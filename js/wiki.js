@@ -41,7 +41,15 @@ export function createWikiService({ lang = 'en', fetchImpl = defaultFetch, retry
 
   async function getJson(url) {
     for (let attempt = 0; ; attempt++) {
-      const res = await inTurn(() => fetchImpl(url, { headers: { Accept: 'application/json' } }));
+      let res;
+      try {
+        res = await inTurn(() => fetchImpl(url, { headers: { Accept: 'application/json' } }));
+      } catch (err) {
+        // A refusal can also arrive as a network error (no CORS headers on the "429"): same treatment.
+        if (attempt >= retries) throw new WikipediaBusyError(`Wikipedia didn't answer (${err?.message ?? err})`);
+        await sleep(retryDelayMs * 2 ** attempt);
+        continue;
+      }
       if (res.ok) return res.json();
       const busy = res.status === 429 || res.status === 503;
       if (!busy || attempt >= retries) {

@@ -129,6 +129,13 @@ test('Wikipedia requests wait their turn (2 at a time) and a refused one is retr
   await Promise.all([1, 2, 3, 4, 5, 6].map((i) => wiki.nearby(48.86 + i / 1000, 2.33, 500)));
   assert.ok(most <= 2, `at most 2 at once (saw ${most})`);
   assert.equal(calls, 7, 'the refused request was asked again');
+  let blocked = 0;
+  const corsBlocked = async () => {
+    if (blocked++ === 0) throw new TypeError('Failed to fetch'); // a 429 without CORS headers looks like this
+    return { ok: true, status: 200, json: async () => ({ query: { pages: [] } }) };
+  };
+  await createWikiService({ fetchImpl: corsBlocked, retryDelayMs: 1 }).nearby(48.86, 2.33, 500);
+  assert.equal(blocked, 2, 'a network error is retried too');
   const refused = async () => ({ ok: false, status: 429, headers: { get: () => null }, json: async () => ({}) });
   await assert.rejects(createWikiService({ fetchImpl: refused, retryDelayMs: 1 }).nearby(48.86, 2.33, 500), WikipediaBusyError);
 });
