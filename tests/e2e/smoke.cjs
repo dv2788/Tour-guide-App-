@@ -220,6 +220,10 @@ const LIVE = process.env.LIVE === '1';
       explored.push(`${u.searchParams.get('ggscoord')}|${u.searchParams.get('ggsradius')}`);
     }
   });
+  // Open or fold the "Suggest a route" panel (the app folds it itself after a successful plan).
+  const panel = async (open) => {
+    if ((await page3.$eval('#suggest-panel', (el) => !el.hidden)) !== open) await page3.click('#suggest-open');
+  };
   const settled = (r) => isWiki(r) && inFlight--;
   page3.on('requestfinished', settled);
   page3.on('requestfailed', settled);
@@ -227,11 +231,11 @@ const LIVE = process.env.LIVE === '1';
   await page3.dispatchEvent('#city', 'change');
   const typedNote = await page3.textContent('#locate-note');
   expect(/plan around Paris/.test(typedNote), `the note says it will plan around the typed city (${typedNote})`);
-  await page3.click('#suggest-open');
+  await panel(true);
   await page3.click('#suggest-go');
   await page3.waitForFunction(() => /✓|couldn't find|found no|Nothing worth|didn't answer/.test(document.getElementById('import-note').textContent), null, { timeout: 60000 });
   expect(explored.length > 0 && explored.every((c) => Math.abs(Number(c.split('|')[0]) - 48.8566) < 0.01), `planned around Paris, not where the phone is (${explored.join(' ')})`);
-  await page3.click('#suggest-open'); // fold the panel again
+  await panel(false);
   await page3.fill('#city', 'Barcelona');
   await page3.dispatchEvent('#city', 'change');
   expect(/plan around where you are/.test(await page3.textContent('#locate-note')), 'back to planning around you');
@@ -252,17 +256,17 @@ const LIVE = process.env.LIVE === '1';
   const areaNote = await page3.textContent('#locate-note');
   expect(/El Born, Barcelona: I'll start your routes from there/.test(areaNote), `the part of town is confirmed (${areaNote})`);
   explored.length = 0;
-  await page3.click('#suggest-open');
+  await panel(true);
   await page3.click('#suggest-go');
   await page3.waitForFunction(() => /✓|couldn't find|found no|Nothing worth|didn't answer/.test(document.getElementById('import-note').textContent), null, { timeout: 60000 });
   expect(explored.length > 0 && explored.every((c) => Math.abs(Number(c.split('|')[0]) - BORN.lat) < 0.001 && Math.abs(Number(c.split('|')[1]) - BORN.lon) < 0.001), `planned from El Born (${explored.join(' ')})`);
-  await page3.click('#suggest-open'); // fold the panel again
+  await panel(false);
   await page3.fill('#area', '');
   await page3.dispatchEvent('#area', 'change');
   // When Wikipedia refuses (it did, for too many requests at once), say so: not "nothing nearby".
   const refuse = (route) => (new URL(route.request().url()).searchParams.get('generator') ? route.fulfill({ status: 429, body: 'Too Many Requests' }) : route.fallback());
   await page3.route('https://*.wikipedia.org/w/api.php?**', refuse);
-  await page3.click('#suggest-open');
+  await panel(true);
   await page3.click('#suggest-go');
   await page3.waitForFunction(() => /didn't answer|couldn't find/.test(document.getElementById('import-note').textContent), null, { timeout: 60000 });
   const busyNote = await page3.textContent('#import-note');
@@ -274,9 +278,8 @@ const LIVE = process.env.LIVE === '1';
   await page3.click('#suggest-go');
   await page3.waitForFunction(() => /✓|couldn't find|found no|Nothing worth/.test(document.getElementById('import-note').textContent), null, { timeout: 60000 });
   expect(explored.length > 0 && explored.every((c) => c.endsWith('|1000')), `searched within 1 km (${explored.join(' ')})`);
+  await panel(true);
   await page3.click('.chip-opt:has(input[name=range][value="auto"])');
-  await page3.click('#suggest-open'); // fold the panel again
-  await page3.click('#suggest-open');
   await page3.click('.chip-opt:has(input[value="240"])');
   await page3.click('#suggest-go');
   await page3.waitForFunction(() => /✓/.test(document.getElementById('import-note').textContent), null, { timeout: 60000 });
