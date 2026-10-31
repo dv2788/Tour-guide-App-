@@ -521,6 +521,55 @@ select:focus {
   outline-offset: 3px;
 }
 
+/* "Select range": fits my time, or a distance on the slider */
+.range-sub {
+  margin: -6px 0 2px;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.range-pick {
+  display: grid;
+  gap: 10px;
+}
+
+.range-pick .chip-opt {
+  justify-self: start;
+}
+
+.range-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.range-row input[type='range'] {
+  flex: 1;
+  min-width: 0;
+  accent-color: var(--gold);
+  height: 28px;
+}
+
+.range-row output {
+  min-width: 5.5em;
+  text-align: right;
+  color: var(--gold);
+  font-size: 0.9rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.range-scale {
+  display: flex;
+  justify-content: space-between;
+  margin: -8px calc(5.5em + 14px) 0 0;
+  color: var(--muted);
+  font-size: 0.66rem;
+}
+
+.range-pick.auto .range-row input[type='range'] {
+  opacity: 0.45;
+}
+
 .check {
   display: flex;
   align-items: center;

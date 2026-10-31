@@ -273,14 +273,21 @@ const LIVE = process.env.LIVE === '1';
   expect(/Wikipedia didn't answer/.test(busyNote), `a busy Wikipedia is reported as such (${busyNote})`);
   await page3.unroute('https://*.wikipedia.org/w/api.php?**', refuse);
   // "How far should I look?": the range chosen is the search radius.
-  await page3.click('.chip-opt:has(input[name=range][value="1000"])');
+  await page3.$eval('#range', (el) => {
+    el.value = '1'; // the slider's second stop: 1 km
+    el.dispatchEvent(new Event('input', { bubbles: true }));
+  });
+  const rangeShown = await page3.textContent('#range-value');
+  expect(rangeShown === '1 km' && !(await page3.isChecked('#range-auto')), `moving the slider picks a distance (${rangeShown})`);
   explored.length = 0;
   await page3.click('#suggest-go');
   await page3.waitForFunction(() => /✓|couldn't find|found no|Nothing worth/.test(document.getElementById('import-note').textContent), null, { timeout: 60000 });
   expect(explored.length > 0 && explored.every((c) => c.endsWith('|1000')), `searched within 1 km (${explored.join(' ')})`);
   await panel(true);
-  await page3.click('.chip-opt:has(input[name=range][value="auto"])');
+  await page3.click('.chip-opt:has(#range-auto)');
   await page3.click('.chip-opt:has(input[value="240"])');
+  const autoRange = await page3.textContent('#range-value');
+  expect((await page3.isChecked('#range-auto')) && autoRange === '6 km', `"Fits my time" follows the time: half a day on foot (${autoRange})`);
   await page3.click('#suggest-go');
   await page3.waitForFunction(() => /✓/.test(document.getElementById('import-note').textContent), null, { timeout: 60000 });
   const planned = await page3.evaluate(() => ({

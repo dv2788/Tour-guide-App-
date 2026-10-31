@@ -84,9 +84,10 @@ ChatGPT search), run `npm run indexnow` once the site is live: no account needed
 ## Let Roamie plan it: "Suggest a route for me"
 
 Tap **Use my location** (or type your city), then **Suggest a route for me** and answer one question:
-**how long do you want to be out?** (30 min, 1 hour, 2 hours, half a day or a full day). You can also choose
-**how far to look** for monuments, museums and landmarks: as far as your time allows (the default), or within
-1, 3, 5 or 10 km. If nothing fits, it says why and offers the way out ("Plan 1 hour instead", "Look within 3 km").
+**how long do you want to be out?** (30 min, 1 hour, 2 hours, half a day or a full day). **Select range** sets
+how far to look for monuments, museums and landmarks: "Fits my time" (the default, worked out from the time and
+way of getting around), or any distance on the slider from 500 m to 50 km (beyond 10 km, Wikipedia's search for
+notable places does the looking). If nothing fits, it says why and offers the way out ("Plan 1 hour instead", "Look within 3 km").
 
 Where the route starts: **the part of town you're staying in**, if you tell it (a neighbourhood, your hotel or
 a street; the box suggests the city's neighbourhoods, best known first, from Wikipedia). Otherwise where you

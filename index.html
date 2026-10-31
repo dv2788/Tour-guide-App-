@@ -155,6 +155,16 @@
               <svg class="icon"><use href="#i-stars" /></svg>Curate a route for me
             </button>
             <div id="suggest-panel" class="suggest-panel" hidden>
+              <p class="suggest-q" id="range-label"><svg class="icon"><use href="#i-near" /></svg>Select range</p>
+              <p class="range-sub">How far from you should I look for monuments, museums and landmarks?</p>
+              <div class="range-pick">
+                <label class="chip-opt"><input type="checkbox" id="range-auto" name="rangeAuto" checked /><span>Fits my time</span></label>
+                <div class="range-row">
+                  <input type="range" id="range" name="range" min="0" max="12" step="1" value="4" aria-labelledby="range-label" />
+                  <output id="range-value" for="range">3 km</output>
+                </div>
+                <p class="range-scale" aria-hidden="true"><span>500 m</span><span>50 km</span></p>
+              </div>
               <p class="suggest-q" id="duration-label"><svg class="icon"><use href="#i-clock" /></svg>How long do you want to be out?</p>
               <div class="chips" role="radiogroup" aria-labelledby="duration-label">
                 <label class="chip-opt"><input type="radio" name="duration" value="30" /><span>30 min</span></label>
@@ -162,14 +172,6 @@
                 <label class="chip-opt"><input type="radio" name="duration" value="120" /><span>2 hours</span></label>
                 <label class="chip-opt"><input type="radio" name="duration" value="240" /><span>Half day</span></label>
                 <label class="chip-opt"><input type="radio" name="duration" value="480" /><span>Full day</span></label>
-              </div>
-              <p class="suggest-q" id="range-label"><svg class="icon"><use href="#i-near" /></svg>How far should I look for monuments, museums and landmarks?</p>
-              <div class="chips" role="radiogroup" aria-labelledby="range-label">
-                <label class="chip-opt"><input type="radio" name="range" value="auto" checked /><span>As far as my time allows</span></label>
-                <label class="chip-opt"><input type="radio" name="range" value="1000" /><span>1 km</span></label>
-                <label class="chip-opt"><input type="radio" name="range" value="3000" /><span>3 km</span></label>
-                <label class="chip-opt"><input type="radio" name="range" value="5000" /><span>5 km</span></label>
-                <label class="chip-opt"><input type="radio" name="range" value="10000" /><span>10 km</span></label>
               </div>
               <label class="check"><input type="checkbox" id="loop" checked /><span>End where I started</span></label>
               <p class="hint">

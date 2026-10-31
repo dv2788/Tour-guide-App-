@@ -189,12 +189,13 @@ export function createWikiService({ lang = 'en', fetchImpl = defaultFetch, retry
    * Throws only if both requests fail.
    */
   async function exploreArea(lat, lon, radius = 2000, limit = 200, notable = 200) {
-    const meters = Math.min(10000, Math.max(10, Math.round(radius)));
+    // The nearest-articles search stops at 10 km; the notable-places search goes further (driving).
+    const meters = Math.min(50000, Math.max(10, Math.round(radius)));
     const details = { prop: 'info|description|pageprops|langlinkscount|coordinates', ppprop: 'disambiguation', coprop: 'type', colimit: 'max' };
     const query = (params) =>
       getJson(`${host}/w/api.php?${new URLSearchParams({ action: 'query', format: 'json', formatversion: '2', origin: '*', ...details, ...params })}`);
     const answers = await Promise.allSettled([
-      query({ generator: 'geosearch', ggscoord: `${lat}|${lon}`, ggsradius: String(meters), ggslimit: String(Math.min(500, limit)) }),
+      query({ generator: 'geosearch', ggscoord: `${lat}|${lon}`, ggsradius: String(Math.min(10000, meters)), ggslimit: String(Math.min(500, limit)) }),
       notable > 0
         ? query({ generator: 'search', gsrsearch: `nearcoord:${meters}m,${lat.toFixed(5)},${lon.toFixed(5)}`, gsrnamespace: '0', gsrlimit: String(Math.min(500, notable)) }) // whole meters: "3.0km" isn't understood
         : Promise.resolve(null),

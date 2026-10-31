@@ -163,3 +163,10 @@ test('neighbourhoods lists the parts of town around a city centre, best known fi
   assert.match(seen[0], /gsrsearch=nearcoord%3A8000m%2C41\.387%2C2\.17/);
   assert.deepEqual(list.map((n) => n.name), ['Eixample', 'Gràcia', 'La Barceloneta', 'Les Corts']);
 });
+
+test('exploreArea looks further than 10 km with the notable-places search (driving)', async () => {
+  const { fetchImpl, seen } = mockFetch([['generator=', { query: { pages: [] } }]]);
+  await createWikiService({ fetchImpl }).exploreArea(41.387, 2.17, 30000);
+  assert.ok(seen.some((u) => /ggsradius=10000/.test(u)), 'nearest articles: Wikipedia stops at 10 km');
+  assert.ok(seen.some((u) => /nearcoord%3A30000m/.test(u)), 'notable places: the whole 30 km');
+});

@@ -51,6 +51,8 @@ function readForm() {
   return {
     city: (data.get('city') ?? '').toString().trim(),
     area: (data.get('area') ?? '').toString().trim(),
+    range: (data.get('range') ?? '4').toString(), // a position on the slider (see RANGE_STEPS)
+    rangeAuto: $('range-auto').checked,
     stops: (data.get('stops') ?? '').toString(),
     mode: data.get('mode') ?? 'walk',
     lang: data.get('lang') ?? 'en',
@@ -72,6 +74,10 @@ function fillForm(values) {
   if ('plan' in values) plan = values.plan ?? null;
   for (const [key, value] of Object.entries(values)) {
     if (['imported', 'voice', 'start', 'areaPoint', 'plan'].includes(key)) continue;
+    if (key === 'rangeAuto') {
+      $('range-auto').checked = value !== false;
+      continue;
+    }
     const el = form.elements[key];
     if (!el || value == null) continue;
     if (el instanceof RadioNodeList) {
@@ -465,17 +471,60 @@ const pickChip = (name, value) => {
   if (input) input.checked = true;
 };
 
+// ---------- "Select range": how far to look for places ----------
+
+const durationNow = () => Number(form.querySelector('input[name=duration]:checked')?.value ?? 60);
+
+// The slider's stops: fine steps for walking, long ones for cycling and driving.
+const RANGE_STEPS = [500, 1000, 1500, 2000, 3000, 4000, 5000, 7500, 10000, 15000, 20000, 30000, 50000];
+const nearestStep = (meters) => RANGE_STEPS.reduce((best, r, i) => (Math.abs(r - meters) < Math.abs(RANGE_STEPS[best] - meters) ? i : best), 0);
+
+/** The search radius: what the time allows ("Fits my time"), or the distance on the slider. */
+function chosenRange(modeId = readForm().mode, minutes = durationNow()) {
+  return $('range-auto').checked ? searchRadiusFor(modeId, minutes) : RANGE_STEPS[Number($('range').value)] ?? 3000;
+}
+
+/** Show the range in words; with "Fits my time", the slider follows the time chosen. */
+function showRange() {
+  const auto = $('range-auto').checked;
+  const meters = chosenRange();
+  if (auto) $('range').value = String(nearestStep(meters));
+  $('range-value').textContent = RANGE_LABEL(meters);
+  $('range').setAttribute('aria-valuetext', `${RANGE_LABEL(meters)}${auto ? ', fits my time' : ''}`);
+  $('range').closest('.range-pick').classList.toggle('auto', auto);
+}
+
+function setRange(meters) {
+  $('range-auto').checked = false;
+  $('range').value = String(nearestStep(meters));
+  showRange();
+  save(readForm());
+}
+
+$('range').addEventListener('input', () => {
+  $('range-auto').checked = false; // moving the slider is choosing a distance
+  showRange();
+});
+$('range').addEventListener('change', () => save(readForm()));
+$('range-auto').addEventListener('change', () => {
+  showRange();
+  save(readForm());
+});
+form.addEventListener('change', (e) => {
+  if (e.target.name === 'duration' || e.target.name === 'mode') showRange();
+});
+
 /** No stops: say why, and offer the way out (more time, or a wider range). */
 function explainEmptyPlan({ origin, candidates, modeId, minutes, loop, radius }) {
   const worth = candidates.filter((c) => Number.isFinite(interestScore(c)));
   const label = (m) => DURATIONS.find((d) => d.minutes === m)?.label.toLowerCase() ?? `${m} min`;
   if (!worth.length) {
-    const wider = [3000, 5000, 10000].find((r) => r > radius);
+    const wider = RANGE_STEPS.find((r) => r >= radius * 2) ?? (radius < 50000 ? 50000 : null);
     showImportNote(
       `I found no monuments, museums or landmarks within ${RANGE_LABEL(radius)} of ${origin.name ?? 'here'}.` +
         (wider ? ` Look further, or type the places you'd like to visit.` : " Type the places you'd like to visit instead."),
       'warn',
-      wider ? { label: `Look within ${RANGE_LABEL(wider)}`, run: () => (pickChip('range', String(wider)), planRoute()) } : null,
+      wider ? { label: `Look within ${RANGE_LABEL(wider)}`, run: () => (setRange(wider), planRoute()) } : null,
     );
     return;
   }
@@ -522,8 +571,7 @@ async function planRoute() {
     }
 
     // How far to look: what the time allows, or the range chosen.
-    const rangeChoice = form.querySelector('input[name=range]:checked')?.value ?? 'auto';
-    const lookWithin = rangeChoice === 'auto' ? searchRadiusFor(modeId, minutes) : Number(rangeChoice);
+    const lookWithin = chosenRange(modeId, minutes);
     showImportNote('Looking for the monuments, museums and landmarks around you…');
     let candidates;
     try {
@@ -907,6 +955,7 @@ const saved = loadSaved();
 if (saved) fillForm(saved);
 populateGuides(saved?.voice ?? null);
 syncFormHints();
+showRange();
 renderPlan();
 if (startPoint || areaPoint) describeLocation();
 // A link to a sample tour (?tour=barcelona, from the tour pages) opens with that tour loaded.
