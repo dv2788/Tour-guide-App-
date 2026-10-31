@@ -2,41 +2,138 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { parseRoute, progressOn, upcomingManeuver, stepInstruction, maneuverSentence, maneuverIcon, mapsLink, Navigator } from '../js/navigation.js';
-import { pointAlongPath } from '../js/geo.js';
+import { pointAlongPath, distanceMeters, bearingDegrees, angleDiff } from '../js/geo.js';
+
+const load = (path) => JSON.parse(readFileSync(new URL(path, import.meta.url)));
+const flush = () => new Promise((r) => setImmediate(r));
 
 // A real walking route: Place de la Concorde -> Grand Palais (routing.openstreetmap.de).
-const osrm = JSON.parse(readFileSync(new URL('./fixtures/route-steps.json', import.meta.url)));
+const osrm = load('./fixtures/route-steps.json');
 const route = parseRoute(osrm);
+// Real walking routes in 8 cities, recorded from the same service (see fixtures/routes/index.json).
+const cities = load('./fixtures/routes/index.json').walks.map((w) => ({ ...w, osrm: load(`./fixtures/routes/${w.file}`) }));
 
-test('parseRoute: the line, its length and the maneuvers along it', () => {
+// A made-up route in local meters (x east, y north) around Paris, with OSRM-style steps.
+function synth(points, steps) {
+  const at = ([x, y]) => [2.35 + x / (111320 * Math.cos((48.85 * Math.PI) / 180)), 48.85 + y / 111320];
+  const coords = points.map(at);
+  const dist = (i, j) => {
+    let d = 0;
+    for (let k = i + 1; k <= j; k++) d += Math.hypot(points[k][0] - points[k - 1][0], points[k][1] - points[k - 1][1]);
+    return d;
+  };
+  return {
+    routes: [
+      {
+        geometry: { type: 'LineString', coordinates: coords },
+        legs: [
+          {
+            steps: steps.map((s, n) => ({
+              distance: n + 1 < steps.length ? dist(s.i, steps[n + 1].i) : 0,
+              name: s.name ?? '',
+              maneuver: { type: s.type, modifier: s.modifier, location: coords[s.i] },
+            })),
+          },
+        ],
+      },
+    ],
+  };
+}
+
+test('parseRoute: the line, its length and the maneuvers placed on it', () => {
   assert.ok(Math.abs(route.length - 876) < 40, `length ${route.length}`);
   assert.equal(route.steps[0].type, 'depart');
   assert.equal(route.steps.at(-1).type, 'arrive');
-  assert.equal(route.steps[2].type, 'turn');
-  assert.ok(route.steps[2].along > 380 && route.steps[2].along < 400, 'third maneuver after ~390 m');
+  assert.equal(route.steps.at(-1).along, route.length);
+  // Every maneuver sits exactly on the drawn line.
+  for (const s of route.rawSteps) assert.ok(progressOn(route, s).off < 1, `${s.type} off the line`);
+  const left = route.steps.find((s) => s.type === 'turn' && s.modifier === 'left');
+  assert.ok(left.along > 380 && left.along < 400, `first left turn after ~390 m (${left.along})`);
 });
 
-test('progress: how far along, how far off', () => {
-  const p = pointAlongPath(route, 200);
-  const prog = progressOn(route, p);
-  assert.ok(Math.abs(prog.along - 200) < 2, `along ${prog.along}`);
-  assert.ok(prog.off < 1);
-  const off = progressOn(route, { lat: p.lat + 0.001, lon: p.lon }); // ~110 m north
-  assert.ok(off.off > 60, `off ${off.off}`);
+test('a zig-zag across a street (left, 12 m, right) is not an instruction', () => {
+  const r = parseRoute(
+    synth(
+      [[0, 0], [100, 0], [100, 12], [200, 12], [200, -80]],
+      [
+        { i: 0, type: 'depart', name: 'Rue A' },
+        { i: 1, type: 'turn', modifier: 'left' }, // onto the crossing
+        { i: 2, type: 'turn', modifier: 'right', name: 'Rue A' }, // onto the far pavement
+        { i: 3, type: 'turn', modifier: 'right', name: 'Rue B' },
+        { i: 4, type: 'arrive' },
+      ],
+    ),
+  );
+  assert.deepEqual(
+    r.steps.map((s) => [s.type, s.modifier ?? null, s.name]),
+    [
+      ['depart', null, 'Rue A'],
+      ['turn', 'right', 'Rue B'],
+      ['arrive', null, ''],
+    ],
+  );
+  assert.equal(stepInstruction('en', r.steps[0]), 'Head east onto Rue A');
 });
 
-test('the next real maneuver skips "carry straight on" and merges turns a few meters apart', () => {
-  const start = upcomingManeuver(route, 0);
-  assert.equal(start.step.type, 'depart');
-  const m = upcomingManeuver(route, 150);
-  assert.equal(m.step.type, 'turn', 'the "new name, straight" step is skipped');
-  assert.equal(m.step.modifier, 'left');
-  assert.equal(m.then, null, 'the next turn is 46 m further: announced on its own');
-  // A sharp right followed 10 m later by a left: said together.
-  const sharp = route.steps.find((st) => st.modifier === 'sharp right');
-  const pair = upcomingManeuver(route, sharp.along - 20);
-  assert.equal(pair.step.id, sharp.id);
-  assert.equal(pair.then?.modifier, 'left');
+test('two lefts round a corner are said as two turns, not "turn around"', () => {
+  const r = parseRoute(
+    synth(
+      [[0, 0], [100, 0], [100, 15], [0, 15]],
+      [
+        { i: 0, type: 'depart' },
+        { i: 1, type: 'turn', modifier: 'left' },
+        { i: 2, type: 'turn', modifier: 'left', name: 'Rue C' },
+        { i: 3, type: 'arrive' },
+      ],
+    ),
+  );
+  const m = upcomingManeuver(r, 60);
+  assert.equal(maneuverSentence('en', m, 'X'), 'In 40 meters, turn left, then turn left onto Rue C');
+});
+
+test('real routes: pavement zig-zags merged, street names kept', () => {
+  const bcn = parseRoute(cities.find((c) => c.city === 'Barcelona').osrm);
+  assert.ok(bcn.rawSteps.length >= 40, `raw steps ${bcn.rawSteps.length}`);
+  assert.ok(bcn.steps.length <= 14, `simplified to ${bcn.steps.length}: ${bcn.steps.map((s) => `${s.modifier} ${s.name}`).join(' | ')}`);
+  const names = bcn.steps.map((s) => s.name);
+  assert.ok(names.includes('Carrer de Mallorca') && names.includes('Avinguda Diagonal'), names.join(' | '));
+  for (const c of cities) {
+    const r = parseRoute(c.osrm);
+    // No left-then-right pairs a few meters apart left over.
+    for (let i = 2; i < r.steps.length - 1; i++) {
+      const [a, b] = [r.steps[i - 1], r.steps[i]];
+      const jog = /left/.test(a.modifier) !== /left/.test(b.modifier) && b.along - a.along < 20 && a.type !== 'depart';
+      assert.ok(!jog, `${c.city}: zig-zag at ${Math.round(a.along)} m left in`);
+    }
+  }
+});
+
+test('real routes: every clear change of direction at a junction gets an instruction', () => {
+  for (const c of cities) {
+    const r = parseRoute(c.osrm);
+    const heading = (a, b) => bearingDegrees(pointAlongPath(r, a), pointAlongPath(r, b));
+    for (let x = 30; x < r.length - 30; x += 5) {
+      if (Math.abs(angleDiff(heading(x - 25, x), heading(x, x + 25))) < 60) continue; // no bend here
+      const junction = r.rawSteps.filter((s) => Math.abs(s.along - x) <= 40 && s.type !== 'depart' && s.type !== 'arrive');
+      if (!junction.length) continue; // the street itself bends: nothing to do
+      const from = Math.min(x, ...junction.map((s) => s.along));
+      const to = Math.max(x, ...junction.map((s) => s.along));
+      const net = angleDiff(heading(Math.max(0, from - 40), from - 10), heading(to + 10, Math.min(r.length, to + 40)));
+      if (Math.abs(net) < 35) continue; // a zig-zag: you end up going the same way
+      const said = r.steps.some((s) => s.type !== 'depart' && s.type !== 'arrive' && s.along >= x - 45 && s.along <= x + 40);
+      assert.ok(said, `${c.city}, ${c.from.name}: the ${Math.round(net)}° turn at ${x} m has no instruction`);
+    }
+  }
+  // After the Pont de l'Alma the path curves right into Cours Albert-Ier before the junction.
+  const alma = parseRoute(cities.find((c) => /on the bridge/.test(c.from.name)).osrm);
+  assert.ok(alma.steps.some((s) => s.modifier === 'right' && s.along > 250 && s.along < 300), 'turn right at the end of the bridge');
+});
+
+test('progress stays on the right part of a route that doubles back', () => {
+  const r = parseRoute(synth([[0, 0], [200, 0], [200, 4], [0, 4]], [{ i: 0, type: 'depart' }, { i: 1, type: 'turn', modifier: 'uturn' }, { i: 3, type: 'arrive' }]));
+  const p = pointAlongPath(r, 300); // on the way back, at x = 104
+  const prog = progressOn(r, { lat: p.lat - 1.5 / 111320, lon: p.lon }, 290);
+  assert.ok(Math.abs(prog.along - 300) < 3, `along ${prog.along}`);
 });
 
 test('instructions in words, with distance and "then"', () => {
@@ -45,6 +142,7 @@ test('instructions in words, with distance and "then"', () => {
   assert.equal(stepInstruction('fr', turn), 'Tournez à gauche sur Rue de Rivoli');
   assert.equal(stepInstruction('en', { type: 'depart', bearing: 92 }), 'Head east');
   assert.equal(stepInstruction('en', { type: 'roundabout', exit: 2 }), 'At the roundabout, take exit 2');
+  assert.equal(stepInstruction('en', { type: 'fork', modifier: 'slight right', name: 'Birdcage Walk' }), 'Keep right onto Birdcage Walk');
   assert.equal(stepInstruction('en', { type: 'arrive' }, 'Grand Palais'), 'Grand Palais is just ahead');
   const m = { step: turn, distance: 80, then: { type: 'turn', modifier: 'right', name: '' } };
   assert.equal(maneuverSentence('en', m, 'X'), 'In 80 meters, turn left onto Rue de Rivoli, then turn right');
@@ -59,43 +157,97 @@ test('maps links hand the next stop to the phone’s navigation app', () => {
   assert.equal(mapsLink(stop, 'drive', { apple: true }), 'https://maps.apple.com/?daddr=48.866100,2.312500&dirflg=d');
 });
 
-test('Navigator: fetches the route, speaks each turn once, re-routes when you stray', async () => {
+/** Walk a route, one position per second, and collect what the Navigator says. */
+async function walk(osrmJson, target, { offsets = () => null, step = 1.4, streetName = null, reroute = null } = {}) {
   let clock = 1_000_000;
   const spoken = [];
-  const updates = [];
   let fetches = 0;
   const nav = new Navigator({
     lang: 'en',
     modeId: 'walk',
-    getDirections: async () => {
+    getDirections: async (from, to) => {
       fetches++;
-      return osrm;
+      return fetches > 1 && reroute ? reroute(from, to) : osrmJson;
     },
-    narrator: { interject: (text) => spoken.push(text) },
-    onUpdate: (s) => updates.push(s),
+    streetName,
+    narrator: { interject: (text, meta, opts) => spoken.push({ text, along: current, urgent: opts.urgent, step: nav.route && upcomingManeuver(nav.route, nav.progress?.along ?? 0)?.step }) },
     now: () => clock,
   });
-  const target = { name: 'Grand Palais', lat: 48.866704, lon: 2.312009 };
-  nav.update(pointAlongPath(route, 0));
+  const r = parseRoute(osrmJson);
+  let current = 0;
+  nav.update(pointAlongPath(r, 0));
   nav.setTarget(target);
-  await new Promise((r) => setImmediate(r));
-  assert.equal(fetches, 1);
-  assert.match(spoken[0], /^Head (west|northwest) onto Place de la Concorde$/);
-  // Walk along: one announcement ~30 m before the first left turn.
-  for (let d = 10; d <= 380; d += 10) {
-    clock += 8000;
-    nav.update(pointAlongPath(route, d));
+  await flush();
+  for (current = 0; current <= r.length; current += step) {
+    clock += 1000;
+    const p = pointAlongPath(r, current);
+    nav.update(offsets(current) ? { ...p, ...offsets(current) } : p);
+    await flush();
   }
-  const turnPrompts = spoken.filter((t) => /turn left/i.test(t));
-  assert.equal(turnPrompts.length, 1, spoken.join(' | '));
-  assert.match(turnPrompts[0], /^(In \d+ meters, turn left|Turn left)/);
-  const last = updates.at(-1);
-  assert.ok(last.remaining > 400 && last.remaining < 520, `remaining ${last.remaining}`);
-  assert.ok(last.minutes >= 6 && last.minutes <= 7);
-  // Stray 150 m off the route: a new route is fetched.
-  clock += 20000;
-  const p = pointAlongPath(route, 380);
-  nav.update({ lat: p.lat - 0.0014, lon: p.lon });
-  await new Promise((r) => setImmediate(r));
-  assert.equal(fetches, 2);
+  return { nav, spoken, fetches: () => fetches, route: r };
+}
+
+test('real routes in 8 cities: every turn announced once, before you reach it', async () => {
+  for (const c of cities) {
+    const { nav, spoken, fetches, route: r } = await walk(c.osrm, c.to);
+    assert.equal(fetches(), 1, `${c.city}: no re-routing while on the route`);
+    const turns = r.steps.filter((s) => s.type !== 'depart' && s.type !== 'arrive');
+    for (const t of turns) assert.ok(nav.announced.has(t.id), `${c.city} ${c.from.name}: turn at ${Math.round(t.along)} m never announced`);
+    for (const s of spoken.slice(1)) {
+      assert.ok(s.step.along - s.along >= 0 && s.step.along - s.along <= 32, `${c.city}: "${s.text}" said ${Math.round(s.step.along - s.along)} m before the turn`);
+    }
+    assert.equal(spoken[0].urgent, false, 'the first "head this way" waits for the story');
+  }
+});
+
+test('Navigator: a GPS jump is not a wrong turn; staying off the route is', async () => {
+  const target = { name: 'Grand Palais', lat: 48.866704, lon: 2.312009 };
+  // One wild fix 100 m off at 200 m: ignored.
+  const once = await walk(osrm, target, { offsets: (d) => (d > 200 && d < 201.5 ? { lat: pointAlongPath(route, d).lat - 0.0009 } : null) });
+  assert.equal(once.fetches(), 1);
+  // Off by 50 m, but the phone says it's only accurate to 45 m: not sure enough to re-route.
+  const fuzzy = await walk(osrm, target, { offsets: (d) => (d > 200 && d < 240 ? { lat: pointAlongPath(route, d).lat - 0.00045, accuracy: 45 } : null) });
+  assert.equal(fuzzy.fetches(), 1);
+  // 120 m off for ten seconds: a new route, announced at once.
+  // (The new route goes straight from where you are to the stop.)
+  const straight = (from, to) => ({
+    routes: [{ geometry: { coordinates: [[from.lon, from.lat], [to.lon, to.lat]] }, legs: [{ steps: [{ distance: 1, name: 'Avenue Y', maneuver: { type: 'depart', location: [from.lon, from.lat] } }, { distance: 0, maneuver: { type: 'arrive', location: [to.lon, to.lat] } }] }] }],
+  });
+  const off = await walk(osrm, target, { reroute: straight, offsets: (d) => (d > 200 && d < 214 ? { lat: pointAlongPath(route, d).lat - 0.0011 } : null) });
+  assert.ok(off.fetches() >= 2, 're-routed');
+  const after = off.spoken.find((s) => s.along > 200 && /^Head/.test(s.text));
+  assert.ok(after?.urgent, 'the new direction cuts in');
+});
+
+test('Navigator: names an unnamed street before announcing the turn', async () => {
+  const unnamed = synth(
+    [[0, 0], [150, 0], [150, 120]],
+    [{ i: 0, type: 'depart', name: 'Quai X' }, { i: 1, type: 'turn', modifier: 'left' }, { i: 2, type: 'arrive' }],
+  );
+  const asked = [];
+  const { spoken } = await walk(unnamed, { name: 'Musée', lat: 48.851, lon: 2.352 }, { streetName: async (p) => (asked.push(p), 'Rue Nommée') });
+  assert.equal(asked.length, 1, 'asked once');
+  assert.ok(distanceMeters(asked[0], { lat: 48.85 + 10 / 111320, lon: 2.35 + 150 / (111320 * Math.cos((48.85 * Math.PI) / 180)) }) < 15, 'asked a little way into the new street');
+  assert.ok(spoken.some((s) => s.text === 'In 30 meters, turn left onto Rue Nommée' || /turn left onto Rue Nommée$/.test(s.text)), spoken.map((s) => s.text).join(' | '));
+});
+
+test('Navigator: a failing route service is retried with growing pauses', async () => {
+  let clock = 0;
+  let fetches = 0;
+  const nav = new Navigator({
+    getDirections: async () => {
+      fetches++;
+      throw new Error('offline');
+    },
+    now: () => clock,
+  });
+  nav.update({ lat: 48.8656, lon: 2.3212 });
+  nav.setTarget({ name: 'Grand Palais', lat: 48.8667, lon: 2.312 });
+  for (let s = 0; s < 30; s++) {
+    await flush();
+    clock += 1000;
+    nav.update({ lat: 48.8656, lon: 2.3212 });
+  }
+  await flush();
+  assert.ok(fetches >= 3 && fetches <= 5, `${fetches} tries in 30 s (not one per second)`);
 });

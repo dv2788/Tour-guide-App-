@@ -1074,14 +1074,15 @@ select:focus {
   background: var(--surface-2);
 }
 
-/* A quiet, monochrome map so the gold route stands out. */
+/* A quiet map so the gold route stands out, but with enough colour left to tell the river,
+   the parks and the streets apart (you need them to find your way). */
 .leaflet-tile-pane {
-  filter: grayscale(1) sepia(0.18) contrast(0.92) brightness(1.04);
+  filter: saturate(0.5) sepia(0.12) contrast(0.96) brightness(1.02);
 }
 
 @media (prefers-color-scheme: dark) {
   .leaflet-tile-pane {
-    filter: grayscale(1) invert(1) sepia(0.2) contrast(0.82) brightness(0.88);
+    filter: invert(1) hue-rotate(180deg) saturate(0.45) contrast(0.88) brightness(0.9);
   }
 }
 
@@ -1486,8 +1487,14 @@ select:focus {
   font-family: var(--sans);
 }
 
-.leaflet-control-attribution {
+.leaflet-container .leaflet-control-attribution {
   font-size: 10px;
+  background: color-mix(in srgb, var(--surface) 82%, transparent);
+  color: var(--muted);
+}
+
+.leaflet-container .leaflet-control-attribution a {
+  color: var(--gold);
 }
 
 @media (min-width: 600px) {

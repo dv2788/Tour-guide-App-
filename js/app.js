@@ -3,7 +3,7 @@
 import { getMode, MODES } from './modes.js';
 import { LANGUAGES, speechLocale } from './i18n.js';
 import { createWikiService } from './wiki.js';
-import { createGeocoder, fetchRoute, fetchDirections } from './geocode.js';
+import { createGeocoder, fetchRoute, fetchDirections, fetchStreetName } from './geocode.js';
 import { Navigator, mapsLink } from './navigation.js';
 import { Narrator } from './narrator.js';
 import { GpsSource, SimulatedSource } from './location.js';
@@ -554,7 +554,15 @@ function showPlanMap() {
   });
   if (plan?.loop && origin && stops.length) points.push(origin);
   if (points.length > 1) {
-    L.polyline(points.map((p) => [p.lat, p.lon]), { color: '#c9a55c', weight: 3, opacity: 0.95, dashArray: '2 7', lineCap: 'round' }).addTo(planLayer);
+    // Dotted straight lines at first, replaced by the real way through the streets once it arrives.
+    const direct = L.polyline(points.map((p) => [p.lat, p.lon]), { color: '#c9a55c', weight: 2, opacity: 0.8, dashArray: '2 7', lineCap: 'round' }).addTo(planLayer);
+    const token = (showPlanMap.token = (showPlanMap.token ?? 0) + 1);
+    const profile = getMode(readForm().mode).routeProfile;
+    fetchRoute(points, profile).then((route) => {
+      if (token !== showPlanMap.token || !route.routed) return;
+      planLayer.removeLayer(direct);
+      L.polyline(route.points.map((p) => [p.lat, p.lon]), { color: '#c9a55c', weight: 4, opacity: 0.95, lineCap: 'round', className: 'plan-route' }).addTo(planLayer);
+    });
   }
   // Measure again once the layout has settled (the panel above may just have folded).
   const frame = () => {
@@ -751,6 +759,8 @@ function initMap() {
       maxZoom: 19,
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     }).addTo(map);
+    // You are always drawn on top, even standing on a stop's pin.
+    map.createPane('you').style.zIndex = 650;
     layers = {
       route: L.layerGroup().addTo(map),
       nav: L.layerGroup().addTo(map),
@@ -765,6 +775,7 @@ function initMap() {
   }
   Object.values(layers).forEach((layer) => layer.clearLayers());
   navRouteDrawn = null;
+  navFittedTarget = null;
   poiMarkers.clear();
   stopMarkers.clear();
   userMarker = null;
@@ -798,6 +809,16 @@ function fitTo(points) {
 
 // The way to the next stop: a bold gold line; the rest of the tour route fades back.
 let navRouteDrawn = null;
+let navFittedTarget = null;
+
+/** Zoom to the way to the next stop (clear of the directions card), once per stop. */
+function fitNavRoute(route, target) {
+  if (!map || !follow || navFittedTarget === target) return;
+  navFittedTarget = target;
+  const card = $('next-stop');
+  const top = (card.hidden ? 0 : card.offsetHeight + 12) + 16;
+  map.fitBounds(route.points.map((p) => [p.lat, p.lon]), { paddingTopLeft: [24, top], paddingBottomRight: [24, 36], maxZoom: 17 });
+}
 function drawNavRoute(route) {
   if (!map || route === navRouteDrawn) return;
   navRouteDrawn = route;
@@ -826,13 +847,16 @@ function showDirections(state, modeId) {
   $('nav-target').textContent = parts.join(' · ');
   $('nav-open').href = mapsLink(state.target, modeId, { apple: isApple });
   drawNavRoute(state.route);
+  if (state.route) fitNavRoute(state.route, state.target);
 }
 
-function drawRoute(points) {
+function drawRoute(points, { routed = true } = {}) {
   if (!map) return;
+  // A real route follows the streets. Without one, a faint dotted line just joins the stops,
+  // so it never looks like a path through buildings.
   window.L.polyline(
     points.map((p) => [p.lat, p.lon]),
-    { color: '#c9a55c', weight: 4, opacity: 0.9 },
+    routed ? { color: '#c9a55c', weight: 4, opacity: 0.9 } : { color: '#c9a55c', weight: 2, opacity: 0.7, dashArray: '2 8' },
   ).addTo(layers.route);
 }
 
@@ -861,7 +885,7 @@ function moveUser({ lat, lon, accuracy }) {
   const L = window.L;
   if (!userMarker) {
     accuracyCircle = L.circle([lat, lon], { radius: accuracy ?? 0, stroke: false, fillColor: '#c9a55c', fillOpacity: 0.12 }).addTo(layers.user);
-    userMarker = L.circleMarker([lat, lon], { radius: 8, color: '#c9a55c', weight: 4, fillColor: '#fffdf8', fillOpacity: 1 }).addTo(layers.user);
+    userMarker = L.circleMarker([lat, lon], { pane: 'you', radius: 8, color: '#c9a55c', weight: 4, fillColor: '#fffdf8', fillOpacity: 1 }).addTo(layers.user);
   } else {
     userMarker.setLatLng([lat, lon]);
     accuracyCircle.setLatLng([lat, lon]).setRadius(accuracy ?? 0);
@@ -1171,8 +1195,18 @@ form.addEventListener('submit', async (event) => {
       lang: cfg.lang,
       modeId: mode.id,
       getDirections: (from, to) => fetchDirections(from, to, mode.routeProfile),
+      streetName: (point) => fetchStreetName(point),
       narrator,
-      onUpdate: (state) => alive() && showDirections(state, mode.id),
+      onUpdate: (state) => {
+        if (!alive()) return;
+        if (state.route?.targetSnap != null && state.target?.index != null) engine.approachLimit(state.target.index, state.route.targetSnap);
+        // The simulated traveller follows the directions, as you would.
+        if (state.route && state.route !== current.followed && current.source?.follow) {
+          current.followed = state.route;
+          current.source.follow(state.route.points);
+        }
+        showDirections(state, mode.id);
+      },
     });
 
     // If the soothing voice is already on this phone, wait (briefly) so it reads the welcome.
@@ -1198,7 +1232,8 @@ form.addEventListener('submit', async (event) => {
       const waypoints = fromPlan ? [plan.start, ...stops, ...(plan.loop ? [plan.start] : [])] : stops;
       const route = await fetchRoute(waypoints, mode.routeProfile);
       if (!alive()) return;
-      drawRoute(route.points);
+      drawRoute(route.points, { routed: route.routed });
+      stops.forEach((stop, i) => engine.approachLimit(i, route.snaps?.[i + (fromPlan ? 1 : 0)]));
       current.source = new SimulatedSource({
         points: route.points,
         speedMps: mode.speedMps,
@@ -1206,7 +1241,8 @@ form.addEventListener('submit', async (event) => {
         onPosition,
         onEnd: () => alive() && setStatus('You reached the end of the simulated trip.'),
       });
-      setStatus(`Simulating your ${mode.label.toLowerCase()} at ${cfg.simSpeed}× speed${missingNote}.${voiceNote}`);
+      const routeNote = route.routed ? '' : " The route service didn't answer, so the dotted line only joins the stops directly.";
+      setStatus(`Simulating your ${mode.label.toLowerCase()} at ${cfg.simSpeed}× speed${missingNote}.${routeNote}${voiceNote}`, route.routed ? undefined : 'warn');
     } else {
       current.source = new GpsSource({
         onPosition: (pos) => {

@@ -5,14 +5,14 @@
 
 const path = require('node:path');
 const { chromium } = require('playwright');
-const { serve, mockNetwork } = require('./mocks.cjs');
+const { serve, mockNetwork, saveRouteCaches } = require('./mocks.cjs');
 
 (async () => {
   const server = await serve();
   const base = `http://127.0.0.1:${server.address().port}/`;
   const browser = await chromium.launch({ args: ['--autoplay-policy=no-user-gesture-required'] });
   const context = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, serviceWorkers: 'block' });
-  await mockNetwork(context);
+  await mockNetwork(context, { routeCacheName: 'voice' });
   // Count the seconds of audio actually handed to the speakers.
   await context.addInitScript(() => {
     window.__played = [];
@@ -75,6 +75,7 @@ const { serve, mockNetwork } = require('./mocks.cjs');
   expect(errors.length === 0, `no page errors (${errors.join(' | ')})`);
 
   await browser.close();
+  saveRouteCaches();
   server.close();
   if (failures.length) {
     console.error('\nFAILED:\n - ' + failures.join('\n - '));

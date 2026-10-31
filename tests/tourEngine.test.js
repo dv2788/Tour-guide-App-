@@ -172,6 +172,23 @@ test('a stop passed between two far-apart GPS fixes still counts as reached', as
   assert.deepEqual(arrivals, ['Middle', 'End'], 'both announced, in order');
 });
 
+test('a stop set back from every path counts as reached from as close as the path gets', async (t) => {
+  // A café 90 m inside a garden: the walking route passes 90 m from it at best.
+  const stops = [{ name: 'Garden Café', lat: north(90), lon: east(300) }, { name: 'End', lat: LAT, lon: east(900) }];
+  const { engine, narrator } = makeEngine({ stops, pois: [] });
+  t.after(() => engine.stop());
+  await engine.start();
+  engine.approachLimit(0, 88); // what the route service says
+  engine.approachLimit(1, Number.NaN); // unknown: unchanged
+  assert.equal(engine.stops[0].arrivalRadius, 113);
+  assert.equal(engine.stops[1].arrivalRadius, 60);
+  engine.update({ lat: LAT, lon: east(250) });
+  engine.update({ lat: LAT, lon: east(350) });
+  await flush();
+  await flush();
+  assert.deepEqual(narrator.spoken.filter((s) => s.meta.kind === 'stop').map((s) => s.meta.title), ['Garden Café']);
+});
+
 test('arriving before the welcome is ready still announces the stop, after the welcome', async (t) => {
   const stops = [{ name: 'Final Square', lat: LAT, lon: LON }];
   const { engine, narrator } = makeEngine({ stops, pois: [] });

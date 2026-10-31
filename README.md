@@ -55,14 +55,40 @@ During the tour Roamie shows and tells you how to reach the next stop:
   stop, the distance and the walking time;
 - a short **spoken direction** just before each turn. A story in progress pauses for it and then carries on
   from the same sentence; the first "head east…" after a stop waits until the stop's story is finished.
-  Turns a few meters apart are said together ("turn left, then turn right"); "carry straight on" isn't said.
   Spoken turns are off when driving (use your car's navigation);
-- **re-routing** when you wander off the route, and after the last stop of a round trip, the way back to
-  where you started;
+- **re-routing** when you take a wrong turn (said straight away), and after the last stop of a round trip,
+  the way back to where you started;
 - an **open in Maps** button that hands the next stop to Apple Maps (iPhone) or Google Maps for full navigation.
 
 Directions come from the same open routing service used for planning (OSRM on routing.openstreetmap.de), in
 all five languages. The logic is in `js/navigation.js`.
+
+**Directions a person would give.** OpenStreetMap maps many pavements and crossings as separate little
+paths, so a raw walking route is full of "turn left, 5 m, turn right" zig-zags, and most of its paths have no
+name. Read literally, that's a stream of confusing orders. Roamie describes the route the way a person would:
+
+- maneuvers a few meters apart are merged, and the real change of direction is measured on the line itself:
+  a zig-zag that leaves you going the same way (crossing a street, stepping onto the pavement) isn't said;
+  a path that curves round a corner before the junction is still a turn;
+- two turns the same way round a corner are said as two turns, never as "turn around";
+- unnamed pavements get the name of the street they run along (the nearest named road), so "turn left"
+  becomes "turn left onto Avenue d'Iéna";
+- a GPS jump is not a wrong turn: Roamie re-routes only after a few positions in a row off the route, and
+  allows for the accuracy the phone reports;
+- a stop set back from every path (in a garden, behind a building) counts as reached from as close as the
+  path gets;
+- without an answer from the route service, it retries with growing pauses, and never draws a straight line
+  through buildings as if it were the way.
+
+Checked on real walking routes in Paris, London, New York, Rome, Barcelona, Tokyo, Marrakech and Kinshasa
+(`tests/fixtures/routes/`): every real change of direction at a junction gets an instruction, each said once
+and before you reach it, with no re-routing while you're on the route. A simulation with a drifting GPS
+error of ±15 m reached every destination; one with a wrong turn on each walk re-routed every time.
+
+**How fresh is the map?** Roamie doesn't keep its own copy of the map: every map tile, route and street name
+is fetched live from OpenStreetMap, which volunteers update every minute. Edits show on the map tiles usually
+within minutes (sometimes a few hours, while older copies expire), place search (Nominatim) follows within
+minutes, and the routing service rebuilds its road network from the latest data roughly every two days.
 
 ## Paste your route from any maps app
 
@@ -110,7 +136,7 @@ still downloading or ever fails, the phone's voice takes over without a gap.
 | Step | What happens | Powered by |
 | --- | --- | --- |
 | 1. Plan | Your city and stops are found on the map | OpenStreetMap (Nominatim) |
-| 2. Move | Your position comes from GPS, or from a simulated trip along a real walking/cycling/driving route | Geolocation API, routing.openstreetmap.de |
+| 2. Move | Your position comes from GPS, or from a simulated trip that follows the directions along real streets | Geolocation API, routing.openstreetmap.de |
 | 3. Look around | Places near you with a Wikipedia article are fetched as you go | Wikipedia geosearch |
 | 4. Decide | The guide picks the best nearby place: close, notable (has a photo), not behind you, not already told, not a metro station | `js/tourEngine.js` |
 | 5. Talk | It says where it is ("on your right") and tells its story, in your language | Wikipedia + an on-device AI voice (or the phone's own) |
@@ -172,14 +198,18 @@ Plain JavaScript modules: no framework, no build step.
 ## Tests
 
 ```bash
-npm test             # unit tests (Node 18+): geo math, text cleanup, the tour engine, Wikipedia/OSM parsing
+npm test             # unit tests (Node 18+): geo math, text cleanup, the tour engine, Wikipedia/OSM parsing,
+                     # directions on real walking routes in 8 cities
 npm run e2e          # browser runs on a phone-sized screen: the Paris walk, a pasted Google Maps route,
                      # and "use my location" + a suggested half-day route with a museum visit and meals
 npm run e2e:voice    # the AI voice for real: download, preview, and a tour read by it (needs internet)
 ```
 
-The browser test answers network requests from `tests/e2e/fixtures.json`: real OpenStreetMap and Wikipedia
-data recorded by `node tests/e2e/build-fixtures.mjs`. Run it with `LIVE=1` to use the real services instead.
+The browser test answers place searches and Wikipedia from `tests/e2e/fixtures.json` (real data recorded by
+`node tests/e2e/build-fixtures.mjs`). Routes and street names always come from the real routing service, so
+the map and the directions show real streets; each answer is recorded in `tests/e2e/routes-*.json`, which
+answers instead when the service can't be reached (or with `OFFLINE=1`). `LIVE=1` uses every real service.
+Screenshots of each run are saved in `tests/e2e/screenshots/`.
 
 ## Known limits of this prototype
 
@@ -189,6 +219,9 @@ data recorded by `node tests/e2e/build-fixtures.mjs`. Run it with `LIVE=1` to us
   slow for it. The phone's own voice is used meanwhile or instead.
 - **Free public services** (Nominatim, routing.openstreetmap.de, OpenStreetMap tiles) are fine for trying this
   out, but not for thousands of users. A real launch needs paid or self-hosted equivalents.
+- **Directions are only as good as OpenStreetMap.** It's very complete in most cities, but a missing footpath
+  or a wrong one-way street means a detour. Anyone can fix the map at openstreetmap.org; the routing service
+  picks up fixes within about two days.
 - Content is Wikipedia's intro paragraphs: accurate, but encyclopedic rather than storyteller-style.
 
 ## Where this could go next

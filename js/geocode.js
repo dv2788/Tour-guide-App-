@@ -161,25 +161,43 @@ export async function fetchRoute(stops, profile = 'foot', fetchImpl = defaultFet
   if (stops.length < 2) return straight;
   const coords = stops.map((p) => `${p.lon.toFixed(6)},${p.lat.toFixed(6)}`).join(';');
   const url = `${ROUTERS[profile] ?? ROUTERS.foot}/route/v1/driving/${coords}?overview=full&geometries=geojson&steps=false`;
-  try {
-    const res = await fetchImpl(url);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    const line = data?.routes?.[0]?.geometry?.coordinates;
-    if (Array.isArray(line) && line.length >= 2) {
-      return { points: line.map(([lon, lat]) => ({ lat, lon })), routed: true };
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      if (attempt) await new Promise((r) => setTimeout(r, 1500));
+      const res = await fetchImpl(url);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      const line = data?.routes?.[0]?.geometry?.coordinates;
+      if (Array.isArray(line) && line.length >= 2) {
+        // snaps: how far each stop is from the nearest path the route could use
+        return { points: line.map(([lon, lat]) => ({ lat, lon })), routed: true, snaps: (data.waypoints ?? []).map((w) => w.distance) };
+      }
+    } catch {
+      // try once more, then fall back to straight lines (drawn as such, never as a route)
     }
-  } catch {
-    // fall through to straight lines
   }
   return straight;
 }
 
-/** Turn-by-turn directions from one point to another (OSRM JSON with steps), or null. */
+/** Turn-by-turn directions from one point to another (OSRM JSON with steps). */
 export async function fetchDirections(from, to, profile = 'foot', fetchImpl = defaultFetch) {
   const coords = [from, to].map((p) => `${p.lon.toFixed(6)},${p.lat.toFixed(6)}`).join(';');
-  const url = `${ROUTERS[profile] ?? ROUTERS.foot}/route/v1/driving/${coords}?overview=full&geometries=geojson&steps=true`;
+  // On a bike or in a car, start the way you're already going (no "turn around" on a one-way street).
+  const heading = profile !== 'foot' && Number.isFinite(from.heading) ? `&bearings=${Math.round(from.heading) % 360},60;` : '';
+  const url = `${ROUTERS[profile] ?? ROUTERS.foot}/route/v1/driving/${coords}?overview=full&geometries=geojson&steps=true${heading}`;
   const res = await fetchImpl(url);
   if (!res.ok) throw new Error(`Directions failed (HTTP ${res.status})`);
   return res.json();
+}
+
+/**
+ * The name of the street at a point. OpenStreetMap often maps pavements and crossings as
+ * separate, unnamed paths; the street they run along is the nearest named road.
+ */
+export async function fetchStreetName(point, fetchImpl = defaultFetch) {
+  const url = `${ROUTERS.car}/nearest/v1/driving/${point.lon.toFixed(6)},${point.lat.toFixed(6)}?number=3`;
+  const res = await fetchImpl(url);
+  if (!res.ok) return null;
+  const data = await res.json();
+  return data?.waypoints?.find((w) => w.name && w.distance <= 20)?.name ?? null;
 }

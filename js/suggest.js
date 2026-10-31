@@ -124,10 +124,14 @@ export function mealAt(date) {
 export function breakSchedule(start, minutes) {
   const startHour = start.getHours() + start.getMinutes() / 60;
   const out = [];
-  for (const [meal, hour] of [['lunch', 12.5], ['dinner', 19.75]]) {
-    let m = (hour - startHour) * 60;
-    if (m < 0) m += 24 * 60;
-    if (m >= 30 && m <= minutes - 30) out.push({ atMinute: Math.round(m), meal, minutes: BREAKS[meal].minutes });
+  // Meals at the usual time, or as close to it as the outing allows (never in the first or
+  // last half hour), as long as it's still a sensible hour for that meal.
+  for (const [meal, [hour, earliest, latest]] of [['lunch', [12.5, 11.75, 14]], ['dinner', [19.75, 19, 21.5]]]) {
+    const shift = (hour - startHour) * 60 < -12 * 60 ? 24 * 60 : 0; // tonight's dinner when starting after midnight
+    const m = (hour - startHour) * 60 + shift;
+    const lo = Math.max(30, (earliest - startHour) * 60 + shift);
+    const hi = Math.min(minutes - 30, (latest - startHour) * 60 + shift);
+    if (lo <= hi) out.push({ atMinute: Math.round(Math.min(Math.max(m, lo), hi)), meal, minutes: BREAKS[meal].minutes });
   }
   const extra = Math.max(0, Math.round(minutes / 150) - out.length);
   for (let k = 0; k < extra; k++) {

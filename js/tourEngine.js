@@ -111,6 +111,16 @@ export class TourEngine {
     this.tick();
   }
 
+  /**
+   * The route can only get within `meters` of this stop (it stands in a garden, behind a
+   * building…): count arriving from that close, or you'd walk past it without noticing.
+   */
+  approachLimit(index, meters) {
+    const stop = this.stops[index];
+    if (!stop || !Number.isFinite(meters)) return;
+    stop.arrivalRadius = Math.max(stop.arrivalRadius, Math.min(Math.round(meters) + 25, this.mode.arrivalRadius + 250));
+  }
+
   stop() {
     this.running = false;
     clearTimeout(this.retickTimer);

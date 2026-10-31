@@ -1,0 +1,188 @@
+{
+  "source": "routing.openstreetmap.de (OSRM, foot profile), recorded 2026-10-31",
+  "walks": [
+    {
+      "file": "paris--louvre--notredame.json",
+      "city": "Paris",
+      "from": {
+        "name": "Louvre",
+        "lat": 48.861,
+        "lon": 2.3358
+      },
+      "to": {
+        "name": "Notre-Dame",
+        "lat": 48.853,
+        "lon": 2.3499
+      }
+    },
+    {
+      "file": "paris--pont-de-lalma--grand-palais.json",
+      "city": "Paris",
+      "from": {
+        "name": "Pont de l'Alma",
+        "lat": 48.8638,
+        "lon": 2.3012
+      },
+      "to": {
+        "name": "Grand Palais",
+        "lat": 48.8661,
+        "lon": 2.3125
+      }
+    },
+    {
+      "file": "paris--eiffel-tower--arc-de-triomphe.json",
+      "city": "Paris",
+      "from": {
+        "name": "Eiffel Tower",
+        "lat": 48.8584,
+        "lon": 2.2945
+      },
+      "to": {
+        "name": "Arc de Triomphe",
+        "lat": 48.8738,
+        "lon": 2.295
+      }
+    },
+    {
+      "file": "london--trafalgar-square--westminster-abbey.json",
+      "city": "London",
+      "from": {
+        "name": "Trafalgar Square",
+        "lat": 51.508,
+        "lon": -0.1281
+      },
+      "to": {
+        "name": "Westminster Abbey",
+        "lat": 51.4994,
+        "lon": -0.1273
+      }
+    },
+    {
+      "file": "london--westminster-abbey--buckingham-palace.json",
+      "city": "London",
+      "from": {
+        "name": "Westminster Abbey",
+        "lat": 51.4994,
+        "lon": -0.1273
+      },
+      "to": {
+        "name": "Buckingham Palace",
+        "lat": 51.5014,
+        "lon": -0.1419
+      }
+    },
+    {
+      "file": "new-york--times-square--grand-central.json",
+      "city": "New York",
+      "from": {
+        "name": "Times Square",
+        "lat": 40.758,
+        "lon": -73.9855
+      },
+      "to": {
+        "name": "Grand Central",
+        "lat": 40.7527,
+        "lon": -73.9772
+      }
+    },
+    {
+      "file": "rome--colosseum--trevi-fountain.json",
+      "city": "Rome",
+      "from": {
+        "name": "Colosseum",
+        "lat": 41.8902,
+        "lon": 12.4922
+      },
+      "to": {
+        "name": "Trevi Fountain",
+        "lat": 41.9009,
+        "lon": 12.4833
+      }
+    },
+    {
+      "file": "rome--trevi-fountain--pantheon.json",
+      "city": "Rome",
+      "from": {
+        "name": "Trevi Fountain",
+        "lat": 41.9009,
+        "lon": 12.4833
+      },
+      "to": {
+        "name": "Pantheon",
+        "lat": 41.8986,
+        "lon": 12.4769
+      }
+    },
+    {
+      "file": "barcelona--sagrada-familia--casa-batllo.json",
+      "city": "Barcelona",
+      "from": {
+        "name": "Sagrada Familia",
+        "lat": 41.4036,
+        "lon": 2.1744
+      },
+      "to": {
+        "name": "Casa Batllo",
+        "lat": 41.3917,
+        "lon": 2.165
+      }
+    },
+    {
+      "file": "tokyo--sensoji--tokyo-skytree.json",
+      "city": "Tokyo",
+      "from": {
+        "name": "Senso-ji",
+        "lat": 35.7148,
+        "lon": 139.7967
+      },
+      "to": {
+        "name": "Tokyo Skytree",
+        "lat": 35.7101,
+        "lon": 139.8107
+      }
+    },
+    {
+      "file": "marrakech--jemaa-elfnaa--bahia-palace.json",
+      "city": "Marrakech",
+      "from": {
+        "name": "Jemaa el-Fnaa",
+        "lat": 31.6258,
+        "lon": -7.9891
+      },
+      "to": {
+        "name": "Bahia Palace",
+        "lat": 31.6216,
+        "lon": -7.9834
+      }
+    },
+    {
+      "file": "kinshasa--gare-centrale--cathedrale-notredame-du-congo.json",
+      "city": "Kinshasa",
+      "from": {
+        "name": "Gare Centrale",
+        "lat": -4.3006,
+        "lon": 15.3135
+      },
+      "to": {
+        "name": "Cathedrale Notre-Dame du Congo",
+        "lat": -4.3195,
+        "lon": 15.3076
+      }
+    },
+    {
+      "file": "paris--pont-de-lalma-bridge--grand-palais.json",
+      "city": "Paris",
+      "from": {
+        "name": "Pont de l'Alma (on the bridge)",
+        "lat": 48.86284,
+        "lon": 2.30191
+      },
+      "to": {
+        "name": "Grand Palais",
+        "lat": 48.866161,
+        "lon": 2.312223
+      },
+      "note": "the path curves into Cours Albert-Ier before the junction OSRM marks"
+    }
+  ]
+}

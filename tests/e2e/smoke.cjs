@@ -1,12 +1,14 @@
 // Browser smoke test: runs the sample Paris walk in simulation mode on a phone-sized
-// screen and checks what the guide says. External services are answered from
-// fixtures.json (recorded by build-fixtures.mjs); set LIVE=1 to use the real ones.
+// screen and checks what the guide says and the way it shows. Place search and Wikipedia
+// are answered from fixtures.json (recorded by build-fixtures.mjs); routes always come from
+// the real routing service, or its recording when offline (see mocks.cjs). LIVE=1 uses
+// every real service.
 // Needs Playwright with Chromium: `npm i -D playwright && npx playwright install chromium`.
 
 const fs = require('node:fs');
 const path = require('node:path');
 const { chromium } = require('playwright');
-const { serve, mockNetwork, fixtures } = require('./mocks.cjs');
+const { serve, mockNetwork, saveRouteCaches, fixtures } = require('./mocks.cjs');
 
 const SHOTS = path.join(__dirname, 'screenshots');
 const LIVE = process.env.LIVE === '1';
@@ -62,13 +64,24 @@ const LIVE = process.env.LIVE === '1';
     await page.waitForTimeout(1500);
     // Directions to the next stop: card, gold line, a spoken turn.
     await page.waitForFunction(() => /min/.test(document.getElementById('nav-target').textContent) && document.querySelector('.nav-line'), null, { timeout: 30000 });
-    const nav = await page.evaluate(() => ({
-      sentence: document.getElementById('nav-sentence').textContent,
-      target: document.getElementById('nav-target').textContent,
-      link: document.getElementById('nav-open').href,
-    }));
+    // (Right after a wrong turn the card says "Finding a new way…" for a moment.)
+    await page.waitForFunction(() => !/Finding/.test(document.getElementById('nav-sentence').textContent), null, { timeout: 30000 }).catch(() => {});
+    await page.waitForTimeout(2500); // let the map tiles load
+    const nav = await page.evaluate(() => {
+      const vertices = (el) => (el?.getAttribute('d')?.match(/[ML]/g) ?? []).length;
+      return {
+        sentence: document.getElementById('nav-sentence').textContent,
+        target: document.getElementById('nav-target').textContent,
+        link: document.getElementById('nav-open').href,
+        navLinePoints: vertices(document.querySelector('.nav-line')),
+        status: document.getElementById('status').textContent,
+      };
+    });
     console.log('Directions:', JSON.stringify(nav));
-    expect(/head|turn|bear|continue|just ahead/i.test(nav.sentence), `a direction is shown (${nav.sentence})`);
+    expect(/head|turn|bear|keep|continue|just ahead/i.test(nav.sentence), `a direction is shown (${nav.sentence})`);
+    expect(!/Rue du Test|Quai des Essais/.test(nav.sentence), 'directions name real streets');
+    expect(nav.navLinePoints >= 6, `the way to the next stop follows the streets (${nav.navLinePoints} points)`);
+    expect(!/didn't answer/.test(nav.status), 'the tour route follows the streets');
     expect(/maps/.test(nav.link), 'open-in-maps link');
     if (shotPrefix) await page.screenshot({ path: path.join(SHOTS, `${shotPrefix}-on-tour.png`) });
     await page.waitForFunction((u) => (window.__said ?? []).some((t) => t.startsWith(u)), until, {
@@ -78,7 +91,7 @@ const LIVE = process.env.LIVE === '1';
     const said = await page.evaluate(() => window.__said);
     const spoken = await page.$eval('#next-stop', (el) => el.dataset.spoken ?? '');
     console.log('Last spoken direction:', spoken);
-    expect(/Head|turn|Turn|Bear/.test(spoken), 'directions are spoken too');
+    expect(/^(In \d|Head|Turn|Bear|Keep|Continue)/i.test(spoken), `directions are spoken too (${spoken})`);
     await page.click('#btn-end');
     return said;
   }
@@ -190,7 +203,7 @@ const LIVE = process.env.LIVE === '1';
     console.log(`Scenario 3, "Another place": ${before} → ${after}`);
     expect(before !== after && lines.includes(after) && !lines.includes(before), 'swapping a break updates the plan and the itinerary');
     expect(!/\(2\)$/.test(after), 'never swaps to a place already in the plan');
-    expect(!/Burger Chain/.test(after) || before === 'La Petite Table', 'chains come last');
+    expect(!/Burger Chain/.test(after) || /^La Petite Table/.test(before), 'chains come last');
   }
   expect((await page3.locator('#plan-list a.text-btn').count()) >= 1, 'breaks link to reviews');
   planned.stops = await page3.$eval('#stops', (el) => el.value.split('\n'));
@@ -205,6 +218,7 @@ const LIVE = process.env.LIVE === '1';
 
   await browser.close();
   server.close();
+  console.log('Routes (real / recorded answers):', JSON.stringify(saveRouteCaches()));
   if (failures.length) {
     console.error('\nFAILED:\n - ' + failures.join('\n - '));
     process.exit(1);

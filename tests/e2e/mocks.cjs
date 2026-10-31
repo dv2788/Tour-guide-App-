@@ -1,5 +1,5 @@
-// Shared by the browser tests: a static server for the app, and fake versions of
-// OpenStreetMap / Wikipedia answering from fixtures.json (recorded real data).
+// Shared by the browser tests: a static server for the app, recorded answers from
+// OpenStreetMap search and Wikipedia (fixtures.json, real data), and real routes.
 const http = require('node:http');
 const fs = require('node:fs');
 const path = require('node:path');
@@ -28,7 +28,97 @@ function distance(a, b) {
   return 2 * R * Math.asin(Math.sqrt(h));
 }
 
-async function mockNetwork(context) {
+
+// ---------- Routes: always real ----------
+// Routes and street names come from the real routing service (routing.openstreetmap.de),
+// so the map and the directions show real streets. Every answer is also recorded in
+// routes-<name>.json, which answers instead when the service can't be reached (or with
+// OFFLINE=1): the exact request if it was recorded, else the closest recorded one.
+const OFFLINE = process.env.OFFLINE === '1';
+const caches = {};
+function routeCache(name) {
+  if (!caches[name]) {
+    const file = path.join(__dirname, `routes-${name}.json`);
+    caches[name] = { file, entries: fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf8')) : {}, used: new Set(), live: 0, recorded: 0 };
+  }
+  return caches[name];
+}
+
+/** Drop what the app never reads (intersections, hints), so recordings stay small. */
+function trimOsrm(data) {
+  if (data.routes) {
+    return {
+      code: data.code,
+      waypoints: (data.waypoints ?? []).map((w) => ({ name: w.name, distance: w.distance, location: w.location })),
+      routes: data.routes.slice(0, 1).map((r) => ({
+        distance: r.distance,
+        duration: r.duration,
+        geometry: { type: 'LineString', coordinates: r.geometry.coordinates.map(([x, y]) => [Number(x.toFixed(6)), Number(y.toFixed(6))]) },
+        legs: r.legs.map((l) => ({
+          distance: l.distance,
+          duration: l.duration,
+          steps: (l.steps ?? []).map((st) => ({ distance: st.distance, name: st.name, ...(st.ref ? { ref: st.ref } : {}), maneuver: { type: st.maneuver.type, modifier: st.maneuver.modifier, exit: st.maneuver.exit, bearing_after: st.maneuver.bearing_after, location: st.maneuver.location } })),
+        })),
+      })),
+    };
+  }
+  if (data.waypoints) return { code: data.code, waypoints: data.waypoints.map((w) => ({ name: w.name, distance: w.distance, location: w.location })) };
+  return data;
+}
+
+function parseRoutingUrl(url) {
+  const u = new URL(url);
+  const [prefix, coords = ''] = u.pathname.split('/driving/');
+  const pts = coords.split(';').filter(Boolean).map((c) => c.split(',').map(Number));
+  const kind = `${prefix}|steps=${u.searchParams.get('steps')}|bearings=${u.searchParams.has('bearings')}`;
+  return { kind, pts, key: `${kind}|${pts.map(([x, y]) => `${x.toFixed(5)},${y.toFixed(5)}`).join(';')}` };
+}
+
+async function answerRouting(route, json, name) {
+  const cache = routeCache(name);
+  const url = route.request().url();
+  const { kind, pts, key } = parseRoutingUrl(url);
+  if (!OFFLINE) {
+    try {
+      const res = await fetch(url, { headers: { 'User-Agent': 'Roamie-tests/0.2 (+https://github.com/dv2788/Tour-guide-App-)' }, signal: AbortSignal.timeout(15000) });
+      if (res.ok) {
+        cache.entries[key] = trimOsrm(await res.json());
+        cache.used.add(key);
+        cache.live++;
+        return json(route, cache.entries[key]);
+      }
+    } catch {
+      // unreachable: use the recording
+    }
+  }
+  let best = cache.entries[key] ? key : null;
+  if (!best) {
+    let bestD = kind.includes('/nearest/') ? 25 : 150;
+    for (const k of Object.keys(cache.entries)) {
+      if (!k.startsWith(`${kind}|`)) continue;
+      const c = k.slice(kind.length + 1).split(';').map((p) => p.split(',').map(Number));
+      if (c.length !== pts.length) continue;
+      const d = Math.max(...c.map(([x, y], i) => distance({ lat: y, lon: x }, { lat: pts[i][1], lon: pts[i][0] })));
+      if (d < bestD) [bestD, best] = [d, k];
+    }
+  }
+  if (!best) return json(route, { code: 'NoRoute', message: 'Not recorded' }, 503);
+  cache.used.add(best);
+  cache.recorded++;
+  return json(route, cache.entries[best]);
+}
+
+/** Keep the recordings this run used (so the file doesn't grow run after run). */
+function saveRouteCaches() {
+  for (const cache of Object.values(caches)) {
+    if (!cache.live) continue; // offline run: keep the recordings as they were
+    const kept = Object.fromEntries([...cache.used].sort().map((k) => [k, cache.entries[k]]));
+    fs.writeFileSync(cache.file, JSON.stringify(kept));
+  }
+  return Object.fromEntries(Object.entries(caches).map(([n, c]) => [n, { live: c.live, recorded: c.recorded }]));
+}
+
+async function mockNetwork(context, { routeCacheName = 'smoke' } = {}) {
   const json = (route, body, status = 200) =>
     route.fulfill({ status, contentType: 'application/json', headers: { 'Access-Control-Allow-Origin': '*' }, body: JSON.stringify(body) });
 
@@ -43,44 +133,7 @@ async function mockNetwork(context) {
     const city = { ...paris, lat: p.get('lat'), lon: p.get('lon'), address: { city: 'Paris' } };
     json(route, Number(p.get('zoom')) <= 10 ? city : { name: 'Somewhere', lat: p.get('lat'), lon: p.get('lon'), address: {} });
   });
-  await context.route('https://routing.openstreetmap.de/**', (route) => {
-    const coords = decodeURIComponent(new URL(route.request().url()).pathname.split('/driving/')[1] ?? '')
-      .split(';')
-      .map((c) => c.split(',').map(Number));
-    if (new URL(route.request().url()).searchParams.get('steps') === 'true' && coords.length === 2) {
-      // Directions: an L-shaped walk (north/south first, then east/west) with a real turn in it.
-      const [[lon1, lat1], [lon2, lat2]] = coords;
-      const corner = [lon1, lat2];
-      const legA = distance({ lat: lat1, lon: lon1 }, { lat: lat2, lon: lon1 });
-      const legB = distance({ lat: lat2, lon: lon1 }, { lat: lat2, lon: lon2 });
-      const north = lat2 > lat1;
-      const east = lon2 > lon1;
-      const modifier = north === east ? 'right' : 'left';
-      json(route, {
-        routes: [
-          {
-            distance: legA + legB,
-            duration: (legA + legB) / 1.3,
-            geometry: { type: 'LineString', coordinates: [coords[0], corner, coords[1]] },
-            legs: [
-              {
-                steps: [
-                  { distance: legA, name: 'Rue du Test', maneuver: { type: 'depart', bearing_after: north ? 0 : 180, location: coords[0] } },
-                  { distance: legB, name: 'Quai des Essais', maneuver: { type: 'turn', modifier, location: corner } },
-                  { distance: 0, name: '', maneuver: { type: 'arrive', location: coords[1] } },
-                ],
-              },
-            ],
-          },
-        ],
-      });
-      return;
-    }
-    const recorded = fixtures.route.waypoints.map((w) => w.location);
-    const same = coords.length === recorded.length && coords.every(([lon, lat], i) => distance({ lat, lon }, { lat: recorded[i][1], lon: recorded[i][0] }) < 50);
-    // The recorded real route for the sample walk; straight lines between any other stops.
-    json(route, same ? fixtures.route : { routes: [{ geometry: { type: 'LineString', coordinates: coords } }] });
-  });
+  await context.route('https://routing.openstreetmap.de/**', (route) => answerRouting(route, json, routeCacheName));
   // Article sizes aren't in the recorded summaries: derive a stable stand-in from the intro.
   const articleLength = (title) => (fixtures.summaries[title]?.extract?.length ?? 300) * 40;
   await context.route('https://*.wikipedia.org/w/api.php?**', (route) => {
@@ -110,20 +163,24 @@ async function mockNetwork(context) {
     }
   });
   // OpenStreetMap cafés, restaurants and bars around the requested point.
+  let overpassCalls = 0;
   await context.route('https://overpass-api.de/**', (route) => {
     const q = new URL(route.request().url()).searchParams.get('data') ?? '';
     const [, , lat, lon] = (q.match(/around:(\d+),(-?[\d.]+),(-?[\d.]+)/) ?? []).map(Number);
     const at = (dLat, dLon) => ({ lat: lat + dLat, lon: lon + dLon });
+    // Each search finds its own places (" II", " III"… after the first), like real streets do.
+    overpassCalls++;
+    const n = (name) => (overpassCalls > 1 ? `${name} ${['II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'][overpassCalls - 2] ?? overpassCalls}` : name);
     json(route, {
       // Hours are 24/7 or unknown so the test doesn't depend on the time it runs.
       elements: [
-        { type: 'node', ...at(0.0006, 0.0002), tags: { name: 'Salon de Thé Historique', amenity: 'cafe', wikidata: 'Q1', opening_hours: '24/7' } },
-        { type: 'node', ...at(-0.0007, -0.0002), tags: { name: 'Café des Artistes', amenity: 'cafe', outdoor_seating: 'yes' } },
-        { type: 'node', ...at(-0.0004, 0.0005), tags: { name: 'Bistrot du Coin', amenity: 'restaurant', cuisine: 'french', opening_hours: '24/7' } },
-        { type: 'node', ...at(0.0005, 0.0006), tags: { name: 'La Petite Table', amenity: 'restaurant', cuisine: 'french' } },
-        { type: 'node', ...at(0.0002, -0.0003), tags: { name: 'Burger Chain', amenity: 'restaurant', brand: 'Burger Chain', opening_hours: '24/7' } },
-        { type: 'node', ...at(0.0003, -0.0006), tags: { name: 'Le Bar à Vins', amenity: 'bar', website: 'https://example.org', opening_hours: '24/7' } },
-        { type: 'node', ...at(-0.0003, -0.0006), tags: { name: 'The Old Pub', amenity: 'pub' } },
+        { type: 'node', ...at(0.0006, 0.0002), tags: { name: n('Salon de Thé Historique'), amenity: 'cafe', wikidata: 'Q1', opening_hours: '24/7' } },
+        { type: 'node', ...at(-0.0007, -0.0002), tags: { name: n('Café des Artistes'), amenity: 'cafe', outdoor_seating: 'yes' } },
+        { type: 'node', ...at(-0.0004, 0.0005), tags: { name: n('Bistrot du Coin'), amenity: 'restaurant', cuisine: 'french', opening_hours: '24/7' } },
+        { type: 'node', ...at(0.0005, 0.0006), tags: { name: n('La Petite Table'), amenity: 'restaurant', cuisine: 'french' } },
+        { type: 'node', ...at(0.0002, -0.0003), tags: { name: n('Burger Chain'), amenity: 'restaurant', brand: 'Burger Chain', opening_hours: '24/7' } },
+        { type: 'node', ...at(0.0003, -0.0006), tags: { name: n('Le Bar à Vins'), amenity: 'bar', website: 'https://example.org', opening_hours: '24/7' } },
+        { type: 'node', ...at(-0.0003, -0.0006), tags: { name: n('The Old Pub'), amenity: 'pub' } },
       ],
     });
   });
@@ -139,4 +196,4 @@ async function mockNetwork(context) {
   });
 }
 
-module.exports = { serve, mockNetwork, fixtures, ROOT };
+module.exports = { serve, mockNetwork, saveRouteCaches, fixtures, ROOT };

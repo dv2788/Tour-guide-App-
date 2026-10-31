@@ -117,6 +117,12 @@ test('breaks follow the clock: coffee, lunch, a drink, dinner', () => {
   const evening = breakSchedule(d(16), 300);
   assert.deepEqual(evening.map((b) => b.meal), ['drink', 'dinner']);
   assert.equal(evening[1].atMinute, 225, 'dinner at 19:45');
+  // Setting off just after noon: lunch half an hour in, not skipped.
+  const noon = breakSchedule(d(12, 2), 240);
+  assert.equal(noon[0].meal, 'lunch');
+  assert.equal(noon[0].atMinute, 30);
+  assert.deepEqual(breakSchedule(d(13), 180).map((b) => [b.meal, b.atMinute])[0], ['lunch', 30], 'lunch at 13:30');
+  assert.ok(!breakSchedule(d(14, 30), 180).some((b) => b.meal === 'lunch'), 'too late for lunch');
 });
 
 test('food places: the right kind, close by, notable ones first', () => {
