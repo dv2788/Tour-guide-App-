@@ -4,12 +4,11 @@
 
 import { chunkForSpeech } from './text.js';
 import { speechLocale } from './i18n.js';
-import { rankSystemVoices, prepareForNeuralVoice } from './voices.js';
+import { rankSystemVoices, prepareForNeuralVoice, voiceProfile } from './voices.js';
 import { getPiperVoice, SoothingPlayer } from './neuralVoice.js';
 
 const WORDS_PER_MINUTE = 165;
 const estimateMs = (text, rate) => Math.max(1200, ((text.split(/\s+/).length / WORDS_PER_MINUTE) * 60000) / rate);
-const CALM_PACE = 1.12; // the AI voice speaks ~10% slower than its default: calmer, easier to follow
 const CALM_PITCH = 0.95; // built-in voices: a touch lower
 
 /** The phone's built-in text-to-speech, using the calmest available voice. */
@@ -87,11 +86,12 @@ export class SystemBackend {
 export class NeuralBackend {
   kind = 'neural';
 
-  constructor({ lang, id, speaker = 0, label = null }) {
+  constructor({ lang, id, speaker = 0, label = null, profile = 'calm', tweak }) {
     this.lang = lang;
     this.label = label ?? id;
+    this.profile = voiceProfile(profile, tweak);
     this.voice = getPiperVoice(id, speaker);
-    this.player = new SoothingPlayer();
+    this.player = new SoothingPlayer({ pitch: this.profile.pitch, eq: this.profile.eq });
     this.prepared = new Map(); // text -> Promise<audio>, so the next sentence is ready in time
   }
 
@@ -111,7 +111,9 @@ export class NeuralBackend {
   prepare(text, { rate }) {
     const key = `${rate}|${text}`;
     if (!this.prepared.has(key)) {
-      const promise = this.voice.synthesize(prepareForNeuralVoice(text, this.lang), { pace: CALM_PACE / rate });
+      const { pace, pitch, pause } = this.profile;
+      // Played back at `pitch` speed, so synthesize a little faster to keep the overall pace.
+      const promise = this.voice.synthesize(prepareForNeuralVoice(text, this.lang), { pace: (pace * pitch) / rate, pause });
       promise.catch(() => this.prepared.delete(key));
       this.prepared.set(key, promise);
       while (this.prepared.size > 8) this.prepared.delete(this.prepared.keys().next().value);
@@ -124,7 +126,7 @@ export class NeuralBackend {
     const done = (async () => {
       const audio = await this.prepare(text, { rate });
       if (cancelled) return;
-      const seconds = audio.samples.length / audio.sampleRate;
+      const seconds = audio.samples.length / audio.sampleRate / this.profile.pitch;
       let timer;
       const watchdog = new Promise((resolve) => (timer = setTimeout(resolve, seconds * 1000 + 4000)));
       await Promise.race([this.player.play(audio), watchdog]);
@@ -191,8 +193,8 @@ export class Narrator {
    * Switch to the soothing AI voice once it's loaded (downloading it the first time).
    * Until then, and if it fails, the built-in voice keeps talking.
    */
-  async useNeuralVoice({ id, speaker = 0, label }, onProgress) {
-    const neural = new NeuralBackend({ lang: this.lang, id, speaker, label });
+  async useNeuralVoice({ id, speaker = 0, label, profile, tweak }, onProgress) {
+    const neural = new NeuralBackend({ lang: this.lang, id, speaker, label, profile, tweak });
     this.neural = neural;
     if (this.unlocked) neural.unlock();
     await neural.load(onProgress);

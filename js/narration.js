@@ -14,36 +14,38 @@ function story(summary, sentences, lang) {
 }
 
 /** "On your right" / "On your right, in 300 meters" depending on the travel mode. */
-export function directionPhrase({ lang, direction, distance, mode }) {
-  let phrase = t(lang, direction);
+// `style` is 'standard' or 'documentary' (the narrator voices' phrasing).
+
+export function directionPhrase({ lang, direction, distance, mode, style }) {
+  let phrase = t(lang, direction, {}, style);
   if (mode.announceDistance && direction !== 'behind' && direction !== 'nearby' && distance >= 120) {
-    phrase += ', ' + t(lang, 'inDistance', { d: formatDistance(lang, distance) });
+    phrase += ', ' + t(lang, 'inDistance', { d: formatDistance(lang, distance) }, style);
   }
   return phrase;
 }
 
-export function buildPoiNarration({ lang, mode, title, summary, direction, distance }) {
-  const intro = t(lang, 'poiIntro', { dir: directionPhrase({ lang, direction, distance, mode }), title });
+export function buildPoiNarration({ lang, mode, title, summary, direction, distance, style }) {
+  const intro = t(lang, 'poiIntro', { dir: directionPhrase({ lang, direction, distance, mode, style }), title }, style);
   return [intro, story(summary, mode.sentences, lang)].filter(Boolean).join(' ');
 }
 
-export function buildWelcomeNarration({ lang, cityName, citySummary, hasStops }) {
-  const parts = [cityName ? t(lang, 'welcome', { city: cityName }) : t(lang, 'started')];
+export function buildWelcomeNarration({ lang, cityName, citySummary, hasStops, style }) {
+  const parts = [cityName ? t(lang, 'welcome', { city: cityName }, style) : t(lang, 'started', {}, style)];
   const s = story(citySummary, 2, lang);
   if (s) parts.push(s);
-  if (!hasStops) parts.push(t(lang, 'freeRoam'));
+  if (!hasStops) parts.push(t(lang, 'freeRoam', {}, style));
   return parts.join(' ');
 }
 
-export function buildFirstStopNarration({ lang, stopName, distance }) {
-  return t(lang, 'firstStop', { name: stopName, d: formatDistance(lang, distance) });
+export function buildFirstStopNarration({ lang, stopName, distance, style }) {
+  return t(lang, 'firstStop', { name: stopName, d: formatDistance(lang, distance) }, style);
 }
 
-export function buildArrivalNarration({ lang, mode, stopName, summary, nextStopName, nextDistance }) {
-  const parts = [t(lang, 'arrived', { name: stopName })];
+export function buildArrivalNarration({ lang, mode, stopName, summary, nextStopName, nextDistance, style }) {
+  const parts = [t(lang, 'arrived', { name: stopName }, style)];
   const s = story(summary, mode.stopSentences, lang);
   if (s) parts.push(s);
-  if (nextStopName) parts.push(t(lang, 'nextStop', { name: nextStopName, d: formatDistance(lang, nextDistance) }));
-  else parts.push(t(lang, 'tourDone'));
+  if (nextStopName) parts.push(t(lang, 'nextStop', { name: nextStopName, d: formatDistance(lang, nextDistance) }, style));
+  else parts.push(t(lang, 'tourDone', {}, style));
   return parts.join(' ');
 }

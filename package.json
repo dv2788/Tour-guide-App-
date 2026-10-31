@@ -1,8 +1,8 @@
 {
-  "name": "tour-guide-app",
-  "version": "0.1.0",
+  "name": "roamie",
+  "version": "0.2.0",
   "private": true,
-  "description": "A voice tour guide that talks you through the city as you walk, run, cycle or drive.",
+  "description": "Roamie: a friendly voice guide that tells you the stories of the city as you walk, run, cycle or drive.",
   "type": "module",
   "scripts": {
     "start": "python3 -m http.server 8080",

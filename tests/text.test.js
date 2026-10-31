@@ -75,3 +75,19 @@ test('voices: calm built-in voices ranked first, novelty voices never', async ()
   assert.deepEqual(parseVoiceKey('system:Ava (Premium)'), { kind: 'system', name: 'Ava (Premium)' });
   assert.equal(defaultVoiceKey('fr'), 'neural:fr_FR-siwis-medium:0');
 });
+
+test('documentary narration phrases, with standard fallbacks', async () => {
+  const { buildPoiNarration } = await import('../js/narration.js');
+  const { getMode } = await import('../js/modes.js');
+  const summary = { extract: 'A palace (1900). It is grand. It is old.' };
+  assert.equal(
+    buildPoiNarration({ lang: 'en', mode: getMode('walk'), title: 'Grand Palais', summary, direction: 'left', distance: 50, style: 'documentary' }),
+    'And here, on your left… Grand Palais. A palace. It is grand. It is old.',
+  );
+  assert.equal(
+    buildPoiNarration({ lang: 'fr', mode: getMode('drive'), title: 'Grand Palais', summary, direction: 'right', distance: 300, style: 'documentary' }),
+    'Et là, sur votre droite, dans 300 mètres… Grand Palais. A palace. It is grand.',
+  );
+  // Italian has no narrator phrasing: standard phrases are used.
+  assert.equal(t('it', 'left', {}, 'documentary'), 'Alla tua sinistra');
+});

@@ -53,15 +53,49 @@ Every recording was also transcribed by a speech recognizer (Whisper) to check i
 At the app's calm pace, with the numeral fix and the EQ, all ten selected voices were transcribed
 essentially word-for-word.
 
+## The documentary narrators
+
+For a second kind of guide (a deep, unhurried storyteller in the tradition of classic British nature
+documentaries), the male voices were compared the same way. This is an original voice built from an open
+dataset: it doesn't imitate or clone any real person.
+
+| Voice (English, British) | Pitch | Spread | Words/min | High freq. | Recognized |
+| --- | ---: | ---: | ---: | ---: | --- |
+| **vctk p274** (southern English) | 100 | 5.0 | 157 | 2.2% | ⭐ perfectly: warm, deep, gently expressive, unhurried |
+| vctk p226 (Surrey) | 113 | 5.1 | 166 | 2.0% | perfectly (close second) |
+| alan | 95 | 3.2 | 150 | 10.2% | perfectly, but flat and brighter |
+| vctk p254 (Surrey) | 80 | 2.7 | 179 | 4.7% | yes, but faster and creaky |
+| northern_english_male | 110 | 4.3 | 217 | 8.2% | yes, but much too fast |
+| vctk p232, p258, p273 | 117–151 | 1.9–6.4 | 210–223 | 2.4–3.7% | misheard words ("pond" for "pont") |
+| semaine (spike, obadiah) | | | | | excluded: non-commercial licence |
+
+The narrator profile then makes the chosen voice sound older and more intimate:
+
+- **deeper**: played back at 93% speed (about 1¼ semitones lower), with synthesis sped up to compensate, so
+  only the pitch drops, not the pace,
+- **slower**: ~20% slower than the model's default, with **0.6 s pauses** between sentences,
+- **closer**: more low body (+3.5 dB) and softer highs (−5.5 dB), for a hushed, close-to-the-mic feel,
+- **documentary phrasing**: *"And here, on your left… the Grand Palais."*, *"And so, we arrive at the
+  Louvre."*, *"Our journey continues to…"* (in English, French, Spanish and German).
+
+Narrators in other languages: **Pierre** (French, upmc), **Marcos** (Spanish, sharvard male speaker) and
+**Thorsten** (German, already deep, so no pitch drop: it blurred German consonants). Rendered with the full
+narrator profile, all four were transcribed word-for-word (Pierre's deeper voice even fixed a mishearing). Italian has no
+good male voice in the collection yet.
+
+Named "Arthur" in the app (the dataset speaker has no name).
+
 ## Listen
 
 The same sentence, exactly as the app plays it:
 
-- English: [Jenny (Dioco)](voice-samples/en-jenny.mp3), [Amy](voice-samples/en-amy.mp3)
-- Français : [Siwis](voice-samples/fr-siwis.mp3), [Jessica](voice-samples/fr-jessica.mp3)
-- Español: [Claude](voice-samples/es-claude.mp3), [Sharvard](voice-samples/es-sharvard.mp3)
-- Deutsch: [Kerstin](voice-samples/de-kerstin.mp3), [Thorsten](voice-samples/de-thorsten.mp3)
+- English: [Jenny (Dioco)](voice-samples/en-jenny.mp3), [Amy](voice-samples/en-amy.mp3), narrator [Arthur](voice-samples/en-arthur.mp3)
+- Français : [Siwis](voice-samples/fr-siwis.mp3), [Jessica](voice-samples/fr-jessica.mp3), narrateur [Pierre](voice-samples/fr-pierre.mp3)
+- Español: [Claude](voice-samples/es-claude.mp3), [Sharvard](voice-samples/es-sharvard.mp3), narrador [Marcos](voice-samples/es-marcos.mp3)
+- Deutsch: [Kerstin](voice-samples/de-kerstin.mp3), Erzähler [Thorsten](voice-samples/de-thorsten.mp3)
 - Italiano: [Paola](voice-samples/it-paola.mp3), [Serena](voice-samples/it-serena.mp3)
+
+(Narrator samples read the documentary-style sentence.)
 
 ## Licences of the selected voices
 
@@ -79,6 +113,9 @@ All are usable in an app, including commercially. Check the model card of any vo
 | Thorsten | CC0 |
 | Paola | CC0 |
 | Serena | CC BY 4.0 |
+| Arthur (VCTK corpus, speaker p274) | CC BY 4.0 (CSTR, University of Edinburgh) |
+| Pierre (upmc) | CC BY-SA 4.0 |
+| Marcos (sharvard) | CC BY 3.0 |
 
 Piper itself and the voice models' code are MIT licensed.
 

@@ -1,8 +1,10 @@
-# Tour Guide 🎧
+<img src="icons/icon.svg" alt="" width="72" height="72" />
 
-**Your phone becomes a tour guide.** Paste your route from Google Maps, Apple Maps or Waze (or type
-your stops), then put the phone in your pocket or on the dashboard. As you walk, run, cycle or drive, a
-calm voice tells you about the places you pass. No tour guide or travel agency needed.
+# Roamie
+
+**Your city, told as you go.** Paste your route from Google Maps, Apple Maps or Waze (or type your
+stops), pick your guide, and put the phone in your pocket or on the dashboard. As you walk, run, cycle or
+drive, a friendly voice tells you the stories of the places you pass. No tour guide or travel agency needed.
 
 > "On your left: Hôtel de la Marine. Designed by Ange-Jacques Gabriel and built between 1757 and 1774…"
 
@@ -11,12 +13,12 @@ calm voice tells you about the places you pass. No tour guide or travel agency n
 It's a web app (works on any phone browser, nothing to install, no account, no API keys).
 
 ```bash
-npm start            # serves the app on http://localhost:8080 (needs Python 3)
+npm start            # serves Roamie on http://localhost:8080 (needs Python 3)
 ```
 
-Open it, tap **"Fill in a sample Paris walk"**, then **Start tour**. Simulation mode drives a virtual
-you along the route, so you can hear a tour of Paris from your couch. Tap **▶ Listen** next to *Voice* to
-hear the soothing voice first.
+Open it, tap **"or try a sample Paris walk"**, then **Start the tour**. "Try from the couch" drives a
+virtual you along the route, so you can hear a tour of Paris from home. Tap **▶** on any guide to hear
+them first.
 
 **On your phone:** location only works over HTTPS. The easiest way is GitHub Pages
 (repo **Settings → Pages → Deploy from a branch**, pick this branch and `/ (root)`). Open the URL on your
@@ -24,7 +26,7 @@ phone, choose **Use my phone's GPS**, and go outside. You can also "Add to Home 
 
 ## Paste your route from any maps app
 
-Plan your trip where you already do, then **Share → Copy** and tap **📋 Paste from a maps app** (or paste
+Plan your trip where you already do, then **Share → Copy** and tap **Paste a route from a maps app** (or paste
 into the itinerary box). The app reads:
 
 | From | What gets imported |
@@ -45,14 +47,20 @@ expands them. It runs automatically if the app is hosted on **Cloudflare Pages**
 no build command, output directory `/`). On hosts without it (GitHub Pages, `npm start`), the app explains
 how to copy the full link instead, and still uses any place names shared alongside the link.
 
-## A soothing voice
+## Choose your guide
 
-By default the guide uses a **natural, calm AI voice that runs on the phone itself**
+Two kinds of guide, in every language:
+
+- **Calm guides** (Jenny, Amy, Siwis, Claude, Kerstin, Paola…): soft, steady, unhurried.
+- **Documentary narrators** (Arthur, Pierre, Marcos, Thorsten): a deep, slow storyteller in the spirit of
+  classic nature documentaries, with long pauses and their own way of telling it: *"And here, on your
+  left… the Grand Palais."* An original voice, not an imitation of any real person.
+
+All of them are **natural AI voices that run on the phone itself**
 ([Piper](https://github.com/rhasspy/piper)): free, private (nothing you hear is sent anywhere), and it works
-offline after a one-time ~80 MB download. Two voices per language were picked by measuring pitch, steadiness,
-pace and harshness across the whole voice collection. See **[docs/voices.md](docs/voices.md)** for the
-comparison and [listen to the samples](docs/voice-samples/). The app also speaks a little slower than usual,
-pauses gently between sentences and softens harsh high frequencies.
+offline after a one-time ~80 MB download. They were picked by measuring pitch, steadiness, pace and harshness
+across the whole voice collection, and checking every one with a speech recognizer. See
+**[docs/voices.md](docs/voices.md)** for the comparison and [listen to the samples](docs/voice-samples/).
 
 Prefer no download? Pick one of the phone's own voices. The calmest ones are listed first. If the AI voice is
 still downloading or ever fails, the phone's voice takes over without a gap.
@@ -153,9 +161,11 @@ data recorded by `node tests/e2e/build-fixtures.mjs`. Run it with `LIVE=1` to us
 
 ## Credits
 
+Icons: [Material Symbols](https://fonts.google.com/icons) (Apache 2.0). Font: [Nunito](https://fonts.google.com/specimen/Nunito) (SIL OFL).
 Place information © [Wikipedia](https://www.wikipedia.org/) contributors (CC BY-SA). Map data ©
 [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors (ODbL). Map display by [Leaflet](https://leafletjs.com/).
 Voices: [Piper](https://github.com/rhasspy/piper) and the [piper-voices](https://huggingface.co/rhasspy/piper-voices)
-collection (see each voice's model card for its dataset licence), running on
+collection (see [docs/voices.md](docs/voices.md) for each voice's dataset licence; the Arthur voice uses the
+VCTK corpus, CC BY 4.0, CSTR, University of Edinburgh), running on
 [ONNX Runtime Web](https://onnxruntime.ai/), with the espeak-ng phonemizer build from
 [@diffusionstudio/piper-wasm](https://www.npmjs.com/package/@diffusionstudio/piper-wasm).

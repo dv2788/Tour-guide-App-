@@ -30,28 +30,43 @@ const { serve, mockNetwork } = require('./mocks.cjs');
   const played = () => page.evaluate(() => window.__played.reduce((a, b) => a + b, 0));
 
   await page.goto(base);
-  const voice = await page.$eval('#voice', (el) => el.value);
+  const voice = await page.$eval('input[name=voice]:checked', (el) => el.value);
   console.log('Default voice:', voice);
   expect(voice === 'neural:en_GB-jenny_dioco-medium:0', 'the soothing AI voice is the default');
 
-  // 1. Preview
-  const t0 = Date.now();
-  await page.click('#voice-preview');
-  await page.waitForFunction(() => /Downloaded/.test(document.getElementById('voice-status').textContent), null, { timeout: 180000 });
-  console.log(`Downloaded and ready in ${((Date.now() - t0) / 1000).toFixed(1)} s`);
-  await page.waitForFunction(() => window.__played.reduce((a, b) => a + b, 0) > 3, null, { timeout: 60000 });
-  console.log(`Preview: ${(await played()).toFixed(1)} s of speech played`);
+  // 1. Preview the calm voice, then the documentary narrator
+  const preview = async (value, name) => {
+    const card = `.guide[data-value="${value}"]`;
+    const before = await played();
+    const t0 = Date.now();
+    await page.click(`${card} .listen`);
+    await page.waitForFunction((sel) => /On your phone/.test(document.querySelector(`${sel} .guide-status`).textContent), card, { timeout: 180000 });
+    const ready = ((Date.now() - t0) / 1000).toFixed(1);
+    await page.waitForFunction((b) => window.__played.reduce((a, x) => a + x, 0) > b + 3, before, { timeout: 60000 });
+    console.log(`${name}: downloaded and ready in ${ready} s, speech is playing`);
+  };
+  await preview('neural:en_GB-jenny_dioco-medium:0', 'Jenny');
+  await page.screenshot({ path: path.join(__dirname, 'screenshots', '6-guides.png'), fullPage: true });
+  await preview('neural:en_GB-vctk-medium:10', 'Arthur (narrator)');
 
-  // 2. A tour with the AI voice (the voice is now cached on the "phone")
+  // 2. A tour read by the narrator (the voice is now cached on the "phone")
   await page.click('#demo');
+  await page.click('.guide[data-value="neural:en_GB-vctk-medium:10"] label');
   await page.selectOption('#sim-speed', '1');
   const before = await played();
   await page.click('button[type=submit]');
-  await page.waitForFunction(() => /^You have arrived at Eiffel Tower/.test(document.getElementById('now-text').textContent), null, {
+  // Documentary phrasing: "Welcome to Paris. Let us take a closer look." then "And so, we arrive at…"
+  await page.waitForFunction(() => /^Welcome to Paris\. Let us take a closer look\./.test(document.getElementById('now-text').textContent), null, {
+    timeout: 60000,
+  });
+  await page.waitForFunction(() => /^And so, we arrive at Eiffel Tower/.test(document.getElementById('now-text').textContent), null, {
     timeout: 120000,
   });
   await page.waitForTimeout(3000);
   const tourAudio = (await played()) - before;
+  const label = await page.$eval('#now-label', (el) => el.textContent);
+  console.log(`Now playing label: "${label}"`);
+  expect(/Arthur|arrived/i.test(label), 'the player shows the guide by name');
   const voiceLine = await page.$eval('#voice-line', (el) => (el.hidden ? '' : el.textContent));
   console.log(`Tour: welcome + arrival, ${tourAudio.toFixed(1)} s of speech played${voiceLine ? `; note: ${voiceLine}` : ''}`);
   expect(tourAudio > 15, `the AI voice read the welcome (only ${tourAudio.toFixed(1)} s played)`);

@@ -9,11 +9,12 @@ import { GpsSource, SimulatedSource } from './location.js';
 import { TourEngine } from './tourEngine.js';
 import { distanceMeters } from './geo.js';
 import { parseItinerary, parseTextList, SOURCE_LABELS } from './itineraryImport.js';
-import { NEURAL_VOICES, neuralVoiceKey, parseVoiceKey, rankSystemVoices, PREVIEW_TEXT } from './voices.js';
+import { NEURAL_VOICES, neuralVoiceKey, parseVoiceKey, rankSystemVoices, PREVIEW_TEXT, PREVIEW_TEXT_DOCUMENTARY, voiceProfile } from './voices.js';
 import { isVoiceDownloaded, neuralVoicesSupported } from './neuralVoice.js';
 
 const $ = (id) => document.getElementById(id);
-const STORAGE_KEY = 'tour-guide:setup';
+const STORAGE_KEY = 'roamie:setup';
+const OLD_STORAGE_KEY = 'tour-guide:setup'; // before the app was called Roamie
 const SAMPLE = {
   city: 'Paris',
   stops: ['Eiffel Tower', "Pont de l'Alma", 'Grand Palais', 'Place de la Concorde', 'Louvre Museum'].join('\n'),
@@ -42,7 +43,7 @@ function readForm() {
     rate: data.get('rate') ?? '1',
     source: data.get('source') ?? 'gps',
     simSpeed: data.get('simSpeed') ?? '8',
-    voice: data.get('voice') ?? '',
+    voice: selectedVoiceKey(),
     imported: [...imported.entries()],
   };
 }
@@ -70,7 +71,7 @@ function syncFormHints() {
 
 function loadSaved() {
   try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY) ?? 'null');
+    return JSON.parse(localStorage.getItem(STORAGE_KEY) ?? localStorage.getItem(OLD_STORAGE_KEY) ?? 'null');
   } catch {
     return null;
   }
@@ -223,90 +224,156 @@ $('paste-route').addEventListener('click', async () => {
   }
 });
 
-// ---------- Voice ----------
+// ---------- Choosing a guide (voice) ----------
 
 function neuralVoiceInfo(lang, key) {
   return (NEURAL_VOICES[lang] ?? []).find((v) => v.id === key.id && (v.speaker ?? 0) === key.speaker);
 }
 
-function populateVoices(selectedKey) {
-  const lang = $('lang').value;
-  const select = $('voice');
-  select.replaceChildren();
-  if (neuralVoicesSupported()) {
-    const group = document.createElement('optgroup');
-    group.label = 'Soothing AI voices · free, downloads once';
-    for (const v of NEURAL_VOICES[lang] ?? []) group.append(new Option(`${v.label} · ${v.note}`, neuralVoiceKey(v)));
-    select.append(group);
-  }
-  const group = document.createElement('optgroup');
-  group.label = "This phone's voices · instant";
-  const system = rankSystemVoices(globalThis.speechSynthesis?.getVoices() ?? [], lang, speechLocale(lang)).slice(0, 8);
-  if (system.length) for (const v of system) group.append(new Option(v.name, `system:${v.name}`));
-  else group.append(new Option("This phone's built-in voice", 'system:'));
-  select.append(group);
-  const keys = [...select.options].map((o) => o.value);
-  select.value = keys.includes(selectedKey) ? selectedKey : keys[0];
-  updateVoiceStatus();
+/** The voice picked in the form, e.g. "neural:en_GB-jenny_dioco-medium:0" or "system:Samantha". */
+function selectedVoiceKey() {
+  const value = form.querySelector('input[name=voice]:checked')?.value ?? '';
+  return value === 'system:' ? `system:${$('system-voice')?.value ?? ''}` : value;
 }
 
-let voiceStatusRun = 0;
-async function updateVoiceStatus(text) {
-  const run = ++voiceStatusRun;
-  const status = $('voice-status');
-  if (text) {
-    status.textContent = text;
-    return;
-  }
-  const key = parseVoiceKey($('voice').value);
-  if (key?.kind === 'neural') {
-    const downloaded = await isVoiceDownloaded(key.id);
-    if (run !== voiceStatusRun) return;
-    status.textContent = downloaded
-      ? '✓ Downloaded. Works offline.'
-      : 'A natural, calm voice that runs on your phone. Downloads once (about 80 MB), so Wi-Fi is best.';
-  } else {
-    status.textContent = "Uses your phone's own voice. Starts instantly.";
-  }
+function icon(name) {
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('class', 'icon');
+  const use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+  use.setAttribute('href', `#i-${name}`);
+  svg.append(use);
+  return svg;
 }
 
-$('lang').addEventListener('change', () => populateVoices(null));
-$('voice').addEventListener('change', () => updateVoiceStatus());
-globalThis.speechSynthesis?.addEventListener?.('voiceschanged', () => populateVoices($('voice').value));
+function el(tag, props = {}, children = []) {
+  const node = Object.assign(document.createElement(tag), props);
+  node.append(...children);
+  return node;
+}
 
-let previewNarrator = null;
-$('voice-preview').addEventListener('click', async () => {
-  previewNarrator?.stop();
-  const lang = $('lang').value;
-  const key = parseVoiceKey($('voice').value);
-  const narrator = new Narrator({
-    lang,
-    rate: Number($('rate').value),
-    systemVoiceName: key?.kind === 'system' ? key.name : null,
+/** One selectable guide card: avatar, name, description, ▶ listen, status line. */
+function guideCard({ value, name, note, avatar, avatarClass, badge }) {
+  const id = `voice-${value.replace(/[^a-z0-9]+/gi, '-')}`;
+  const card = el('div', { className: 'guide' });
+  card.dataset.value = value;
+  const radio = el('input', { type: 'radio', name: 'voice', value, id });
+  const nameEl = el('strong', {}, [name]);
+  if (badge) nameEl.append(el('span', { className: 'badge-doc' }, [badge]));
+  const label = el('label', { className: 'guide-main', htmlFor: id }, [
+    el('span', { className: `avatar ${avatarClass ?? ''}`, ariaHidden: 'true' }, [avatar]),
+    el('span', { className: 'guide-text' }, [nameEl, el('small', {}, [note])]),
+  ]);
+  const listen = el('button', { type: 'button', className: 'listen', ariaLabel: `Listen to ${name}` }, [icon('play')]);
+  listen.addEventListener('click', () => {
+    radio.checked = true;
+    previewVoice(card);
   });
-  previewNarrator = narrator;
-  narrator.unlock(); // inside the tap
-  if (key?.kind === 'neural') {
-    const button = $('voice-preview');
-    button.disabled = true;
-    try {
-      const loading = narrator.useNeuralVoice({ ...key, label: neuralVoiceInfo(lang, key)?.label }, (p) =>
-        updateVoiceStatus(p < 1 ? `Downloading the voice… ${Math.round(p * 100)}%` : 'Getting the voice ready…'),
+  card.append(radio, label, listen, el('div', { className: 'progress', hidden: true }, [el('span')]), el('small', { className: 'guide-status' }));
+  return card;
+}
+
+function populateGuides(selectedKey) {
+  const lang = $('lang').value;
+  const box = $('guides');
+  box.replaceChildren();
+  if (neuralVoicesSupported()) {
+    for (const v of NEURAL_VOICES[lang] ?? []) {
+      const documentary = v.profile === 'documentary';
+      box.append(
+        guideCard({
+          value: neuralVoiceKey(v),
+          name: v.label,
+          note: v.note,
+          avatar: v.label[0],
+          avatarClass: documentary ? 'documentary' : '',
+          badge: documentary ? 'Narrator' : null,
+        }),
       );
-      await loading;
-      updateVoiceStatus();
-    } catch {
-      updateVoiceStatus("Couldn't download the voice (check your connection). You'll hear your phone's voice instead.");
-    } finally {
-      button.disabled = false;
     }
   }
-  if (previewNarrator === narrator) narrator.speak(PREVIEW_TEXT[lang] ?? PREVIEW_TEXT.en);
-});
+  // The phone's own voices: one card, with a choice of voice when there are several.
+  const systemCard = guideCard({ value: 'system:', name: "Your phone's voice", note: 'Instant, no download', avatar: icon('phone'), avatarClass: 'system' });
+  const voices = rankSystemVoices(globalThis.speechSynthesis?.getVoices() ?? [], lang, speechLocale(lang)).slice(0, 8);
+  if (voices.length > 1) {
+    const select = el('select', { id: 'system-voice', ariaLabel: 'Phone voice' }, voices.map((v) => new Option(v.name, v.name)));
+    select.addEventListener('change', () => {
+      systemCard.querySelector('input').checked = true;
+      refreshGuideStatus();
+    });
+    systemCard.append(select);
+  } else if (voices.length === 1) {
+    systemCard.append(el('input', { type: 'hidden', id: 'system-voice', value: voices[0].name }));
+  }
+  box.append(systemCard);
+
+  const parsed = parseVoiceKey(selectedKey);
+  const wanted = parsed?.kind === 'system' ? 'system:' : selectedKey;
+  const radios = [...box.querySelectorAll('input[name=voice]')];
+  (radios.find((r) => r.value === wanted) ?? radios[0]).checked = true;
+  if (parsed?.kind === 'system' && parsed.name && $('system-voice')) $('system-voice').value = parsed.name;
+  refreshGuideStatus();
+}
+
+/** "80 MB download, once" / "✓ On your phone, works offline" under each AI voice. */
+async function refreshGuideStatus() {
+  for (const card of $('guides').querySelectorAll('.guide')) {
+    const key = parseVoiceKey(card.dataset.value);
+    const status = card.querySelector('.guide-status');
+    if (card.classList.contains('busy')) continue;
+    if (key?.kind === 'neural') {
+      const downloaded = await isVoiceDownloaded(key.id);
+      status.textContent = downloaded ? '✓ On your phone, works offline' : 'Free · 80 MB download, once';
+      status.classList.toggle('ready', downloaded);
+    } else {
+      status.textContent = '';
+    }
+  }
+}
+
+$('lang').addEventListener('change', () => populateGuides(null));
+globalThis.speechSynthesis?.addEventListener?.('voiceschanged', () => populateGuides(selectedVoiceKey()));
+
+let previewNarrator = null;
+async function previewVoice(card) {
+  previewNarrator?.stop();
+  for (const b of $('guides').querySelectorAll('.listen')) b.classList.remove('playing');
+  const lang = $('lang').value;
+  const key = parseVoiceKey(selectedVoiceKey());
+  const narrator = new Narrator({ lang, rate: Number(readForm().rate), systemVoiceName: key?.kind === 'system' ? key.name : null });
+  previewNarrator = narrator;
+  narrator.unlock(); // inside the tap
+  const listen = card.querySelector('.listen');
+  const status = card.querySelector('.guide-status');
+  const info = key?.kind === 'neural' ? neuralVoiceInfo(lang, key) : null;
+  if (info) {
+    const progress = card.querySelector('.progress');
+    card.classList.add('busy');
+    listen.disabled = true;
+    try {
+      await narrator.useNeuralVoice({ ...key, label: info.label, profile: info.profile, tweak: info.tweak }, (p) => {
+        progress.hidden = p >= 1;
+        progress.firstChild.style.width = `${Math.round(p * 100)}%`;
+        status.textContent = p < 1 ? `Downloading… ${Math.round(p * 100)}%` : 'Getting ready…';
+      });
+    } catch {
+      status.textContent = "Couldn't download this voice. Check your connection; your phone's voice will be used meanwhile.";
+    } finally {
+      progress.hidden = true;
+      card.classList.remove('busy');
+      listen.disabled = false;
+      refreshGuideStatus();
+    }
+  }
+  if (previewNarrator !== narrator) return;
+  const text = info?.profile === 'documentary' ? PREVIEW_TEXT_DOCUMENTARY[lang] : PREVIEW_TEXT[lang];
+  narrator.on('start', () => listen.classList.add('playing'));
+  narrator.on('idle', () => listen.classList.remove('playing'));
+  narrator.speak(text ?? PREVIEW_TEXT.en);
+}
 
 const saved = loadSaved();
 if (saved) fillForm(saved);
-populateVoices(saved?.voice ?? null);
+populateGuides(saved?.voice ?? null);
 syncFormHints();
 
 // ---------- Map ----------
@@ -385,7 +452,7 @@ function drawRoute(points) {
   if (!map) return;
   window.L.polyline(
     points.map((p) => [p.lat, p.lon]),
-    { color: '#0f766e', weight: 5, opacity: 0.6 },
+    { color: '#1f6f5c', weight: 5, opacity: 0.65 },
   ).addTo(layers.route);
 }
 
@@ -395,9 +462,9 @@ function drawPois(pois) {
     if (poi.category === 'skip' || poiMarkers.has(poi.id)) continue;
     const marker = window.L.circleMarker([poi.lat, poi.lon], {
       radius: poi.category === 'minor' ? 4 : 6,
-      color: '#b45309',
+      color: '#b7791f',
       weight: 2,
-      fillColor: '#f59e0b',
+      fillColor: '#ffc857',
       fillOpacity: 0.8,
     }).addTo(layers.pois);
     marker.bindTooltip(label(poi.title));
@@ -436,14 +503,20 @@ function formatMeters(m) {
   return m < 1000 ? `${Math.round(m / 10) * 10} m` : `${(m / 1000).toFixed(1)} km`;
 }
 
-function showNowPlaying(item) {
+function showNowPlaying(item, voiceName) {
   const { meta, text } = item;
+  const who = voiceName ?? 'Roamie';
   $('now').hidden = false;
   $('now').classList.remove('idle');
+  $('now-avatar').textContent = who[0];
   $('now-label').textContent =
-    meta.kind === 'stop' ? 'You have arrived' : meta.kind === 'poi' ? 'Now telling you about' : 'Your guide';
+    meta.kind === 'stop' ? 'You have arrived' : meta.kind === 'poi' ? `${who} is telling you about` : `${who}, your guide`;
   $('now-title').textContent = meta.title ?? '';
-  $('now-text').textContent = text;
+  const body = $('now-text');
+  body.textContent = text;
+  body.classList.add('clamp');
+  requestAnimationFrame(() => ($('now-more').hidden = body.scrollHeight <= body.clientHeight + 2));
+  $('now-more').textContent = 'Show more';
   const img = $('now-img');
   img.onerror = () => (img.hidden = true);
   if (meta.thumbnail) {
@@ -498,6 +571,11 @@ document.addEventListener('visibilitychange', () => {
   }
 });
 
+$('now-more').addEventListener('click', () => {
+  const clamped = $('now-text').classList.toggle('clamp');
+  $('now-more').textContent = clamped ? 'Show more' : 'Show less';
+});
+
 function endTour() {
   if (!session) return;
   session.ended = true;
@@ -507,6 +585,7 @@ function endTour() {
   session.wakeLock?.release?.().catch(() => {});
   session = null;
   $('tour').hidden = true;
+  $('btn-end').hidden = true;
   $('setup').hidden = false;
   window.scrollTo(0, 0);
 }
@@ -521,7 +600,10 @@ $('btn-pause').addEventListener('click', () => {
 });
 
 function setPauseButton(paused) {
-  $('btn-pause').innerHTML = paused ? '▶<span>Resume</span>' : '⏸<span>Pause</span>';
+  const button = $('btn-pause');
+  button.querySelector('use').setAttribute('href', paused ? '#i-play' : '#i-pause');
+  button.setAttribute('aria-label', paused ? 'Resume' : 'Pause');
+  $('now').classList.toggle('paused', paused);
 }
 
 form.addEventListener('submit', async (event) => {
@@ -550,6 +632,9 @@ form.addEventListener('submit', async (event) => {
 
   const mode = getMode(cfg.mode);
   const voiceKey = parseVoiceKey(cfg.voice);
+  const voiceInfo = voiceKey?.kind === 'neural' ? neuralVoiceInfo(cfg.lang, voiceKey) : null;
+  // Narrator voices phrase the tour like a nature documentary.
+  const style = voiceProfile(voiceInfo?.profile).style;
   previewNarrator?.stop();
   const narrator = new Narrator({
     lang: cfg.lang,
@@ -566,9 +651,8 @@ form.addEventListener('submit', async (event) => {
   const voiceLine = $('voice-line');
   voiceLine.hidden = true;
   if (voiceKey?.kind === 'neural') {
-    const info = neuralVoiceInfo(cfg.lang, voiceKey);
     voiceReady = narrator
-      .useNeuralVoice({ ...voiceKey, label: info?.label }, (p) => {
+      .useNeuralVoice({ ...voiceKey, label: voiceInfo?.label, profile: voiceInfo?.profile, tweak: voiceInfo?.tweak }, (p) => {
         if (!alive() || p >= 1) return;
         voiceLine.hidden = false;
         voiceLine.textContent = `Downloading the soothing voice… ${Math.round(p * 100)}% (your phone's voice speaks meanwhile)`;
@@ -594,6 +678,8 @@ form.addEventListener('submit', async (event) => {
   });
 
   $('setup').hidden = true;
+  $('btn-end').hidden = false;
+  window.scrollTo(0, 0);
   $('tour').hidden = false;
   $('now').hidden = true;
   $('next-stop').hidden = true;
@@ -604,7 +690,8 @@ form.addEventListener('submit', async (event) => {
   requestWakeLock();
 
   narrator.on('start', (item) => {
-    showNowPlaying(item);
+    const neural = narrator.backend.kind === 'neural';
+    showNowPlaying(item, neural ? narrator.voiceLabel?.replace(/\s*\(.*\)$/, '') : null);
     if (!item.repeated) addToJournal(item.meta);
   });
   narrator.on('idle', () => {
@@ -660,6 +747,7 @@ form.addEventListener('submit', async (event) => {
     const engine = new TourEngine({
       mode,
       lang: cfg.lang,
+      style,
       wiki,
       narrator,
       city,

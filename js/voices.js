@@ -5,28 +5,50 @@
 //    (The Jenny dataset asks that the voice be credited as "Jenny (Dioco)" in apps.)
 //  - the phone's built-in voices, ranked so the calmest natural-sounding one comes first.
 
+// profile 'calm': soothing delivery. profile 'documentary': a deep, unhurried narrator in the
+// style of classic nature documentaries (an original voice, not an imitation of anyone).
 export const NEURAL_VOICES = {
   en: [
-    { id: 'en_GB-jenny_dioco-medium', label: 'Jenny (Dioco)', note: 'British, calmest' },
-    { id: 'en_US-amy-medium', label: 'Amy', note: 'American, warm' },
+    { id: 'en_GB-jenny_dioco-medium', label: 'Jenny (Dioco)', note: 'Calm and gentle · British', profile: 'calm' },
+    { id: 'en_US-amy-medium', label: 'Amy', note: 'Warm and soft · American', profile: 'calm' },
+    { id: 'en_GB-vctk-medium', speaker: 10, label: 'Arthur', note: 'Documentary narrator · deep British voice', profile: 'documentary' },
   ],
   fr: [
-    { id: 'fr_FR-siwis-medium', label: 'Siwis', note: 'douce, claire' },
-    { id: 'fr_FR-upmc-medium', speaker: 0, label: 'Jessica', note: 'chaleureuse' },
+    { id: 'fr_FR-siwis-medium', label: 'Siwis', note: 'Douce et claire', profile: 'calm' },
+    { id: 'fr_FR-upmc-medium', speaker: 0, label: 'Jessica', note: 'Chaleureuse', profile: 'calm' },
+    { id: 'fr_FR-upmc-medium', speaker: 1, label: 'Pierre', note: 'Narrateur de documentaire · voix grave', profile: 'documentary' },
   ],
   es: [
-    { id: 'es_MX-claude-high', label: 'Claude', note: 'México, pausada' },
-    { id: 'es_ES-sharvard-medium', speaker: 1, label: 'Sharvard', note: 'España' },
+    { id: 'es_MX-claude-high', label: 'Claude', note: 'Pausada y cálida · México', profile: 'calm' },
+    { id: 'es_ES-sharvard-medium', speaker: 1, label: 'Sharvard', note: 'Cálida · España', profile: 'calm' },
+    { id: 'es_ES-sharvard-medium', speaker: 0, label: 'Marcos', note: 'Narrador de documental · voz grave', profile: 'documentary' },
   ],
   de: [
-    { id: 'de_DE-kerstin-low', label: 'Kerstin', note: 'ruhig' },
-    { id: 'de_DE-thorsten-medium', label: 'Thorsten', note: 'klar, Männerstimme' },
+    { id: 'de_DE-kerstin-low', label: 'Kerstin', note: 'Ruhig und gleichmäßig', profile: 'calm' },
+    // Already a deep voice: lowering it further blurs German consonants.
+    { id: 'de_DE-thorsten-medium', label: 'Thorsten', note: 'Dokumentarfilm-Erzähler · tiefe Stimme', profile: 'documentary', tweak: { pitch: 1 } },
   ],
   it: [
-    { id: 'it_IT-paola-medium', label: 'Paola', note: 'calma' },
-    { id: 'it_IT-serena-medium', label: 'Serena', note: 'limpida' },
+    { id: 'it_IT-paola-medium', label: 'Paola', note: 'Calma e regolare', profile: 'calm' },
+    { id: 'it_IT-serena-medium', label: 'Serena', note: 'Limpida', profile: 'calm' },
   ],
 };
+
+/**
+ * How each kind of voice delivers the tour.
+ * pace: slower than the model's default (>1). pitch: playback rate, <1 = deeper (and the
+ * synthesis pace is adjusted so the overall speed stays as set). pause: seconds between
+ * sentences. eq: dB of low "body" and high "air" (negative = softer).
+ */
+export const VOICE_PROFILES = {
+  calm: { pace: 1.12, pitch: 1, pause: 0.28, style: 'standard', eq: { low: 2, high: -4 } },
+  documentary: { pace: 1.2, pitch: 0.93, pause: 0.6, style: 'documentary', eq: { low: 3.5, high: -5.5 } },
+};
+
+/** A voice's delivery: its profile, with any per-voice adjustments. */
+export function voiceProfile(name, tweak = {}) {
+  return { ...(VOICE_PROFILES[name] ?? VOICE_PROFILES.calm), ...tweak };
+}
 
 /** Voice ids are stored as "neural:<piper id>:<speaker>" or "system:<voice name>". */
 export function neuralVoiceKey(v) {
@@ -107,6 +129,13 @@ export function prepareForNeuralVoice(text, lang) {
     numeral.length >= 2 ? `${name} ${romanToNumber(numeral)}` : match,
   );
 }
+
+export const PREVIEW_TEXT_DOCUMENTARY = {
+  en: "And here, on your left… the Pont Alexandre the Third. Built for the great Exhibition of 1900, it is, quite simply, the most beautiful bridge in Paris.",
+  fr: "Et ici, sur votre gauche… le pont Alexandre-III. Construit pour l'Exposition universelle de 1900, il est, tout simplement, le plus beau pont de Paris.",
+  es: 'Y aquí, a nuestra izquierda… el puente de Alejandro III. Construido para la gran Exposición de 1900, es, sencillamente, el puente más bello de París.',
+  de: 'Und hier, zu unserer Linken… die Pont Alexandre III. Erbaut für die große Weltausstellung von 1900, ist sie schlicht die schönste Brücke von Paris.',
+};
 
 export const PREVIEW_TEXT = {
   en: "Hello, I'll be your guide today. On your left: the Pont Alexandre the Third, often called the most beautiful bridge in Paris.",

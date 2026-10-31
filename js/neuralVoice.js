@@ -11,7 +11,6 @@ const PHONEMIZER_SCRIPT = { src: `${PHONEMIZER_BASE}.js`, integrity: 'sha384-PMu
 // Voice models, pinned to one revision of the official collection so files never change under us.
 const VOICES_BASE = 'https://huggingface.co/rhasspy/piper-voices/resolve/b4e358ffcb232591bf73a540e70f7de528e4174a/';
 const CACHE_NAME = 'tour-guide-voices-v1';
-const SENTENCE_PAUSE_S = 0.28; // a calm breath between sentences
 
 const scripts = new Map();
 function loadScript({ src, integrity }) {
@@ -197,11 +196,11 @@ export class PiperVoice {
    * Synthesize speech. pace > 1 speaks more slowly (Piper's length_scale), which is the
    * single biggest lever for a calm delivery. Returns { samples: Float32Array, sampleRate }.
    */
-  async synthesize(text, { pace = 1 } = {}) {
+  async synthesize(text, { pace = 1, pause: pauseSeconds = 0.28 } = {}) {
     await this.load();
     const { inference, speaker_id_map: speakers } = this.config;
     const sentences = await this.#phonemize(text);
-    const pause = new Float32Array(Math.round(this.sampleRate * SENTENCE_PAUSE_S));
+    const pause = new Float32Array(Math.round(this.sampleRate * pauseSeconds)); // a breath between sentences
     const parts = [];
     for (const ids of sentences) {
       if (!ids?.length) continue;
@@ -231,15 +230,15 @@ export class PiperVoice {
  * The "warmth" EQ: a soft cut of the harsh high frequencies (sibilance, hiss) and a slight
  * lift of the low body of the voice. Returns the node to connect sources to.
  */
-function warmthChain(ctx, destination) {
+function warmthChain(ctx, destination, eq = { low: 2, high: -4 }) {
   const warmth = ctx.createBiquadFilter();
   warmth.type = 'highshelf';
   warmth.frequency.value = 4500;
-  warmth.gain.value = -4;
+  warmth.gain.value = eq.high;
   const body = ctx.createBiquadFilter();
   body.type = 'lowshelf';
   body.frequency.value = 220;
-  body.gain.value = 2;
+  body.gain.value = eq.low;
   warmth.connect(body).connect(destination);
   return warmth;
 }
@@ -256,19 +255,25 @@ function withFades(samples, sampleRate) {
 }
 
 /** Exactly what the listener hears, rendered offline (used for voice samples and tests). */
-export async function renderSoothing({ samples, sampleRate }) {
-  const ctx = new OfflineAudioContext(1, samples.length, sampleRate);
+export async function renderSoothing({ samples, sampleRate }, { pitch = 1, eq } = {}) {
+  const ctx = new OfflineAudioContext(1, Math.ceil(samples.length / pitch), sampleRate);
   const buffer = ctx.createBuffer(1, samples.length, sampleRate);
   buffer.copyToChannel(withFades(samples, sampleRate), 0);
   const src = ctx.createBufferSource();
   src.buffer = buffer;
-  src.connect(warmthChain(ctx, ctx.destination));
+  src.playbackRate.value = pitch;
+  src.connect(warmthChain(ctx, ctx.destination, eq));
   src.start();
   return { samples: (await ctx.startRendering()).getChannelData(0), sampleRate };
 }
 
-/** Plays synthesized speech through Web Audio with the warmth EQ. */
+/** Plays synthesized speech through Web Audio with the warmth EQ (and optional deeper pitch). */
 export class SoothingPlayer {
+  constructor({ pitch = 1, eq } = {}) {
+    this.pitch = pitch;
+    this.eq = eq;
+  }
+
   unlock() {
     // Call from a tap. 'playback' lets iPhones play even with the silent switch on.
     try {
@@ -284,7 +289,7 @@ export class SoothingPlayer {
     src.buffer = silent;
     src.connect(this.ctx.destination);
     src.start();
-    this.output ??= warmthChain(this.ctx, this.ctx.destination);
+    this.output ??= warmthChain(this.ctx, this.ctx.destination, this.eq);
   }
 
   /** Play samples; resolves when finished. stop() ends it early. */
@@ -295,6 +300,7 @@ export class SoothingPlayer {
     buffer.copyToChannel(shaped, 0);
     const src = this.ctx.createBufferSource();
     src.buffer = buffer;
+    src.playbackRate.value = this.pitch;
     src.connect(this.output);
     this.ctx.resume?.();
     const done = new Promise((resolve) => (src.onended = resolve));

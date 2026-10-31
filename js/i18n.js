@@ -107,13 +107,79 @@ const PHRASES = {
   },
 };
 
+// The documentary narrator's way of speaking: unhurried, a touch of wonder, "we".
+// Keys not listed fall back to the standard phrases.
+const DOCUMENTARY = {
+  en: {
+    welcome: 'Welcome to {city}. Let us take a closer look.',
+    started: 'Our journey begins.',
+    freeRoam: "There is no fixed route today. We shall simply see what we find.",
+    left: 'And here, on your left',
+    right: 'Now, on your right',
+    ahead: 'Just ahead of us',
+    behind: 'Behind us now',
+    nearby: 'Nearby',
+    poiIntro: '{dir}… {title}.',
+    firstStop: 'Our first stop is {name}, some {d} away.',
+    arrived: 'And so, we arrive at {name}.',
+    nextStop: 'Our journey continues to {name}, {d} from here.',
+    tourDone: 'And that brings our journey to its end. But this city still has stories to tell, and I shall share them as we go.',
+  },
+  fr: {
+    welcome: 'Bienvenue à {city}. Regardons de plus près.',
+    started: 'Notre voyage commence.',
+    freeRoam: "Pas d'itinéraire aujourd'hui. Nous verrons bien ce que nous découvrirons.",
+    left: 'Et ici, sur votre gauche',
+    right: 'Et là, sur votre droite',
+    ahead: 'Juste devant nous',
+    behind: 'Derrière nous, à présent',
+    nearby: 'Tout près',
+    poiIntro: '{dir}… {title}.',
+    firstStop: 'Notre première étape : {name}, à quelque {d}.',
+    arrived: 'Et nous voici à {name}.',
+    nextStop: 'Notre voyage se poursuit vers {name}, à {d} d’ici.',
+    tourDone: "Ainsi s'achève notre voyage. Mais la ville a encore bien des histoires à raconter, et je vous les confierai en chemin.",
+  },
+  es: {
+    welcome: 'Bienvenidos a {city}. Observemos con atención.',
+    started: 'Nuestro viaje comienza.',
+    freeRoam: 'Hoy no hay ruta fija. Veremos qué descubrimos.',
+    left: 'Y aquí, a nuestra izquierda',
+    right: 'Y ahora, a nuestra derecha',
+    ahead: 'Justo delante de nosotros',
+    behind: 'Ya detrás de nosotros',
+    nearby: 'Muy cerca',
+    poiIntro: '{dir}… {title}.',
+    firstStop: 'Nuestra primera parada: {name}, a unos {d}.',
+    arrived: 'Y así llegamos a {name}.',
+    nextStop: 'Nuestro viaje continúa hacia {name}, a {d} de aquí.',
+    tourDone: 'Y así termina nuestro viaje. Pero la ciudad aún guarda historias, y te las contaré por el camino.',
+  },
+  de: {
+    welcome: 'Willkommen in {city}. Sehen wir uns genauer um.',
+    started: 'Unsere Reise beginnt.',
+    freeRoam: 'Heute gibt es keine feste Route. Mal sehen, was wir entdecken.',
+    left: 'Und hier, zu unserer Linken',
+    right: 'Und nun, zu unserer Rechten',
+    ahead: 'Direkt vor uns',
+    behind: 'Nun schon hinter uns',
+    nearby: 'Ganz in der Nähe',
+    poiIntro: '{dir}… {title}.',
+    firstStop: 'Unser erster Halt: {name}, etwa {d} entfernt.',
+    arrived: 'Und so erreichen wir {name}.',
+    nextStop: 'Unsere Reise führt weiter zu {name}, {d} von hier.',
+    tourDone: 'Damit endet unsere Reise. Doch die Stadt hat noch viele Geschichten zu erzählen, und ich erzähle sie Ihnen unterwegs.',
+  },
+};
+const STYLES = { documentary: DOCUMENTARY };
+
 export function speechLocale(lang) {
   return LANGUAGES.find((l) => l.code === lang)?.locale ?? 'en-US';
 }
 
-/** Translate a phrase key, filling {placeholders}. Falls back to English. */
-export function t(lang, key, vars = {}) {
-  const template = PHRASES[lang]?.[key] ?? PHRASES.en[key] ?? key;
+/** Translate a phrase key, filling {placeholders}. Falls back to the standard style, then English. */
+export function t(lang, key, vars = {}, style = 'standard') {
+  const template = STYLES[style]?.[lang]?.[key] ?? PHRASES[lang]?.[key] ?? PHRASES.en[key] ?? key;
   return template.replace(/\{(\w+)\}/g, (_, name) => (name in vars ? String(vars[name]) : `{${name}}`));
 }
 

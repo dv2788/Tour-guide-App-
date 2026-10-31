@@ -55,7 +55,7 @@ const LIVE = process.env.LIVE === '1';
       }).observe(document.getElementById('now-text'), { childList: true, characterData: true, subtree: true });
     });
     // The phone's voice (headless Chromium has none, so the text is paced instead).
-    await page.selectOption('#voice', 'system:');
+    await page.click('#guides .guide[data-value="system:"] label');
     await page.click('button[type=submit]');
     await page.waitForFunction(() => document.querySelectorAll('#journal li').length >= 3, null, { timeout: 90000 });
     await page.waitForTimeout(1500);

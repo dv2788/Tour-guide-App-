@@ -199,3 +199,30 @@ test('big places count as reached from their edge, not their centre point', () =
   const r = arrivalRadiusFor(eiffel, walk);
   assert.ok(r > 90 && r < 110, `got ${r}`);
 });
+
+test('the documentary narrator phrases the tour its own way', async (t) => {
+  const stops = [{ name: 'Final Square', lat: LAT, lon: east(150) }];
+  let clock = 1_000_000;
+  const narrator = new FakeNarrator();
+  const engine = new TourEngine({
+    mode: getMode('walk'),
+    lang: 'en',
+    style: 'documentary',
+    wiki: fakeWiki({ articles: { 'Final Square': { pageid: 50, title: 'Final Square', extract: 'A grand square.' } } }),
+    narrator,
+    city: { name: 'Testville', lat: LAT, lon: LON },
+    stops,
+    now: () => clock,
+  });
+  t.after(() => engine.stop());
+  await engine.start();
+  engine.update({ lat: LAT, lon: LON });
+  narrator.finishAll();
+  engine.update({ lat: LAT, lon: east(150) });
+  await flush();
+  await flush();
+  const said = narrator.spoken.map((s) => s.text);
+  assert.match(said[0], /^Welcome to Testville\. Let us take a closer look\./);
+  assert.match(said[1], /^Our first stop is Final Square, some 150 meters away\.$/);
+  assert.match(said.at(-1), /^And so, we arrive at Final Square\. A grand square\. And that brings our journey to its end\./);
+});

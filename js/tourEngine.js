@@ -49,9 +49,10 @@ export function pickNextPoi({ pois, position, heading, narrated, mode, allowMino
 }
 
 export class TourEngine {
-  constructor({ mode, lang, wiki, narrator, city = null, stops = [], onEvent = () => {}, now = () => Date.now() }) {
+  constructor({ mode, lang, wiki, narrator, city = null, stops = [], style = 'standard', onEvent = () => {}, now = () => Date.now() }) {
     this.mode = mode;
     this.lang = lang;
+    this.style = style; // how the guide phrases things ('documentary' for narrator voices)
     this.wiki = wiki;
     this.narrator = narrator;
     this.city = city;
@@ -93,6 +94,7 @@ export class TourEngine {
     if (!this.running) return;
     const text = buildWelcomeNarration({
       lang: this.lang,
+      style: this.style,
       cityName: this.city?.name,
       citySummary,
       hasStops: this.stops.length > 0,
@@ -162,7 +164,7 @@ export class TourEngine {
       this.emit('next-stop', { stop: next, distance: distanceToNext });
       if (!this.announcedFirstStop && this.nextStopIndex === 0) {
         this.announcedFirstStop = true;
-        this.#say(buildFirstStopNarration({ lang: this.lang, stopName: next.name, distance: distanceToNext }), {
+        this.#say(buildFirstStopNarration({ lang: this.lang, style: this.style, stopName: next.name, distance: distanceToNext }), {
           kind: 'info',
           title: next.name,
         });
@@ -203,6 +205,7 @@ export class TourEngine {
       const direction = relativeDirection(this.heading, bearingDegrees(this.position, poi));
       const text = buildPoiNarration({
         lang: this.lang,
+        style: this.style,
         mode: this.mode,
         title: poi.title,
         summary: summary ?? { description: poi.description },
@@ -236,6 +239,7 @@ export class TourEngine {
       const following = this.stops[this.nextStopIndex] ?? null;
       const text = buildArrivalNarration({
         lang: this.lang,
+        style: this.style,
         mode: this.mode,
         stopName: stop.name,
         summary,

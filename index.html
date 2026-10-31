@@ -3,12 +3,16 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="theme-color" content="#0f766e" />
-    <meta name="description" content="A voice tour guide that talks you through the city as you walk, run, cycle or drive." />
-    <title>Tour Guide</title>
+    <meta name="theme-color" content="#FFF7F0" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#15171D" media="(prefers-color-scheme: dark)" />
+    <meta name="description" content="Roamie: your city, told as you go. A friendly voice guide for walking, running, cycling and driving." />
+    <title>Roamie · your city, told as you go</title>
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="icons/icon-192.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"
@@ -18,38 +22,71 @@
     <link rel="stylesheet" href="css/styles.css" />
   </head>
   <body>
-    <header class="topbar">
-      <img src="icons/icon.svg" alt="" class="logo" width="32" height="32" />
-      <h1>Tour Guide</h1>
+    <!-- Icons: Material Symbols Rounded (Apache License 2.0), https://fonts.google.com/icons -->
+    <svg class="sprite" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+    <symbol id="i-walk" viewBox="0 -960 960 960"><path d="M419-378 345-63q-2 11-10.33 17t-19.19 6Q301-40 291.5-51T285-76l109-550-101 43v103q0 12.75-8.68 21.37-8.67 8.63-21.5 8.63-12.82 0-21.82-8.91-9-8.92-9-22.09v-122q0-9.33 4.88-16.72 4.87-7.39 13.12-11.28l174.29-73.22Q438-710 453.5-711.5T484-710q17 3 29.5 10.87Q526-691.25 534-679l42 66q16 24 35.5 43t42.5 33q17 10 34.5 16t36.5 9q12.11 2.25 20.05 10.87 7.95 8.63 7.95 21.38 0 12.75-8.78 21.25T723-452q-59-7-105.5-35.5T533-568l-38 152 82 74q5 4.55 7.5 10.24T587-320v250q0 12.75-8.68 21.37-8.67 8.63-21.5 8.63-12.82 0-21.32-8.63Q527-57.25 527-70v-210l-108-98Zm121.08-376q-30.08 0-51.58-21.42t-21.5-51.5q0-30.08 21.42-51.58t51.5-21.5q30.08 0 51.58 21.42t21.5 51.5q0 30.08-21.42 51.58t-51.5 21.5Z"/></symbol>
+    <symbol id="i-run" viewBox="0 -960 960 960"><path d="M535-70v-209l-108-99-36 159q-2.97 12.12-12.98 18.56Q368-194 356-196l-208-43q-11-2-18-12t-5-22q2-12 12.5-18t21.5-4l171 34 73-369-100 47v104q0 12.75-8.68 21.37-8.67 8.63-21.5 8.63-12.82 0-21.32-8.63-8.5-8.62-8.5-21.37v-125q0-9.33 4.88-16.72 4.87-7.39 13.12-11.28l146-61q32-14 45.5-17.5t27.1-3.5q20.4 0 35.9 8.5T542-680l42 67q23 37 60 65.5t86 36.5q12.75 2.16 21.38 10.82 8.62 8.66 8.62 20.92 0 12.26-8.55 21.26-8.55 9-20.45 7-57-6-102.5-36.5T543-573l-39 158 81 75q5 4.55 7.5 10.24T595-318v248q0 12.75-8.68 21.37-8.67 8.63-21.5 8.63-12.82 0-21.32-8.63Q535-57.25 535-70Zm5.08-684q-30.08 0-51.58-21.42t-21.5-51.5q0-30.08 21.42-51.58t51.5-21.5q30.08 0 51.58 21.42t21.5 51.5q0 30.08-21.42 51.58t-51.5 21.5Z"/></symbol>
+    <symbol id="i-bike" viewBox="0 -960 960 960"><path d="M194.95-80Q114-80 57-137.05q-57-57.06-57-138Q0-356 57.05-413q57.06-57 138-57Q276-470 333-412.95q57 57.06 57 138Q390-194 332.95-137q-57.06 57-138 57Zm.05-60q57 0 96-39t39-96q0-57-39-96t-96-39q-57 0-96 39t-39 96q0 57 39 96t96 39Zm338-520L422-548l72 78q8 8.46 12 19.23t4 21.77v193q0 12.75-8.68 21.37-8.67 8.63-21.5 8.63-12.82 0-21.32-8.63-8.5-8.62-8.5-21.37v-170L315-525q-11-9-16-21.84-5-12.83-5-27 0-14.16 5.5-26.16t15.5-22l119-119q11-11 24.59-16t28.5-5q14.91 0 28.41 5t24.5 16l78 78q26 26 58.5 43t68.5 22q12 2 19.5 12t5.5 22q-2 12-12 19.5t-22 5.5q-46-6-88-27t-75-54l-40-40Zm86.08-94q-30.08 0-51.58-21.42t-21.5-51.5q0-30.08 21.42-51.58t51.5-21.5q30.08 0 51.58 21.42t21.5 51.5q0 30.08-21.42 51.58t-51.5 21.5ZM764.95-80Q684-80 627-137.05q-57-57.06-57-138Q570-356 627.05-413q57.06-57 138-57Q846-470 903-412.95q57 57.06 57 138Q960-194 902.95-137q-57.06 57-138 57Zm.05-60q57 0 96-39t39-96q0-57-39-96t-96-39q-57 0-96 39t-39 96q0 57 39 96t96 39Z"/></symbol>
+    <symbol id="i-car" viewBox="0 -960 960 960"><path d="M200-204v44q0 16.67-11.74 28.33Q176.53-120 159.76-120q-16.76 0-28.26-11.67Q120-143.33 120-160v-304q0-4.67.5-9.33.5-4.67 2.5-9.67l78-236q6-19 21.75-30T258-760h444q19.5 0 35.25 11T759-719l78 236q2 5 2.5 9.67.5 4.66.5 9.33v304q0 16.67-11.74 28.33Q816.53-120 799.76-120 783-120 771-131.96T759-161v-43H200Zm3-330h554l-55-166H258l-55 166Zm82.76 220q23.24 0 38.74-15.75Q340-345.5 340-368q0-23.33-15.75-39.67Q308.5-424 286-424q-23.33 0-39.67 16.26Q230-391.47 230-368.24q0 23.24 16.26 38.74 16.27 15.5 39.5 15.5ZM675-314q23.33 0 39.67-15.75Q731-345.5 731-368q0-23.33-16.26-39.67Q698.47-424 675.24-424q-23.24 0-38.74 16.26-15.5 16.27-15.5 39.5 0 23.24 15.75 38.74Q652.5-314 675-314Z"/></symbol>
+    <symbol id="i-play" viewBox="0 -960 960 960"><path d="M320-258v-450q0-14 9-22t21-8q4 0 8 1t8 3l354 226q7 5 10.5 11t3.5 14q0 8-3.5 14T720-458L366-232q-4 2-8 3t-8 1q-12 0-21-8t-9-22Z"/></symbol>
+    <symbol id="i-pause" viewBox="0 -960 960 960"><path d="M615-200q-24.75 0-42.37-17.63Q555-235.25 555-260v-440q0-24.75 17.63-42.38Q590.25-760 615-760h55q24.75 0 42.38 17.62Q730-724.75 730-700v440q0 24.75-17.62 42.37Q694.75-200 670-200h-55Zm-325 0q-24.75 0-42.37-17.63Q230-235.25 230-260v-440q0-24.75 17.63-42.38Q265.25-760 290-760h55q24.75 0 42.38 17.62Q405-724.75 405-700v440q0 24.75-17.62 42.37Q369.75-200 345-200h-55Z"/></symbol>
+    <symbol id="i-skip" viewBox="0 -960 960 960"><path d="M680-270v-420q0-12.75 8.68-21.38 8.67-8.62 21.5-8.62 12.82 0 21.32 8.62 8.5 8.63 8.5 21.38v420q0 12.75-8.68 21.37-8.67 8.63-21.5 8.63-12.82 0-21.32-8.63-8.5-8.62-8.5-21.37Zm-460-27v-366q0-13.5 9-21.75t21-8.25q5 0 9 1.5t8 4.5l263 182q7 5 10 11.3 3 6.29 3 13.7 0 7.41-3 13.7-3 6.3-10 11.3L267-273q-4 3-8 4.5t-9 1.5q-12 0-21-8.25T220-297Z"/></symbol>
+    <symbol id="i-replay" viewBox="0 -960 960 960"><path d="M480-80q-75 0-140.5-28T225-185q-49-49-77-114.5T120-440q0-13 8.5-21.5T150-470q13 0 21.5 8.5T180-440q0 125 87.5 212.5T480-140q125 0 212.5-87.5T780-440q0-125-85-212.5T485-740h-22l52 52q9 9 9 21t-9 21q-9 9-21 9t-21-9L368-751q-9-9-9-21t9-21l106-106q8-8 20.5-8t20.5 8q8 8 8 20.5t-8 20.5l-58 58h23q75 0 140.5 28T735-695q49 49 77 114.5T840-440q0 75-28 140.5T735-185q-49 49-114.5 77T480-80Z"/></symbol>
+    <symbol id="i-close" viewBox="0 -960 960 960"><path d="M480-438 270-228q-9 9-21 9t-21-9q-9-9-9-21t9-21l210-210-210-210q-9-9-9-21t9-21q9-9 21-9t21 9l210 210 210-210q9-9 21-9t21 9q9 9 9 21t-9 21L522-480l210 210q9 9 9 21t-9 21q-9 9-21 9t-21-9L480-438Z"/></symbol>
+    <symbol id="i-locate" viewBox="0 -960 960 960"><path d="M450-72v-45q-137-14-228-105T117-450H72q-12.75 0-21.37-8.68-8.63-8.67-8.63-21.5 0-12.82 8.63-21.32Q59.25-510 72-510h45q14-137 105-228t228-105v-45q0-12.75 8.68-21.38 8.67-8.62 21.5-8.62 12.82 0 21.32 8.62 8.5 8.63 8.5 21.38v45q137 14 228 105t105 228h45q12.75 0 21.38 8.68 8.62 8.67 8.62 21.5 0 12.82-8.62 21.32-8.63 8.5-21.38 8.5h-45q-14 137-105 228T510-117v45q0 12.75-8.68 21.37-8.67 8.63-21.5 8.63-12.82 0-21.32-8.63Q450-59.25 450-72Zm30-104q125 0 214.5-89.5T784-480q0-125-89.5-214.5T480-784q-125 0-214.5 89.5T176-480q0 125 89.5 214.5T480-176Zm0-154q-63 0-106.5-43.5T330-480q0-63 43.5-106.5T480-630q63 0 106.5 43.5T630-480q0 63-43.5 106.5T480-330Z"/></symbol>
+    <symbol id="i-paste" viewBox="0 -960 960 960"><path d="M180-120q-26 0-43-17t-17-43v-600q0-26 17-43t43-17h202q7-35 34.5-57.5T480-920q36 0 63.5 22.5T578-840h202q26 0 43 17t17 43v600q0 26-17 43t-43 17H180Zm0-60h600v-600h-60v60q0 12.75-8.62 21.37Q702.75-690 690-690H270q-12.75 0-21.37-8.63Q240-707.25 240-720v-60h-60v600Zm300-600q17 0 28.5-11.5T520-820q0-17-11.5-28.5T480-860q-17 0-28.5 11.5T440-820q0 17 11.5 28.5T480-780Z"/></symbol>
+    <symbol id="i-pin" viewBox="0 -960 960 960"><path d="M479.75-100q-10.75 0-21.25-3.5T440-115q-42-38-91-87.5T258-309q-42-57-70-119t-28-124q0-150 96.5-239T480-880q127 0 223.5 89T800-552q0 62-28 124t-70 119q-42 57-91 106.5T520-115q-8 8-18.75 11.5t-21.5 3.5Zm.34-390q28.91 0 49.41-20.59 20.5-20.59 20.5-49.5t-20.59-49.41q-20.59-20.5-49.5-20.5t-49.41 20.59q-20.5 20.59-20.5 49.5t20.59 49.41q20.59 20.5 49.5 20.5Z"/></symbol>
+    <symbol id="i-check" viewBox="0 -960 960 960"><path d="m421-389-98-98q-9-9-22-9t-23 10q-9 9-9 22t9 22l122 123q9 9 21 9t21-9l239-239q10-10 10-23t-10-23q-10-9-23.5-8.5T635-603L421-389Zm59 309q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 31.5-156t86-127Q252-817 325-848.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 82-31.5 155T763-197.5q-54 54.5-127 86T480-80Z"/></symbol>
+    <symbol id="i-near" viewBox="0 -960 960 960"><path d="M413-413 137-520q-10-4-14.5-12t-4.5-17q0-9 4.5-16t14.5-11l641-241q9-4 17.5-1.5T810-810q6 6 8.5 14.5T817-778L576-137q-4 10-11 14.5t-16 4.5q-9 0-17-4.5T520-137L413-413Z"/></symbol>
+    <symbol id="i-couch" viewBox="0 -960 960 960"><path d="M144-160q-44 0-74-31.5T40-268v-240q0-31 20.5-53.5T111-584q30 0 50.5 22.5T182-508v179h596v-179q0-31 20.5-53.5T849-584q30 0 50.5 22.5T920-508v240q0 45-29.5 76.5T817-160H144Zm98-229v-119q0-43-25-78t-65-53v-52q0-45 30-77t74-32h449q44 0 73.5 32t29.5 77v52q-41 16-65.5 51.5T718-508v119H242Z"/></symbol>
+    <symbol id="i-phone" viewBox="0 -960 960 960"><path d="M260-40q-25 0-42.5-17.5T200-100v-760q0-24 18-42t42-18h438q25 0 42.5 17.5T758-860v150q18 3 30 17t12 32v74q0 19-12 33t-30 17v437q0 25-17.5 42.5T698-40H260Zm219-680q12 0 21-9t9-21q0-12-9-21t-21-9q-12 0-21 9t-9 21q0 12 9 21t21 9Z"/></symbol>
+    <symbol id="i-mic" viewBox="0 -960 960 960"><path d="M480-423q-43 0-72-30.92-29-30.91-29-75.08v-251q0-41.67 29.44-70.83Q437.88-880 479.94-880t71.56 29.17Q581-821.67 581-780v251q0 44.17-29 75.08Q523-423 480-423Zm-30 273v-106q-96-11-166.5-77.5T202-498q-2-12.85 6.59-21.93 8.6-9.07 21.5-9.07 12.91 0 21.41 9t10.5 22q12 81 74.71 132.5Q399.42-314 479.65-314q81.35 0 143.85-51.5T698-498q2-13 10.68-22 8.67-9 21.5-9 12.82 0 21.32 9.07 8.5 9.08 6.5 21.93-11 97-81 164t-167 78v106q0 12.75-8.68 21.37-8.67 8.63-21.5 8.63-12.82 0-21.32-8.63-8.5-8.62-8.5-21.37Z"/></symbol>
+    <symbol id="i-journal" viewBox="0 -960 960 960"><path d="M480-171q-7 0-13-1.5t-11-5.5q-44-29-93.5-45.5T260-240q-42 0-82.5 11T100-198q-21 11-40.5-1T40-234v-482q0-11 5.5-21T62-752q46-24 96-36t102-12q58 0 113.5 15T480-740v506q51-33 107-49.5T700-300q36 0 78.5 7t81.5 29v-505q10 4 19.5 8t18.5 9q10 6 16 15.5t6 20.5v482q0 23-19.5 35t-40.5 1q-37-20-77.5-31T700-240q-53 0-102.5 16.5T504-178q-5 4-11 5.5t-13 1.5Zm85-178q-8 6-16.5 2.5T540-360v-314q0-3 1-5.5t3-4.5l230-230q7-7 16.5-3.5T800-904v344q0 3-1.5 6t-3.5 5L565-349Z"/></symbol>
+    <symbol id="i-waves" viewBox="0 -960 960 960"><path d="M285-270v-420q0-12.75 8.68-21.38 8.67-8.62 21.5-8.62 12.82 0 21.32 8.62 8.5 8.63 8.5 21.38v420q0 12.75-8.68 21.37-8.67 8.63-21.5 8.63-12.82 0-21.32-8.63-8.5-8.62-8.5-21.37Zm165 160v-740q0-12.75 8.68-21.38 8.67-8.62 21.5-8.62 12.82 0 21.32 8.62 8.5 8.63 8.5 21.38v740q0 12.75-8.68 21.37-8.67 8.63-21.5 8.63-12.82 0-21.32-8.63Q450-97.25 450-110ZM120-430v-100q0-12.75 8.68-21.38 8.67-8.62 21.5-8.62 12.82 0 21.32 8.62 8.5 8.63 8.5 21.38v100q0 12.75-8.68 21.37-8.67 8.63-21.5 8.63-12.82 0-21.32-8.63-8.5-8.62-8.5-21.37Zm495 160v-420q0-12.75 8.68-21.38 8.67-8.62 21.5-8.62 12.82 0 21.32 8.62 8.5 8.63 8.5 21.38v420q0 12.75-8.68 21.37-8.67 8.63-21.5 8.63-12.82 0-21.32-8.63-8.5-8.62-8.5-21.37Zm165-160v-100q0-12.75 8.68-21.38 8.67-8.62 21.5-8.62 12.82 0 21.32 8.62 8.5 8.63 8.5 21.38v100q0 12.75-8.68 21.37-8.67 8.63-21.5 8.63-12.82 0-21.32-8.63-8.5-8.62-8.5-21.37Z"/></symbol>
+    <symbol id="i-headphones" viewBox="0 -960 960 960"><path d="M268-120h-88q-24 0-42-18t-18-42v-300q0-75 28.5-140.5t77-114q48.5-48.5 114-77T480-840q75 0 140.5 28.5t114 77q48.5 48.5 77 114T840-480v300q0 24-18 42t-42 18h-88q-24.75 0-42.37-17.63Q632-155.25 632-180v-176q0-24.75 17.63-42.38Q667.25-416 692-416h88v-64q0-125.36-87.32-212.68Q605.36-780 480-780q-125.36 0-212.68 87.32Q180-605.36 180-480v64h88q24.75 0 42.38 17.62Q328-380.75 328-356v176q0 24.75-17.62 42.37Q292.75-120 268-120Z"/></symbol>
+    </svg>
+
+    <header class="appbar">
+      <div class="brand">
+        <img src="icons/icon.svg" alt="" width="36" height="36" />
+        <span class="wordmark">Roamie</span>
+      </div>
+      <button type="button" id="btn-end" class="appbar-action" hidden>
+        <svg class="icon"><use href="#i-close" /></svg>End tour
+      </button>
     </header>
 
     <main>
       <!-- 1. Plan the trip -->
-      <section id="setup" class="panel">
-        <p class="tagline">
-          Tell me where you're staying and where you're going. I'll talk you through the city as you move.
-        </p>
+      <section id="setup">
+        <div class="hero">
+          <h1>Hi, I'm Roamie.</h1>
+          <p>Tell me where you're headed and I'll tell you the stories along the way, whether you walk, run, cycle or drive.</p>
+        </div>
 
         <form id="setup-form" novalidate>
-          <label class="field">
-            <span class="field-label">City you're staying in</span>
-            <input id="city" name="city" type="text" placeholder="e.g. Paris" autocomplete="off" />
-          </label>
+          <section class="card">
+            <h2 class="card-title"><span class="step">1</span>Where are you staying?</h2>
+            <label class="input-with-icon">
+              <svg class="icon"><use href="#i-pin" /></svg>
+              <span class="sr-only">City you're staying in</span>
+              <input id="city" name="city" type="text" placeholder="City, e.g. Paris" autocomplete="off" />
+            </label>
+          </section>
 
-          <div class="field">
-            <div class="field-head">
-              <label for="stops" class="field-label">Your itinerary <span class="hint">(optional)</span></label>
-              <button type="button" id="paste-route" class="chip">📋 Paste from a maps app</button>
+          <section class="card">
+            <div class="card-head">
+              <h2 class="card-title"><span class="step">2</span>Where are you going?</h2>
+              <span class="optional">optional</span>
             </div>
-            <textarea
-              id="stops"
-              name="stops"
-              rows="5"
-              placeholder="Paste a route from Google Maps, Apple Maps or Waze, or type one stop per line:&#10;Eiffel Tower&#10;Grand Palais&#10;Louvre Museum"
-            ></textarea>
+            <button type="button" id="paste-route" class="btn-soft">
+              <svg class="icon"><use href="#i-paste" /></svg>Paste a route from a maps app
+            </button>
+            <label for="stops" class="or">or type your stops, one per line</label>
+            <textarea id="stops" name="stops" rows="4" placeholder="Eiffel Tower&#10;Grand Palais&#10;Louvre Museum"></textarea>
             <p id="import-note" class="import-note" role="status" hidden></p>
             <details class="howto">
-              <summary>How do I copy my route from a maps app?</summary>
+              <summary>How do I copy my route?</summary>
               <ul>
                 <li><strong>Google Maps:</strong> plan your route (add stops if you like), tap <em>Share</em>, then <em>Copy</em>.</li>
                 <li><strong>Apple Maps:</strong> plan your route, tap the share button, then <em>Copy</em>.</li>
@@ -57,59 +94,60 @@
                 <li><strong>On a computer:</strong> copy the address from the browser's address bar.</li>
               </ul>
               <p class="hint">
-                Links from OpenStreetMap, Bing and HERE WeGo work too, and so do coordinates and plain lists (numbered,
-                bulleted, or "Eiffel Tower → Louvre"). Your travel mode is picked up from the link when it has one.
+                OpenStreetMap, Bing and HERE links work too, and so do coordinates and plain lists ("Eiffel Tower → Louvre").
+                The travel mode is picked up from the link when it has one.
               </p>
             </details>
-          </div>
+          </section>
 
-          <fieldset class="field">
-            <legend class="field-label">How are you getting around?</legend>
-            <div class="segmented" id="mode-picker">
-              <label><input type="radio" name="mode" value="walk" checked /><span>🚶<br />Walk</span></label>
-              <label><input type="radio" name="mode" value="run" /><span>🏃<br />Run</span></label>
-              <label><input type="radio" name="mode" value="cycle" /><span>🚴<br />Cycle</span></label>
-              <label><input type="radio" name="mode" value="drive" /><span>🚗<br />Drive</span></label>
+          <section class="card">
+            <h2 class="card-title"><span class="step">3</span>How are you getting around?</h2>
+            <div class="tiles tiles-4" id="mode-picker">
+              <label class="tile"><input type="radio" name="mode" value="walk" checked /><svg class="icon"><use href="#i-walk" /></svg><span>Walk</span></label>
+              <label class="tile"><input type="radio" name="mode" value="run" /><svg class="icon"><use href="#i-run" /></svg><span>Run</span></label>
+              <label class="tile"><input type="radio" name="mode" value="cycle" /><svg class="icon"><use href="#i-bike" /></svg><span>Cycle</span></label>
+              <label class="tile"><input type="radio" name="mode" value="drive" /><svg class="icon"><use href="#i-car" /></svg><span>Drive</span></label>
             </div>
-          </fieldset>
+            <p id="drive-note" class="note" hidden>
+              Set everything up before you leave. Once the tour starts it's hands-free: you never need to touch the screen while driving.
+            </p>
+          </section>
 
-          <p id="drive-note" class="note" hidden>
-            🚗 Set everything up before you leave. Once the tour starts it runs hands-free, so you never need to touch
-            the screen while driving.
-          </p>
-
-          <div class="row">
-            <label class="field">
-              <span class="field-label">Language</span>
-              <select id="lang" name="lang"></select>
-            </label>
-            <label class="field">
-              <span class="field-label">Pace</span>
-              <select id="rate" name="rate">
-                <option value="0.9">Relaxed</option>
-                <option value="1" selected>Normal</option>
-                <option value="1.15">Brisk</option>
-              </select>
-            </label>
-          </div>
-
-          <div class="field">
-            <label for="voice" class="field-label">Voice</label>
-            <div class="voice-row">
-              <select id="voice" name="voice"></select>
-              <button type="button" id="voice-preview" class="chip">▶ Listen</button>
+          <section class="card">
+            <div class="card-head">
+              <h2 class="card-title"><span class="step">4</span>Choose your guide</h2>
+              <label class="lang-pick">
+                <span class="sr-only">Language</span>
+                <select id="lang" name="lang"></select>
+              </label>
             </div>
-            <p id="voice-status" class="hint" aria-live="polite"></p>
-          </div>
+            <div id="guides" class="guides" role="radiogroup" aria-label="Voice"></div>
+            <div class="pace">
+              <span class="pace-label" id="pace-label">Pace</span>
+              <div class="segmented" role="radiogroup" aria-labelledby="pace-label">
+                <label><input type="radio" name="rate" value="0.9" /><span>Relaxed</span></label>
+                <label><input type="radio" name="rate" value="1" checked /><span>Normal</span></label>
+                <label><input type="radio" name="rate" value="1.15" /><span>Brisk</span></label>
+              </div>
+            </div>
+          </section>
 
-          <fieldset class="field">
-            <legend class="field-label">Location</legend>
-            <label class="radio"><input type="radio" name="source" value="gps" checked /> Use my phone's GPS</label>
-            <label class="radio"
-              ><input type="radio" name="source" value="sim" /> Simulate the trip (try it from your couch)</label
-            >
-            <label class="field indent" id="sim-speed-row" hidden>
-              <span class="field-label">Simulation speed</span>
+          <section class="card">
+            <h2 class="card-title"><span class="step">5</span>Ready when you are</h2>
+            <div class="tiles tiles-2">
+              <label class="tile tile-wide">
+                <input type="radio" name="source" value="gps" checked />
+                <svg class="icon"><use href="#i-near" /></svg>
+                <span><strong>Go for real</strong><small>Uses your location</small></span>
+              </label>
+              <label class="tile tile-wide">
+                <input type="radio" name="source" value="sim" />
+                <svg class="icon"><use href="#i-couch" /></svg>
+                <span><strong>Try from the couch</strong><small>Simulates the trip</small></span>
+              </label>
+            </div>
+            <label class="inline-field" id="sim-speed-row" hidden>
+              <span>Simulation speed</span>
               <select id="sim-speed" name="simSpeed">
                 <option value="1">Real time</option>
                 <option value="4">4× faster</option>
@@ -117,47 +155,61 @@
                 <option value="16">16× faster</option>
               </select>
             </label>
-          </fieldset>
+          </section>
 
           <p id="setup-error" class="error" role="alert"></p>
 
-          <button type="submit" class="primary">Start tour</button>
-          <button type="button" id="demo" class="link">Fill in a sample Paris walk</button>
+          <div class="cta-bar">
+            <button type="submit" class="btn-primary">
+              <svg class="icon"><use href="#i-headphones" /></svg>Start the tour
+            </button>
+            <button type="button" id="demo" class="link">or try a sample Paris walk</button>
+          </div>
         </form>
       </section>
 
       <!-- 2. On tour -->
-      <section id="tour" class="panel" hidden>
+      <section id="tour" hidden>
         <div class="map-wrap">
           <div id="map" role="img" aria-label="Map of your tour"></div>
-          <button type="button" id="recenter" class="map-btn" hidden>◎ Follow me</button>
+          <p id="next-stop" class="map-chip" hidden></p>
+          <button type="button" id="recenter" class="map-btn" hidden>
+            <svg class="icon"><use href="#i-locate" /></svg>Follow me
+          </button>
         </div>
 
-        <p id="status" class="status" aria-live="polite">Preparing your tour…</p>
-        <p id="voice-line" class="status" hidden></p>
-        <p id="next-stop" class="next-stop" hidden></p>
+        <div class="sheet">
+          <article id="now" class="now" hidden>
+            <div class="now-head">
+              <span class="avatar" id="now-avatar" aria-hidden="true">R</span>
+              <p class="now-label" id="now-label">Your guide</p>
+              <svg class="icon waves" aria-hidden="true"><use href="#i-waves" /></svg>
+            </div>
+            <div class="now-main">
+              <div class="now-body">
+                <h2 id="now-title"></h2>
+                <p id="now-text" class="clamp"></p>
+                <button type="button" id="now-more" class="link small" hidden>Show more</button>
+              </div>
+              <img id="now-img" alt="" hidden />
+            </div>
+          </article>
 
-        <article id="now" class="now" hidden>
-          <img id="now-img" alt="" hidden />
-          <div class="now-body">
-            <p class="now-label" id="now-label">Now telling you about</p>
-            <h2 id="now-title"></h2>
-            <p id="now-text"></p>
+          <div class="player">
+            <button type="button" id="btn-repeat" class="icon-btn"><svg class="icon"><use href="#i-replay" /></svg><span>Repeat</span></button>
+            <button type="button" id="btn-pause" class="play-btn" aria-label="Pause"><svg class="icon"><use href="#i-pause" /></svg></button>
+            <button type="button" id="btn-skip" class="icon-btn"><svg class="icon"><use href="#i-skip" /></svg><span>Skip</span></button>
           </div>
-        </article>
 
-        <div class="controls">
-          <button type="button" id="btn-pause" class="ctrl">⏸<span>Pause</span></button>
-          <button type="button" id="btn-skip" class="ctrl">⏭<span>Skip</span></button>
-          <button type="button" id="btn-repeat" class="ctrl">↺<span>Repeat</span></button>
-          <button type="button" id="btn-end" class="ctrl danger">■<span>End</span></button>
+          <p id="status" class="status" aria-live="polite">Preparing your tour…</p>
+          <p id="voice-line" class="status" hidden></p>
         </div>
 
-        <details class="journal" open>
-          <summary>Trip journal (<span id="journal-count">0</span>)</summary>
+        <section class="journal">
+          <h2><svg class="icon"><use href="#i-journal" /></svg>Your trip so far <span id="journal-count" class="badge">0</span></h2>
           <p class="hint">Everything you heard about, to read more later.</p>
           <ol id="journal"></ol>
-        </details>
+        </section>
       </section>
     </main>
 
