@@ -1,16 +1,28 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <title>Roamie</title>
-  <rect width="512" height="512" rx="120" fill="#E8603A"/>
-  <g fill="none" stroke="#FFD166" stroke-width="22" stroke-linecap="round">
-    <path d="M398 182c18 26 18 62 0 88"/>
-    <path d="M432 150c34 46 34 106 0 152"/>
-    <path d="M114 182c-18 26-18 62 0 88"/>
-    <path d="M80 150c-34 46-34 106 0 152"/>
+  <defs>
+    <radialGradient id="bg" cx="30%" cy="22%" r="95%">
+      <stop offset="0" stop-color="#1B2640"/>
+      <stop offset="1" stop-color="#070B14"/>
+    </radialGradient>
+    <linearGradient id="ring" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F3E3B5"/>
+      <stop offset="0.5" stop-color="#C9A55C"/>
+      <stop offset="1" stop-color="#8E6C33"/>
+    </linearGradient>
+    <linearGradient id="g1l" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FBEFC9"/><stop offset="1" stop-color="#D9B86E"/></linearGradient>
+    <linearGradient id="g1d" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#C29A4F"/><stop offset="1" stop-color="#7E5E2A"/></linearGradient>
+    <linearGradient id="g2l" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E9D29A"/><stop offset="1" stop-color="#B8924A"/></linearGradient>
+    <linearGradient id="g2d" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9C7A3C"/><stop offset="1" stop-color="#5E4520"/></linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <circle cx="256" cy="256" r="212" fill="none" stroke="url(#ring)" stroke-width="5"/>
+  <circle cx="256" cy="256" r="202" fill="none" stroke="url(#ring)" stroke-width="1.5" opacity="0.7"/>
+  <g stroke="url(#ring)" stroke-width="2.5" stroke-linecap="round" opacity="0.85">
+    <line x1="446.0" y1="256.0" x2="456.0" y2="256.0"/><line x1="446.3" y1="293.8" x2="451.2" y2="294.8"/><line x1="435.2" y1="330.2" x2="439.9" y2="332.2"/><line x1="417.3" y1="363.8" x2="421.5" y2="366.6"/><line x1="390.4" y1="390.4" x2="397.4" y2="397.4"/><line x1="363.8" y1="417.3" x2="366.6" y2="421.5"/><line x1="330.2" y1="435.2" x2="332.2" y2="439.9"/><line x1="293.8" y1="446.3" x2="294.8" y2="451.2"/><line x1="256.0" y1="446.0" x2="256.0" y2="456.0"/><line x1="218.2" y1="446.3" x2="217.2" y2="451.2"/><line x1="181.8" y1="435.2" x2="179.8" y2="439.9"/><line x1="148.2" y1="417.3" x2="145.4" y2="421.5"/><line x1="121.6" y1="390.4" x2="114.6" y2="397.4"/><line x1="94.7" y1="363.8" x2="90.5" y2="366.6"/><line x1="76.8" y1="330.2" x2="72.1" y2="332.2"/><line x1="65.7" y1="293.8" x2="60.8" y2="294.8"/><line x1="66.0" y1="256.0" x2="56.0" y2="256.0"/><line x1="65.7" y1="218.2" x2="60.8" y2="217.2"/><line x1="76.8" y1="181.8" x2="72.1" y2="179.8"/><line x1="94.7" y1="148.2" x2="90.5" y2="145.4"/><line x1="121.6" y1="121.6" x2="114.6" y2="114.6"/><line x1="148.2" y1="94.7" x2="145.4" y2="90.5"/><line x1="181.8" y1="76.8" x2="179.8" y2="72.1"/><line x1="218.2" y1="65.7" x2="217.2" y2="60.8"/><line x1="256.0" y1="66.0" x2="256.0" y2="56.0"/><line x1="293.8" y1="65.7" x2="294.8" y2="60.8"/><line x1="330.2" y1="76.8" x2="332.2" y2="72.1"/><line x1="363.8" y1="94.7" x2="366.6" y2="90.5"/><line x1="390.4" y1="121.6" x2="397.4" y2="114.6"/><line x1="417.3" y1="148.2" x2="421.5" y2="145.4"/><line x1="435.2" y1="181.8" x2="439.9" y2="179.8"/><line x1="446.3" y1="218.2" x2="451.2" y2="217.2"/>
   </g>
-  <path d="M256 96c-64 0-116 52-116 116 0 88 116 204 116 204s116-116 116-204c0-64-52-116-116-116z" fill="#FFF7F0"/>
-  <circle cx="220" cy="200" r="16" fill="#1E2433"/>
-  <circle cx="292" cy="200" r="16" fill="#1E2433"/>
-  <circle cx="198" cy="238" r="13" fill="#F9A88C"/>
-  <circle cx="314" cy="238" r="13" fill="#F9A88C"/>
-  <path d="M222 244q34 28 68 0" fill="none" stroke="#1E2433" stroke-width="14" stroke-linecap="round"/>
+  <g>
+    <path d="M321.1,190.9 L256,256 L256.0,234.0 Z" fill="url(#g2l)"/><path d="M321.1,190.9 L256,256 L278.0,256.0 Z" fill="url(#g2d)"/><path d="M321.1,321.1 L256,256 L278.0,256.0 Z" fill="url(#g2l)"/><path d="M321.1,321.1 L256,256 L256.0,278.0 Z" fill="url(#g2d)"/><path d="M190.9,321.1 L256,256 L256.0,278.0 Z" fill="url(#g2l)"/><path d="M190.9,321.1 L256,256 L234.0,256.0 Z" fill="url(#g2d)"/><path d="M190.9,190.9 L256,256 L234.0,256.0 Z" fill="url(#g2l)"/><path d="M190.9,190.9 L256,256 L256.0,234.0 Z" fill="url(#g2d)"/><path d="M256.0,88.0 L256,256 L234.8,234.8 Z" fill="url(#g1l)"/><path d="M256.0,88.0 L256,256 L277.2,234.8 Z" fill="url(#g1d)"/><path d="M424.0,256.0 L256,256 L277.2,234.8 Z" fill="url(#g1l)"/><path d="M424.0,256.0 L256,256 L277.2,277.2 Z" fill="url(#g1d)"/><path d="M256.0,424.0 L256,256 L277.2,277.2 Z" fill="url(#g1l)"/><path d="M256.0,424.0 L256,256 L234.8,277.2 Z" fill="url(#g1d)"/><path d="M88.0,256.0 L256,256 L234.8,277.2 Z" fill="url(#g1l)"/><path d="M88.0,256.0 L256,256 L234.8,234.8 Z" fill="url(#g1d)"/>
+  </g>
+  <circle cx="256" cy="256" r="9" fill="#070B14" stroke="url(#ring)" stroke-width="3"/>
 </svg>

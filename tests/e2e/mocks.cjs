@@ -86,10 +86,15 @@ async function mockNetwork(context) {
     const [, , lat, lon] = (q.match(/around:(\d+),(-?[\d.]+),(-?[\d.]+)/) ?? []).map(Number);
     const at = (dLat, dLon) => ({ lat: lat + dLat, lon: lon + dLon });
     json(route, {
+      // Hours are 24/7 or unknown so the test doesn't depend on the time it runs.
       elements: [
-        { type: 'node', ...at(0.0006, 0.0002), tags: { name: 'Salon de Thé Historique', amenity: 'cafe', wikidata: 'Q1', opening_hours: 'Mo-Su 09:00-19:00' } },
-        { type: 'node', ...at(-0.0004, 0.0005), tags: { name: 'Bistrot du Coin', amenity: 'restaurant', cuisine: 'french', opening_hours: 'Mo-Su 12:00-23:00' } },
-        { type: 'node', ...at(0.0003, -0.0006), tags: { name: 'Le Bar à Vins', amenity: 'bar', website: 'https://example.org' } },
+        { type: 'node', ...at(0.0006, 0.0002), tags: { name: 'Salon de Thé Historique', amenity: 'cafe', wikidata: 'Q1', opening_hours: '24/7' } },
+        { type: 'node', ...at(-0.0007, -0.0002), tags: { name: 'Café des Artistes', amenity: 'cafe', outdoor_seating: 'yes' } },
+        { type: 'node', ...at(-0.0004, 0.0005), tags: { name: 'Bistrot du Coin', amenity: 'restaurant', cuisine: 'french', opening_hours: '24/7' } },
+        { type: 'node', ...at(0.0005, 0.0006), tags: { name: 'La Petite Table', amenity: 'restaurant', cuisine: 'french' } },
+        { type: 'node', ...at(0.0002, -0.0003), tags: { name: 'Burger Chain', amenity: 'restaurant', brand: 'Burger Chain', opening_hours: '24/7' } },
+        { type: 'node', ...at(0.0003, -0.0006), tags: { name: 'Le Bar à Vins', amenity: 'bar', website: 'https://example.org', opening_hours: '24/7' } },
+        { type: 'node', ...at(-0.0003, -0.0006), tags: { name: 'The Old Pub', amenity: 'pub' } },
       ],
     });
   });

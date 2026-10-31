@@ -164,3 +164,21 @@ test('areas are recognised by what they are, not by words further on', () => {
   assert.ok(Number.isFinite(interestScore({ title: 'Pont Neuf', description: 'bridge over the Seine river in Paris', length: 40000 })));
   assert.ok(Number.isFinite(interestScore({ title: 'Place des Vosges', description: 'public square in Paris', length: 40000 })));
 });
+
+test('food picks skip places closed during the break, prefer independents, and offer alternatives', async () => {
+  const { pickFoodPlaces } = await import('../js/suggest.js');
+  const here = at(0, 0);
+  const monday1pm = new Date(2026, 10, 2, 13, 0);
+  const places = [
+    { name: 'Closed Bistro', amenity: 'restaurant', ...at(30, 0), tags: { opening_hours: 'Mo off; Tu-Su 12:00-22:00' } },
+    { name: 'Burger Chain', amenity: 'restaurant', ...at(20, 0), tags: { brand: 'Burger Chain', opening_hours: '24/7' } },
+    { name: 'Chez Marie', amenity: 'restaurant', ...at(120, 0), tags: { opening_hours: 'Mo-Su 12:00-15:00', cuisine: 'french' } },
+    { name: 'La Table', amenity: 'restaurant', ...at(200, 0), tags: {} },
+  ];
+  const picks = pickFoodPlaces(places, 'lunch', here, { when: monday1pm, minutes: 60 });
+  assert.deepEqual(picks.map((p) => p.name), ['Chez Marie', 'La Table', 'Burger Chain']);
+  assert.equal(picks[0].open, true);
+  assert.equal(picks[0].closes, 15 * 60);
+  assert.equal(picks[1].open, null, 'hours unknown, but kept as an alternative');
+  assert.ok(!picks.some((p) => p.name === 'Closed Bistro'));
+});

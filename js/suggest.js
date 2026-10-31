@@ -4,6 +4,7 @@
 
 import { distanceMeters } from './geo.js';
 import { sharesNameToken } from './text.js';
+import { openDuring } from './openingHours.js';
 
 // Kinds of places that carry history, in the five supported languages (word starts).
 const HISTORIC_WORDS = [
@@ -148,30 +149,43 @@ export function breakSchedule(start, minutes) {
 }
 
 /**
- * Pick a place for a break: the right kind of place, close by, preferring notable ones
- * (a historic café with its own Wikipedia article beats an anonymous chain).
+ * Rank places for a break, best first (up to `count`): the right kind of place, open for the
+ * whole break when we can tell (closed ones are dropped), independent and notable rather
+ * than chains, and close by. Each result carries `open` (true/null) and `closes`.
  */
-export function pickFoodPlace(places, meal, at, { radius = 400, avoid = [] } = {}) {
+export function pickFoodPlaces(places, meal, at, { radius = 400, avoid = [], when = null, minutes = null, count = 3 } = {}) {
   const kinds = BREAKS[meal]?.kinds ?? [['cafe']];
-  let best = null;
+  const stay = minutes ?? BREAKS[meal]?.minutes ?? 30;
+  const ranked = [];
+  const seen = new Set();
   for (const p of places) {
-    if (!p.name || avoid.includes(p.name)) continue;
+    if (!p.name || avoid.includes(p.name) || seen.has(p.name)) continue;
     const rank = kinds.findIndex((group) => group.includes(p.amenity));
     if (rank < 0) continue;
     const d = distanceMeters(at, p);
     if (d > radius) continue;
     const t = p.tags ?? {};
+    const hours = when ? openDuring(t.opening_hours, when, stay) : { open: null, closes: null };
+    if (hours.open === false) continue; // closed when you'd get there
     let score = 0;
     if (t.wikipedia || t.wikidata) score += 2; // notable: has its own story
-    if (t.website) score += 0.6;
-    if (t.opening_hours) score += 0.5;
+    if (t.brand || t['brand:wikidata']) score -= 2.5; // a chain: something local first, chains only as a last resort
+    if (hours.open === true) score += 0.8; // known to be open
+    else if (when) score -= 0.6; // hours unknown
+    if (t.website) score += 0.4;
     if (t.cuisine) score += 0.3;
     if (t.outdoor_seating === 'yes') score += 0.2;
     score -= rank * 3; // the fitting kind first: a restaurant for lunch, unless there's none
     score -= d / radius; // closer is better
-    if (!best || score > best.score) best = { place: p, score, distance: d };
+    seen.add(p.name);
+    ranked.push({ ...p, open: hours.open, closes: hours.closes, score, distance: Math.round(d) });
   }
-  return best?.place ?? null;
+  return ranked.sort((a, b) => b.score - a.score).slice(0, count);
+}
+
+/** The single best place for a break, or null. */
+export function pickFoodPlace(places, meal, at, options = {}) {
+  return pickFoodPlaces(places, meal, at, { ...options, count: 1 })[0] ?? null;
 }
 
 // ---------- Building the route ----------
@@ -318,6 +332,7 @@ export function addBreaks(stops, placed) {
       kind: 'food',
       meal: b.meal,
       breakMinutes: b.minutes,
+      options: b.options ?? [b.place], // alternatives the traveller can switch to
     });
   }
   return out;

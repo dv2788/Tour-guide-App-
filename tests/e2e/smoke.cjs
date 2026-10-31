@@ -166,6 +166,21 @@ const LIVE = process.env.LIVE === '1';
   expect(planned.items.length === planned.stops.length, 'the plan and the itinerary box match');
   expect(planned.items.some((t) => /Museum visit/.test(t)), 'a museum visit is on the route');
   expect(planned.items.some((t) => /Coffee break|Lunch|Dinner|A drink/.test(t)), 'a food or drink break is on the route');
+  // Food breaks: alternatives you can switch between, and a link to reviews.
+  const foodItem = page3.locator('#plan-list li', { has: page3.locator('button.text-btn') }).first();
+  expect((await foodItem.count()) === 1, 'a break offers another place');
+  if (await foodItem.count()) {
+    const before = (await foodItem.locator('strong').textContent()).trim();
+    await foodItem.locator('button.text-btn').click();
+    const after = (await page3.locator('#plan-list li', { has: page3.locator('button.text-btn') }).first().locator('strong').textContent()).trim();
+    const lines = await page3.$eval('#stops', (el) => el.value.split('\n'));
+    console.log(`Scenario 3, "Another place": ${before} → ${after}`);
+    expect(before !== after && lines.includes(after) && !lines.includes(before), 'swapping a break updates the plan and the itinerary');
+    expect(!/\(2\)$/.test(after), 'never swaps to a place already in the plan');
+    expect(!/Burger Chain/.test(after) || before === 'La Petite Table', 'chains come last');
+  }
+  expect((await page3.locator('#plan-list a.text-btn').count()) >= 1, 'breaks link to reviews');
+  planned.stops = await page3.$eval('#stops', (el) => el.value.split('\n'));
   await page3.click('label:has(input[value=sim])');
   await page3.selectOption('#sim-speed', '16');
   const said3 = await runTour(null, page3, planned.items.length > 1 ? 'You have arrived at' : 'Welcome');

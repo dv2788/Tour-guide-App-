@@ -11,13 +11,14 @@ import { distanceMeters } from './geo.js';
 import { parseItinerary, parseTextList, SOURCE_LABELS } from './itineraryImport.js';
 import { NEURAL_VOICES, neuralVoiceKey, parseVoiceKey, rankSystemVoices, PREVIEW_TEXT, PREVIEW_TEXT_DOCUMENTARY, voiceProfile } from './voices.js';
 import { isVoiceDownloaded, neuralVoicesSupported } from './neuralVoice.js';
+import { formatClock } from './openingHours.js';
 import {
   suggestRoute,
   searchRadiusFor,
   breakSchedule,
   placeBreaks,
   addBreaks,
-  pickFoodPlace,
+  pickFoodPlaces,
   findFoodNear,
   timeline,
 } from './suggest.js';
@@ -36,6 +37,10 @@ const SAMPLE = {
 // ---------- Setup form ----------
 
 const form = $('setup-form');
+
+// A concierge's greeting.
+const hour = new Date().getHours();
+$('greeting').textContent = hour < 5 ? 'Good evening.' : hour < 12 ? 'Good morning.' : hour < 18 ? 'Good afternoon.' : 'Good evening.';
 
 for (const { code, label } of LANGUAGES) {
   $('lang').append(new Option(label, code));
@@ -361,13 +366,21 @@ async function planRoute() {
     const placed = placeBreaks(origin, route.stops, schedule, modeId, loop);
     const geocoder = createGeocoder({ lang });
     const radius = modeId === 'drive' ? 1500 : modeId === 'cycle' ? 700 : 400;
+    const { times: baseTimes } = timeline(origin, route.stops, modeId, loop);
     const used = [];
-    for (const b of placed) {
+    let shift = 0; // earlier breaks push later ones back
+    for (const b of [...placed].sort((x, y) => x.afterIndex - y.afterIndex)) {
       showImportNote(`Finding a good spot for ${MEAL_LABEL[b.meal].toLowerCase()}…`);
       const near = route.stops[b.afterIndex];
+      const when = new Date(startedAt.getTime() + (baseTimes[b.afterIndex].leave + shift) * 60000);
       const places = await findFoodNear(near, b.meal, { radius, geocoder });
-      b.place = pickFoodPlace(places, b.meal, near, { radius, avoid: used });
-      if (b.place) used.push(b.place.name);
+      // Open when you'd get there, local rather than chains, with alternatives to choose from.
+      b.options = pickFoodPlaces(places, b.meal, near, { radius, avoid: used, when, minutes: b.minutes });
+      b.place = b.options[0] ?? null;
+      if (b.place) {
+        used.push(b.place.name);
+        shift += b.minutes;
+      }
     }
     const stops = addBreaks(route.stops, placed);
     const { times, minutes: total, meters } = timeline(origin, stops, modeId, loop);
@@ -391,7 +404,23 @@ async function planRoute() {
         wikipedia: stop.tags?.wikipedia ?? null,
         wikidata: stop.tags?.wikidata ?? null,
       });
-      return { name, kind: stop.kind, meal: stop.meal ?? null, visitMinutes: stop.visitMinutes ?? null, breakMinutes: stop.breakMinutes ?? null, description: stop.description ?? '', arrive: times[i].arrive };
+      const item = { name, kind: stop.kind, meal: stop.meal ?? null, visitMinutes: stop.visitMinutes ?? null, breakMinutes: stop.breakMinutes ?? null, description: stop.description ?? '', arrive: times[i].arrive, lat: stop.lat, lon: stop.lon };
+      if (stop.kind === 'food') {
+        item.open = stop.open ?? null;
+        item.closes = stop.closes ?? null;
+        item.optionIndex = 0;
+        item.options = (stop.options ?? [stop]).map((o) => ({
+          name: o.name,
+          lat: o.lat,
+          lon: o.lon,
+          amenity: o.amenity,
+          open: o.open ?? null,
+          closes: o.closes ?? null,
+          wikipedia: o.tags?.wikipedia ?? null,
+          wikidata: o.tags?.wikidata ?? null,
+        }));
+      }
+      return item;
     });
     $('stops').value = items.map((it) => it.name).join('\n');
     plan = { start: origin, loop, minutes: total, meters, startedAt: startedAt.toISOString(), items };
@@ -422,22 +451,70 @@ function renderPlan() {
   const start = new Date(plan.startedAt);
   $('plan-summary').textContent = `About ${formatMinutes(plan.minutes)} · ${(plan.meters / 1000).toFixed(1)} km${plan.loop ? ' round trip' : ''}`;
   $('plan-list').replaceChildren(
-    ...plan.items.map((it) => {
+    ...plan.items.map((it, index) => {
       const kindClass = it.kind === 'food' ? 'food' : it.kind === 'museum' ? 'museum' : '';
       const iconName = it.kind === 'food' ? MEAL_ICON[it.meal] ?? 'cafe' : it.kind === 'museum' ? 'museum' : 'historic';
+      const hours =
+        it.open === true ? (it.closes != null ? ` · open until ${formatClock(it.closes)}` : ' · open') : it.open === null ? ' · check opening hours' : '';
       const sub =
         it.kind === 'food'
-          ? `${MEAL_LABEL[it.meal] ?? 'Break'} · ${formatMinutes(it.breakMinutes)}`
+          ? `${MEAL_LABEL[it.meal] ?? 'Break'} · ${formatMinutes(it.breakMinutes)}${hours}`
           : it.visitMinutes
             ? `Museum visit · about ${formatMinutes(it.visitMinutes)} inside`
             : it.description || (it.kind === 'museum' ? 'Museum' : 'Historic place');
+      const text = el('span', { className: 'plan-text' }, [el('strong', {}, [it.name]), el('small', {}, [sub])]);
+      if (it.kind === 'food') text.append(foodActions(it, index));
       return el('li', {}, [
         el('span', { className: 'plan-time' }, [clock(new Date(start.getTime() + it.arrive * 60000))]),
         el('span', { className: `plan-icon ${kindClass}` }, [icon(iconName)]),
-        el('span', { className: 'plan-text' }, [el('strong', {}, [it.name]), el('small', {}, [sub])]),
+        text,
       ]);
     }),
   );
+}
+
+/** "Another place" (cycle through the alternatives) and "Reviews" (ratings, photos, hours in Google Maps). */
+function foodActions(it, index) {
+  const row = el('span', { className: 'plan-actions' });
+  if ((it.options?.length ?? 0) > 1) {
+    const swap = el('button', { type: 'button', className: 'text-btn' }, [`Another place (${it.optionIndex + 1}/${it.options.length})`]);
+    swap.addEventListener('click', () => swapFood(index));
+    row.append(swap);
+  }
+  const reviews = el('a', {
+    className: 'text-btn',
+    href: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${it.name} ${it.lat.toFixed(5)},${it.lon.toFixed(5)}`)}`,
+    target: '_blank',
+    rel: 'noopener',
+  }, ['Reviews ↗']);
+  row.append(reviews);
+  return row;
+}
+
+function swapFood(index) {
+  const it = plan?.items[index];
+  if (!it?.options?.length) return;
+  const oldName = it.name;
+  const old = imported.get(oldName) ?? {};
+  // Next alternative that isn't already elsewhere in the plan.
+  const taken = new Set(plan.items.filter((_, i) => i !== index).map((x) => x.name));
+  let tries = 0;
+  do {
+    it.optionIndex = (it.optionIndex + 1) % it.options.length;
+  } while (taken.has(it.options[it.optionIndex].name) && ++tries < it.options.length);
+  const next = it.options[it.optionIndex];
+  if (taken.has(next.name)) return;
+  it.name = next.name;
+  Object.assign(it, { lat: next.lat, lon: next.lon, open: next.open, closes: next.closes });
+  imported.delete(oldName);
+  imported.set(it.name, { ...old, query: next.name, lat: next.lat, lon: next.lon, wikipedia: next.wikipedia, wikidata: next.wikidata });
+  const lines = $('stops').value.split('\n');
+  const at = lines.findIndex((l) => l.trim() === oldName);
+  if (at >= 0) lines[at] = it.name;
+  $('stops').value = lines.join('\n');
+  renderPlan();
+  showPlanMap();
+  save(readForm());
 }
 
 // A small map of the plan: where you are, the stops, and the way round.
@@ -476,11 +553,16 @@ function showPlanMap() {
   });
   if (plan?.loop && origin && stops.length) points.push(origin);
   if (points.length > 1) {
-    L.polyline(points.map((p) => [p.lat, p.lon]), { color: '#1f6f5c', weight: 4, opacity: 0.7, dashArray: '6 8' }).addTo(planLayer);
-    planMap.fitBounds(points.map((p) => [p.lat, p.lon]), { padding: [24, 24] });
-  } else {
-    planMap.setView([points[0].lat, points[0].lon], 14);
+    L.polyline(points.map((p) => [p.lat, p.lon]), { color: '#c9a55c', weight: 3, opacity: 0.95, dashArray: '2 7', lineCap: 'round' }).addTo(planLayer);
   }
+  // Measure again once the layout has settled (the panel above may just have folded).
+  const frame = () => {
+    planMap.invalidateSize();
+    if (points.length > 1) planMap.fitBounds(points.map((p) => [p.lat, p.lon]), { padding: [24, 24] });
+    else planMap.setView([points[0].lat, points[0].lon], 14);
+  };
+  frame();
+  requestAnimationFrame(() => requestAnimationFrame(frame));
 }
 
 // ---------- Choosing a guide (voice) ----------
@@ -715,7 +797,7 @@ function drawRoute(points) {
   if (!map) return;
   window.L.polyline(
     points.map((p) => [p.lat, p.lon]),
-    { color: '#1f6f5c', weight: 5, opacity: 0.65 },
+    { color: '#c9a55c', weight: 4, opacity: 0.9 },
   ).addTo(layers.route);
 }
 
@@ -725,9 +807,9 @@ function drawPois(pois) {
     if (poi.category === 'skip' || poiMarkers.has(poi.id)) continue;
     const marker = window.L.circleMarker([poi.lat, poi.lon], {
       radius: poi.category === 'minor' ? 4 : 6,
-      color: '#b7791f',
+      color: '#9c7a3c',
       weight: 2,
-      fillColor: '#ffc857',
+      fillColor: '#e9d29a',
       fillOpacity: 0.8,
     }).addTo(layers.pois);
     marker.bindTooltip(label(poi.title));
@@ -736,15 +818,15 @@ function drawPois(pois) {
 }
 
 function markPoiHeard(id) {
-  poiMarkers.get(id)?.setStyle({ color: '#64748b', fillColor: '#94a3b8', fillOpacity: 0.6 });
+  poiMarkers.get(id)?.setStyle({ color: '#8a8578', fillColor: '#bdb6a6', fillOpacity: 0.5 });
 }
 
 function moveUser({ lat, lon, accuracy }) {
   if (!map) return;
   const L = window.L;
   if (!userMarker) {
-    accuracyCircle = L.circle([lat, lon], { radius: accuracy ?? 0, stroke: false, fillColor: '#2563eb', fillOpacity: 0.12 }).addTo(layers.user);
-    userMarker = L.circleMarker([lat, lon], { radius: 9, color: '#fff', weight: 3, fillColor: '#2563eb', fillOpacity: 1 }).addTo(layers.user);
+    accuracyCircle = L.circle([lat, lon], { radius: accuracy ?? 0, stroke: false, fillColor: '#c9a55c', fillOpacity: 0.12 }).addTo(layers.user);
+    userMarker = L.circleMarker([lat, lon], { radius: 8, color: '#c9a55c', weight: 4, fillColor: '#fffdf8', fillOpacity: 1 }).addTo(layers.user);
   } else {
     userMarker.setLatLng([lat, lon]);
     accuracyCircle.setLatLng([lat, lon]).setRadius(accuracy ?? 0);
@@ -772,8 +854,7 @@ function showNowPlaying(item, voiceName) {
   $('now').hidden = false;
   $('now').classList.remove('idle');
   $('now-avatar').textContent = who[0];
-  $('now-label').textContent =
-    meta.kind === 'stop' ? 'You have arrived' : meta.kind === 'poi' ? `${who} is telling you about` : `${who}, your guide`;
+  $('now-label').textContent = meta.kind === 'stop' ? 'You have arrived' : meta.kind === 'poi' ? `${who} · now narrating` : `${who} · your guide`;
   $('now-title').textContent = meta.title ?? '';
   const body = $('now-text');
   body.textContent = text;

@@ -1,13 +1,13 @@
 {
-  "name": "Roamie · your city, told as you go",
+  "name": "Roamie · The city, narrated",
   "short_name": "Roamie",
-  "description": "A friendly voice guide that tells you the stories of the city as you walk, run, cycle or drive.",
+  "description": "A private voice guide that curates your route and tells you the stories of the city as you walk, run, cycle or drive.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#FFF7F0",
-  "theme_color": "#FFF7F0",
+  "background_color": "#0B0F17",
+  "theme_color": "#0B0F17",
   "icons": [
     { "src": "icons/icon.svg", "sizes": "any", "type": "image/svg+xml" },
     { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
