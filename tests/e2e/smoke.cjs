@@ -38,6 +38,7 @@ const LIVE = process.env.LIVE === '1';
     window.setInterval = (fn, ms = 0, ...args) => setI(fn, ms / factor, ...args);
   }, 10);
   const page = await context.newPage();
+  const mainPage = page;
   const errors = [];
   page.on('pageerror', (e) => errors.push(e.message));
   page.on('console', (m) => m.type() === 'error' && !/tile|Failed to load resource/.test(m.text()) && errors.push(m.text()));
@@ -46,7 +47,7 @@ const LIVE = process.env.LIVE === '1';
   const expect = (ok, msg) => ok || failures.push(msg);
 
   // Records everything the guide says, then runs the tour until the Louvre.
-  async function runTour(shotPrefix) {
+  async function runTour(shotPrefix, page = mainPage, until = 'You have arrived at Louvre Museum') {
     await page.evaluate(() => {
       window.__said = [];
       new MutationObserver(() => {
@@ -60,7 +61,7 @@ const LIVE = process.env.LIVE === '1';
     await page.waitForFunction(() => document.querySelectorAll('#journal li').length >= 3, null, { timeout: 90000 });
     await page.waitForTimeout(1500);
     if (shotPrefix) await page.screenshot({ path: path.join(SHOTS, `${shotPrefix}-on-tour.png`) });
-    await page.waitForFunction(() => (window.__said ?? []).some((t) => t.startsWith('You have arrived at Louvre Museum')), null, {
+    await page.waitForFunction((u) => (window.__said ?? []).some((t) => t.startsWith(u)), until, {
       timeout: 240000,
     });
     await page.waitForTimeout(1000);
@@ -120,6 +121,57 @@ const LIVE = process.env.LIVE === '1';
     JSON.stringify(arrivalsIn(said2)) === JSON.stringify(['Eiffel Tower', 'Grand Palais', 'Louvre Museum']),
     `tour from a pasted link visits its stops (got ${JSON.stringify(arrivalsIn(said2))})`,
   );
+
+  // ---- Scenario 3: "Use my location", then "Suggest a route for me" (half a day) ----
+  const context3 = await browser.newContext({
+    viewport: { width: 390, height: 844 },
+    deviceScaleFactor: 2,
+    isMobile: true,
+    hasTouch: true,
+    locale: 'en-US',
+    serviceWorkers: 'block',
+    geolocation: { latitude: 48.8656, longitude: 2.3212 }, // Place de la Concorde
+    permissions: ['geolocation'],
+  });
+  if (!LIVE) await mockNetwork(context3);
+  await context3.addInitScript((factor) => {
+    const realNow = Date.now.bind(Date);
+    const t0 = realNow();
+    Date.now = () => t0 + (realNow() - t0) * factor;
+    const setT = window.setTimeout.bind(window);
+    const setI = window.setInterval.bind(window);
+    window.setTimeout = (fn, ms = 0, ...args) => setT(fn, ms / factor, ...args);
+    window.setInterval = (fn, ms = 0, ...args) => setI(fn, ms / factor, ...args);
+  }, 10);
+  const page3 = await context3.newPage();
+  page3.on('pageerror', (e) => errors.push(e.message));
+  await page3.goto(base);
+  await page3.click('#locate-me');
+  await page3.waitForFunction(() => /You're in Paris/.test(document.getElementById('locate-note').textContent), null, { timeout: 30000 });
+  expect((await page3.$eval('#city', (el) => el.value)) === 'Paris', 'city filled in from the location');
+  await page3.click('#suggest-open');
+  await page3.click('.chip-opt:has(input[value="240"])');
+  await page3.click('#suggest-go');
+  await page3.waitForFunction(() => /✓/.test(document.getElementById('import-note').textContent), null, { timeout: 60000 });
+  const planned = await page3.evaluate(() => ({
+    note: document.getElementById('import-note').textContent,
+    summary: document.getElementById('plan-summary').textContent,
+    items: [...document.querySelectorAll('#plan-list li')].map((li) => li.innerText.replace(/\s+/g, ' ').trim()),
+    stops: document.getElementById('stops').value.split('\n'),
+  }));
+  console.log('\nScenario 3, suggested half-day route:', planned.note, '|', planned.summary);
+  planned.items.forEach((it) => console.log('   ', it));
+  await page3.screenshot({ path: path.join(SHOTS, '7-suggested-route.png'), fullPage: true });
+  expect(planned.items.length >= 4, `a route with several stops (${planned.items.length})`);
+  expect(planned.items.length === planned.stops.length, 'the plan and the itinerary box match');
+  expect(planned.items.some((t) => /Museum visit/.test(t)), 'a museum visit is on the route');
+  expect(planned.items.some((t) => /Coffee break|Lunch|Dinner|A drink/.test(t)), 'a food or drink break is on the route');
+  await page3.click('label:has(input[value=sim])');
+  await page3.selectOption('#sim-speed', '16');
+  const said3 = await runTour(null, page3, planned.items.length > 1 ? 'You have arrived at' : 'Welcome');
+  const first = said3.find((t) => t.startsWith('You have arrived at'));
+  console.log('Scenario 3, first arrival:', first?.slice(0, 90));
+  expect(first?.includes(planned.stops[0]), `the tour starts with the first suggested stop (${planned.stops[0]})`);
 
   expect(errors.length === 0, `no page errors (got ${errors.join(' | ')})`);
 

@@ -41,10 +41,22 @@ export function buildFirstStopNarration({ lang, stopName, distance, style }) {
   return t(lang, 'firstStop', { name: stopName, d: formatDistance(lang, distance) }, style);
 }
 
-export function buildArrivalNarration({ lang, mode, stopName, summary, nextStopName, nextDistance, style }) {
-  const parts = [t(lang, 'arrived', { name: stopName }, style)];
-  const s = story(summary, mode.stopSentences, lang);
-  if (s) parts.push(s);
+const BREAK_KEYS = { coffee: 'breakCoffee', lunch: 'breakLunch', dinner: 'breakDinner', drink: 'breakDrink' };
+
+export function buildArrivalNarration({ lang, mode, stopName, summary, nextStopName, nextDistance, style, kind, meal, visitMinutes }) {
+  const parts = [];
+  if (kind === 'food') {
+    // A break: no history lecture (unless the place has its own story), and then quiet.
+    parts.push(t(lang, BREAK_KEYS[meal] ?? 'breakCoffee', {}, style));
+    const s = story(summary, 2, lang);
+    if (s) parts.push(s);
+    parts.push(t(lang, 'breakAt', { name: stopName }, style));
+  } else {
+    parts.push(t(lang, 'arrived', { name: stopName }, style));
+    const s = story(summary, mode.stopSentences, lang);
+    if (s) parts.push(s);
+    if (visitMinutes) parts.push(t(lang, 'museumVisit', { n: visitMinutes }, style));
+  }
   if (nextStopName) parts.push(t(lang, 'nextStop', { name: nextStopName, d: formatDistance(lang, nextDistance) }, style));
   else parts.push(t(lang, 'tourDone', {}, style));
   return parts.join(' ');

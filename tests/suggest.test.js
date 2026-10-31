@@ -1,0 +1,166 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {
+  interestScore,
+  placeKind,
+  suggestRoute,
+  breakSchedule,
+  mealAt,
+  placeBreaks,
+  addBreaks,
+  pickFoodPlace,
+  timeline,
+  searchRadiusFor,
+  museumVisits,
+  findFoodNear,
+} from '../js/suggest.js';
+import { distanceMeters } from '../js/geo.js';
+
+const LAT = 48.86;
+const LON = 2.33;
+const M_LON = 111320 * Math.cos((LAT * Math.PI) / 180);
+const at = (eastM, northM) => ({ lat: LAT + northM / 111320, lon: LON + eastM / M_LON });
+const start = at(0, 0);
+let nextId = 1;
+const place = (title, description, length, eastM, northM, extra = {}) => ({
+  id: nextId++,
+  title,
+  description,
+  length,
+  thumbnail: 'x.jpg',
+  category: null,
+  ...at(eastM, northM),
+  ...extra,
+});
+
+test('placeKind and interestScore favour history and rich articles, drop areas and filler', () => {
+  assert.equal(placeKind({ title: 'Louvre', description: 'art museum in Paris' }), 'museum');
+  assert.equal(placeKind({ title: 'Sainte-Chapelle', description: 'Gothic chapel in Paris' }), 'historic');
+  assert.equal(placeKind({ title: 'Kölner Dom', description: 'Kathedrale in Köln' }), 'historic');
+  assert.equal(placeKind({ title: 'Some Shop', description: 'shop' }), 'sight');
+  const church = interestScore({ title: 'Saint-Eustache', description: 'church in Paris', length: 40000 });
+  const shop = interestScore({ title: 'Some Shop', description: 'department store', length: 40000 });
+  assert.ok(church > shop, 'historic kinds get a boost');
+  assert.ok(interestScore({ title: 'X', description: 'church', length: 120000 }) > church, 'longer article, more to tell');
+  assert.equal(interestScore({ title: '1st arrondissement of Paris', description: 'arrondissement of Paris', length: 90000 }), -Infinity);
+  assert.equal(interestScore({ title: 'Seine', description: 'river in France', length: 90000 }), -Infinity);
+  assert.equal(interestScore({ title: 'Station', description: 'metro station', category: 'skip' }), -Infinity);
+});
+
+test('a 70-minute walk picks the best places that fit, in an untangled loop', () => {
+  const candidates = [
+    place('Big Cathedral', 'cathedral', 150000, 600, 200),
+    place('Old Palace', 'royal palace', 120000, -500, 300),
+    place('Famous Bridge', 'bridge over the river', 60000, 300, -200),
+    place('Tiny Plaque', 'memorial plaque', 2000, 50, 50),
+    place('Far Castle', 'castle', 200000, 6000, 6000), // too far for an hour
+    place('Old Palace Gardens', 'garden of the Old Palace', 30000, -520, 320), // near-duplicate
+  ];
+  const r = suggestRoute({ start, candidates, modeId: 'walk', minutes: 70, loop: true });
+  const titles = r.stops.map((s) => s.title);
+  assert.ok(titles.includes('Big Cathedral') && titles.includes('Old Palace') && titles.includes('Famous Bridge'), titles.join());
+  assert.ok(!titles.includes('Far Castle'), 'out of reach');
+  assert.ok(!titles.includes('Old Palace Gardens'), 'near-duplicates skipped');
+  assert.ok(!titles.includes('Tiny Plaque'), 'stubs skipped: too little to tell');
+  assert.ok(r.minutes <= 70, `fits in the time (${r.minutes} min)`);
+  // Untangled: visiting in the returned order is no longer than the reverse-crossing order.
+  const pts = [start, ...r.stops, start];
+  for (let i = 1; i < pts.length - 2; i++) {
+    for (let j = i + 1; j < pts.length - 1; j++) {
+      const before = distanceMeters(pts[i - 1], pts[i]) + distanceMeters(pts[j], pts[j + 1]);
+      const after = distanceMeters(pts[i - 1], pts[j]) + distanceMeters(pts[i], pts[j + 1]);
+      assert.ok(before <= after + 1e-6, 'no crossing legs');
+    }
+  }
+});
+
+test('museums become visits (with time to go inside) on longer outings, never while running', () => {
+  const candidates = [place('Grand Museum', 'art museum', 160000, 400, 0), place('Old Church', 'church', 50000, 0, 400)];
+  const short = suggestRoute({ start, candidates, modeId: 'walk', minutes: 60 });
+  assert.equal(short.stops.find((s) => s.title === 'Grand Museum')?.visitMinutes ?? null, null, 'no time to go inside in an hour');
+  const half = suggestRoute({ start, candidates, modeId: 'walk', minutes: 240 });
+  assert.equal(half.stops.find((s) => s.title === 'Grand Museum').visitMinutes, 60);
+  assert.ok(half.minutes >= 60, 'the visit time is counted');
+  assert.equal(museumVisits('run', 480).count, 0);
+  assert.equal(museumVisits('walk', 480).count, 2);
+});
+
+test('museum visits come first and win over a lesser neighbour with the same name', () => {
+  const candidates = [
+    place('Louvre Pyramid', 'glass pyramid in the courtyard of the Louvre Palace', 40000, 900, 0),
+    place('Louvre', 'art museum', 30000, 950, 50),
+    place('Old Church', 'church', 60000, 0, 300),
+    place('Old Bridge', 'bridge', 60000, 300, 0),
+  ];
+  const r = suggestRoute({ start, candidates, modeId: 'walk', minutes: 240, reservedMinutes: 80 });
+  const titles = r.stops.map((s) => s.title);
+  assert.ok(titles.includes('Louvre'), titles.join());
+  assert.equal(r.stops.find((s) => s.title === 'Louvre').visitMinutes, 60);
+  assert.ok(!titles.includes('Louvre Pyramid'), 'the museum, not its courtyard');
+});
+
+test('breaks follow the clock: coffee, lunch, a drink, dinner', () => {
+  const d = (h, m = 0) => new Date(2026, 9, 31, h, m);
+  assert.equal(mealAt(d(10)), 'coffee');
+  assert.equal(mealAt(d(12, 30)), 'lunch');
+  assert.equal(mealAt(d(15)), 'coffee');
+  assert.equal(mealAt(d(18)), 'drink');
+  assert.equal(mealAt(d(20)), 'dinner');
+  assert.deepEqual(breakSchedule(d(10), 60), [], 'no break in a short outing');
+  assert.deepEqual(breakSchedule(d(10), 120).map((b) => b.meal), ['coffee']);
+  const half = breakSchedule(d(10, 30), 240);
+  assert.deepEqual(half.map((b) => b.meal), ['coffee', 'lunch']);
+  assert.equal(half[1].atMinute, 120, 'lunch at 12:30');
+  const day = breakSchedule(d(10), 480);
+  assert.deepEqual(day.map((b) => b.meal), ['coffee', 'lunch', 'coffee']);
+  assert.deepEqual(day.map((b) => b.minutes), [20, 60, 20]);
+  const evening = breakSchedule(d(16), 300);
+  assert.deepEqual(evening.map((b) => b.meal), ['drink', 'dinner']);
+  assert.equal(evening[1].atMinute, 225, 'dinner at 19:45');
+});
+
+test('food places: the right kind, close by, notable ones first', () => {
+  const here = at(0, 0);
+  const places = [
+    { name: 'Chain Coffee', amenity: 'cafe', ...at(20, 0), tags: {} },
+    { name: 'Historic Tea Room', amenity: 'cafe', ...at(150, 0), tags: { wikidata: 'Q1', website: 'x', opening_hours: 'x' } },
+    { name: 'Far Café', amenity: 'cafe', ...at(2000, 0), tags: { wikidata: 'Q2' } },
+    { name: 'Bistro', amenity: 'restaurant', ...at(60, 0), tags: { cuisine: 'french', opening_hours: 'x' } },
+    { name: 'Pub', amenity: 'pub', ...at(30, 0), tags: {} },
+  ];
+  assert.equal(pickFoodPlace(places, 'coffee', here).name, 'Historic Tea Room');
+  assert.equal(pickFoodPlace(places, 'lunch', here).name, 'Bistro', 'a restaurant for lunch');
+  assert.equal(pickFoodPlace(places, 'drink', here).name, 'Pub');
+  assert.equal(pickFoodPlace(places, 'dinner', here, { avoid: ['Bistro'] }), null);
+});
+
+test('breaks are slotted after the stop closest to the planned time', () => {
+  const stops = [place('A', 'church', 9000, 300, 0), place('B', 'church', 9000, 600, 0), place('C', 'church', 9000, 900, 0)];
+  const { times } = timeline(start, stops, 'walk', true);
+  const placed = placeBreaks(start, stops, [{ atMinute: times[1].leave, meal: 'coffee', minutes: 20 }], 'walk', true);
+  assert.equal(placed[0].afterIndex, 1);
+  const withBreak = addBreaks(stops, [{ ...placed[0], place: { name: 'Café X', lat: LAT, lon: LON, amenity: 'cafe', tags: {} } }]);
+  assert.deepEqual(withBreak.map((s) => s.title), ['A', 'B', 'Café X', 'C']);
+  assert.equal(withBreak[2].kind, 'food');
+  assert.equal(withBreak[2].breakMinutes, 20);
+  assert.ok(searchRadiusFor('walk', 60) >= 1000 && searchRadiusFor('drive', 480) === 10000);
+});
+
+test('findFoodNear uses Overpass, and the place search when Overpass is down', async () => {
+  const overpass = async () => ({ ok: true, json: async () => ({ elements: [{ type: 'node', lat: LAT, lon: LON, tags: { name: 'Angelina', amenity: 'cafe', wikidata: 'Q2851097' } }] }) });
+  const found = await findFoodNear(start, 'coffee', { fetchImpl: overpass });
+  assert.deepEqual(found.map((p) => p.name), ['Angelina']);
+  const down = async () => {
+    throw new Error('offline');
+  };
+  const geocoder = { searchNearby: async (kind) => (kind === 'cafe' ? [{ name: 'Fallback Café', lat: LAT, lon: LON, amenity: 'cafe', tags: {} }] : []) };
+  const fallback = await findFoodNear(start, 'coffee', { fetchImpl: down, geocoder });
+  assert.deepEqual(fallback.map((p) => p.name), ['Fallback Café']);
+});
+
+test('areas are recognised by what they are, not by words further on', () => {
+  assert.equal(interestScore({ title: 'Seine', description: 'major river in France', length: 90000 }), -Infinity);
+  assert.equal(interestScore({ title: 'Champs-Élysées', description: 'avenue in Paris', length: 90000 }), -Infinity);
+  assert.ok(Number.isFinite(interestScore({ title: 'Pont Neuf', description: 'bridge over the Seine river in Paris', length: 40000 })));
+  assert.ok(Number.isFinite(interestScore({ title: 'Place des Vosges', description: 'public square in Paris', length: 40000 })));
+});

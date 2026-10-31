@@ -130,7 +130,26 @@ export function createGeocoder({ lang = 'en', fetchImpl = defaultFetch, minInter
     return { ...toPlace(r, name || (r.display_name ?? '').split(',')[0]), lat, lon };
   }
 
-  return { findCity, findPlace, findPlaceNear, reverse };
+  /** Places of one kind (e.g. 'cafe') within `radius` meters: name, position, OSM tags. */
+  async function searchNearby(kind, { lat, lon }, radius = 400) {
+    const dLat = radius / 111320;
+    const dLon = radius / (111320 * Math.cos((lat * Math.PI) / 180));
+    const params = new URLSearchParams({
+      q: kind,
+      format: 'jsonv2',
+      limit: '25',
+      extratags: '1',
+      bounded: '1',
+      viewbox: [lon - dLon, lat + dLat, lon + dLon, lat - dLat].map((v) => v.toFixed(5)).join(','),
+      'accept-language': lang,
+    });
+    const results = await throttledJson(`${NOMINATIM}/search?${params}`);
+    return (Array.isArray(results) ? results : [])
+      .filter((r) => r.name && r.category === 'amenity')
+      .map((r) => ({ name: r.name, lat: Number(r.lat), lon: Number(r.lon), amenity: r.type, tags: r.extratags ?? {} }));
+  }
+
+  return { findCity, findPlace, findPlaceNear, reverse, searchNearby };
 }
 
 /**

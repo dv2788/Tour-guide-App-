@@ -11,6 +11,16 @@ import { distanceMeters } from './geo.js';
 import { parseItinerary, parseTextList, SOURCE_LABELS } from './itineraryImport.js';
 import { NEURAL_VOICES, neuralVoiceKey, parseVoiceKey, rankSystemVoices, PREVIEW_TEXT, PREVIEW_TEXT_DOCUMENTARY, voiceProfile } from './voices.js';
 import { isVoiceDownloaded, neuralVoicesSupported } from './neuralVoice.js';
+import {
+  suggestRoute,
+  searchRadiusFor,
+  breakSchedule,
+  placeBreaks,
+  addBreaks,
+  pickFoodPlace,
+  findFoodNear,
+  timeline,
+} from './suggest.js';
 
 const $ = (id) => document.getElementById(id);
 const STORAGE_KEY = 'roamie:setup';
@@ -45,13 +55,17 @@ function readForm() {
     simSpeed: data.get('simSpeed') ?? '8',
     voice: selectedVoiceKey(),
     imported: [...imported.entries()],
+    start: startPoint,
+    plan,
   };
 }
 
 function fillForm(values) {
   if (Array.isArray(values.imported)) imported = new Map(values.imported);
+  if ('start' in values) startPoint = values.start ?? null;
+  if ('plan' in values) plan = values.plan ?? null;
   for (const [key, value] of Object.entries(values)) {
-    if (key === 'imported' || key === 'voice') continue;
+    if (['imported', 'voice', 'start', 'plan'].includes(key)) continue;
     const el = form.elements[key];
     if (!el || value == null) continue;
     if (el instanceof RadioNodeList) {
@@ -201,6 +215,11 @@ $('stops').addEventListener('paste', (event) => {
 $('stops').addEventListener('input', () => {
   const lines = new Set($('stops').value.split('\n').map((l) => l.trim()));
   for (const name of imported.keys()) if (!lines.has(name)) imported.delete(name);
+  if (plan) {
+    plan = null; // it's the traveller's own list now
+    renderPlan();
+  }
+  showPlanMap();
 });
 
 if (!navigator.clipboard?.readText) $('paste-route').hidden = true;
@@ -223,6 +242,246 @@ $('paste-route').addEventListener('click', async () => {
     showImportNote('Long-press the box and choose Paste.', 'warn');
   }
 });
+
+// ---------- Where you are, and suggested routes ----------
+
+let startPoint = null; // { lat, lon, name } from "Use my location"
+let plan = null; // the suggested route: { start, loop, minutes, meters, startedAt, items: [...] }
+
+function showLocateNote(text, tone = '') {
+  const note = $('locate-note');
+  note.hidden = !text;
+  note.textContent = text;
+  note.dataset.tone = tone;
+}
+
+/** Ask the browser where we are, name the city, and centre the plan around it. */
+async function locateMe({ silent = false } = {}) {
+  if (!('geolocation' in navigator)) {
+    if (!silent) showLocateNote("This browser can't share your location. Type your city instead.", 'warn');
+    return null;
+  }
+  if (!silent) showLocateNote('Finding where you are…');
+  let pos;
+  try {
+    pos = await new Promise((resolve, reject) =>
+      navigator.geolocation.getCurrentPosition(resolve, reject, { enableHighAccuracy: false, timeout: 15000, maximumAge: 300000 }),
+    );
+  } catch (err) {
+    if (!silent) {
+      showLocateNote(
+        err?.code === 1
+          ? 'Location is turned off for this site. Allow it in your browser settings, or type your city.'
+          : "I couldn't find your location just now. Type your city, or try again outside.",
+        'warn',
+      );
+    }
+    return null;
+  }
+  const here = { lat: pos.coords.latitude, lon: pos.coords.longitude, name: null };
+  const city = await createGeocoder({ lang: $('lang').value })
+    .reverse(here, 10)
+    .catch(() => null);
+  here.name = city?.name ?? null;
+  startPoint = here;
+  if (here.name && !$('city').value.trim()) $('city').value = here.name;
+  showLocateNote(here.name ? `✓ You're in ${here.name}. I'll plan around where you are.` : "✓ Got your location. I'll plan around where you are.");
+  showPlanMap();
+  save(readForm());
+  return here;
+}
+
+$('locate-me').addEventListener('click', () => locateMe());
+// Already allowed before? Then just do it.
+navigator.permissions
+  ?.query({ name: 'geolocation' })
+  .then((p) => {
+    if (p.state === 'granted' && !startPoint) locateMe({ silent: true });
+  })
+  .catch(() => {});
+
+$('suggest-open').addEventListener('click', () => {
+  const panel = $('suggest-panel');
+  panel.hidden = !panel.hidden;
+  $('suggest-open').setAttribute('aria-expanded', String(!panel.hidden));
+});
+
+const MEAL_LABEL = { coffee: 'Coffee break', lunch: 'Lunch', dinner: 'Dinner', drink: 'A drink' };
+const MEAL_ICON = { coffee: 'cafe', lunch: 'restaurant', dinner: 'restaurant', drink: 'bar' };
+
+function formatMinutes(min) {
+  if (min < 60) return `${min} min`;
+  const h = Math.floor(min / 60);
+  const m = Math.round((min % 60) / 5) * 5;
+  return m ? `${h} h ${String(m).padStart(2, '0')}` : `${h} h`;
+}
+
+function clock(date) {
+  return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+
+async function planRoute() {
+  const button = $('suggest-go');
+  const { mode: modeId, lang } = readForm();
+  const minutes = Number(form.querySelector('input[name=duration]:checked')?.value ?? 60);
+  const loop = $('loop').checked;
+  button.disabled = true;
+  try {
+    let origin = startPoint ?? (await locateMe());
+    if (!origin && $('city').value.trim()) {
+      showImportNote(`Finding ${$('city').value.trim()}…`);
+      const city = await createGeocoder({ lang }).findCity($('city').value.trim()).catch(() => null);
+      if (city) origin = { lat: city.lat, lon: city.lon, name: city.name };
+    }
+    if (!origin) {
+      showImportNote('Tell me where you are first: tap "Use my location" or type your city.', 'warn');
+      return;
+    }
+
+    showImportNote('Looking for the places with the most history around you…');
+    const candidates = await createWikiService({ lang })
+      .exploreArea(origin.lat, origin.lon, searchRadiusFor(modeId, minutes), 300)
+      .catch(() => []);
+    const startedAt = new Date();
+    const schedule = breakSchedule(startedAt, minutes);
+    const route = suggestRoute({
+      start: origin,
+      candidates,
+      modeId,
+      minutes,
+      loop,
+      reservedMinutes: schedule.reduce((n, b) => n + b.minutes, 0),
+    });
+    if (!route.stops.length) {
+      showImportNote("I couldn't find enough interesting places nearby. Try a longer outing, or another way of getting around.", 'warn');
+      return;
+    }
+
+    // Food and drink, at the right moments.
+    const placed = placeBreaks(origin, route.stops, schedule, modeId, loop);
+    const geocoder = createGeocoder({ lang });
+    const radius = modeId === 'drive' ? 1500 : modeId === 'cycle' ? 700 : 400;
+    const used = [];
+    for (const b of placed) {
+      showImportNote(`Finding a good spot for ${MEAL_LABEL[b.meal].toLowerCase()}…`);
+      const near = route.stops[b.afterIndex];
+      const places = await findFoodNear(near, b.meal, { radius, geocoder });
+      b.place = pickFoodPlace(places, b.meal, near, { radius, avoid: used });
+      if (b.place) used.push(b.place.name);
+    }
+    const stops = addBreaks(route.stops, placed);
+    const { times, minutes: total, meters } = timeline(origin, stops, modeId, loop);
+
+    // Fill the itinerary box (still editable) and remember what we know about each stop.
+    imported = new Map();
+    const seen = new Map();
+    const items = stops.map((stop, i) => {
+      let name = stop.title;
+      const n = (seen.get(name) ?? 0) + 1;
+      seen.set(name, n);
+      if (n > 1) name = `${name} (${n})`;
+      imported.set(name, {
+        query: stop.title,
+        lat: stop.lat,
+        lon: stop.lon,
+        kind: stop.kind,
+        visitMinutes: stop.visitMinutes ?? null,
+        meal: stop.meal ?? null,
+        breakMinutes: stop.breakMinutes ?? null,
+        wikipedia: stop.tags?.wikipedia ?? null,
+        wikidata: stop.tags?.wikidata ?? null,
+      });
+      return { name, kind: stop.kind, meal: stop.meal ?? null, visitMinutes: stop.visitMinutes ?? null, breakMinutes: stop.breakMinutes ?? null, description: stop.description ?? '', arrive: times[i].arrive };
+    });
+    $('stops').value = items.map((it) => it.name).join('\n');
+    plan = { start: origin, loop, minutes: total, meters, startedAt: startedAt.toISOString(), items };
+    renderPlan();
+    showPlanMap();
+    // Fold the options away so the plan is right there.
+    $('suggest-panel').hidden = true;
+    $('suggest-open').setAttribute('aria-expanded', 'false');
+
+    const sights = items.filter((it) => it.kind !== 'food').length;
+    const breaks = items.length - sights;
+    showImportNote(
+      `✓ ${sights} place${sights > 1 ? 's' : ''} picked for their history` +
+        (breaks ? ` and ${breaks} break${breaks > 1 ? 's' : ''}` : '') +
+        `. Edit the list below if you like.`,
+    );
+    save(readForm());
+  } finally {
+    button.disabled = false;
+  }
+}
+$('suggest-go').addEventListener('click', planRoute);
+
+function renderPlan() {
+  const box = $('plan');
+  box.hidden = !plan;
+  if (!plan) return;
+  const start = new Date(plan.startedAt);
+  $('plan-summary').textContent = `About ${formatMinutes(plan.minutes)} · ${(plan.meters / 1000).toFixed(1)} km${plan.loop ? ' round trip' : ''}`;
+  $('plan-list').replaceChildren(
+    ...plan.items.map((it) => {
+      const kindClass = it.kind === 'food' ? 'food' : it.kind === 'museum' ? 'museum' : '';
+      const iconName = it.kind === 'food' ? MEAL_ICON[it.meal] ?? 'cafe' : it.kind === 'museum' ? 'museum' : 'historic';
+      const sub =
+        it.kind === 'food'
+          ? `${MEAL_LABEL[it.meal] ?? 'Break'} · ${formatMinutes(it.breakMinutes)}`
+          : it.visitMinutes
+            ? `Museum visit · about ${formatMinutes(it.visitMinutes)} inside`
+            : it.description || (it.kind === 'museum' ? 'Museum' : 'Historic place');
+      return el('li', {}, [
+        el('span', { className: 'plan-time' }, [clock(new Date(start.getTime() + it.arrive * 60000))]),
+        el('span', { className: `plan-icon ${kindClass}` }, [icon(iconName)]),
+        el('span', { className: 'plan-text' }, [el('strong', {}, [it.name]), el('small', {}, [sub])]),
+      ]);
+    }),
+  );
+}
+
+// A small map of the plan: where you are, the stops, and the way round.
+let planMap = null;
+let planLayer = null;
+function showPlanMap() {
+  const L = window.L;
+  const box = $('plan-map');
+  const lines = $('stops').value.split('\n').map((l) => l.trim()).filter(Boolean);
+  const stops = lines.map((name) => ({ name, ...imported.get(name) })).filter((s) => s.lat != null);
+  const origin = plan?.start ?? startPoint;
+  if (!L || (!origin && !stops.length)) {
+    box.hidden = true;
+    return;
+  }
+  box.hidden = false;
+  if (!planMap) {
+    planMap = L.map(box, { zoomControl: false, attributionControl: true, dragging: true, scrollWheelZoom: false });
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    }).addTo(planMap);
+    planLayer = L.layerGroup().addTo(planMap);
+  }
+  planMap.invalidateSize();
+  planLayer.clearLayers();
+  const points = [];
+  if (origin) {
+    L.marker([origin.lat, origin.lon], { icon: L.divIcon({ className: 'start-dot', iconSize: [18, 18] }), title: 'You' }).addTo(planLayer);
+    points.push(origin);
+  }
+  stops.forEach((s, i) => {
+    const icon = L.divIcon({ className: `stop-pin ${s.kind === 'food' ? 'food' : ''}`, html: `<span>${i + 1}</span>`, iconSize: [26, 26] });
+    L.marker([s.lat, s.lon], { icon, title: s.name }).addTo(planLayer).bindTooltip(label(s.name));
+    points.push(s);
+  });
+  if (plan?.loop && origin && stops.length) points.push(origin);
+  if (points.length > 1) {
+    L.polyline(points.map((p) => [p.lat, p.lon]), { color: '#1f6f5c', weight: 4, opacity: 0.7, dashArray: '6 8' }).addTo(planLayer);
+    planMap.fitBounds(points.map((p) => [p.lat, p.lon]), { padding: [24, 24] });
+  } else {
+    planMap.setView([points[0].lat, points[0].lon], 14);
+  }
+}
 
 // ---------- Choosing a guide (voice) ----------
 
@@ -375,6 +634,9 @@ const saved = loadSaved();
 if (saved) fillForm(saved);
 populateGuides(saved?.voice ?? null);
 syncFormHints();
+renderPlan();
+if (startPoint?.name) showLocateNote(`✓ You're in ${startPoint.name}.`);
+window.addEventListener('load', () => showPlanMap());
 
 // ---------- Map ----------
 
@@ -400,7 +662,8 @@ function initMap() {
     return;
   }
   if (!map) {
-    map = L.map('map', { zoomControl: false }).setView([48.8566, 2.3522], 13);
+    const centre = startPoint ? [[startPoint.lat, startPoint.lon], 14] : [[20, 0], 2];
+    map = L.map('map', { zoomControl: false }).setView(...centre);
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
@@ -620,7 +883,9 @@ form.addEventListener('submit', async (event) => {
   const error = $('setup-error');
   error.textContent = '';
 
-  if (cfg.source === 'sim' && stopNames.length < 2) {
+  // A suggested route starts where you are, so one stop is enough to simulate it.
+  const minStops = plan?.start ? 1 : 2;
+  if (cfg.source === 'sim' && stopNames.length < minStops) {
     error.textContent = 'To simulate a trip, add at least two stops to your itinerary.';
     return;
   }
@@ -715,7 +980,10 @@ form.addEventListener('submit', async (event) => {
     for (const [i, entry] of stopEntries.entries()) {
       setStatus(`Finding stop ${i + 1} of ${stopEntries.length}: ${entry.name}…`);
       let place;
-      if (entry.coordsOnly) {
+      if (entry.kind === 'food') {
+        // A café or restaurant from the suggestion: we already know exactly where it is.
+        place = { ...entry, osmName: entry.name, isArea: false, bbox: null };
+      } else if (entry.coordsOnly) {
         // Typed coordinates: name the stop after what's there.
         place = await geocoder.reverse(entry).catch(() => ({ ...entry }));
       } else if (entry.lat != null) {
@@ -725,8 +993,11 @@ form.addEventListener('submit', async (event) => {
         place = await geocoder.findPlace(entry.query ?? entry.name, city, entry.name).catch(() => null);
       }
       if (!alive()) return;
-      if (place) stops.push(place);
-      else missing.push(entry.name);
+      if (place) {
+        // Keep what the suggestion knows: museum visits, meal breaks, article links.
+        const { kind, visitMinutes, meal, breakMinutes, wikipedia, wikidata } = entry;
+        stops.push({ ...place, kind, visitMinutes, meal, breakMinutes, wikipedia: place.wikipedia ?? wikipedia, wikidata: place.wikidata ?? wikidata });
+      } else missing.push(entry.name);
     }
     drawStops(stops);
     if (stops.length) fitTo(stops);
@@ -738,7 +1009,7 @@ form.addEventListener('submit', async (event) => {
       if (!alive()) return;
     }
 
-    if (cfg.source === 'sim' && stops.length < 2) {
+    if (cfg.source === 'sim' && stops.length < minStops) {
       setStatus("I couldn't find enough of your stops on the map to simulate a trip. Check the spelling?", 'error');
       return;
     }
@@ -780,7 +1051,10 @@ form.addEventListener('submit', async (event) => {
 
     if (cfg.source === 'sim') {
       setStatus('Planning the route…');
-      const route = await fetchRoute(stops, mode.routeProfile);
+      // A suggested route starts (and maybe ends) where you are.
+      const fromPlan = plan?.start && plan.items.length === stops.length;
+      const waypoints = fromPlan ? [plan.start, ...stops, ...(plan.loop ? [plan.start] : [])] : stops;
+      const route = await fetchRoute(waypoints, mode.routeProfile);
       if (!alive()) return;
       drawRoute(route.points);
       current.source = new SimulatedSource({

@@ -131,5 +131,56 @@ export function createWikiService({ lang = 'en', fetchImpl = defaultFetch } = {}
     return null;
   }
 
-  return { lang, nearby, summary, titleFromWikidata, resolveArticle };
+  /**
+   * Many articles around a point, with how long each article is (a good sign of how much
+   * there is to tell): used to suggest routes. Up to `limit` articles within `radius` m.
+   */
+  async function exploreArea(lat, lon, radius = 2000, limit = 250) {
+    const list = new URLSearchParams({
+      action: 'query',
+      format: 'json',
+      formatversion: '2',
+      origin: '*',
+      list: 'geosearch',
+      gscoord: `${lat}|${lon}`,
+      gsradius: String(Math.min(10000, Math.max(10, Math.round(radius)))),
+      gslimit: String(Math.min(500, limit)),
+    });
+    const found = (await getJson(`${host}/w/api.php?${list}`))?.query?.geosearch ?? [];
+    const byId = new Map(found.map((p) => [p.pageid, { id: p.pageid, title: p.title, lat: p.lat, lon: p.lon }]));
+    const ids = [...byId.keys()];
+    const batches = [];
+    for (let i = 0; i < ids.length; i += 50) batches.push(ids.slice(i, i + 50));
+    await Promise.all(
+      batches.map(async (batch) => {
+        const params = new URLSearchParams({
+          action: 'query',
+          format: 'json',
+          formatversion: '2',
+          origin: '*',
+          pageids: batch.join('|'),
+          prop: 'info|description|pageimages|pageprops',
+          piprop: 'thumbnail',
+          pithumbsize: '240',
+          pilimit: 'max',
+          ppprop: 'disambiguation',
+        });
+        const pages = (await getJson(`${host}/w/api.php?${params}`))?.query?.pages ?? [];
+        for (const p of pages) {
+          const poi = byId.get(p.pageid);
+          if (!poi) continue;
+          Object.assign(poi, {
+            length: p.length ?? null,
+            description: p.description ?? '',
+            thumbnail: p.thumbnail?.source ?? null,
+            disambiguation: !!p.pageprops && 'disambiguation' in p.pageprops,
+          });
+          poi.category = classifyPlace(poi);
+        }
+      }),
+    );
+    return [...byId.values()].filter((p) => p.category !== undefined);
+  }
+
+  return { lang, nearby, summary, titleFromWikidata, resolveArticle, exploreArea };
 }

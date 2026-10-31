@@ -1,0 +1,364 @@
+// "Suggest a route for me": the most historically interesting places around you that fit
+// in the time you have, in a sensible order, with museum visits and food/drink breaks.
+// Pure functions (no network) so they can be tested; app.js fetches the data.
+
+import { distanceMeters } from './geo.js';
+import { sharesNameToken } from './text.js';
+
+// Kinds of places that carry history, in the five supported languages (word starts).
+const HISTORIC_WORDS = [
+  // English
+  'church', 'cathedral', 'basilica', 'chapel', 'abbey', 'monaster', 'convent', 'temple', 'mosque', 'synagogue', 'shrine',
+  'palace', 'castle', 'château', 'chateau', 'fort', 'citadel', 'tower', 'gate', 'city wall', 'ruin', 'archaeolog',
+  'ancient', 'roman', 'medieval', 'historic', 'heritage', 'monument', 'memorial', 'statue', 'opera', 'theatre',
+  'theater', 'bridge', 'square', 'market', 'old town', 'mausoleum', 'tomb', 'cemetery', 'obelisk', 'triumphal',
+  'fountain', 'lighthouse', 'mansion', 'manor',
+  // French
+  'église', 'eglise', 'cathédrale', 'basilique', 'chapelle', 'abbaye', 'monastère', 'couvent', 'mosquée', 'palais',
+  'forteresse', 'citadelle', 'rempart', 'ruines', 'archéolog', 'antique', 'romain', 'médiéval', 'historique',
+  'mémorial', 'opéra', 'théâtre', 'pont', 'marché', 'mausolée', 'cimetière', 'obélisque', 'fontaine', 'phare',
+  // Spanish
+  'iglesia', 'catedral', 'basílica', 'capilla', 'abadía', 'monasterio', 'convento', 'templo', 'mezquita', 'sinagoga',
+  'palacio', 'castillo', 'fortaleza', 'ciudadela', 'torre', 'puerta', 'muralla', 'ruinas', 'arqueológ', 'antiguo',
+  'histórico', 'monumento', 'estatua', 'teatro', 'puente', 'plaza', 'mercado',
+  // German
+  'kirche', 'kathedrale', 'münster', 'basilika', 'kapelle', 'abtei', 'kloster', 'moschee', 'synagoge', 'palast',
+  'schloss', 'burg', 'festung', 'zitadelle', 'turm', 'stadtmauer', 'ruine', 'archäolog', 'antik', 'römisch',
+  'mittelalter', 'historisch', 'denkmal', 'mahnmal', 'oper', 'brücke', 'platz', 'markt',
+  // Italian
+  'chiesa', 'cattedrale', 'duomo', 'cappella', 'abbazia', 'monastero', 'tempio', 'moschea', 'palazzo', 'castello',
+  'fortezza', 'cittadella', 'porta', 'mura', 'rovine', 'archeolog', 'antico', 'medievale', 'storico', 'statua',
+  'ponte', 'piazza', 'mercato',
+];
+const HISTORIC_RE = new RegExp(`(?:^|[^\\p{L}])(?:${HISTORIC_WORDS.join('|')})`, 'iu');
+const MUSEUM_RE = /(?:^|[^\p{L}])(?:museum|musée|musee|museo|museu|gallery|galerie|galleria|pinacoteca|kunsthalle)/iu;
+// Long articles about whole areas, rivers or streets aren't places you stop at.
+// Matched against what a place *is* (the start of its description: "river in France",
+// "arrondissement of Paris"), not words further on ("bridge over the river").
+const AREA_RE =
+  /^(?:[\p{L}'’-]+\s+){0,2}(?:arrondissement|district|neighbou?rhood|quarter|quartier|borough|ward|commune|municipality|city|town|village|river|fleuve|rivière|río|fluss|fiume|lake|region|province|department|département|metropolitan|island|street|avenue|boulevard|rue|calle|straße|strasse|metro line|railway line)(?![\p{L}])/iu;
+
+/** 'museum' | 'historic' | 'sight' */
+export function placeKind(poi) {
+  const text = `${poi.title ?? ''} ${poi.description ?? ''}`;
+  if (MUSEUM_RE.test(text)) return 'museum';
+  if (HISTORIC_RE.test(text)) return 'historic';
+  return 'sight';
+}
+
+/**
+ * How worth visiting a place is. Long Wikipedia articles mean there's a lot of story to
+ * tell; historic kinds of places get a boost; areas, streets and filler are excluded.
+ */
+export function interestScore(poi) {
+  if (poi.category === 'skip' || poi.disambiguation) return -Infinity;
+  if (AREA_RE.test(poi.description ?? '')) return -Infinity;
+  if ((poi.length ?? 3000) < 2500) return -Infinity; // a stub: too little to tell
+  let score = Math.log10(Math.max(1000, poi.length ?? 3000)); // ~3 (stub) to ~5.5 (major landmark)
+  const kind = placeKind(poi);
+  if (kind === 'historic') score += 1;
+  if (kind === 'museum') score += 1.2;
+  if (poi.thumbnail) score += 0.3;
+  if (poi.category === 'minor') score -= 2;
+  return score;
+}
+
+/** Travel pace for planning: speed, time spent at an ordinary stop, and how much longer streets are than a straight line. */
+export const PACE = {
+  walk: { kmh: 4.5, dwell: 5, detour: 1.3 },
+  run: { kmh: 9, dwell: 1, detour: 1.3 },
+  cycle: { kmh: 14, dwell: 3, detour: 1.3 },
+  drive: { kmh: 22, dwell: 3, detour: 1.4 },
+};
+
+export const DURATIONS = [
+  { minutes: 30, label: '30 min' },
+  { minutes: 60, label: '1 hour' },
+  { minutes: 120, label: '2 hours' },
+  { minutes: 240, label: 'Half day' },
+  { minutes: 480, label: 'Full day' },
+];
+
+/** How far to look for places: you can only go so far and come back in the time. */
+export function searchRadiusFor(modeId, minutes) {
+  const pace = PACE[modeId] ?? PACE.walk;
+  const reach = (pace.kmh * 1000 * (minutes / 60)) / 3;
+  return Math.round(Math.min(10000, Math.max(600, reach)));
+}
+
+/** Museums worth going inside, depending on how long you're out (never while running). */
+export function museumVisits(modeId, minutes) {
+  if (modeId === 'run') return { count: 0, minutes: 0 };
+  if (minutes >= 420) return { count: 2, minutes: 75 };
+  if (minutes >= 210) return { count: 1, minutes: 60 };
+  if (minutes >= 110) return { count: 1, minutes: 45 };
+  return { count: 0, minutes: 0 };
+}
+
+// ---------- Food and drink breaks ----------
+
+// `kinds`: OpenStreetMap amenities, best fit first (a restaurant for lunch, a café if there's none).
+export const BREAKS = {
+  coffee: { minutes: 20, kinds: [['cafe']] },
+  lunch: { minutes: 60, kinds: [['restaurant'], ['cafe']] },
+  drink: { minutes: 30, kinds: [['bar', 'pub'], ['cafe']] },
+  dinner: { minutes: 75, kinds: [['restaurant']] },
+};
+const amenitiesFor = (meal) => (BREAKS[meal]?.kinds ?? [['cafe']]).flat();
+
+/** What kind of break fits this time of day. */
+export function mealAt(date) {
+  const h = date.getHours() + date.getMinutes() / 60;
+  if (h >= 11.75 && h < 14.25) return 'lunch';
+  if (h >= 19 && h < 21.5) return 'dinner';
+  if (h >= 17 || h < 6) return 'drink';
+  return 'coffee';
+}
+
+/**
+ * When to take breaks, from when you start and how long you're out. Meals happen at meal
+ * times (lunch 12:30, dinner 19:45) if you're out then; coffee or drink breaks (about one
+ * per 2½ hours) go in the longest stretches without a break.
+ */
+export function breakSchedule(start, minutes) {
+  const startHour = start.getHours() + start.getMinutes() / 60;
+  const out = [];
+  for (const [meal, hour] of [['lunch', 12.5], ['dinner', 19.75]]) {
+    let m = (hour - startHour) * 60;
+    if (m < 0) m += 24 * 60;
+    if (m >= 30 && m <= minutes - 30) out.push({ atMinute: Math.round(m), meal, minutes: BREAKS[meal].minutes });
+  }
+  const extra = Math.max(0, Math.round(minutes / 150) - out.length);
+  for (let k = 0; k < extra; k++) {
+    let best = null;
+    let prevEnd = 0;
+    for (const b of [...out].sort((a, c) => a.atMinute - c.atMinute).concat({ atMinute: minutes, minutes: 0 })) {
+      const gap = b.atMinute - prevEnd;
+      if (!best || gap > best.gap) best = { gap, from: prevEnd };
+      prevEnd = b.atMinute + b.minutes;
+    }
+    if (!best || best.gap < 90) break;
+    const atMinute = Math.round(best.from + best.gap / 2);
+    let meal = mealAt(new Date(start.getTime() + atMinute * 60000));
+    if (meal === 'lunch') meal = 'coffee'; // proper meals only at meal times
+    if (meal === 'dinner') meal = 'drink';
+    out.push({ atMinute, meal, minutes: BREAKS[meal].minutes });
+  }
+  return out.sort((a, b) => a.atMinute - b.atMinute);
+}
+
+/**
+ * Pick a place for a break: the right kind of place, close by, preferring notable ones
+ * (a historic café with its own Wikipedia article beats an anonymous chain).
+ */
+export function pickFoodPlace(places, meal, at, { radius = 400, avoid = [] } = {}) {
+  const kinds = BREAKS[meal]?.kinds ?? [['cafe']];
+  let best = null;
+  for (const p of places) {
+    if (!p.name || avoid.includes(p.name)) continue;
+    const rank = kinds.findIndex((group) => group.includes(p.amenity));
+    if (rank < 0) continue;
+    const d = distanceMeters(at, p);
+    if (d > radius) continue;
+    const t = p.tags ?? {};
+    let score = 0;
+    if (t.wikipedia || t.wikidata) score += 2; // notable: has its own story
+    if (t.website) score += 0.6;
+    if (t.opening_hours) score += 0.5;
+    if (t.cuisine) score += 0.3;
+    if (t.outdoor_seating === 'yes') score += 0.2;
+    score -= rank * 3; // the fitting kind first: a restaurant for lunch, unless there's none
+    score -= d / radius; // closer is better
+    if (!best || score > best.score) best = { place: p, score, distance: d };
+  }
+  return best?.place ?? null;
+}
+
+// ---------- Building the route ----------
+
+function legMinutes(a, b, pace) {
+  return (distanceMeters(a, b) * pace.detour) / ((pace.kmh * 1000) / 60);
+}
+
+function stopMinutes(stop, pace) {
+  return stop.visitMinutes ?? stop.breakMinutes ?? pace.dwell;
+}
+
+/** Arrival/leave times (minutes from the start) along a route, and the total. */
+export function timeline(start, stops, modeId = 'walk', loop = true) {
+  const pace = PACE[modeId] ?? PACE.walk;
+  let t = 0;
+  let meters = 0;
+  let prev = start;
+  const times = stops.map((stop) => {
+    t += legMinutes(prev, stop, pace);
+    meters += distanceMeters(prev, stop) * pace.detour;
+    const arrive = t;
+    t += stopMinutes(stop, pace);
+    prev = stop;
+    return { arrive: Math.round(arrive), leave: Math.round(t) };
+  });
+  if (loop && stops.length) {
+    t += legMinutes(prev, start, pace);
+    meters += distanceMeters(prev, start) * pace.detour;
+  }
+  return { times, minutes: Math.round(t), meters: Math.round(meters) };
+}
+
+function pathMinutes(points, pace) {
+  let total = 0;
+  for (let i = 1; i < points.length; i++) total += legMinutes(points[i - 1], points[i], pace);
+  return total;
+}
+
+/** Untangle the order (2-opt): keeps the start (and the end, for a loop) fixed. */
+function untangle(points, pace) {
+  let improved = true;
+  while (improved) {
+    improved = false;
+    for (let i = 1; i < points.length - 2; i++) {
+      for (let j = i + 1; j < points.length - 1; j++) {
+        const before = legMinutes(points[i - 1], points[i], pace) + legMinutes(points[j], points[j + 1], pace);
+        const after = legMinutes(points[i - 1], points[j], pace) + legMinutes(points[i], points[j + 1], pace);
+        if (after + 1e-9 < before) {
+          points.splice(i, j - i + 1, ...points.slice(i, j + 1).reverse());
+          improved = true;
+        }
+      }
+    }
+  }
+  return points;
+}
+
+/**
+ * The most interesting places that fit in `minutes` (minus time reserved for breaks),
+ * taken best first and slotted in where they add the least walking.
+ * Returns { stops, minutes, meters, loop } (breaks are added afterwards with addBreaks).
+ */
+export function suggestRoute({ start, candidates, modeId = 'walk', minutes = 60, loop = true, reservedMinutes = 0, maxStops = 12 }) {
+  const pace = PACE[modeId] ?? PACE.walk;
+  const visits = museumVisits(modeId, minutes);
+  const budget = minutes - reservedMinutes;
+  const pool = candidates
+    .map((c) => ({ ...c, kind: placeKind(c), score: interestScore(c) }))
+    .filter((c) => Number.isFinite(c.score))
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 60);
+
+  const points = loop ? [start, start] : [start];
+  const chosen = [];
+  let used = 0; // minutes so far
+
+  /** Slot a place in where it adds the least travel, if it fits the time left. */
+  const tryAdd = (c, visitMinutes = null) => {
+    if (chosen.length >= maxStops || chosen.includes(c)) return false;
+    // Skip near-duplicates: the Louvre Pyramid right next to the Louvre.
+    if (chosen.some((s) => distanceMeters(s, c) < 60 || (distanceMeters(s, c) < 400 && sharesNameToken(s.title, c.title)))) return false;
+    const dwell = visitMinutes ?? pace.dwell;
+    let best = null;
+    const lastSlot = loop ? points.length - 1 : points.length;
+    for (let i = 1; i <= lastSlot; i++) {
+      const prev = points[i - 1];
+      const next = points[i];
+      const extra = next ? legMinutes(prev, c, pace) + legMinutes(c, next, pace) - legMinutes(prev, next, pace) : legMinutes(prev, c, pace);
+      if (!best || extra < best.extra) best = { i, extra };
+    }
+    if (used + best.extra + dwell > budget) return false;
+    const stop = { ...c, visitMinutes };
+    points.splice(best.i, 0, stop);
+    chosen.push(c);
+    used += best.extra + dwell;
+    return true;
+  };
+
+  // 1. On longer outings, museum visits go on the route first (the best museums nearby).
+  let museumsLeft = visits.count;
+  for (const c of pool) {
+    if (museumsLeft <= 0) break;
+    if (c.kind === 'museum' && tryAdd(c, visits.minutes)) museumsLeft--;
+  }
+  // 2. Then the most interesting places, best first, while they fit.
+  for (const c of pool) tryAdd(c);
+
+  untangle(points, pace);
+  const stops = points.slice(1, loop ? -1 : undefined);
+  const { minutes: total, meters } = timeline(start, stops, modeId, loop);
+  return { stops, minutes: total, meters, loop, pathMinutes: Math.round(pathMinutes(points, pace)) };
+}
+
+/**
+ * Where along the route each scheduled break falls: after the stop you leave closest to
+ * the planned time (one break per stop).
+ */
+export function placeBreaks(start, stops, schedule, modeId = 'walk', loop = true) {
+  const { times } = timeline(start, stops, modeId, loop);
+  const taken = new Set();
+  return schedule
+    .map((b) => {
+      let bestIndex = -1;
+      times.forEach((t, i) => {
+        if (taken.has(i)) return;
+        if (bestIndex < 0 || Math.abs(t.leave - b.atMinute) < Math.abs(times[bestIndex].leave - b.atMinute)) bestIndex = i;
+      });
+      if (bestIndex >= 0) taken.add(bestIndex);
+      return { ...b, afterIndex: bestIndex };
+    })
+    .filter((b) => b.afterIndex >= 0);
+}
+
+/** Insert chosen food places (one per placed break) into the stop list. */
+export function addBreaks(stops, placed) {
+  const out = [...stops];
+  // Insert from the end so earlier indexes stay valid.
+  for (const b of [...placed].sort((x, y) => y.afterIndex - x.afterIndex)) {
+    if (!b.place) continue;
+    out.splice(b.afterIndex + 1, 0, {
+      ...b.place,
+      title: b.place.name,
+      kind: 'food',
+      meal: b.meal,
+      breakMinutes: b.minutes,
+    });
+  }
+  return out;
+}
+
+// ---------- Fetching food places (OpenStreetMap) ----------
+
+const OVERPASS = 'https://overpass-api.de/api/interpreter';
+const defaultFetch = (...args) => globalThis.fetch(...args);
+
+function normalizeOsm(e) {
+  const lat = e.lat ?? e.center?.lat;
+  const lon = e.lon ?? e.center?.lon;
+  if (lat == null || !e.tags?.name) return null;
+  return { name: e.tags.name, lat, lon, amenity: e.tags.amenity, tags: e.tags };
+}
+
+/**
+ * Cafés, restaurants and bars around a point: OpenStreetMap's Overpass API first, and the
+ * place search (Nominatim, via `geocoder.searchNearby`) if that's unavailable.
+ */
+export async function findFoodNear({ lat, lon }, meal, { radius = 400, geocoder = null, fetchImpl = defaultFetch } = {}) {
+  const amenities = amenitiesFor(meal);
+  const query = `[out:json][timeout:10];nwr["amenity"~"^(${amenities.join('|')})$"]["name"](around:${Math.round(radius)},${lat.toFixed(5)},${lon.toFixed(5)});out center tags 60;`;
+  try {
+    const controller = typeof AbortController === 'function' ? new AbortController() : null;
+    const timer = setTimeout(() => controller?.abort(), 9000);
+    const res = await fetchImpl(`${OVERPASS}?data=${encodeURIComponent(query)}`, { signal: controller?.signal });
+    clearTimeout(timer);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    const places = (data.elements ?? []).map(normalizeOsm).filter(Boolean);
+    if (places.length) return places;
+  } catch {
+    // fall back below
+  }
+  if (!geocoder?.searchNearby) return [];
+  const results = [];
+  for (const amenity of amenities) {
+    const found = await geocoder.searchNearby(amenity, { lat, lon }, radius).catch(() => []);
+    results.push(...found);
+  }
+  return results;
+}

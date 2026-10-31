@@ -74,6 +74,7 @@ export class TourEngine {
     this.lastIdleAt = 0;
     this.fetching = false;
     this.lastFetch = null; // { position, at, coverage }
+    this.quietAt = null; // a museum visit or meal: no stories until the traveller leaves
     this.retickTimer = null;
     this.readyPromise = new Promise((resolve) => (this.resolveReady = resolve));
 
@@ -174,6 +175,11 @@ export class TourEngine {
 
     // 2. Otherwise, talk about interesting places you're passing.
     if (this.narrator.busy || this.pendingPoi || this.pendingArrivals > 0) return;
+    if (this.quietAt) {
+      // Visiting a museum or having a meal: stay quiet until they set off again.
+      if (distanceMeters(pos, this.quietAt) <= this.quietAt.arrivalRadius + 120) return;
+      this.quietAt = null;
+    }
     if (next && distanceToNext <= next.arrivalRadius + this.mode.arrivalRadius * 1.5) return; // about to arrive
     const quietFor = this.now() - this.lastIdleAt;
     const gapMs = this.mode.gapSeconds * 1000;
@@ -230,6 +236,7 @@ export class TourEngine {
     // Stops before it that were never reached stay unreached (skipped).
     stop.reached = true;
     this.nextStopIndex = stop.index + 1;
+    if (stop.kind === 'food' || stop.visitMinutes) this.quietAt = stop;
     this.announcedFirstStop = true;
     this.pendingArrivals++;
     this.emit('stop-reached', { stop });
@@ -245,6 +252,9 @@ export class TourEngine {
         summary,
         nextStopName: following?.name ?? null,
         nextDistance: following ? distanceMeters(stop, following) : 0,
+        kind: stop.kind,
+        meal: stop.meal,
+        visitMinutes: stop.visitMinutes,
       });
       const interrupt = this.narrator.current?.meta?.kind === 'poi';
       this.#say(
@@ -258,6 +268,8 @@ export class TourEngine {
   }
 
   #stopArticle(stop) {
+    // Cafés and restaurants only get a story when they're notable (tagged with an article).
+    if (stop.kind === 'food' && !stop.wikipedia && !stop.wikidata) return Promise.resolve(null);
     if (!stop.articlePromise) {
       stop.articlePromise = this.wiki
         .resolveArticle(stop)

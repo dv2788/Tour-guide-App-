@@ -363,6 +363,203 @@ textarea {
   font-size: 0.92rem;
 }
 
+.btn-suggest {
+  background: linear-gradient(135deg, var(--primary-soft), color-mix(in srgb, var(--sun) 35%, var(--primary-soft)));
+}
+
+.btn-quiet {
+  background: var(--surface-2);
+  color: var(--ink);
+}
+
+.btn-small {
+  min-height: 50px;
+  font-size: 1rem;
+}
+
+.suggest-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px;
+  border-radius: 16px;
+  background: var(--surface-2);
+}
+
+.suggest-q {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 800;
+}
+
+.suggest-q .icon {
+  color: var(--coral);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip-opt {
+  position: relative;
+}
+
+.chip-opt input {
+  position: absolute;
+  opacity: 0;
+  inset: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+.chip-opt span {
+  display: block;
+  padding: 9px 14px;
+  border-radius: 20px;
+  background: var(--surface);
+  border: 2px solid var(--line);
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.chip-opt input:checked + span {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+  color: var(--primary-ink);
+}
+
+.chip-opt input:focus-visible + span {
+  outline: 3px solid color-mix(in srgb, var(--primary) 55%, transparent);
+  outline-offset: 2px;
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 0.92rem;
+  min-height: 36px;
+}
+
+.check input {
+  width: 22px;
+  height: 22px;
+  accent-color: var(--primary);
+}
+
+.plan {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.plan-summary {
+  margin: 0;
+  font-weight: 800;
+}
+
+.plan-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.plan-list li {
+  position: relative;
+  display: grid;
+  grid-template-columns: 66px 36px 1fr;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+}
+
+.plan-list li + li::before {
+  content: '';
+  position: absolute;
+  left: 91px;
+  top: -10px;
+  height: 20px;
+  border-left: 2px dotted var(--line);
+}
+
+.plan-time {
+  white-space: nowrap;
+  font-weight: 800;
+  font-size: 0.82rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.plan-icon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+
+.plan-icon .icon {
+  width: 20px;
+  height: 20px;
+}
+
+.plan-icon.food {
+  background: color-mix(in srgb, var(--sun) 35%, var(--surface));
+  color: #8a5300;
+}
+
+.plan-icon.museum {
+  background: var(--forest-soft);
+  color: var(--forest);
+}
+
+.plan-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.25;
+}
+
+.plan-text strong {
+  overflow-wrap: anywhere;
+}
+
+.plan-text small {
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 0.82rem;
+}
+
+.plan-map {
+  height: 220px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--surface-2);
+}
+
+.start-dot {
+  width: 18px !important;
+  height: 18px !important;
+  border-radius: 50%;
+  background: #2563eb;
+  border: 3px solid #fff;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 35%);
+}
+
+.stop-pin.food {
+  background: #f2a900;
+}
+
 /* Choice tiles (travel mode, location source) */
 
 .tiles {

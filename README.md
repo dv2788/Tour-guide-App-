@@ -24,6 +24,25 @@ them first.
 (repo **Settings → Pages → Deploy from a branch**, pick this branch and `/ (root)`). Open the URL on your
 phone, choose **Use my phone's GPS**, and go outside. You can also "Add to Home Screen": it installs like an app.
 
+## Let Roamie plan it: "Suggest a route for me"
+
+Tap **Use my location** (or type your city), then **Suggest a route for me** and answer one question:
+**how long do you want to be out?** (30 min, 1 hour, 2 hours, half a day or a full day). Roamie then:
+
+- **picks the places with the most history around you**: churches, palaces, castles, monuments, old markets,
+  bridges… (recognised in all five languages), favouring the places Wikipedia has the most to say about,
+  and skipping filler (streets, metro stations, whole districts, stub articles) and near-duplicates;
+- **puts museums on the route** when there's time to go inside (about an hour each, one for half a day, two
+  for a full day), and stays quiet while you visit;
+- **adds food and drink at the right time**: lunch around 12:30, dinner around 19:45, a coffee or a drink in
+  the longest stretches without a break. It prefers notable places (a historic café with its own Wikipedia
+  article beats a chain) and the right kind (a restaurant for lunch, a bar for a drink);
+- orders everything into an efficient loop back to where you started (or one-way), fitted to your time and
+  way of getting around, and shows it as a timeline with times and a map. You can still edit the list.
+
+Places come from Wikipedia; cafés, restaurants and bars from OpenStreetMap (Overpass, falling back to
+Nominatim). The planning logic is in `js/suggest.js` (pure functions, unit-tested).
+
 ## Paste your route from any maps app
 
 Plan your trip where you already do, then **Share → Copy** and tap **Paste a route from a maps app** (or paste
@@ -113,6 +132,7 @@ js/narrator.js        what to say next: queue, pause/skip/repeat, priority for a
 js/neuralVoice.js     the on-device AI voice (Piper on ONNX Runtime Web), warm EQ, caching
 js/voices.js          voice catalogue, calm built-in voice ranking, pronunciation fixes
 js/itineraryImport.js reading routes pasted from maps apps and plain lists
+js/suggest.js         suggested routes: interest scoring, museum visits, meal breaks, route order
 js/wiki.js            Wikipedia: nearby places, stories, matching a stop to its article
 js/geocode.js         OpenStreetMap: finding places, routes
 js/location.js        GPS and the trip simulator
@@ -130,7 +150,8 @@ Plain JavaScript modules: no framework, no build step.
 
 ```bash
 npm test             # unit tests (Node 18+): geo math, text cleanup, the tour engine, Wikipedia/OSM parsing
-npm run e2e          # browser runs on a phone-sized screen: the Paris walk, and a pasted Google Maps route
+npm run e2e          # browser runs on a phone-sized screen: the Paris walk, a pasted Google Maps route,
+                     # and "use my location" + a suggested half-day route with a museum visit and meals
 npm run e2e:voice    # the AI voice for real: download, preview, and a tour read by it (needs internet)
 ```
 

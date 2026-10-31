@@ -226,3 +226,37 @@ test('the documentary narrator phrases the tour its own way', async (t) => {
   assert.match(said[1], /^Our first stop is Final Square, some 150 meters away\.$/);
   assert.match(said.at(-1), /^And so, we arrive at Final Square\. A grand square\. And that brings our journey to its end\./);
 });
+
+test('museum visits and meals: the guide says so, then stays quiet until you leave', async (t) => {
+  const stops = [
+    { name: 'Grand Museum', lat: LAT, lon: east(100), visitMinutes: 60 },
+    { name: 'Le Café', lat: LAT, lon: east(400), kind: 'food', meal: 'coffee', breakMinutes: 20 },
+  ];
+  const nearMuseum = { id: 9, title: 'Museum Garden', lat: north(30), lon: east(140), thumbnail: null, category: null };
+  let clock = 1_000_000;
+  const narrator = new FakeNarrator();
+  const wiki = fakeWiki({
+    pois: [nearMuseum],
+    summaries: { 'Museum Garden': { pageid: 9, title: 'Museum Garden', extract: 'A garden.' } },
+    articles: { 'Grand Museum': { pageid: 50, title: 'Grand Museum', extract: 'A great museum.' } },
+  });
+  const engine = new TourEngine({ mode: getMode('walk'), lang: 'en', wiki, narrator, stops, now: () => clock });
+  t.after(() => engine.stop());
+  await engine.start();
+  engine.update({ lat: LAT, lon: east(100) }); // at the museum
+  await flush();
+  await flush();
+  assert.match(narrator.spoken.at(-1).text, /You have arrived at Grand Museum\. A great museum\. It's well worth going inside: allow about 60 minutes/);
+  narrator.finishAll();
+  clock += 60000;
+  engine.update({ lat: LAT, lon: east(105) }); // wandering inside: the garden is close, but no story
+  await flush();
+  await flush();
+  assert.ok(!narrator.spoken.some((s) => s.meta.title === 'Museum Garden'), 'quiet during the visit');
+  engine.update({ lat: LAT, lon: east(400) }); // left, and reached the café
+  await flush();
+  await flush();
+  const cafe = narrator.spoken.at(-1).text;
+  assert.match(cafe, /^Time for a coffee break\. Le Café is right here\./);
+  assert.ok(!/A great museum|garden/i.test(cafe));
+});
