@@ -102,16 +102,20 @@ function save(values) {
 form.addEventListener('change', syncFormHints);
 // ---------- Sample tours ----------
 
-function loadSample(id) {
+function loadSample(id, { onSite = false } = {}) {
   const sample = sampleById(id);
   imported = new Map();
   plan = null;
   renderPlan();
   showPlanMap();
   // Start from the first stop (not from wherever you are now), simulated from the sofa.
-  fillForm({ city: sample.city, stops: sample.stops.join('\n'), mode: sample.mode, source: 'sim', simSpeed: '8', start: null, lang: $('lang').value });
+  fillForm({ city: sample.city, stops: sample.stops.join('\n'), mode: sample.mode, source: onSite ? 'gps' : 'sim', simSpeed: '8', start: null, lang: $('lang').value });
   for (const el of document.querySelectorAll('.sample')) el.setAttribute('aria-pressed', String(el.dataset.id === sample.id));
-  showImportNote(`✓ Sample tour of ${sample.label}: ${sample.stops.length} stops. Tap “Begin the tour” to try it from your sofa.`);
+  showImportNote(
+    onSite
+      ? `✓ Tour of ${sample.label}: ${sample.stops.length} stops. Tap “Begin the tour” when you're there, or choose “Try from the couch” below to hear it from anywhere.`
+      : `✓ Sample tour of ${sample.label}: ${sample.stops.length} stops. Tap “Begin the tour” to try it from your sofa.`,
+  );
   $('setup-error').textContent = '';
 }
 
@@ -745,6 +749,12 @@ populateGuides(saved?.voice ?? null);
 syncFormHints();
 renderPlan();
 if (startPoint?.name) showLocateNote(`✓ You're in ${startPoint.name}.`);
+// A link to a sample tour (?tour=barcelona, from the tour pages) opens with that tour loaded.
+const linkedTour = new URLSearchParams(location.search).get('tour');
+if (linkedTour && SAMPLES.some((s) => s.id === linkedTour)) {
+  loadSample(linkedTour, { onSite: true }); // from a tour page: you may well be there
+  document.querySelector(`.sample[data-id="${linkedTour}"]`)?.scrollIntoView({ block: 'nearest', inline: 'center' });
+}
 window.addEventListener('load', () => showPlanMap());
 
 // ---------- Map ----------

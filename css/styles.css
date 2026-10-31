@@ -1147,6 +1147,38 @@ select:focus {
   height: 15px;
 }
 
+/* ---------- Footer (links to the tour pages) ---------- */
+
+.site-foot {
+  display: grid;
+  gap: 10px;
+  margin: 28px 0 8px;
+  padding-top: 22px;
+  border-top: 1px solid var(--hairline);
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.site-foot .samples-title {
+  margin: 0;
+}
+
+.tour-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+}
+
+.tour-links a {
+  color: var(--gold);
+  font-family: var(--serif);
+  font-size: 1.05rem;
+}
+
+.site-foot p {
+  margin: 0;
+}
+
 /* ---------- Tour ---------- */
 
 #tour {

@@ -18,6 +18,23 @@
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="Roamie, the city narrated: a phone showing walking directions on La Rambla, Barcelona" />
     <meta name="twitter:card" content="summary_large_image" />
+    <link rel="canonical" href="https://dv2788.github.io/Tour-guide-App-/" />
+    <!-- For search engines: what Roamie is (schema.org) -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Roamie",
+        "alternateName": "Roamie · The city, narrated",
+        "url": "https://dv2788.github.io/Tour-guide-App-/",
+        "description": "A free voice guide for cities: it curates a route, shows you the way and tells you the story of every place you pass, on foot, by bike or by car.",
+        "applicationCategory": "TravelApplication",
+        "operatingSystem": "Any (runs in a web browser)",
+        "inLanguage": ["en", "fr", "es", "de", "it"],
+        "image": "https://dv2788.github.io/Tour-guide-App-/icons/og-image.jpg",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" }
+      }
+    </script>
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="icons/icon-192.png" />
@@ -241,6 +258,24 @@
             <button type="button" id="demo" class="link">or try a sample tour of Barcelona</button>
           </div>
         </form>
+
+        <footer class="site-foot">
+          <p class="samples-title">Free audio tours</p>
+          <nav class="tour-links" aria-label="Free audio tours">
+            <!-- tours:start -->
+            <a href="tours/barcelona/">Barcelona</a>
+            <a href="tours/brussels/">Brussels</a>
+            <a href="tours/cape-town/">Cape Town</a>
+            <a href="tours/kinshasa/">Kinshasa</a>
+            <a href="tours/miami/">Miami Beach</a>
+            <a href="tours/paris/">Paris</a>
+            <a href="tours/san-francisco/">San Francisco</a>
+            <a href="tours/shenzhen/">Shenzhen</a>
+            <a href="tours/tokyo/">Tokyo</a>
+            <!-- tours:end -->
+          </nav>
+          <p>Roamie, the city narrated: a free voice guide that curates your route, shows you the way and tells you the story of every place you pass. Stories from Wikipedia · Map data © OpenStreetMap contributors.</p>
+        </footer>
       </section>
 
       <!-- 2. On tour -->

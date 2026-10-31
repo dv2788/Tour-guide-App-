@@ -52,6 +52,35 @@ paste the full link instead.
 
 **Launching it:** the ad, the visuals, ready-to-paste copy and a launch plan are in [`marketing/`](marketing/).
 
+### Getting found on Google
+
+The site is ready for search engines:
+
+- **A page per sample tour** (`tours/barcelona/`, `tours/cape-town/`…), written for what people search
+  ("free audio walking tour of Barcelona"), with each stop described from Wikipedia and a **Start this tour**
+  button that opens the app with the tour loaded (`?tour=barcelona`, also handy to share).
+- **A sitemap** (`sitemap.xml`), structured data (schema.org `WebApplication` on the home page, `TouristTrip` on
+  each tour page), canonical addresses, link previews, and the tour pages linked from the home page footer.
+- `npm run build:site` regenerates the tour pages, the sitemap and the footer links after editing
+  `js/samples.js` (a test checks they stay in sync).
+
+Google only accepts new sites through **Google Search Console**, which needs your Google account:
+
+1. Switch on GitHub Pages (above) and check the site opens.
+2. Go to https://search.google.com/search-console, **Add property → URL prefix**, and enter
+   `https://dv2788.github.io/Tour-guide-App-/`.
+3. Choose the **HTML tag** method and copy the code it shows (`<meta name="google-site-verification" …>`). Add it
+   to `index.html` next to the other `<meta>` tags (or send it to Claude to add), push, wait a minute, then click
+   **Verify**.
+4. Open **Sitemaps**, enter `sitemap.xml`, **Submit**.
+5. Open **URL inspection**, paste the home page address, click **Request indexing**. Do the same for a couple of
+   tour pages.
+
+Pages usually appear within a few days to two weeks. For Bing (which also feeds DuckDuckGo, Yahoo, Ecosia and
+ChatGPT search), run `npm run indexnow` once the site is live: no account needed. A domain of your own
+(`roamie.app`, say) would rank and read better than a `github.io` address; if you get one, rebuild with
+`SITE_URL=https://your.domain/ npm run build:site` and update the `og:` and canonical tags in `index.html`.
+
 ## Let Roamie plan it: "Suggest a route for me"
 
 Tap **Use my location** (or type your city), then **Suggest a route for me** and answer one question:
