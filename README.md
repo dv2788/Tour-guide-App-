@@ -41,9 +41,14 @@ this name, a real route joining them, a Wikipedia article for each). Use them fr
 They live in `js/samples.js`; any city works the same way: type your own stops, paste a route, or let Roamie
 curate one.
 
-**On your phone:** location only works over HTTPS. The easiest way is GitHub Pages
-(repo **Settings → Pages → Deploy from a branch**, pick this branch and `/ (root)`). Open the URL on your
-phone, choose **Use my phone's GPS**, and go outside. You can also "Add to Home Screen": it installs like an app.
+**Online:** Roamie is published with GitHub Pages at **https://dv2788.github.io/Tour-guide-App-/** once Pages
+is switched on (repo **Settings → Pages → Build and deployment → Deploy from a branch**, branch
+`claude/city-tour-guide-app-nrb6vy`, folder `/ (root)`, **Save**). Every push to that branch then updates the
+site within a minute or two. Open the link on your phone, choose **Use my phone's GPS**, and go outside
+(location needs HTTPS, which Pages provides). "Add to Home Screen" installs it like an app. Links to it show
+a preview card (`icons/og-image.jpg`); if you move to your own domain, update the `og:` tags in `index.html`.
+Short map links (`maps.app.goo.gl/…`) need the small Cloudflare function in `functions/`, so on GitHub Pages
+paste the full link instead.
 
 ## Let Roamie plan it: "Suggest a route for me"
 
