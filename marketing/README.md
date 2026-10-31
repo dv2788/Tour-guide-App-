@@ -6,13 +6,15 @@ ready-to-paste copy for each channel and a two-week launch plan.
 
 | File | What | Use |
 | --- | --- | --- |
-| `roamie-ad.mp4` | 32 s vertical ad, 1080 × 1920, H.264 + AAC, −16 LUFS, words on screen | Instagram Reels, TikTok, YouTube Shorts, Stories |
+| `roamie-ad.mp4` | 32 s vertical ad, 1080 × 1920, H.264 + AAC, −16 LUFS, words on screen · voice: Heart (American, warm) | Instagram Reels, TikTok, YouTube Shorts, Stories |
+| `roamie-ad-george.mp4` | The same ad · voice: George (British, calm) | Same, or for UK audiences |
 | `roamie-feed.jpg` | 1080 × 1350 | Instagram / Facebook / LinkedIn posts |
 | `roamie-story.jpg` | 1080 × 1920 | Stories, TikTok cover |
 | `roamie-square.jpg` | 1080 × 1080 | Profile posts, Product Hunt gallery |
 | `roamie-og.jpg` | 1200 × 630 | Link previews (also in `icons/og-image.jpg`, used by the app) |
 | `ad-poster.jpg` | A still from the ad | Video cover |
 
-The ad's voice is the app's own documentary narrator (Piper, VCTK speaker p274, CC BY 4.0), generated on the
-device. The music is an ambient pad made for the film. Screens are the real app (Barcelona sample tour), with
+The ad's voices are Heart and George from [Kokoro-82M](https://huggingface.co/hexgrad/Kokoro-82M), an
+open-source voice model (Apache 2.0, free for commercial use). The music is a light arpeggio bed written for
+the film; it dips under the voice. Screens are the real app (Barcelona sample tour), with
 Wikipedia photos left out. Map data © OpenStreetMap contributors; vector maps OpenFreeMap © OpenMapTiles.

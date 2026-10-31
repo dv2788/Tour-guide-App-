@@ -73,7 +73,10 @@
   .card pre { margin: 0; white-space: pre-wrap; word-wrap: break-word; font-family: var(--body); font-size: 0.95rem; line-height: 1.55; font-weight: 300; }
   .card .meta { font-size: 0.78rem; color: var(--muted); }
   button.copy-btn { font: inherit; font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 5px 12px; border-radius: 999px; border: 1px solid var(--gold-bright); background: transparent; color: var(--gold); cursor: pointer; flex: none; }
-  button.copy-btn:focus-visible { outline: 2px solid var(--gold-bright); outline-offset: 2px; }
+  button.copy-btn:focus-visible, .voice-btn:focus-visible { outline: 2px solid var(--gold-bright); outline-offset: 2px; }
+  .voices { display: flex; flex-wrap: wrap; gap: 8px; }
+  .voice-btn { font: inherit; font-size: 0.84rem; padding: 6px 14px; border-radius: 999px; border: 1px solid var(--hairline); background: var(--surface); color: var(--ink); cursor: pointer; }
+  .voice-btn[aria-pressed="true"] { border-color: var(--gold-bright); color: var(--gold); box-shadow: inset 0 0 0 1px var(--gold-bright); }
   .timeline { display: grid; gap: 0; }
   .phase { display: grid; grid-template-columns: minmax(0, 170px) minmax(0, 1fr); gap: 24px; padding-block: 22px; border-top: 1px solid var(--hairline); }
   .phase h3 { font-size: 1.3rem; }
@@ -123,10 +126,16 @@
     <div class="section-head">
       <p class="label">The ad</p>
       <h2>“And here, on your left… Casa Batlló.”</h2>
-      <p class="muted">A vertical film for Reels, TikTok and Shorts. Barcelona at night, the walk drawing itself in gold, then the real app. The voice is Roamie’s own documentary narrator, generated on the device like in the app. Every screen shown is the real product.</p>
+      <p class="muted">A vertical film for Reels, TikTok and Shorts. Barcelona at night, the walk drawing itself in gold, then the real app. Every screen shown is the real product. Two voices to choose from, both warm and natural, made with Kokoro, an open-source voice model that is free for commercial use.</p>
     </div>
     <div class="ad">
-      <video src="roamie-ad.mp4" poster="ad-poster.jpg" controls playsinline preload="metadata" aria-label="Roamie ad, 32 seconds"></video>
+      <div style="display:grid;gap:12px;justify-items:start;min-width:0">
+        <video id="ad-video" src="roamie-ad.mp4" poster="ad-poster.jpg" controls playsinline preload="metadata" aria-label="Roamie ad, 32 seconds"></video>
+        <div class="voices" role="group" aria-label="Voice">
+          <button type="button" class="voice-btn" data-src="roamie-ad.mp4" aria-pressed="true">Heart · American, warm</button>
+          <button type="button" class="voice-btn" data-src="roamie-ad-george.mp4" aria-pressed="false">George · British, calm</button>
+        </div>
+      </div>
       <div style="display:grid;gap:18px;min-width:0">
         <div class="scroll">
           <table>
@@ -146,7 +155,7 @@
         <div class="specs">
           <span class="chip">1080 × 1920 · 9:16</span><span class="chip">32 s · 30 fps</span><span class="chip">H.264 + AAC</span><span class="chip">Loudness −16 LUFS</span><span class="chip">Words on screen for silent viewing</span>
         </div>
-        <p class="muted" style="font-size:0.9rem">Music is a soft ambient pad made for this film, so there are no licensing questions. Wikipedia photos were left out of the screens on purpose (their licences require credits).</p>
+        <p class="muted" style="font-size:0.9rem">The music is a light arpeggio bed written for this film, so there are no licensing questions; it dips under the voice. Wikipedia photos were left out of the screens on purpose (their licences require credits). Files: <code>roamie-ad.mp4</code> (Heart) and <code>roamie-ad-george.mp4</code>.</p>
       </div>
     </div>
   </section>
@@ -334,11 +343,20 @@ Contact: [your email]</pre></article>
   </section>
 
   <footer>
-    Roamie 1.0 · Map data © OpenStreetMap contributors · Vector maps OpenFreeMap © OpenMapTiles · Stories from Wikipedia (CC BY-SA) · Voices: Piper and the piper-voices collection.
+    Roamie 1.0 · Map data © OpenStreetMap contributors · Vector maps OpenFreeMap © OpenMapTiles · Stories from Wikipedia (CC BY-SA) · App voices: Piper and the piper-voices collection · Ad voices: Kokoro-82M (Apache 2.0).
   </footer>
 </div>
 
 <script>
+  const adVideo = document.getElementById('ad-video');
+  document.querySelectorAll('.voice-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.voice-btn').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+      const playing = !adVideo.paused;
+      adVideo.src = btn.dataset.src;
+      if (playing) adVideo.play().catch(() => {});
+    });
+  });
   document.querySelectorAll('.copy-btn').forEach((btn) => {
     btn.addEventListener('click', () => {
       const pre = btn.closest('.card').querySelector('pre');
