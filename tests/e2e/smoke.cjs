@@ -299,6 +299,18 @@ const LIVE = process.env.LIVE === '1';
   console.log('\nScenario 3, suggested half-day route:', planned.note, '|', planned.summary);
   planned.items.forEach((it) => console.log('   ', it));
   expect(mostInFlight <= 2, `at most 2 Wikipedia requests at once (Wikipedia refuses more than 3; saw ${mostInFlight})`);
+  // "Open in Google Maps": the whole route, in order, from the start and back (no copying and pasting).
+  const mapsLinks = await page3.$$eval('#plan-maps a', (as) => as.map((a) => a.href));
+  const noteHasMaps = await page3.$eval('#import-note', (n) => /Open in Google Maps/.test(n.textContent));
+  const mapsStops = mapsLinks.flatMap((href) => {
+    const q = new URL(href).searchParams;
+    return [...(q.get('waypoints') ? q.get('waypoints').split('|') : []), q.get('destination')];
+  });
+  const firstMaps = mapsLinks[0] ? new URL(mapsLinks[0]).searchParams : null;
+  expect(
+    mapsLinks.length >= 1 && noteHasMaps && firstMaps?.get('origin') && mapsStops.length === planned.items.length + 1 && firstMaps.get('travelmode') === 'walking',
+    `the route opens in Google Maps with every stop and back to the start (${mapsLinks.length} link(s), ${mapsStops.length} points for ${planned.items.length} stops)`,
+  );
   await page3.screenshot({ path: path.join(SHOTS, '7-suggested-route.png'), fullPage: true });
   expect(planned.items.length >= 4, `a route with several stops (${planned.items.length})`);
   expect(!planned.items.some((t) => /\((Barcelona|Paris)\)/.test(t)), 'stop names without Wikipedia\'s "(Barcelona)"');

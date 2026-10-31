@@ -5,7 +5,7 @@ import { SAMPLES, DEFAULT_SAMPLE, sampleById } from './samples.js';
 import { LANGUAGES, speechLocale } from './i18n.js';
 import { createWikiService } from './wiki.js';
 import { createGeocoder, fetchRoute, fetchDirections, fetchStreetName } from './geocode.js';
-import { Navigator, mapsLink } from './navigation.js';
+import { Navigator, mapsLink, routeMapsLinks } from './navigation.js';
 import { Narrator } from './narrator.js';
 import { GpsSource, SimulatedSource } from './location.js';
 import { TourEngine } from './tourEngine.js';
@@ -666,10 +666,13 @@ async function planRoute() {
 
     const sights = items.filter((it) => it.kind !== 'food').length;
     const breaks = items.length - sights;
+    const links = planMapsLinks();
     showImportNote(
       `✓ ${sights} place${sights > 1 ? 's' : ''} picked for their history` +
         (breaks ? ` and ${breaks} break${breaks > 1 ? 's' : ''}` : '') +
-        `. Edit the list below if you like.`,
+        `. Edit the list below if you like, begin the tour here, or follow it in your maps app.`,
+      '',
+      links.length ? { label: 'Open in Google Maps', run: () => window.open(links[0], '_blank', 'noopener') } : null,
     );
     save(readForm());
   } finally {
@@ -678,10 +681,26 @@ async function planRoute() {
 }
 $('suggest-go').addEventListener('click', planRoute);
 
+/** Google Maps links for the planned route: from the start, every stop, and back on a round trip. */
+function planMapsLinks() {
+  if (!plan?.items?.length) return [];
+  const stops = plan.items.filter((it) => it.lat != null);
+  return routeMapsLinks(plan.loop && plan.start ? [...stops, plan.start] : stops, { modeId: readForm().mode, origin: plan.start ?? null });
+}
+
 function renderPlan() {
   const box = $('plan');
   box.hidden = !plan;
   if (!plan) return;
+  const links = planMapsLinks();
+  $('plan-maps').replaceChildren(
+    ...links.map((href, i) =>
+      el('a', { href, target: '_blank', rel: 'noopener' }, [
+        icon('map'),
+        links.length > 1 ? `Google Maps · part ${i + 1} of ${links.length}` : 'Open in Google Maps',
+      ]),
+    ),
+  );
   const start = new Date(plan.startedAt);
   $('plan-summary').textContent = `About ${formatMinutes(plan.minutes)} · ${(plan.meters / 1000).toFixed(1)} km${plan.loop ? ' round trip' : ''}`;
   $('plan-list').replaceChildren(
@@ -1148,7 +1167,9 @@ function showDirections(state, modeId) {
   }
   card.hidden = false;
   $('nav-icon').setAttribute('href', `#i-${state.icon ?? 'navigation'}`);
-  $('nav-sentence').textContent = state.sentence ?? (state.offRoute ? 'Finding a new way…' : 'Finding the way…');
+  $('nav-sentence').textContent =
+    state.sentence ?? (state.offRoute ? 'Finding a new way…' : state.failed ? 'No route found here yet: tap the map for your maps app' : 'Finding the way…');
+  card.classList.toggle('failed', Boolean(state.failed && !state.sentence));
   const parts = [state.target.name];
   if (state.remaining != null) parts.push(formatMeters(state.remaining));
   if (state.minutes != null) parts.push(`${state.minutes} min`);

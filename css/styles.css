@@ -570,6 +570,33 @@ select:focus {
   opacity: 0.45;
 }
 
+/* The planned route, handed to Google Maps (in parts when it has more than 10 stops) */
+.plan-maps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 4px 0 12px;
+}
+
+.plan-maps a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border: 1px solid var(--gold-bright);
+  border-radius: var(--radius);
+  color: var(--gold);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.nav-card.failed .nav-open {
+  border-color: var(--gold-bright);
+  box-shadow: 0 0 0 4px rgb(201 165 92 / 25%);
+}
+
 .check {
   display: flex;
   align-items: center;

@@ -112,7 +112,9 @@ are, or, if you've typed another city (planning tomorrow's trip from home), that
   kind (a restaurant for lunch, a bar for a drink), offers up to three alternatives ("Another place"), and
   links to reviews in Google Maps;
 - orders everything into an efficient loop back to where you started (or one-way), fitted to your time and
-  way of getting around, and shows it as a timeline with times and a map. You can still edit the list.
+  way of getting around, and shows it as a timeline with times and a map. You can still edit the list;
+- **opens it in Google Maps** in one tap: every stop in order, from your start and back (Google takes 10 stops
+  per route, so a longer plan comes in parts, each starting where the last ended).
 
 Places come from Wikipedia; cafés, restaurants and bars from OpenStreetMap (Overpass, falling back to
 Nominatim). Wikipedia allows a web page at most 3 requests at a time, so the app sends at most 2 (a shared

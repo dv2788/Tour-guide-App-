@@ -13,6 +13,11 @@ const HEADING_MIN_MOVE_M = 10; // ignore GPS jitter when working out direction o
 const MIN_REFETCH_MS = 8000;
 const MAX_TRUSTED_JUMP_M = 2000; // a bigger jump between fixes is a GPS glitch, not travel
 const MINOR_AFTER_MS = 45000; // streets, stations…: only worth it after a long silence
+// Wikipedia can be slow or busy: the welcome and each arrival wait this long for their article,
+// then speak without it rather than keep you waiting.
+const WELCOME_WAIT_MS = 4000;
+const ARRIVAL_WAIT_MS = 8000;
+const atMost = (promise, ms) => Promise.race([promise, new Promise((resolve) => setTimeout(() => resolve(null), ms))]);
 
 /**
  * How close counts as "arrived". Big places (the Louvre, a park) count from their edge,
@@ -89,7 +94,7 @@ export class TourEngine {
     this.#prefetchStopArticles();
     let citySummary = null;
     if (this.city) {
-      citySummary = await this.wiki.resolveArticle(this.city, { maxDistance: 30000 }).catch(() => null);
+      citySummary = await atMost(this.wiki.resolveArticle(this.city, { maxDistance: 30000 }).catch(() => null), WELCOME_WAIT_MS);
       if (citySummary) this.narrated.add(citySummary.pageid);
     }
     if (!this.running) return;
@@ -164,15 +169,16 @@ export class TourEngine {
 
   /** Decide whether to say something now. Safe to call often. */
   tick() {
-    if (!this.running || !this.ready || !this.position) return;
+    if (!this.running || !this.position) return;
     const pos = this.position;
 
-    // 1. Itinerary stops (arrivals themselves are detected in update()).
+    // 1. Itinerary stops (arrivals themselves are detected in update()). Directions to the next
+    // stop start at once: they don't wait for the welcome, or for Wikipedia.
     const next = this.stops[this.nextStopIndex];
-    let distanceToNext = Infinity;
+    const distanceToNext = next ? distanceMeters(pos, next) : Infinity;
+    if (next) this.emit('next-stop', { stop: next, distance: distanceToNext });
+    if (!this.ready) return;
     if (next) {
-      distanceToNext = distanceMeters(pos, next);
-      this.emit('next-stop', { stop: next, distance: distanceToNext });
       if (!this.announcedFirstStop && this.nextStopIndex === 0) {
         this.announcedFirstStop = true;
         this.#say(buildFirstStopNarration({ lang: this.lang, style: this.style, stopName: next.name, distance: distanceToNext }), {
@@ -251,7 +257,7 @@ export class TourEngine {
     this.pendingArrivals++;
     this.emit('stop-reached', { stop });
     try {
-      const [summary] = await Promise.all([this.#stopArticle(stop), this.readyPromise]); // after the welcome
+      const [summary] = await Promise.all([atMost(this.#stopArticle(stop), ARRIVAL_WAIT_MS), this.readyPromise]); // after the welcome
       if (!this.running) return;
       const following = this.stops[this.nextStopIndex] ?? null;
       const text = buildArrivalNarration({

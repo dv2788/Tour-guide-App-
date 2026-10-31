@@ -277,3 +277,26 @@ test('museum visits and meals: the guide says so, then stays quiet until you lea
   assert.match(cafe, /^Time for a coffee break\. Le Café is right here\./);
   assert.ok(!/A great museum|garden/i.test(cafe));
 });
+
+test('directions to the first stop start at once, even while Wikipedia is slow to answer', async () => {
+  const narrator = new FakeNarrator();
+  const targets = [];
+  const never = new Promise(() => {}); // Wikipedia busy: no answer
+  const wiki = { ...fakeWiki({ pois: [], summaries: {} }), resolveArticle: () => never, nearby: () => never, summary: () => never };
+  const engine = new TourEngine({
+    mode: getMode('walk'),
+    lang: 'en',
+    wiki,
+    narrator,
+    city: { name: 'Testville', lat: LAT, lon: LON },
+    stops: [{ name: 'Final Square', lat: LAT, lon: east(600) }],
+    onEvent: (type, data) => type === 'next-stop' && targets.push(data.stop.name),
+    now: () => 1_000_000,
+  });
+  engine.start(); // still waiting for the city's article
+  engine.update({ lat: LAT, lon: LON, accuracy: 10 });
+  await flush();
+  assert.deepEqual([...new Set(targets)], ['Final Square'], 'the guide knows where to go before the welcome');
+  assert.equal(engine.ready, false, 'the welcome is still waiting');
+  engine.stop();
+});

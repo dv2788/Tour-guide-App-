@@ -329,6 +329,28 @@ export function mapsLink(stop, modeId = 'walk', { apple = false } = {}) {
   return `https://www.google.com/maps/dir/?api=1&destination=${at}&travelmode=${mode}`;
 }
 
+/**
+ * The whole route in Google Maps, every stop in order. Google takes up to 9 stops on the way
+ * plus the destination, so a longer route comes in parts, each starting where the last ended.
+ * Without an origin, Google starts from where the phone is.
+ */
+export function routeMapsLinks(stops, { modeId = 'walk', origin = null, perPart = 10 } = {}) {
+  const at = (p) => `${p.lat.toFixed(6)},${p.lon.toFixed(6)}`;
+  const mode = { walk: 'walking', run: 'walking', cycle: 'bicycling', drive: 'driving' }[modeId] ?? 'walking';
+  const links = [];
+  for (let i = 0; i < stops.length; i += perPart) {
+    const part = stops.slice(i, i + perPart);
+    const from = i === 0 ? origin : stops[i - 1];
+    const params = new URLSearchParams({ api: '1' });
+    if (from) params.set('origin', at(from));
+    params.set('destination', at(part.at(-1)));
+    if (part.length > 1) params.set('waypoints', part.slice(0, -1).map(at).join('|'));
+    params.set('travelmode', mode);
+    links.push(`https://www.google.com/maps/dir/?${params}`);
+  }
+  return links;
+}
+
 // ---------- Guiding ----------
 
 const SETTINGS = {
@@ -501,7 +523,8 @@ export class Navigator {
   }
 
   #state(progress = null) {
-    const base = { target: this.target, route: this.route, maneuver: null, sentence: null, icon: null, remaining: null, minutes: null, offRoute: false };
+    // failed: the route service couldn't give a way here (yet): the maps app is the way out.
+    const base = { target: this.target, route: this.route, maneuver: null, sentence: null, icon: null, remaining: null, minutes: null, offRoute: false, failed: this.failures > 0 && !this.route };
     if (!this.target) return base;
     if (!this.route || !progress) {
       const straight = this.position ? distanceMeters(this.position, this.target) : null;

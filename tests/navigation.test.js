@@ -288,3 +288,24 @@ test('Navigator: a failing route service is retried with growing pauses', async 
   await flush();
   assert.ok(fetches >= 3 && fetches <= 5, `${fetches} tries in 30 s (not one per second)`);
 });
+
+test('routeMapsLinks hands the whole route to Google Maps, in parts of up to 10 stops', async () => {
+  const { routeMapsLinks } = await import('../js/navigation.js');
+  const stop = (i) => ({ lat: 41.38 + i / 1000, lon: 2.17 });
+  const start = { lat: 41.3, lon: 2.1 };
+  const [one] = routeMapsLinks([stop(1), stop(2), stop(3), start], { modeId: 'walk', origin: start });
+  const p = new URL(one).searchParams;
+  assert.equal(p.get('api'), '1');
+  assert.equal(p.get('origin'), '41.300000,2.100000');
+  assert.equal(p.get('destination'), '41.300000,2.100000', 'a round trip ends where it started');
+  assert.deepEqual(p.get('waypoints').split('|'), ['41.381000,2.170000', '41.382000,2.170000', '41.383000,2.170000']);
+  assert.equal(p.get('travelmode'), 'walking');
+  const long = routeMapsLinks(Array.from({ length: 14 }, (_, i) => stop(i + 1)), { modeId: 'cycle' }).map((u) => new URL(u).searchParams);
+  assert.equal(long.length, 2, '14 stops: two parts');
+  assert.equal(long[0].get('origin'), null, 'no origin: Google starts from where the phone is');
+  assert.equal(long[0].get('waypoints').split('|').length, 9);
+  assert.equal(long[0].get('destination'), '41.390000,2.170000');
+  assert.equal(long[1].get('origin'), '41.390000,2.170000', 'part 2 starts where part 1 ended');
+  assert.equal(long[1].get('destination'), '41.394000,2.170000');
+  assert.equal(long[1].get('travelmode'), 'bicycling');
+});
