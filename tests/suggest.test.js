@@ -190,6 +190,12 @@ test('organisations, events, places that are gone and objects in a collection ar
   assert.ok(!ok('Multi-sport event in Barcelona, Spain'), 'an event');
   assert.ok(!ok('Storming of the Tuileries Palace in Paris during the French Revolution'), 'a historic event');
   assert.ok(!ok('Assault conducted by Spanish officers'), 'an incident');
+  // Descriptions come in the reader's language.
+  assert.ok(!ok('attentat terroriste à Paris en 2015') && !ok('bataille de la Seconde Guerre mondiale') && !ok('épisode de la Seconde Guerre mondiale du 19 au 25 août 1944'), 'French events');
+  assert.ok(!ok('ancienne ville gallo-romaine') && !ok('cité gallo-romaine, actuelle Paris') && !ok('barrio de Madrid'), 'French and Spanish areas');
+  assert.ok(!ok('Universität in Berlin') && !ok('partito politico italiano') && !ok('agence gouvernementale française'), 'organisations in other languages');
+  assert.ok(!ok('région fédérale de Belgique incluant la ville de Bruxelles'), 'a region');
+  assert.ok(ok('cathédrale gothique à Paris') && ok('museo de arte en Madrid') && ok('Kirche in Berlin') && ok('basilica di Roma'), 'real places in other languages stay');
   assert.ok(!ok('Royal and imperial palace in Paris (1564–1883)'), 'demolished');
   assert.ok(!ok('Government of France from 1792 to 1804'), 'a former government');
   assert.ok(!ok('Ancient Greek sculptures held in London'), 'inside a museum');

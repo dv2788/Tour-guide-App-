@@ -37,16 +37,19 @@ const MUSEUM_RE = /(?:^|[^\p{L}])(?:museum|musée|musee|museo|museu|gallery|gale
 // Matched against what a place *is* (the start of its description: "river in France",
 // "arrondissement of Paris"), not words further on ("bridge over the river").
 const AREA_RE =
-  /^(?:[\p{L}'’-]+\s+){0,2}(?:arrondissement|district|neighbou?rhood|suburb|area|space|point|junction|intersection|settlement|quarter|quartier|borough|ward|commune|municipality|city|town|village|capital|river|fleuve|rivière|río|fluss|fiume|lake|region|province|department|département|metropolitan|island|street|avenue|boulevard|rue|calle|straße|strasse|metro line|railway line)(?![\p{L}])/iu;
+  /^(?:[\p{L}'’-]+\s+){0,2}(?:arrondissement|district|neighbou?rhood|suburb|area|space|point|junction|intersection|settlement|ville|cité|région|región|regione|provincia|département|departamento|bundesland|ciudad|stadt|città|comune|gemeinde|île|isla|insel|isola|barrio|bairro|stadtteil|quartiere|rione|quarter|quartier|borough|ward|commune|municipality|city|town|village|capital|river|fleuve|rivière|río|fluss|fiume|lake|region|province|department|département|metropolitan|island|street|avenue|boulevard|rue|calle|straße|strasse|metro line|railway line)(?![\p{L}])/iu;
 
 // Wikipedia also places organisations, events and works at an address: not places to walk to.
 // (Matched on the short description: "British intelligence agency", "Satirical magazine", "Fire in 1666".)
 const NOT_A_PLACE_RE =
   /(?:^|[^\p{L}])(?:agency|company|corporation|government|body|conglomerate|firm|manufacturer|magazine|newspaper|tabloid|broadcaster|publisher|record label|band|political party|parliament|legislat|senate|ministry|government department|central bank|stock exchange|university|college|school|religious order|higher education|research institution|educational institution|école|ecole|lycée|escuela|schule|scuola|society|association|organi[sz]ation|charity|foundation|club|team|brand|fashion house|retailer|airline|television|radio|channel|film|novel|album|song|video game|battle|siege|attack|assault|incident|affair|arson|explosion|bombing|storming|uprising|insurrection|rebellion|revolt|coup|protest|riot|election|treaty|festival|event|olympics|games|championship|tournament|competition|conflagration|massacre|scandal|police|intelligence|embassy|consulate|series|former (?:country|state)|historical (?:country|state))(?![\p{L}])/iu;
+// The same in French, Spanish, German and Italian (descriptions come in the reader's language).
+const NOT_A_PLACE_INTL_RE =
+  /(?:^|[^\p{L}])(?:épisode|événement|evento|acontecimiento|ereignis|agence|agencia|agentur|agenzia|académies?|academias?|akademien?|accademi[ae]|entreprise|société|journal|quotidien|parti politique|ministère|gouvernement|université|banque|association|fondation|attentat|bataille|incendie|siège|émeute|traité|conférence|élection|jeux olympiques|libération|manifestation|empresa|periódico|partido político|ministerio|gobierno|universidad|banco|fundación|asociación|atentado|batalla|incendio|asedio|motín|tratado|conferencia|elecciones|juegos olímpicos|unternehmen|zeitung|partei|ministerium|regierung|universität|verein|stiftung|anschlag|schlacht|belagerung|aufstand|vertrag|konferenz|olympische|azienda|società|giornale|partito|ministero|governo|università|banca|fondazione|associazione|attentato|battaglia|assedio|rivolta|trattato|conferenza|elezioni|olimpiadi|giochi olimpici)(?![\p{L}])/iu;
 // Institutions named after what they are, with no description to go on.
 const INSTITUTION_TITLE_RE = /^(?:parliament|government|ministry|house of (?:lords|commons|representatives)|senate|congress|principality|kingdom|duchy|county|republic|empire|province|diocese|archdiocese) of\b/i;
 // Places that are gone: "Royal palace in Paris (1564–1883)", "Government of France from 1792 to 1804".
-const GONE_RE = /\(\s*\d{3,4}\s*[–-]\s*\d{3,4}\s*\)|\bfrom \d{3,4} to \d{3,4}\b|\b(?:demolished|destroyed)\b/i;
+const GONE_RE = /\(\s*\d{3,4}\s*[–-]\s*\d{3,4}\s*\)|\bfrom \d{3,4} to \d{3,4}\b|(?:^|[^\p{L}])(?:demolished|destroyed|détruit|démoli|disparu|destruido|demolido|zerstört|abgerissen|distrutto|demolito)/iu;
 // Objects inside a collection ("Ancient Greek sculptures held in London"): the museum is the stop.
 const IN_A_COLLECTION_RE = /(?:^(?:painting|portrait|fresco|manuscript|tapestry|artwork)\b)|\b(?:held|housed|kept|displayed|exhibited) (?:in|at|by)\b/i;
 // Coordinate kinds (from Wikipedia's {{coord}}) that are never a stop on a walk.
@@ -69,7 +72,7 @@ export function placeKind(poi) {
 export function interestScore(poi) {
   if (poi.category === 'skip' || poi.disambiguation) return -Infinity;
   const description = poi.description ?? '';
-  if (AREA_RE.test(description) || NOT_A_PLACE_RE.test(description) || IN_A_COLLECTION_RE.test(description) || GONE_RE.test(description)) return -Infinity;
+  if (AREA_RE.test(description) || NOT_A_PLACE_RE.test(description) || NOT_A_PLACE_INTL_RE.test(description) || IN_A_COLLECTION_RE.test(description) || GONE_RE.test(description)) return -Infinity;
   if (INSTITUTION_TITLE_RE.test(poi.title ?? '') || NOT_A_STOP_TYPES.has(poi.coordType)) return -Infinity;
   // A railway station is a stop only when it's a landmark in its own right (Grand Central, St Pancras).
   if (poi.coordType === 'railwaystation' && (poi.langs ?? 0) < 40) return -Infinity;
