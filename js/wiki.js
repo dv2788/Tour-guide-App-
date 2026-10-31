@@ -6,6 +6,9 @@ import { classifyPlace, sharesNameToken } from './text.js';
 
 const defaultFetch = (...args) => globalThis.fetch(...args);
 const TRANSIT_RE = /\b(station|stop|gare|bahnhof|estaci[óo]n|stazione|fermata)\b/i;
+// "Neighbourhood in Barcelona", "District of Paris", "Quartier de Lyon", "Barrio de Madrid"…
+const NEIGHBOURHOOD_RE =
+  /^(?:[\p{L}'’-]+\s+){0,3}(?:district|neighbou?rhood|quarter|borough|arrondissement|ward|barrio|quartier|bairro|stadtteil|stadtbezirk|ortsteil|quartiere|rione|sestiere)(?![\p{L}])/iu;
 
 export function createWikiService({ lang = 'en', fetchImpl = defaultFetch } = {}) {
   const host = `https://${lang}.wikipedia.org`;
@@ -193,5 +196,32 @@ export function createWikiService({ lang = 'en', fetchImpl = defaultFetch } = {}
     return [...byId.values()].filter((p) => p.category !== undefined && p.lat != null && distanceMeters({ lat, lon }, p) <= meters * 1.05);
   }
 
-  return { lang, nearby, summary, titleFromWikidata, resolveArticle, exploreArea };
+  /**
+   * The neighbourhoods and districts around a city centre, best known first ("Eixample",
+   * "Gràcia", "The Marais"), as suggestions for "which part of town are you staying in?".
+   * One request: Wikipedia's search, limited to the area, with each page's short description.
+   */
+  async function neighbourhoods(lat, lon, radius = 8000, limit = 60) {
+    const params = new URLSearchParams({
+      action: 'query',
+      format: 'json',
+      formatversion: '2',
+      origin: '*',
+      generator: 'search',
+      gsrsearch: `nearcoord:${Math.round(Math.min(20000, radius))}m,${lat},${lon}`, // whole meters only
+      gsrnamespace: '0',
+      gsrlimit: '500',
+      prop: 'description',
+    });
+    const pages = (await getJson(`${host}/w/api.php?${params}`))?.query?.pages ?? [];
+    const seen = new Set();
+    return pages
+      .filter((p) => NEIGHBOURHOOD_RE.test(p.description ?? ''))
+      .sort((a, b) => (a.index ?? 0) - (b.index ?? 0))
+      .map((p) => ({ title: p.title, name: p.title.replace(/\s*\([^)]*\)$/, '').replace(/,\s*[^,]+$/, '') }))
+      .filter((n) => !seen.has(n.name) && seen.add(n.name))
+      .slice(0, limit);
+  }
+
+  return { lang, nearby, summary, titleFromWikidata, resolveArticle, exploreArea, neighbourhoods };
 }

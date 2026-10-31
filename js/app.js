@@ -48,6 +48,7 @@ function readForm() {
   const data = new FormData(form);
   return {
     city: (data.get('city') ?? '').toString().trim(),
+    area: (data.get('area') ?? '').toString().trim(),
     stops: (data.get('stops') ?? '').toString(),
     mode: data.get('mode') ?? 'walk',
     lang: data.get('lang') ?? 'en',
@@ -57,6 +58,7 @@ function readForm() {
     voice: selectedVoiceKey(),
     imported: [...imported.entries()],
     start: startPoint,
+    areaPoint,
     plan,
   };
 }
@@ -64,9 +66,10 @@ function readForm() {
 function fillForm(values) {
   if (Array.isArray(values.imported)) imported = new Map(values.imported);
   if ('start' in values) startPoint = values.start ?? null;
+  if ('areaPoint' in values) areaPoint = values.areaPoint ?? null;
   if ('plan' in values) plan = values.plan ?? null;
   for (const [key, value] of Object.entries(values)) {
-    if (['imported', 'voice', 'start', 'plan'].includes(key)) continue;
+    if (['imported', 'voice', 'start', 'areaPoint', 'plan'].includes(key)) continue;
     const el = form.elements[key];
     if (!el || value == null) continue;
     if (el instanceof RadioNodeList) {
@@ -110,7 +113,7 @@ function loadSample(id, { onSite = false } = {}) {
   renderPlan();
   showPlanMap();
   // Start from the first stop (not from wherever you are now), simulated from the sofa.
-  fillForm({ city: sample.city, stops: sample.stops.join('\n'), mode: sample.mode, source: onSite ? 'gps' : 'sim', simSpeed: '8', start: null, lang: $('lang').value });
+  fillForm({ city: sample.city, area: '', areaPoint: null, stops: sample.stops.join('\n'), mode: sample.mode, source: onSite ? 'gps' : 'sim', simSpeed: '8', start: null, lang: $('lang').value });
   for (const el of document.querySelectorAll('.sample')) el.setAttribute('aria-pressed', String(el.dataset.id === sample.id));
   showImportNote(
     onSite
@@ -276,6 +279,7 @@ $('paste-route').addEventListener('click', async () => {
 // ---------- Where you are, and suggested routes ----------
 
 let startPoint = null; // { lat, lon, name } from "Use my location"
+let areaPoint = null; // { lat, lon, name, query, city } for the part of town typed ("El Born", a hotel, a street)
 let plan = null; // the suggested route: { start, loop, minutes, meters, startedAt, items: [...] }
 
 function showLocateNote(text, tone = '') {
@@ -296,6 +300,10 @@ function otherCityTyped() {
 }
 
 function describeLocation() {
+  if (areaPoint && areaPoint.query === $('area').value.trim()) {
+    showLocateNote(`✓ ${areaPoint.label}: I'll start your routes from there.`);
+    return;
+  }
   if (!startPoint) return;
   const other = otherCityTyped();
   if (other && startPoint.name) showLocateNote(`✓ You're in ${startPoint.name}. I'll plan around ${other}, as typed.`);
@@ -303,10 +311,82 @@ function describeLocation() {
   else showLocateNote(startPoint.name ? `✓ You're in ${startPoint.name}. I'll plan around where you are.` : "✓ Got your location. I'll plan around where you are.");
 }
 
+/** The city to look in: the one typed, or the one you're in. Remembered per name. */
+const cityCache = new Map();
+async function currentCity() {
+  const typed = $('city').value.trim();
+  if (!typed || (startPoint && !otherCityTyped())) return startPoint ? { ...startPoint, bbox: null } : null;
+  if (!cityCache.has(typed)) cityCache.set(typed, createGeocoder({ lang: $('lang').value }).findCity(typed).catch(() => null));
+  const city = await cityCache.get(typed);
+  if (!city) cityCache.delete(typed); // try again next time
+  return city;
+}
+
+/** Suggest the city's neighbourhoods in the "which part of town" box (best known first). */
+let areasFor = null;
+async function suggestAreas() {
+  const city = await currentCity();
+  const key = city ? `${city.lat.toFixed(2)},${city.lon.toFixed(2)},${$('lang').value}` : null;
+  if (!key || key === areasFor) return;
+  areasFor = key;
+  const list = await createWikiService({ lang: $('lang').value }).neighbourhoods(city.lat, city.lon).catch(() => []);
+  if (key !== areasFor) return;
+  $('area-options').replaceChildren(...list.map((n) => el('option', { value: n.name })));
+}
+
+/** Find the part of town typed, in the city you're staying in, and show it. */
+let areaRun = 0;
+async function locateArea() {
+  const query = $('area').value.trim();
+  const run = ++areaRun;
+  if (!query) {
+    areaPoint = null;
+    describeLocation();
+    if (!startPoint) showLocateNote('');
+    if (!plan) showPlanMap();
+    save(readForm());
+    return null;
+  }
+  if (areaPoint?.query === query && areaPoint.city === $('city').value.trim()) return areaPoint;
+  showLocateNote(`Finding ${query}…`);
+  const city = await currentCity();
+  if (run !== areaRun) return null;
+  const place = await createGeocoder({ lang: $('lang').value })
+    .findPlace(query, city)
+    .catch(() => null);
+  if (run !== areaRun) return null;
+  if (!place) {
+    areaPoint = null;
+    const where = city?.name ? ` in ${city.name}` : '';
+    showLocateNote(
+      city || $('city').value.trim()
+        ? `I couldn't find "${query}"${where}. Try a neighbourhood, your hotel's name or a street.`
+        : 'Type the city first, or use your location, so I know where to look.',
+      'warn',
+    );
+    return null;
+  }
+  const cityName = city?.name ?? $('city').value.trim();
+  areaPoint = { lat: place.lat, lon: place.lon, name: query, query, city: $('city').value.trim(), label: cityName && !query.includes(cityName) ? `${query}, ${cityName}` : query };
+  if (plan?.start && distanceMeters(plan.start, areaPoint) > 300) {
+    plan = null; // that route started somewhere else: curate a new one from here
+    renderPlan();
+  }
+  describeLocation();
+  showPlanMap();
+  save(readForm());
+  return areaPoint;
+}
+
 $('city').addEventListener('change', () => {
   describeLocation();
-  if (!plan) showPlanMap();
+  suggestAreas();
+  // Same words, new city: look for that part of town again.
+  if ($('area').value.trim()) locateArea();
+  else if (!plan) showPlanMap();
 });
+$('area').addEventListener('focus', () => suggestAreas());
+$('area').addEventListener('change', () => locateArea());
 
 /** Ask the browser where we are, name the city, and centre the plan around it. */
 async function locateMe({ silent = false } = {}) {
@@ -340,6 +420,7 @@ async function locateMe({ silent = false } = {}) {
   if (here.name && !$('city').value.trim()) $('city').value = here.name;
   describeLocation();
   showPlanMap();
+  suggestAreas();
   save(readForm());
   return here;
 }
@@ -381,9 +462,14 @@ async function planRoute() {
   const loop = $('loop').checked;
   button.disabled = true;
   try {
-    // Around you, unless you typed another city: then around that city's centre.
+    // From the part of town you're staying in; else around you, unless you typed another
+    // city: then around that city's centre.
+    if ($('area').value.trim()) {
+      const area = await locateArea();
+      if (!area) return; // the note says what's wrong
+    }
     const typed = $('city').value.trim();
-    let origin = startPoint && !otherCityTyped() ? startPoint : null;
+    let origin = areaPoint ?? (startPoint && !otherCityTyped() ? startPoint : null);
     if (!origin && typed) {
       showImportNote(`Finding ${typed}…`);
       const city = await createGeocoder({ lang }).findCity(typed).catch(() => null);
@@ -583,7 +669,7 @@ function showPlanMap() {
   const box = $('plan-map');
   const lines = $('stops').value.split('\n').map((l) => l.trim()).filter(Boolean);
   const stops = lines.map((name) => ({ name, ...imported.get(name) })).filter((s) => s.lat != null);
-  const origin = plan?.start ?? (otherCityTyped() ? null : startPoint);
+  const origin = plan?.start ?? areaPoint ?? (otherCityTyped() ? null : startPoint);
   if (!L || (!origin && !stops.length)) {
     box.hidden = true;
     return;
@@ -780,7 +866,7 @@ if (saved) fillForm(saved);
 populateGuides(saved?.voice ?? null);
 syncFormHints();
 renderPlan();
-if (startPoint) describeLocation();
+if (startPoint || areaPoint) describeLocation();
 // A link to a sample tour (?tour=barcelona, from the tour pages) opens with that tour loaded.
 const linkedTour = new URLSearchParams(location.search).get('tour');
 if (linkedTour && SAMPLES.some((s) => s.id === linkedTour)) {

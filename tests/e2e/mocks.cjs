@@ -171,6 +171,15 @@ async function mockNetwork(context, { routeCacheName = 'smoke' } = {}) {
           coordinates: page.coordinates.map((c) => ({ lat: c.lat, lon: c.lon, primary: true })),
         }));
       json(route, { query: { pages } });
+    } else if (p.get('generator') === 'search') {
+      // Suggestions for "which part of town": the recorded places plus a few neighbourhoods.
+      const quarters = [
+        { title: 'Eixample', description: 'District of Barcelona, Spain' },
+        { title: 'El Born', description: 'Neighbourhood in Barcelona, Spain' },
+        { title: 'Gràcia', description: 'District of Barcelona, Spain' },
+      ];
+      const pages = [...quarters, ...fixtures.geosearch.map((page) => ({ title: page.title, description: page.description }))].map((page, i) => ({ pageid: 900000 + i, index: i + 1, ...page }));
+      json(route, { query: { pages } });
     } else {
       const [lat, lon] = p.get('ggscoord').split('|').map(Number);
       const pages = near(lat, lon, Number(p.get('ggsradius')), Number(p.get('ggslimit'))).map(({ page }) => page);

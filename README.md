@@ -84,8 +84,11 @@ ChatGPT search), run `npm run indexnow` once the site is live: no account needed
 ## Let Roamie plan it: "Suggest a route for me"
 
 Tap **Use my location** (or type your city), then **Suggest a route for me** and answer one question:
-**how long do you want to be out?** (30 min, 1 hour, 2 hours, half a day or a full day). If you've shared
-your location but typed another city (planning tomorrow from your hotel), Roamie plans in that city. Then it:
+**how long do you want to be out?** (30 min, 1 hour, 2 hours, half a day or a full day).
+
+Where the route starts: **the part of town you're staying in**, if you tell it (a neighbourhood, your hotel or
+a street; the box suggests the city's neighbourhoods, best known first, from Wikipedia). Otherwise where you
+are, or, if you've typed another city (planning tomorrow's trip from home), that city's centre. Then it:
 
 - **picks the places most worth seeing**: it searches both the nearest places and the most notable ones
   anywhere within reach (in a dense centre like London's, the nearest few hundred articles only cover a few

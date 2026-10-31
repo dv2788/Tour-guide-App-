@@ -104,3 +104,27 @@ test('exploreArea adds the most notable places in the whole radius to the neares
   assert.ok(Math.abs(byTitle['Famous Cathedral'].lat - 48.878) < 1e-9, 'position from its coordinates');
   assert.equal(byTitle['Corner Church'].langs, 0, 'no language links means none');
 });
+
+test('neighbourhoods lists the parts of town around a city centre, best known first, with plain names', async () => {
+  const { fetchImpl, seen } = mockFetch([
+    [
+      'generator=search',
+      {
+        query: {
+          pages: [
+            { pageid: 3, index: 3, title: 'Gràcia', description: 'District of Barcelona, Spain' },
+            { pageid: 1, index: 1, title: 'Eixample', description: 'District of Barcelona, Spain' },
+            { pageid: 2, index: 2, title: 'Sagrada Família', description: 'Basilica in Barcelona' },
+            { pageid: 4, index: 4, title: 'La Barceloneta, Barcelona', description: 'Neighbourhood in Barcelona' },
+            { pageid: 5, index: 5, title: 'Les Corts (district)', description: 'District of Barcelona' },
+            { pageid: 6, index: 6, title: 'Barcelona Metro line 1', description: 'Metro line in Barcelona' },
+          ],
+        },
+      },
+    ],
+  ]);
+  const wiki = createWikiService({ lang: 'en', fetchImpl });
+  const list = await wiki.neighbourhoods(41.387, 2.17, 8000);
+  assert.match(seen[0], /gsrsearch=nearcoord%3A8000m%2C41\.387%2C2\.17/);
+  assert.deepEqual(list.map((n) => n.name), ['Eixample', 'Gràcia', 'La Barceloneta', 'Les Corts']);
+});

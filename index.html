@@ -137,6 +137,12 @@
               <svg class="icon"><use href="#i-pin" /></svg>
               <input id="city" name="city" type="text" placeholder="City, e.g. Barcelona" autocomplete="off" />
             </label>
+            <label for="area" class="or">and which part of town you're staying in</label>
+            <label class="input-with-icon">
+              <svg class="icon"><use href="#i-near" /></svg>
+              <input id="area" name="area" type="text" list="area-options" placeholder="Neighbourhood, hotel or street" autocomplete="off" />
+            </label>
+            <datalist id="area-options"></datalist>
             <p id="locate-note" class="import-note" role="status" hidden></p>
           </section>
 

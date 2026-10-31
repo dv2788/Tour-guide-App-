@@ -225,6 +225,30 @@ const LIVE = process.env.LIVE === '1';
   await page3.fill('#city', 'Barcelona');
   await page3.dispatchEvent('#city', 'change');
   expect(/plan around where you are/.test(await page3.textContent('#locate-note')), 'back to planning around you');
+  // "Which part of town are you staying in?": suggestions, found in the city, and routes start there.
+  const BORN = { lat: 41.3851, lon: 2.1823 };
+  await page3.route('https://nominatim.openstreetmap.org/search?**', (route) => {
+    if (!/^El Born\b/.test(new URL(route.request().url()).searchParams.get('q'))) return route.fallback();
+    const born = { lat: String(BORN.lat), lon: String(BORN.lon), name: 'El Born', display_name: 'El Born, Ciutat Vella, Barcelona, Spain', category: 'place', type: 'neighbourhood', addresstype: 'neighbourhood', importance: 0.5, boundingbox: ['41.383', '41.387', '2.179', '2.185'] };
+    return route.fulfill({ contentType: 'application/json', body: JSON.stringify([born]) });
+  });
+  await page3.focus('#area');
+  await page3.waitForFunction(() => document.querySelectorAll('#area-options option').length > 0, null, { timeout: 15000 }).catch(() => {});
+  const areaOptions = await page3.$$eval('#area-options option', (os) => os.map((o) => o.value));
+  expect(['Eixample', 'El Born', 'Gràcia'].every((n) => areaOptions.includes(n)) && !areaOptions.includes('Casa Batlló'), `neighbourhoods suggested, not sights (${areaOptions.join(', ')})`);
+  await page3.fill('#area', 'El Born');
+  await page3.dispatchEvent('#area', 'change');
+  await page3.waitForFunction(() => /start your routes/.test(document.getElementById('locate-note').textContent), null, { timeout: 15000 }).catch(() => {});
+  const areaNote = await page3.textContent('#locate-note');
+  expect(/El Born, Barcelona: I'll start your routes from there/.test(areaNote), `the part of town is confirmed (${areaNote})`);
+  explored.length = 0;
+  await page3.click('#suggest-open');
+  await page3.click('#suggest-go');
+  await page3.waitForFunction(() => /couldn't find|✓/.test(document.getElementById('import-note').textContent), null, { timeout: 60000 });
+  expect(explored.length > 0 && explored.every((c) => Math.abs(Number(c.split('|')[0]) - BORN.lat) < 0.001 && Math.abs(Number(c.split('|')[1]) - BORN.lon) < 0.001), `planned from El Born (${explored.join(' ')})`);
+  await page3.click('#suggest-open'); // fold the panel again
+  await page3.fill('#area', '');
+  await page3.dispatchEvent('#area', 'change');
   await page3.click('#suggest-open');
   await page3.click('.chip-opt:has(input[value="240"])');
   await page3.click('#suggest-go');
