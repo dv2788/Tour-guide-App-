@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#0f766e" />
+    <meta name="description" content="A voice tour guide that talks you through the city as you walk, run, cycle or drive." />
+    <title>Tour Guide</title>
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="icons/icon-192.png" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"
+      integrity="sha384-c6Rcwz4e4CITMbu/NBmnNS8yN2sC3cUElMEMfP3vqqKFp7GOYaaBBCqmaWBjmkjb"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <img src="icons/icon.svg" alt="" class="logo" width="32" height="32" />
+      <h1>Tour Guide</h1>
+    </header>
+
+    <main>
+      <!-- 1. Plan the trip -->
+      <section id="setup" class="panel">
+        <p class="tagline">
+          Tell me where you're staying and where you're going. I'll talk you through the city as you move.
+        </p>
+
+        <form id="setup-form" novalidate>
+          <label class="field">
+            <span class="field-label">City you're staying in</span>
+            <input id="city" name="city" type="text" placeholder="e.g. Paris" autocomplete="off" />
+          </label>
+
+          <label class="field">
+            <span class="field-label">Your itinerary <span class="hint">one stop per line, in order (optional)</span></span>
+            <textarea id="stops" name="stops" rows="5" placeholder="Eiffel Tower&#10;Grand Palais&#10;Louvre Museum"></textarea>
+          </label>
+
+          <fieldset class="field">
+            <legend class="field-label">How are you getting around?</legend>
+            <div class="segmented" id="mode-picker">
+              <label><input type="radio" name="mode" value="walk" checked /><span>🚶<br />Walk</span></label>
+              <label><input type="radio" name="mode" value="run" /><span>🏃<br />Run</span></label>
+              <label><input type="radio" name="mode" value="cycle" /><span>🚴<br />Cycle</span></label>
+              <label><input type="radio" name="mode" value="drive" /><span>🚗<br />Drive</span></label>
+            </div>
+          </fieldset>
+
+          <p id="drive-note" class="note" hidden>
+            🚗 Set everything up before you leave. Once the tour starts it runs hands-free, so you never need to touch
+            the screen while driving.
+          </p>
+
+          <div class="row">
+            <label class="field">
+              <span class="field-label">Language</span>
+              <select id="lang" name="lang"></select>
+            </label>
+            <label class="field">
+              <span class="field-label">Voice speed</span>
+              <select id="rate" name="rate">
+                <option value="0.9">Relaxed</option>
+                <option value="1" selected>Normal</option>
+                <option value="1.15">Brisk</option>
+              </select>
+            </label>
+          </div>
+
+          <fieldset class="field">
+            <legend class="field-label">Location</legend>
+            <label class="radio"><input type="radio" name="source" value="gps" checked /> Use my phone's GPS</label>
+            <label class="radio"
+              ><input type="radio" name="source" value="sim" /> Simulate the trip (try it from your couch)</label
+            >
+            <label class="field indent" id="sim-speed-row" hidden>
+              <span class="field-label">Simulation speed</span>
+              <select id="sim-speed" name="simSpeed">
+                <option value="1">Real time</option>
+                <option value="4">4× faster</option>
+                <option value="8" selected>8× faster</option>
+                <option value="16">16× faster</option>
+              </select>
+            </label>
+          </fieldset>
+
+          <p id="setup-error" class="error" role="alert"></p>
+
+          <button type="submit" class="primary">Start tour</button>
+          <button type="button" id="demo" class="link">Fill in a sample Paris walk</button>
+        </form>
+      </section>
+
+      <!-- 2. On tour -->
+      <section id="tour" class="panel" hidden>
+        <div class="map-wrap">
+          <div id="map" role="img" aria-label="Map of your tour"></div>
+          <button type="button" id="recenter" class="map-btn" hidden>◎ Follow me</button>
+        </div>
+
+        <p id="status" class="status" aria-live="polite">Preparing your tour…</p>
+        <p id="next-stop" class="next-stop" hidden></p>
+
+        <article id="now" class="now" hidden>
+          <img id="now-img" alt="" hidden />
+          <div class="now-body">
+            <p class="now-label" id="now-label">Now telling you about</p>
+            <h2 id="now-title"></h2>
+            <p id="now-text"></p>
+          </div>
+        </article>
+
+        <div class="controls">
+          <button type="button" id="btn-pause" class="ctrl">⏸<span>Pause</span></button>
+          <button type="button" id="btn-skip" class="ctrl">⏭<span>Skip</span></button>
+          <button type="button" id="btn-repeat" class="ctrl">↺<span>Repeat</span></button>
+          <button type="button" id="btn-end" class="ctrl danger">■<span>End</span></button>
+        </div>
+
+        <details class="journal" open>
+          <summary>Trip journal (<span id="journal-count">0</span>)</summary>
+          <p class="hint">Everything you heard about, to read more later.</p>
+          <ol id="journal"></ol>
+        </details>
+      </section>
+    </main>
+
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"
+      integrity="sha384-NElt3Op+9NBMCYaef5HxeJmU4Xeard/Lku8ek6hoPTvYkQPh3zLIrJP7KiRocsxO"
+      crossorigin="anonymous"
+      defer
+    ></script>
+    <script type="module" src="js/app.js"></script>
+  </body>
+</html>

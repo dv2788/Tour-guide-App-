@@ -1,0 +1,4301 @@
+{
+ "nominatim": {
+  "Paris": [
+   {
+    "place_id": 97644102,
+    "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+    "osm_type": "relation",
+    "osm_id": 7444,
+    "lat": "48.8588897",
+    "lon": "2.3200410",
+    "category": "boundary",
+    "type": "administrative",
+    "place_rank": 15,
+    "importance": 0.897098092136026,
+    "addresstype": "suburb",
+    "name": "Paris",
+    "display_name": "Paris, Ile-de-France, Metropolitan France, France",
+    "extratags": {
+     "capital": "yes",
+     "website": "https://www.paris.fr",
+     "wikidata": "Q90",
+     "ref:INSEE": "75056",
+     "wikipedia": "fr:Paris",
+     "population": "2133111",
+     "ref:FR:MGP": "T1",
+     "coat_of_arms": "File:Armoiries de la ville de Paris (1949).svg",
+     "ref:FR:SIREN": "217500016",
+     "population:date": "2021",
+     "admin_level": "8"
+    },
+    "boundingbox": [
+     "48.8155755",
+     "48.9021560",
+     "2.2241220",
+     "2.4697602"
+    ]
+   },
+   {
+    "place_id": 97683695,
+    "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+    "osm_type": "relation",
+    "osm_id": 71525,
+    "lat": "48.8534951",
+    "lon": "2.3483915",
+    "category": "boundary",
+    "type": "administrative",
+    "place_rank": 12,
+    "importance": 0.897098092136026,
+    "addresstype": "city",
+    "name": "Paris",
+    "display_name": "Paris, Ile-de-France, Metropolitan France, France",
+    "extratags": {
+     "rank": "0",
+     "capital": "yes",
+     "website": "https://www.paris.fr",
+     "ref:nuts": "FR101",
+     "wikidata": "Q90",
+     "ref:INSEE": "75",
+     "wikipedia": "fr:Paris",
+     "importance": "international",
+     "is_capital": "country",
+     "population": "2165423",
+     "ref:nuts:3": "FR101",
+     "coat_of_arms": "File:Armoiries de la ville de Paris (1949).svg",
+     "linked_place": "city",
+     "ref:FR:SIREN": "200054781",
+     "population:date": "2019",
+     "admin_level": "6"
+    },
+    "boundingbox": [
+     "48.8155755",
+     "48.9021560",
+     "2.2241220",
+     "2.4697602"
+    ]
+   },
+   {
+    "place_id": 333846024,
+    "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+    "osm_type": "relation",
+    "osm_id": 115357,
+    "lat": "33.6617962",
+    "lon": "-95.5555130",
+    "category": "boundary",
+    "type": "administrative",
+    "place_rank": 16,
+    "importance": 0.5298648354283636,
+    "addresstype": "town",
+    "name": "Paris",
+    "display_name": "Paris, Lamar County, Texas, United States",
+    "extratags": {
+     "ele": "180",
+     "capital": "6",
+     "website": "https://www.paristexas.com/",
+     "wikidata": "Q830149",
+     "wikipedia": "en:Paris, Texas",
+     "population": "24476",
+     "border_type": "city",
+     "linked_place": "town",
+     "population:date": "2020-04-01",
+     "admin_level": "8"
+    },
+    "boundingbox": [
+     "33.6206314",
+     "33.7383126",
+     "-95.6279045",
+     "-95.4354005"
+    ]
+   },
+   {
+    "place_id": 97919129,
+    "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+    "osm_type": "relation",
+    "osm_id": 1641193,
+    "lat": "48.8588897",
+    "lon": "2.3200410",
+    "category": "boundary",
+    "type": "administrative",
+    "place_rank": 14,
+    "importance": 0.4594627538257798,
+    "addresstype": "city_district",
+    "name": "Paris",
+    "display_name": "Paris, Ile-de-France, Metropolitan France, France",
+    "extratags": {
+     "wikidata": "Q2863958",
+     "ref:INSEE": "751",
+     "wikipedia": "fr:Arrondissement de Paris (ensemble de communes)",
+     "admin_level": "7"
+    },
+    "boundingbox": [
+     "48.8155755",
+     "48.9021560",
+     "2.2241220",
+     "2.4697602"
+    ]
+   }
+  ],
+  "Eiffel Tower": [
+   {
+    "place_id": 97838275,
+    "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+    "osm_type": "way",
+    "osm_id": 5013364,
+    "lat": "48.8582599",
+    "lon": "2.2945006",
+    "category": "man_made",
+    "type": "tower",
+    "place_rank": 30,
+    "importance": 0.6205937724353116,
+    "addresstype": "man_made",
+    "name": "Eiffel Tower",
+    "display_name": "Eiffel Tower, 5, Avenue Anatole France, Quartier du Gros-Caillou, 7th Arrondissement, Paris, Ile-de-France, Metropolitan France, 75007, France",
+    "extratags": {
+     "fee": "10-25€",
+     "3dmr": "4",
+     "image": "https://fr.wikipedia.org/wiki/Fichier:Tour_Eiffel_Wikimedia_Commons.jpg",
+     "layer": "2",
+     "height": "330",
+     "ref:mhs": "PA00088801",
+     "tourism": "attraction",
+     "website": "https://www.toureiffel.paris/",
+     "building": "tower",
+     "engineer": "Gustave Eiffel;Maurice Koechlin;Émile Nouguier",
+     "heritage": "3",
+     "historic": "monument",
+     "landmark": "1",
+     "operator": "Société d’Exploitation de la Tour Eiffel",
+     "wikidata": "Q243",
+     "architect": "Stephen Sauvestre",
+     "panoramax": "b57848f0-a526-4bab-8cb3-ede3df7b41c3;7e69687f-3956-41f2-bd85-03af73df2b2b;7ca4fd32-0e0a-498f-826c-d106ee360948&xyz=3.20/53.64/30",
+     "wikipedia": "fr:Tour Eiffel",
+     "check_date": "2026-09-23",
+     "importance": "international",
+     "min_height": "0",
+     "roof:shape": "pyramidal",
+     "start_date": "1889",
+     "tower:type": "communication;observation",
+     "wheelchair": "limited",
+     "ref:FR:ANFR": "548894",
+     "roof:height": "330",
+     "building:part": "no",
+     "opening_hours": "09:30-23:45; Jun 21-Sep 02: 09:00-00:45; Jul 14,Jul 15 off",
+     "building:shape": "pyramidal",
+     "ref:FR:FANTOIR": "75107P320D",
+     "building:colour": "#706550",
+     "historic:period": "modern",
+     "tourism:visitors": "7000000",
+     "building:material": "iron",
+     "heritage:operator": "mhs",
+     "wikimedia_commons": "Category:Eiffel Tower",
+     "tower:construction": "lattice",
+     "communication:radio": "fm",
+     "mhs:inscription_date": "1964-06-24",
+     "wheelchair:description": "1. and 2. platform is accessable by elevator but not the 3. platform.",
+     "communication:television": "dvb-t"
+    },
+    "boundingbox": [
+     "48.8574753",
+     "48.8590453",
+     "2.2933119",
+     "2.2956897"
+    ]
+   },
+   {
+    "place_id": 376463881,
+    "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+    "osm_type": "node",
+    "osm_id": 2689315641,
+    "lat": "51.3336000",
+    "lon": "-116.2350000",
+    "category": "natural",
+    "type": "peak",
+    "place_rank": 18,
+    "importance": 0.16000999999999999,
+    "addresstype": "peak",
+    "name": "Eiffel Tower",
+    "display_name": "Eiffel Tower, Improvement District No. 9, Alberta, Canada",
+    "extratags": {
+     "ele": "3080"
+    },
+    "boundingbox": [
+     "51.3335500",
+     "51.3336500",
+     "-116.2350500",
+     "-116.2349500"
+    ]
+   }
+  ],
+  "Pont de l'Alma": [
+   {
+    "place_id": 97804770,
+    "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+    "osm_type": "node",
+    "osm_id": 270191328,
+    "lat": "48.8625636",
+    "lon": "2.2999572",
+    "category": "railway",
+    "type": "stop",
+    "place_rank": 30,
+    "importance": 0.3678453393566702,
+    "addresstype": "railway",
+    "name": "Pont de l'Alma",
+    "display_name": "Pont de l'Alma, Promenade Gisèle Halimi, Quartier du Gros-Caillou, 7th Arrondissement, Paris, Ile-de-France, Metropolitan France, 75007, France",
+    "extratags": {
+     "level": "-1",
+     "train": "yes",
+     "uic_ref": "8739304",
+     "operator": "SNCF Gares & Connexions",
+     "ref:SNCF": "RER",
+     "wikidata": "Q1858826",
+     "STIF:zone": "1",
+     "local_ref": "1",
+     "type:RATP": "rer",
+     "wikipedia": "fr:Gare du Pont de l'Alma",
+     "wheelchair": "yes",
+     "ref:FR:RATP": "5601",
+     "ref:SNCF:RER": "C",
+     "opening_hours": "Mo-Su 00:00-00:40,05:00-24:00",
+     "public_transport": "stop_position",
+     "operator:wikidata": "Q3098278"
+    },
+    "boundingbox": [
+     "48.8625136",
+     "48.8626136",
+     "2.2999072",
+     "2.3000072"
+    ]
+   },
+   {
+    "place_id": 98034519,
+    "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+    "osm_type": "node",
+    "osm_id": 3414141480,
+    "lat": "48.8625482",
+    "lon": "2.2999919",
+    "category": "railway",
+    "type": "station",
+    "place_rank": 30,
+    "importance": 0.3678453393566702,
+    "addresstype": "railway",
+    "name": "Pont de l'Alma",
+    "display_name": "Pont de l'Alma, Promenade Gisèle Halimi, Quartier du Gros-Caillou, 7th Arrondissement, Paris, Ile-de-France, Metropolitan France, 75007, France",
+    "extratags": {
+     "train": "yes",
+     "network": "RER",
+     "uic_ref": "8739304",
+     "operator": "SNCF Gares & Connexions",
+     "ref:SNCF": "RER",
+     "wikidata": "Q1858826",
+     "STIF:zone": "1",
+     "type:RATP": "rer",
+     "wikipedia": "fr:Gare du Pont de l'Alma",
+     "wheelchair": "yes",
+     "railway:ref": "PDM",
+     "ref:FR:RATP": "5601",
+     "ref:FR:STIF": "41209",
+     "ref:FR:uic8": "87393041",
+     "ref:SNCF:RER": "C",
+     "network:wikidata": "Q216125",
+     "public_transport": "station",
+     "operator:wikidata": "Q3098278",
+     "operator:wikipedia": "fr:SNCF Gares & Connexions",
+     "ref:FR:sncf:resarail": "FRDHV"
+    },
+    "boundingbox": [
+     "48.8575482",
+     "48.8675482",
+     "2.2949919",
+     "2.3049919"
+    ]
+   },
+   {
+    "place_id": 97357096,
+    "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+    "osm_type": "way",
+    "osm_id": 17066884,
+    "lat": "48.8634373",
+    "lon": "2.3018510",
+    "category": "highway",
+    "type": "primary",
+    "place_rank": 26,
+    "importance": 0.053426505683985624,
+    "addresstype": "primary",
+    "name": "Pont de l'Alma",
+    "display_name": "Pont de l'Alma, Quartier du Gros-Caillou, 7th Arrondissement, Paris, Ile-de-France, Metropolitan France, 75007, France",
+    "extratags": {
+     "lit": "yes",
+     "lanes": "4",
+     "layer": "1",
+     "bridge": "yes",
+     "oneway": "yes",
+     "surface": "asphalt",
+     "maxspeed": "30",
+     "smoothness": "excellent",
+     "busway:right": "lane",
+     "cycleway:left": "no",
+     "sidewalk:left": "no",
+     "cycleway:right": "separate",
+     "sidewalk:right": "separate",
+     "dual_carriageway": "yes",
+     "maxweight:signed": "no",
+     "was:cycleway:right": "lane",
+     "maxweightrating:signed": "no",
+     "name:etymology:wikidata": "Q913604"
+    },
+    "boundingbox": [
+     "48.8628286",
+     "48.8640460",
+     "2.3017924",
+     "2.3019096"
+    ]
+   },
+   {
+    "place_id": 98022587,
+    "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+    "osm_type": "way",
+    "osm_id": 24864325,
+    "lat": "48.8641497",
+    "lon": "2.3015585",
+    "category": "highway",
+    "type": "primary",
+    "place_rank": 26,
+    "importance": 0.053426505683985624,
+    "addresstype": "primary",
+    "name": "Pont de l'Alma",
+    "display_name": "Pont de l'Alma, Quartier des Champs-Élysées, 8th Arrondissement of Paris, Paris, Ile-de-France, Metropolitan France, 75008, France",
+    "extratags": {
+     "lit": "yes",
+     "lanes": "4",
+     "oneway": "yes",
+     "surface": "asphalt",
+     "maxspeed": "30",
+     "cycleway:left": "no",
+     "sidewalk:left": "no",
+     "sidewalk:right": "separate",
+     "dual_carriageway": "yes",
+     "name:etymology:wikidata": "Q913604"
+    },
+    "boundingbox": [
+     "48.8641254",
+     "48.8641739",
+     "2.3015434",
+     "2.3015736"
+    ]
+   }
+  ],
+  "Grand Palais": [
+   {
+    "place_id": 98471573,
+    "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+    "osm_type": "way",
+    "osm_id": 56185523,
+    "lat": "48.8661614",
+    "lon": "2.3122229",
+    "category": "tourism",
+    "type": "museum",
+    "place_rank": 30,
+    "importance": 0.5676059064661384,
+    "addresstype": "tourism",
+    "name": "Great Palace",
+    "display_name": "Great Palace, Avenue du Général-Eisenhower, Quartier des Champs-Élysées, 8th Arrondissement of Paris, Paris, Ile-de-France, Metropolitan France, 75008, France",
+    "extratags": {
+     "fee": "yes",
+     "email": "webmaster@rmngp.fr",
+     "phone": "+33 1 44 13 17 17",
+     "ref:mhs": "PA00088877",
+     "website": "https://www.grandpalais.fr/",
+     "building": "yes",
+     "heritage": "2",
+     "wikidata": "Q457318",
+     "wikipedia": "fr:Grand Palais (Paris)",
+     "check_date": "2026-06-29",
+     "wheelchair": "yes",
+     "opening_hours": "Tu-Th, Sa-Su 09:30-20:00; Fr 09:30-22:30",
+     "heritage:operator": "mhs",
+     "mhs:inscription_date": "2000-11-06",
+     "check_date:opening_hours": "2026-06-29"
+    },
+    "boundingbox": [
+     "48.8650731",
+     "48.8672298",
+     "2.3111783",
+     "2.3133551"
+    ]
+   },
+   {
+    "place_id": 169529164,
+    "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+    "osm_type": "relation",
+    "osm_id": 7483660,
+    "lat": "59.8845122",
+    "lon": "29.9092348",
+    "category": "tourism",
+    "type": "museum",
+    "place_rank": 30,
+    "importance": 0.3993661419952677,
+    "addresstype": "tourism",
+    "name": "Grand Palace",
+    "display_name": "Grand Palace, Правленская улица, Zayachyy Remiz, Peterhof, Saint Petersburg, Northwestern Federal District, 198516, Russia",
+    "extratags": {
+     "fee": "yes",
+     "building": "palace",
+     "historic": "castle",
+     "operator": "Государственный музей-заповедник «Петегроф»",
+     "wikidata": "Q2463835",
+     "wikipedia": "ru:Большой дворец (Петергоф)",
+     "start_date": "1714..1725;1747..1752",
+     "wheelchair": "no",
+     "castle_type": "palace",
+     "contact:phone": "+7 812 2079745;+7 812 2235058",
+     "opening_hours": "10:30-18:00 \"касса: 10:30-12:00, 14:30-16:00\"; Mo off; Tu[-1] off",
+     "building:levels": "2",
+     "contact:website": "https://peterhofmuseum.ru/objects/peterhof/bolshoy_petergofskiy_dvorets"
+    },
+    "boundingbox": [
+     "59.8841083",
+     "59.8849316",
+     "29.9063888",
+     "29.9112836"
+    ]
+   }
+  ],
+  "Place de la Concorde": [
+   {
+    "place_id": 97529176,
+    "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+    "osm_type": "way",
+    "osm_id": 432819047,
+    "lat": "48.8655715",
+    "lon": "2.3212248",
+    "category": "leisure",
+    "type": "square",
+    "place_rank": 25,
+    "importance": 0.5639540414314098,
+    "addresstype": "square",
+    "name": "Concorde Square",
+    "display_name": "Concorde Square, Quartier des Champs-Élysées, 8th Arrondissement of Paris, Paris, Ile-de-France, Metropolitan France, 75008, France",
+    "extratags": {
+     "place": "square",
+     "ref:mhs": "PA00088880",
+     "tourism": "attraction",
+     "heritage": "2",
+     "operator": "Maire de Paris dans le respect des prescriptions prises par le préfet de police",
+     "wikidata": "Q189503",
+     "wikipedia": "fr:Place de la Concorde",
+     "wheelchair": "yes",
+     "operator:url": "https://www.legifrance.gouv.fr/loda/id/LEGIARTI000035244298/#LEGIARTI000035244298",
+     "heritage:operator": "mhs",
+     "mhs:inscription_date": "1937-08-23"
+    },
+    "boundingbox": [
+     "48.8638123",
+     "48.8671673",
+     "2.3188463",
+     "2.3235257"
+    ]
+   },
+   {
+    "place_id": 422608720,
+    "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+    "osm_type": "way",
+    "osm_id": 1537577268,
+    "lat": "44.8402841",
+    "lon": "0.2202433",
+    "category": "landuse",
+    "type": "grass",
+    "place_rank": 24,
+    "importance": 0.08006377889677269,
+    "addresstype": "grass",
+    "name": "Place de la Concorde",
+    "display_name": "Place de la Concorde, Sainte-Foy-la-Grande, Libourne, Gironde, Nouvelle-Aquitaine, Metropolitan France, 33220, France",
+    "extratags": null,
+    "boundingbox": [
+     "44.8402280",
+     "44.8403315",
+     "0.2201922",
+     "0.2203305"
+    ]
+   },
+   {
+    "place_id": 86453604,
+    "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+    "osm_type": "way",
+    "osm_id": 122562420,
+    "lat": "45.2023392",
+    "lon": "0.1332632",
+    "category": "place",
+    "type": "square",
+    "place_rank": 25,
+    "importance": 0.06672971618219271,
+    "addresstype": "square",
+    "name": "Place de la Concorde",
+    "display_name": "Place de la Concorde, Les Henrys, Saint-Aulaye, Saint-Aulaye-Puymangou, Périgueux, Dordogne, Nouvelle-Aquitaine, Metropolitan France, 24410, France",
+    "extratags": {
+     "amenity": "parking"
+    },
+    "boundingbox": [
+     "45.2021004",
+     "45.2025606",
+     "0.1329102",
+     "0.1336074"
+    ]
+   },
+   {
+    "place_id": 93928083,
+    "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+    "osm_type": "way",
+    "osm_id": 544708831,
+    "lat": "47.0677187",
+    "lon": "5.4127594",
+    "category": "place",
+    "type": "square",
+    "place_rank": 25,
+    "importance": 0.06672963378347448,
+    "addresstype": "square",
+    "name": "Place de la Concorde",
+    "display_name": "Place de la Concorde, Damparis, Dole, Jura, Bourgogne – Franche-Comté, Metropolitan France, 39500, France",
+    "extratags": null,
+    "boundingbox": [
+     "47.0673068",
+     "47.0681285",
+     "5.4121941",
+     "5.4133240"
+    ]
+   },
+   {
+    "place_id": 87644320,
+    "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+    "osm_type": "way",
+    "osm_id": 695960592,
+    "lat": "44.3688992",
+    "lon": "4.6467691",
+    "category": "place",
+    "type": "square",
+    "place_rank": 25,
+    "importance": 0.06672768215457389,
+    "addresstype": "square",
+    "name": "Place de la Concorde",
+    "display_name": "Place de la Concorde, Cité Jeannette, Bourg-Saint-Andéol, Privas, Ardèche, Auvergne-Rhône-Alpes, Metropolitan France, 07700, France",
+    "extratags": {
+     "lit": "yes",
+     "surface": "paving_stones;concrete"
+    },
+    "boundingbox": [
+     "44.3687122",
+     "44.3691541",
+     "4.6465065",
+     "4.6470577"
+    ]
+   }
+  ],
+  "Louvre Museum": [
+   {
+    "place_id": 98044426,
+    "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+    "osm_type": "relation",
+    "osm_id": 7515426,
+    "lat": "48.8611473",
+    "lon": "2.3380277",
+    "category": "tourism",
+    "type": "museum",
+    "place_rank": 30,
+    "importance": 0.7007075748892404,
+    "addresstype": "tourism",
+    "name": "Louvre Museum",
+    "display_name": "Louvre Museum, Pont du Carrousel, Saint-Germain-l'Auxerrois, 1st Arrondissement, Paris, Ile-de-France, Metropolitan France, 75001, France",
+    "extratags": {
+     "fee": "yes",
+     "image": "http://upload.wikimedia.org/wikipedia/commons/6/66/Louvre_Museum_Wikimedia_Commons.jpg",
+     "museum": "art",
+     "landmark": "20",
+     "wikidata": "Q19675",
+     "wikipedia": "fr:Musée du Louvre",
+     "check_date": "2025-07-26",
+     "importance": "international",
+     "wheelchair": "yes",
+     "surveillance": "indoor",
+     "contact:phone": "+33 1 40 20 52 29",
+     "opening_hours": "Mo,Th,Sa-Su 09:00-18:00; Tu off; We,Fr 09:00-21:00; Jan 01,May 01,Dec 25 off",
+     "contact:website": "https://www.louvre.fr",
+     "internet_access": "wlan",
+     "tourism:visitors": "9000000",
+     "wikimedia_commons": "Category:Musée du Louvre",
+     "internet_access:fee": "no",
+     "opening_hours:lastcheck": "2015-03"
+    },
+    "boundingbox": [
+     "48.8593816",
+     "48.8629132",
+     "2.3317162",
+     "2.3400113"
+    ]
+   }
+  ]
+ },
+ "route": {
+  "code": "Ok",
+  "routes": [
+   {
+    "legs": [
+     {
+      "steps": [],
+      "weight": 85.05,
+      "summary": "",
+      "duration": 762.1,
+      "distance": 952.7
+     },
+     {
+      "steps": [],
+      "weight": 88.29,
+      "summary": "",
+      "duration": 807.8,
+      "distance": 1007.4
+     },
+     {
+      "steps": [],
+      "weight": 74.49,
+      "summary": "",
+      "duration": 705.3,
+      "distance": 879.6
+     },
+     {
+      "steps": [],
+      "weight": 124.65,
+      "summary": "",
+      "duration": 1196.4,
+      "distance": 1495.7
+     }
+    ],
+    "weight_name": "routability",
+    "geometry": {
+     "coordinates": [
+      [
+       2.295208,
+       48.857815
+      ],
+      [
+       2.295421,
+       48.857962
+      ],
+      [
+       2.295534,
+       48.858038
+      ],
+      [
+       2.29589,
+       48.85828
+      ],
+      [
+       2.296345,
+       48.858589
+      ],
+      [
+       2.296773,
+       48.858871
+      ],
+      [
+       2.296834,
+       48.858832
+      ],
+      [
+       2.296869,
+       48.858809
+      ],
+      [
+       2.296874,
+       48.858806
+      ],
+      [
+       2.296917,
+       48.858837
+      ],
+      [
+       2.296966,
+       48.858868
+      ],
+      [
+       2.297016,
+       48.8589
+      ],
+      [
+       2.297059,
+       48.858927
+      ],
+      [
+       2.297113,
+       48.858977
+      ],
+      [
+       2.297485,
+       48.859224
+      ],
+      [
+       2.297767,
+       48.859041
+      ],
+      [
+       2.297793,
+       48.859077
+      ],
+      [
+       2.297829,
+       48.859125
+      ],
+      [
+       2.297873,
+       48.859185
+      ],
+      [
+       2.297886,
+       48.859203
+      ],
+      [
+       2.297885,
+       48.859218
+      ],
+      [
+       2.297909,
+       48.859234
+      ],
+      [
+       2.300592,
+       48.859781
+      ],
+      [
+       2.300597,
+       48.859793
+      ],
+      [
+       2.300608,
+       48.859827
+      ],
+      [
+       2.300623,
+       48.85987
+      ],
+      [
+       2.300628,
+       48.859883
+      ],
+      [
+       2.300761,
+       48.860297
+      ],
+      [
+       2.300741,
+       48.860314
+      ],
+      [
+       2.300745,
+       48.860327
+      ],
+      [
+       2.300756,
+       48.860357
+      ],
+      [
+       2.300768,
+       48.860392
+      ],
+      [
+       2.300773,
+       48.860401
+      ],
+      [
+       2.300803,
+       48.860421
+      ],
+      [
+       2.300883,
+       48.860632
+      ],
+      [
+       2.3009,
+       48.860694
+      ],
+      [
+       2.300904,
+       48.86073
+      ],
+      [
+       2.30094,
+       48.860852
+      ],
+      [
+       2.300926,
+       48.860871
+      ],
+      [
+       2.300933,
+       48.860895
+      ],
+      [
+       2.300946,
+       48.860945
+      ],
+      [
+       2.300961,
+       48.860999
+      ],
+      [
+       2.300963,
+       48.861004
+      ],
+      [
+       2.30099,
+       48.861034
+      ],
+      [
+       2.301235,
+       48.861821
+      ],
+      [
+       2.301252,
+       48.861869
+      ],
+      [
+       2.301252,
+       48.862045
+      ],
+      [
+       2.301249,
+       48.862166
+      ],
+      [
+       2.30127,
+       48.862212
+      ],
+      [
+       2.301272,
+       48.86226
+      ],
+      [
+       2.301271,
+       48.862285
+      ],
+      [
+       2.301278,
+       48.862301
+      ],
+      [
+       2.301286,
+       48.862317
+      ],
+      [
+       2.301293,
+       48.862345
+      ],
+      [
+       2.301291,
+       48.862378
+      ],
+      [
+       2.301289,
+       48.862412
+      ],
+      [
+       2.301288,
+       48.862427
+      ],
+      [
+       2.301283,
+       48.862442
+      ],
+      [
+       2.301278,
+       48.862456
+      ],
+      [
+       2.301342,
+       48.86246
+      ],
+      [
+       2.301408,
+       48.862464
+      ],
+      [
+       2.301443,
+       48.862471
+      ],
+      [
+       2.301473,
+       48.862484
+      ],
+      [
+       2.301493,
+       48.862501
+      ],
+      [
+       2.301514,
+       48.862524
+      ],
+      [
+       2.301527,
+       48.862556
+      ],
+      [
+       2.301546,
+       48.862557
+      ],
+      [
+       2.301657,
+       48.862569
+      ],
+      [
+       2.301937,
+       48.862586
+      ],
+      [
+       2.301923,
+       48.862693
+      ],
+      [
+       2.301913,
+       48.86281
+      ],
+      [
+       2.30191,
+       48.862829
+      ],
+      [
+       2.301851,
+       48.863437
+      ],
+      [
+       2.301792,
+       48.864046
+      ],
+      [
+       2.30179,
+       48.864065
+      ],
+      [
+       2.301788,
+       48.864084
+      ],
+      [
+       2.301884,
+       48.864087
+      ],
+      [
+       2.301891,
+       48.864087
+      ],
+      [
+       2.301931,
+       48.864089
+      ],
+      [
+       2.301943,
+       48.864113
+      ],
+      [
+       2.301962,
+       48.864142
+      ],
+      [
+       2.301965,
+       48.864165
+      ],
+      [
+       2.301966,
+       48.864196
+      ],
+      [
+       2.301969,
+       48.864229
+      ],
+      [
+       2.301971,
+       48.864254
+      ],
+      [
+       2.301974,
+       48.864276
+      ],
+      [
+       2.30198,
+       48.864339
+      ],
+      [
+       2.301987,
+       48.864405
+      ],
+      [
+       2.301984,
+       48.864628
+      ],
+      [
+       2.302062,
+       48.864679
+      ],
+      [
+       2.30219,
+       48.864679
+      ],
+      [
+       2.302217,
+       48.864679
+      ],
+      [
+       2.302256,
+       48.864679
+      ],
+      [
+       2.30229,
+       48.864692
+      ],
+      [
+       2.302333,
+       48.864698
+      ],
+      [
+       2.30236,
+       48.864699
+      ],
+      [
+       2.302376,
+       48.864743
+      ],
+      [
+       2.302398,
+       48.864805
+      ],
+      [
+       2.302394,
+       48.864824
+      ],
+      [
+       2.302548,
+       48.86486
+      ],
+      [
+       2.302598,
+       48.864832
+      ],
+      [
+       2.30307,
+       48.864845
+      ],
+      [
+       2.303119,
+       48.86484
+      ],
+      [
+       2.30327,
+       48.86483
+      ],
+      [
+       2.303354,
+       48.864825
+      ],
+      [
+       2.303386,
+       48.864825
+      ],
+      [
+       2.30334,
+       48.864972
+      ],
+      [
+       2.304746,
+       48.86534
+      ],
+      [
+       2.306579,
+       48.865823
+      ],
+      [
+       2.307523,
+       48.866067
+      ],
+      [
+       2.307535,
+       48.866066
+      ],
+      [
+       2.307577,
+       48.866034
+      ],
+      [
+       2.307629,
+       48.866006
+      ],
+      [
+       2.307689,
+       48.865985
+      ],
+      [
+       2.307747,
+       48.865973
+      ],
+      [
+       2.307756,
+       48.865966
+      ],
+      [
+       2.307774,
+       48.865966
+      ],
+      [
+       2.307837,
+       48.865969
+      ],
+      [
+       2.307894,
+       48.865971
+      ],
+      [
+       2.307915,
+       48.865971
+      ],
+      [
+       2.307914,
+       48.865978
+      ],
+      [
+       2.308006,
+       48.866003
+      ],
+      [
+       2.308019,
+       48.865996
+      ],
+      [
+       2.308035,
+       48.866009
+      ],
+      [
+       2.308089,
+       48.866054
+      ],
+      [
+       2.308138,
+       48.866094
+      ],
+      [
+       2.308155,
+       48.866108
+      ],
+      [
+       2.308149,
+       48.866126
+      ],
+      [
+       2.308161,
+       48.866155
+      ],
+      [
+       2.308166,
+       48.866187
+      ],
+      [
+       2.308165,
+       48.866226
+      ],
+      [
+       2.308173,
+       48.866235
+      ],
+      [
+       2.309945,
+       48.866697
+      ],
+      [
+       2.309994,
+       48.866698
+      ],
+      [
+       2.310014,
+       48.866698
+      ],
+      [
+       2.310023,
+       48.866698
+      ],
+      [
+       2.31007,
+       48.866704
+      ],
+      [
+       2.310118,
+       48.866709
+      ],
+      [
+       2.310146,
+       48.866713
+      ],
+      [
+       2.310205,
+       48.866728
+      ],
+      [
+       2.310223,
+       48.866733
+      ],
+      [
+       2.310231,
+       48.866735
+      ],
+      [
+       2.310322,
+       48.86676
+      ],
+      [
+       2.310385,
+       48.866776
+      ],
+      [
+       2.310387,
+       48.86681
+      ],
+      [
+       2.310793,
+       48.866917
+      ],
+      [
+       2.310845,
+       48.86693
+      ],
+      [
+       2.310901,
+       48.866945
+      ],
+      [
+       2.310951,
+       48.866958
+      ],
+      [
+       2.311275,
+       48.867043
+      ],
+      [
+       2.311315,
+       48.867024
+      ],
+      [
+       2.311386,
+       48.866992
+      ],
+      [
+       2.311471,
+       48.866952
+      ],
+      [
+       2.311454,
+       48.86693
+      ],
+      [
+       2.311444,
+       48.866905
+      ],
+      [
+       2.311442,
+       48.86688
+      ],
+      [
+       2.311447,
+       48.866854
+      ],
+      [
+       2.311461,
+       48.86683
+      ],
+      [
+       2.311481,
+       48.866809
+      ],
+      [
+       2.311508,
+       48.866791
+      ],
+      [
+       2.31154,
+       48.866776
+      ],
+      [
+       2.311576,
+       48.866766
+      ],
+      [
+       2.311614,
+       48.866762
+      ],
+      [
+       2.311652,
+       48.866762
+      ],
+      [
+       2.31169,
+       48.866767
+      ],
+      [
+       2.311736,
+       48.866782
+      ],
+      [
+       2.311802,
+       48.866743
+      ],
+      [
+       2.311819,
+       48.866733
+      ],
+      [
+       2.311854,
+       48.866713
+      ],
+      [
+       2.312009,
+       48.866704
+      ],
+      [
+       2.312009,
+       48.866704
+      ],
+      [
+       2.311854,
+       48.866713
+      ],
+      [
+       2.311819,
+       48.866733
+      ],
+      [
+       2.311836,
+       48.866743
+      ],
+      [
+       2.311861,
+       48.866762
+      ],
+      [
+       2.311886,
+       48.866787
+      ],
+      [
+       2.311906,
+       48.866816
+      ],
+      [
+       2.311919,
+       48.866846
+      ],
+      [
+       2.311925,
+       48.866877
+      ],
+      [
+       2.311924,
+       48.866908
+      ],
+      [
+       2.311914,
+       48.866938
+      ],
+      [
+       2.311897,
+       48.866968
+      ],
+      [
+       2.311873,
+       48.866994
+      ],
+      [
+       2.311843,
+       48.867019
+      ],
+      [
+       2.311799,
+       48.867043
+      ],
+      [
+       2.311764,
+       48.867057
+      ],
+      [
+       2.311847,
+       48.867168
+      ],
+      [
+       2.31187,
+       48.867198
+      ],
+      [
+       2.311927,
+       48.867213
+      ],
+      [
+       2.31192,
+       48.867224
+      ],
+      [
+       2.311892,
+       48.867269
+      ],
+      [
+       2.311917,
+       48.867274
+      ],
+      [
+       2.312145,
+       48.867326
+      ],
+      [
+       2.312302,
+       48.867351
+      ],
+      [
+       2.312516,
+       48.867366
+      ],
+      [
+       2.312693,
+       48.867368
+      ],
+      [
+       2.313147,
+       48.867324
+      ],
+      [
+       2.313385,
+       48.867281
+      ],
+      [
+       2.313761,
+       48.867187
+      ],
+      [
+       2.313946,
+       48.867138
+      ],
+      [
+       2.314036,
+       48.867134
+      ],
+      [
+       2.314169,
+       48.867164
+      ],
+      [
+       2.314172,
+       48.867094
+      ],
+      [
+       2.314172,
+       48.867077
+      ],
+      [
+       2.314306,
+       48.86714
+      ],
+      [
+       2.314454,
+       48.867239
+      ],
+      [
+       2.314497,
+       48.86727
+      ],
+      [
+       2.314537,
+       48.867256
+      ],
+      [
+       2.314618,
+       48.867228
+      ],
+      [
+       2.314664,
+       48.867223
+      ],
+      [
+       2.314704,
+       48.867224
+      ],
+      [
+       2.31474,
+       48.86724
+      ],
+      [
+       2.314769,
+       48.867261
+      ],
+      [
+       2.314789,
+       48.867255
+      ],
+      [
+       2.315841,
+       48.866929
+      ],
+      [
+       2.31587,
+       48.86692
+      ],
+      [
+       2.315939,
+       48.866898
+      ],
+      [
+       2.316016,
+       48.866873
+      ],
+      [
+       2.316207,
+       48.866812
+      ],
+      [
+       2.316264,
+       48.866889
+      ],
+      [
+       2.316269,
+       48.866896
+      ],
+      [
+       2.316342,
+       48.866997
+      ],
+      [
+       2.316415,
+       48.867099
+      ],
+      [
+       2.316424,
+       48.867111
+      ],
+      [
+       2.31648,
+       48.867188
+      ],
+      [
+       2.317627,
+       48.866822
+      ],
+      [
+       2.318677,
+       48.866487
+      ],
+      [
+       2.319154,
+       48.866346
+      ],
+      [
+       2.319659,
+       48.866198
+      ],
+      [
+       2.319838,
+       48.866145
+      ],
+      [
+       2.319972,
+       48.866105
+      ],
+      [
+       2.320068,
+       48.866078
+      ],
+      [
+       2.320174,
+       48.866047
+      ],
+      [
+       2.320211,
+       48.866041
+      ],
+      [
+       2.320395,
+       48.866014
+      ],
+      [
+       2.320542,
+       48.865985
+      ],
+      [
+       2.320647,
+       48.865967
+      ],
+      [
+       2.320769,
+       48.865928
+      ],
+      [
+       2.320849,
+       48.865902
+      ],
+      [
+       2.320885,
+       48.865891
+      ],
+      [
+       2.32094,
+       48.865868
+      ],
+      [
+       2.321109,
+       48.86582
+      ],
+      [
+       2.321146,
+       48.865808
+      ],
+      [
+       2.321351,
+       48.865743
+      ],
+      [
+       2.321517,
+       48.86569
+      ],
+      [
+       2.321739,
+       48.865617
+      ],
+      [
+       2.322007,
+       48.86553
+      ],
+      [
+       2.322068,
+       48.865511
+      ],
+      [
+       2.322289,
+       48.86582
+      ],
+      [
+       2.322304,
+       48.865864
+      ],
+      [
+       2.322306,
+       48.865875
+      ],
+      [
+       2.322673,
+       48.865885
+      ],
+      [
+       2.32275,
+       48.865886
+      ],
+      [
+       2.322782,
+       48.865875
+      ],
+      [
+       2.322913,
+       48.86588
+      ],
+      [
+       2.323003,
+       48.865883
+      ],
+      [
+       2.323048,
+       48.865884
+      ],
+      [
+       2.32326,
+       48.866159
+      ],
+      [
+       2.323294,
+       48.866196
+      ],
+      [
+       2.32335,
+       48.866226
+      ],
+      [
+       2.323484,
+       48.866265
+      ],
+      [
+       2.323575,
+       48.866288
+      ],
+      [
+       2.32366,
+       48.866284
+      ],
+      [
+       2.323975,
+       48.866243
+      ],
+      [
+       2.324128,
+       48.866223
+      ],
+      [
+       2.324961,
+       48.865957
+      ],
+      [
+       2.325002,
+       48.865943
+      ],
+      [
+       2.325008,
+       48.865951
+      ],
+      [
+       2.325069,
+       48.865932
+      ],
+      [
+       2.325117,
+       48.865918
+      ],
+      [
+       2.32511,
+       48.865909
+      ],
+      [
+       2.32606,
+       48.865606
+      ],
+      [
+       2.327201,
+       48.865241
+      ],
+      [
+       2.3274,
+       48.865175
+      ],
+      [
+       2.329336,
+       48.864548
+      ],
+      [
+       2.330029,
+       48.864312
+      ],
+      [
+       2.33004,
+       48.864327
+      ],
+      [
+       2.330169,
+       48.864285
+      ],
+      [
+       2.330304,
+       48.864241
+      ],
+      [
+       2.330294,
+       48.864227
+      ],
+      [
+       2.331161,
+       48.86395
+      ],
+      [
+       2.33157,
+       48.863823
+      ],
+      [
+       2.331731,
+       48.863768
+      ],
+      [
+       2.331809,
+       48.863744
+      ],
+      [
+       2.331794,
+       48.863707
+      ],
+      [
+       2.331881,
+       48.863678
+      ],
+      [
+       2.331912,
+       48.863669
+      ],
+      [
+       2.332004,
+       48.863641
+      ],
+      [
+       2.332106,
+       48.86361
+      ],
+      [
+       2.33214,
+       48.8636
+      ],
+      [
+       2.332173,
+       48.86359
+      ],
+      [
+       2.332209,
+       48.863615
+      ],
+      [
+       2.332317,
+       48.863578
+      ],
+      [
+       2.332529,
+       48.863512
+      ],
+      [
+       2.333516,
+       48.86319
+      ],
+      [
+       2.333822,
+       48.863094
+      ],
+      [
+       2.33492,
+       48.862725
+      ],
+      [
+       2.334987,
+       48.862704
+      ],
+      [
+       2.335029,
+       48.862691
+      ],
+      [
+       2.335064,
+       48.862681
+      ],
+      [
+       2.335097,
+       48.862671
+      ],
+      [
+       2.335129,
+       48.862661
+      ],
+      [
+       2.335151,
+       48.862654
+      ],
+      [
+       2.33518,
+       48.862645
+      ],
+      [
+       2.335209,
+       48.862637
+      ],
+      [
+       2.335238,
+       48.862628
+      ],
+      [
+       2.335272,
+       48.862617
+      ],
+      [
+       2.335321,
+       48.862603
+      ],
+      [
+       2.335341,
+       48.862596
+      ],
+      [
+       2.335567,
+       48.862524
+      ],
+      [
+       2.335892,
+       48.86242
+      ],
+      [
+       2.336552,
+       48.862208
+      ],
+      [
+       2.336539,
+       48.86219
+      ],
+      [
+       2.336357,
+       48.861883
+      ],
+      [
+       2.336287,
+       48.861761
+      ],
+      [
+       2.336258,
+       48.861711
+      ],
+      [
+       2.336236,
+       48.861672
+      ],
+      [
+       2.336212,
+       48.86163
+      ],
+      [
+       2.336202,
+       48.861612
+      ],
+      [
+       2.336154,
+       48.861529
+      ],
+      [
+       2.336145,
+       48.861514
+      ],
+      [
+       2.33611,
+       48.861452
+      ],
+      [
+       2.336189,
+       48.861432
+      ],
+      [
+       2.336231,
+       48.861421
+      ],
+      [
+       2.337608,
+       48.861073
+      ],
+      [
+       2.337608,
+       48.861073
+      ]
+     ],
+     "type": "LineString"
+    },
+    "weight": 372.48,
+    "duration": 3471.6,
+    "distance": 4335.4
+   }
+  ],
+  "waypoints": [
+   {
+    "hint": "MFgBgFDI7ZC8AAAAxQAAAAAAAAAAAAAASOi0QV3SvEEAAAAAAAAAALQAAAC-AAAAAAAAAAAAAAB4AAAAqAUjANeC6QLlAiMAlITpAgAA_w0AAAAA",
+    "location": [
+     2.295208,
+     48.857815
+    ],
+    "name": "Avenue Gustave Eiffel",
+    "distance": 71.68426532
+   },
+   {
+    "hint": "RwAEjnmm3ZDHAwAAygMAAIMBAAA8AAAAPYGHQhC6h0IxzNhBvo2HQB4CAAAfAgAA2QAAADYAAAB4AAAAmx8jAM2Y6QKbHyMAzZjpAgYATxYAAAAA",
+    "location": [
+     2.301851,
+     48.863437
+    ],
+    "name": "Pont de l'Alma",
+    "distance": 0
+   },
+   {
+    "hint": "Fhrqmxga6psAAAAAXwAAAAAAAAAcAAAAAAAAAImfNkEAAAAApmVZQAAAAABbAAAAAAAAABsAAAB4AAAASUcjAJCl6QIfSCMAcaPpAgAAPxEAAAAA",
+    "location": [
+     2.312009,
+     48.866704
+    ],
+    "name": "",
+    "distance": 62.39264194
+   },
+   {
+    "hint": "-dNtgCC9GZyKAAAAcgAAAAAAAACYAAAAjXqFQQZ0WEEAAAAAkJGRQYUAAABtAAAAAAAAAJIAAAB4AAAAx2sjAM-h6QJJayMAJKHpAgAAPwcAAAAA",
+    "location": [
+     2.321351,
+     48.865743
+    ],
+    "name": "Place de la Concorde",
+    "distance": 21.14362381
+   },
+   {
+    "hint": "aWAih3I01Zu1AAAAAAAAAP4AAACFAwAAzFGtQQAAAAAoTPRBt1bYQq0AAAAAAAAA9AAAAGEDAAB4AAAASKsjAJGP6QLsrCMA24_pAgQAXwAAAAAA",
+    "location": [
+     2.337608,
+     48.861073
+    ],
+    "name": "",
+    "distance": 31.8891146
+   }
+  ]
+ },
+ "summaries": {
+  "Paris": {
+   "type": "standard",
+   "title": "Paris",
+   "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Paris</span></span>",
+   "namespace": {
+    "id": 0,
+    "text": ""
+   },
+   "wikibase_item": "Q90",
+   "titles": {
+    "canonical": "Paris",
+    "normalized": "Paris",
+    "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Paris</span></span>"
+   },
+   "pageid": 22989,
+   "thumbnail": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4b/La_Tour_Eiffel_vue_de_la_Tour_Saint-Jacques%2C_Paris_ao%C3%BBt_2014_%282%29.jpg/330px-La_Tour_Eiffel_vue_de_la_Tour_Saint-Jacques%2C_Paris_ao%C3%BBt_2014_%282%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 330,
+    "height": 206
+   },
+   "originalimage": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4b/La_Tour_Eiffel_vue_de_la_Tour_Saint-Jacques%2C_Paris_ao%C3%BBt_2014_%282%29.jpg/3840px-La_Tour_Eiffel_vue_de_la_Tour_Saint-Jacques%2C_Paris_ao%C3%BBt_2014_%282%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 4592,
+    "height": 2870
+   },
+   "lang": "en",
+   "dir": "ltr",
+   "revision": "1382945234",
+   "tid": "5853aa20-d4db-11f1-80ad-73c40eb9f5e6",
+   "timestamp": "2026-10-31T03:29:57Z",
+   "description": "Capital and largest city of France",
+   "description_source": "local",
+   "coordinates": {
+    "lat": 48.8567,
+    "lon": 2.3522
+   },
+   "content_urls": {
+    "desktop": {
+     "page": "https://en.wikipedia.org/wiki/Paris",
+     "revisions": "https://en.wikipedia.org/wiki/Paris?action=history",
+     "edit": "https://en.wikipedia.org/wiki/Paris?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Paris"
+    },
+    "mobile": {
+     "page": "https://en.wikipedia.org/wiki/Paris",
+     "revisions": "https://en.wikipedia.org/wiki/Special:History/Paris",
+     "edit": "https://en.wikipedia.org/wiki/Paris?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Paris"
+    }
+   },
+   "extract": "Paris is the capital and largest city of France, with an estimated city population of 2.04 million in an area of 105.4 km2 (40.7 sq mi), as of January 2026, and a metropolitan population of 13.3 million (2023). Located on the Seine in the centre of the Île-de-France region, it is the largest metropolitan area and fourth-most populous city in the European Union (EU). Paris is nicknamed the \"City of Light\" mainly due to its leading role in the Age of Enlightenment.",
+   "extract_html": "<p><b>Paris</b> is the capital and largest city of France, with an estimated city population of 2.04 million in an area of 105.4 km<sup>2</sup> (40.7 sq mi), as of January 2026, and a metropolitan population of 13.3 million (2023). Located on the Seine in the centre of the Île-de-France region, it is the largest metropolitan area and fourth-most populous city in the European Union (EU). Paris is nicknamed the \"City of Light\" mainly due to its leading role in the Age of Enlightenment.</p>"
+  },
+  "Eiffel Tower": {
+   "type": "standard",
+   "title": "Eiffel Tower",
+   "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Eiffel Tower</span></span>",
+   "namespace": {
+    "id": 0,
+    "text": ""
+   },
+   "wikibase_item": "Q243",
+   "titles": {
+    "canonical": "Eiffel_Tower",
+    "normalized": "Eiffel Tower",
+    "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Eiffel Tower</span></span>"
+   },
+   "pageid": 9232,
+   "thumbnail": {
+    "source": "https://thumb.wikimedia.org/wikipedia/en/thumb/b/ba/Eiffel_Tower_logo.svg/330px-Eiffel_Tower_logo.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 330,
+    "height": 423
+   },
+   "originalimage": {
+    "source": "https://thumb.wikimedia.org/wikipedia/en/thumb/b/ba/Eiffel_Tower_logo.svg/330px-Eiffel_Tower_logo.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 279,
+    "height": 358
+   },
+   "lang": "en",
+   "dir": "ltr",
+   "revision": "1380433272",
+   "tid": "d9e3ee95-c8c2-11f1-b077-2ce44f941535",
+   "timestamp": "2026-10-15T18:04:23Z",
+   "description": "Tower in Paris, France",
+   "description_source": "local",
+   "coordinates": {
+    "lat": 48.85822222,
+    "lon": 2.2945
+   },
+   "content_urls": {
+    "desktop": {
+     "page": "https://en.wikipedia.org/wiki/Eiffel_Tower",
+     "revisions": "https://en.wikipedia.org/wiki/Eiffel_Tower?action=history",
+     "edit": "https://en.wikipedia.org/wiki/Eiffel_Tower?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Eiffel_Tower"
+    },
+    "mobile": {
+     "page": "https://en.wikipedia.org/wiki/Eiffel_Tower",
+     "revisions": "https://en.wikipedia.org/wiki/Special:History/Eiffel_Tower",
+     "edit": "https://en.wikipedia.org/wiki/Eiffel_Tower?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Eiffel_Tower"
+    }
+   },
+   "extract": "The Eiffel Tower is a lattice tower on the Champ de Mars in Paris, France. It is named after the engineer Gustave Eiffel, whose company designed and built the tower from 1887 to 1889.",
+   "extract_html": "<p>The <b>Eiffel Tower</b> is a lattice tower on the Champ de Mars in Paris, France. It is named after the engineer Gustave Eiffel, whose company designed and built the tower from 1887 to 1889.</p>"
+  },
+  "Pont de l'Alma": {
+   "type": "standard",
+   "title": "Pont de l'Alma",
+   "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Pont de l&#039;Alma</span></span>",
+   "namespace": {
+    "id": 0,
+    "text": ""
+   },
+   "wikibase_item": "Q1621256",
+   "titles": {
+    "canonical": "Pont_de_l'Alma",
+    "normalized": "Pont de l'Alma",
+    "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Pont de l&#039;Alma</span></span>"
+   },
+   "pageid": 13506119,
+   "thumbnail": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/af/Pont_de_l%27Alma%2C_Paris_5_December_2016.jpg/330px-Pont_de_l%27Alma%2C_Paris_5_December_2016.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 330,
+    "height": 220
+   },
+   "originalimage": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/af/Pont_de_l%27Alma%2C_Paris_5_December_2016.jpg/3840px-Pont_de_l%27Alma%2C_Paris_5_December_2016.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 5472,
+    "height": 3648
+   },
+   "lang": "en",
+   "dir": "ltr",
+   "revision": "1381604263",
+   "tid": "e2ab745a-cf01-11f1-b07c-ae8f2521c05a",
+   "timestamp": "2026-10-23T16:50:43Z",
+   "description": "Road bridge in Paris, France",
+   "description_source": "local",
+   "coordinates": {
+    "lat": 48.8635,
+    "lon": 2.3018
+   },
+   "content_urls": {
+    "desktop": {
+     "page": "https://en.wikipedia.org/wiki/Pont_de_l'Alma",
+     "revisions": "https://en.wikipedia.org/wiki/Pont_de_l'Alma?action=history",
+     "edit": "https://en.wikipedia.org/wiki/Pont_de_l'Alma?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Pont_de_l'Alma"
+    },
+    "mobile": {
+     "page": "https://en.wikipedia.org/wiki/Pont_de_l'Alma",
+     "revisions": "https://en.wikipedia.org/wiki/Special:History/Pont_de_l'Alma",
+     "edit": "https://en.wikipedia.org/wiki/Pont_de_l'Alma?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Pont_de_l'Alma"
+    }
+   },
+   "extract": "The Pont de l'Alma is a road bridge in Paris, France, across the Seine. It was named to commemorate the Battle of Alma during the Crimean War, in which the Ottoman-Franco-British alliance achieved victory over the Russian army in 1854. The bridge is known for being the site of the car crash that caused the death of Diana, Princess of Wales, in 1997.",
+   "extract_html": "<p>The <b>Pont de l'Alma</b> is a road bridge in Paris, France, across the Seine. It was named to commemorate the Battle of Alma during the Crimean War, in which the Ottoman-Franco-British alliance achieved victory over the Russian army in 1854. The bridge is known for being the site of the car crash that caused the death of Diana, Princess of Wales, in 1997.</p>"
+  },
+  "Grand Palais": {
+   "type": "standard",
+   "title": "Grand Palais",
+   "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Grand Palais</span></span>",
+   "namespace": {
+    "id": 0,
+    "text": ""
+   },
+   "wikibase_item": "Q457318",
+   "titles": {
+    "canonical": "Grand_Palais",
+    "normalized": "Grand Palais",
+    "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Grand Palais</span></span>"
+   },
+   "pageid": 2730731,
+   "thumbnail": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d6/France-000296_-_Paris%27_Grand_Palais_%2814525102530%29.jpg/330px-France-000296_-_Paris%27_Grand_Palais_%2814525102530%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 330,
+    "height": 220
+   },
+   "originalimage": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d6/France-000296_-_Paris%27_Grand_Palais_%2814525102530%29.jpg/3840px-France-000296_-_Paris%27_Grand_Palais_%2814525102530%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 6000,
+    "height": 4000
+   },
+   "lang": "en",
+   "dir": "ltr",
+   "revision": "1382340864",
+   "tid": "509dc534-d28b-11f1-87b1-afa9ec60461a",
+   "timestamp": "2026-10-28T04:52:02Z",
+   "description": "Historic site, exhibition hall in Paris, France",
+   "description_source": "local",
+   "coordinates": {
+    "lat": 48.8661,
+    "lon": 2.3125
+   },
+   "content_urls": {
+    "desktop": {
+     "page": "https://en.wikipedia.org/wiki/Grand_Palais",
+     "revisions": "https://en.wikipedia.org/wiki/Grand_Palais?action=history",
+     "edit": "https://en.wikipedia.org/wiki/Grand_Palais?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Grand_Palais"
+    },
+    "mobile": {
+     "page": "https://en.wikipedia.org/wiki/Grand_Palais",
+     "revisions": "https://en.wikipedia.org/wiki/Special:History/Grand_Palais",
+     "edit": "https://en.wikipedia.org/wiki/Grand_Palais?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Grand_Palais"
+    }
+   },
+   "extract": "The Grand Palais des Champs-Élysées, commonly known as the Grand Palais, is a historic site, exhibition hall and museum complex located in the 8th arrondissement of Paris between the Champs-Élysées and the Seine, France, on Avenue Winston-Churchill. Construction of the Grand Palais began in 1897 following the demolition of the Palais de l'Industrie to prepare for the Universal Exposition of 1900. That exposition also produced the adjacent Petit Palais and Pont Alexandre III.",
+   "extract_html": "<p>The <b><span><span style=\"font-style:normal\">Grand Palais des Champs-Élysées</span></span></b>, commonly known as the <b><span><span style=\"font-style:normal\">Grand Palais</span></span></b>, is a historic site, exhibition hall and museum complex located in the 8th arrondissement of Paris between the Champs-Élysées and the Seine, France, on Avenue Winston-Churchill. Construction of the <span><span style=\"font-style:normal\">Grand Palais</span></span> began in 1897 following the demolition of the Palais de l'Industrie to prepare for the Universal Exposition of 1900. That exposition also produced the adjacent <span><span style=\"font-style:normal\">Petit Palais</span></span> and Pont Alexandre III.</p>"
+  },
+  "Place de la Concorde": {
+   "type": "standard",
+   "title": "Place de la Concorde",
+   "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Place de la Concorde</span></span>",
+   "namespace": {
+    "id": 0,
+    "text": ""
+   },
+   "wikibase_item": "Q189503",
+   "titles": {
+    "canonical": "Place_de_la_Concorde",
+    "normalized": "Place de la Concorde",
+    "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Place de la Concorde</span></span>"
+   },
+   "pageid": 80899,
+   "thumbnail": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fa/Place_de_la_Concorde_from_the_Eiffel_Tower%2C_Paris_April_2011.jpg/330px-Place_de_la_Concorde_from_the_Eiffel_Tower%2C_Paris_April_2011.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 330,
+    "height": 220
+   },
+   "originalimage": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fa/Place_de_la_Concorde_from_the_Eiffel_Tower%2C_Paris_April_2011.jpg/3840px-Place_de_la_Concorde_from_the_Eiffel_Tower%2C_Paris_April_2011.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 4752,
+    "height": 3168
+   },
+   "lang": "en",
+   "dir": "ltr",
+   "revision": "1368423900",
+   "tid": "929e2843-9384-11f1-9a1e-ec35151d9a1c",
+   "timestamp": "2026-08-08T23:55:03Z",
+   "description": "Square in Paris, France",
+   "description_source": "local",
+   "coordinates": {
+    "lat": 48.8656331,
+    "lon": 2.3212357
+   },
+   "content_urls": {
+    "desktop": {
+     "page": "https://en.wikipedia.org/wiki/Place_de_la_Concorde",
+     "revisions": "https://en.wikipedia.org/wiki/Place_de_la_Concorde?action=history",
+     "edit": "https://en.wikipedia.org/wiki/Place_de_la_Concorde?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Place_de_la_Concorde"
+    },
+    "mobile": {
+     "page": "https://en.wikipedia.org/wiki/Place_de_la_Concorde",
+     "revisions": "https://en.wikipedia.org/wiki/Special:History/Place_de_la_Concorde",
+     "edit": "https://en.wikipedia.org/wiki/Place_de_la_Concorde?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Place_de_la_Concorde"
+    }
+   },
+   "extract": "The Place de la Concorde, originally the Place Louis XV, and later the Place Louis XVI, is a public square in Paris. Measuring 7.6 ha in area, it is the largest square in the city. It is located in the 8th arrondissement, at the eastern end of the Champs-Élysées.",
+   "extract_html": "<p>The <b>Place de la Concorde</b>, originally the <b>Place Louis XV</b>, and later the <b>Place Louis XVI</b>, is a public square in Paris. Measuring 7.6 ha in area, it is the largest square in the city. It is located in the 8th arrondissement, at the eastern end of the Champs-Élysées.</p>"
+  },
+  "Louvre Museum": {
+   "type": "standard",
+   "title": "Louvre",
+   "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Louvre</span></span>",
+   "namespace": {
+    "id": 0,
+    "text": ""
+   },
+   "wikibase_item": "Q19675",
+   "titles": {
+    "canonical": "Louvre",
+    "normalized": "Louvre",
+    "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Louvre</span></span>"
+   },
+   "pageid": 17546,
+   "thumbnail": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/66/Louvre_Museum_Wikimedia_Commons.jpg/330px-Louvre_Museum_Wikimedia_Commons.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 330,
+    "height": 139
+   },
+   "originalimage": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/66/Louvre_Museum_Wikimedia_Commons.jpg/3840px-Louvre_Museum_Wikimedia_Commons.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 6740,
+    "height": 2832
+   },
+   "lang": "en",
+   "dir": "ltr",
+   "revision": "1379049247",
+   "tid": "affc4e78-c26c-11f1-aa9a-663a194e586f",
+   "timestamp": "2026-10-07T16:32:29Z",
+   "description": "Art museum in Paris, France",
+   "description_source": "local",
+   "coordinates": {
+    "lat": 48.8611,
+    "lon": 2.3358
+   },
+   "content_urls": {
+    "desktop": {
+     "page": "https://en.wikipedia.org/wiki/Louvre",
+     "revisions": "https://en.wikipedia.org/wiki/Louvre?action=history",
+     "edit": "https://en.wikipedia.org/wiki/Louvre?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Louvre"
+    },
+    "mobile": {
+     "page": "https://en.wikipedia.org/wiki/Louvre",
+     "revisions": "https://en.wikipedia.org/wiki/Special:History/Louvre",
+     "edit": "https://en.wikipedia.org/wiki/Louvre?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Louvre"
+    }
+   },
+   "extract": "The Louvre is a national art museum in Paris, France. It is located on the Right Bank of the Seine in the city's 1st arrondissement (district) and home to some of the most canonical works of Western art, including the Mona Lisa, Venus de Milo, and Winged Victory. The museum is housed in the Louvre Palace, originally built in the late 12th to 13th century under Philip II. Remnants of the Medieval Louvre fortress are visible in the basement of the museum. Due to urban expansion, the fortress eventually lost its defensive function, and in 1546 Francis I converted it into the primary residence of the French kings.",
+   "extract_html": "<p>The <b>Louvre</b> is a national art museum in Paris, France. It is located on the Right Bank of the Seine in the city's 1st arrondissement (district) and home to some of the most canonical works of Western art, including the <i>Mona Lisa</i>, <i>Venus de Milo</i>, and <i>Winged Victory</i>. The museum is housed in the Louvre Palace, originally built in the late 12th to 13th century under Philip II. Remnants of the Medieval Louvre fortress are visible in the basement of the museum. Due to urban expansion, the fortress eventually lost its defensive function, and in 1546 Francis I converted it into the primary residence of the French kings.</p>"
+  },
+  "Musée du quai Branly – Jacques Chirac": {
+   "type": "standard",
+   "title": "Musée du Quai Branly – Jacques Chirac",
+   "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Musée du Quai Branly – Jacques Chirac</span></span>",
+   "namespace": {
+    "id": 0,
+    "text": ""
+   },
+   "wikibase_item": "Q167863",
+   "titles": {
+    "canonical": "Musée_du_Quai_Branly_–_Jacques_Chirac",
+    "normalized": "Musée du Quai Branly – Jacques Chirac",
+    "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Musée du Quai Branly – Jacques Chirac</span></span>"
+   },
+   "pageid": 5455300,
+   "thumbnail": {
+    "source": "https://thumb.wikimedia.org/wikipedia/en/thumb/f/f2/Musee_du_quai_Branly_exterieur.jpg/330px-Musee_du_quai_Branly_exterieur.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 330,
+    "height": 248
+   },
+   "originalimage": {
+    "source": "https://upload.wikimedia.org/wikipedia/en/f/f2/Musee_du_quai_Branly_exterieur.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "width": 3264,
+    "height": 2448
+   },
+   "lang": "en",
+   "dir": "ltr",
+   "revision": "1378005433",
+   "tid": "4804cc1f-be54-11f1-b5b0-aa29369dcbfe",
+   "timestamp": "2026-10-02T11:27:42Z",
+   "description": "Museum for indigenous art in Paris",
+   "description_source": "local",
+   "coordinates": {
+    "lat": 48.8608,
+    "lon": 2.2975
+   },
+   "content_urls": {
+    "desktop": {
+     "page": "https://en.wikipedia.org/wiki/Mus%C3%A9e_du_Quai_Branly_%E2%80%93_Jacques_Chirac",
+     "revisions": "https://en.wikipedia.org/wiki/Mus%C3%A9e_du_Quai_Branly_%E2%80%93_Jacques_Chirac?action=history",
+     "edit": "https://en.wikipedia.org/wiki/Mus%C3%A9e_du_Quai_Branly_%E2%80%93_Jacques_Chirac?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Mus%C3%A9e_du_Quai_Branly_%E2%80%93_Jacques_Chirac"
+    },
+    "mobile": {
+     "page": "https://en.wikipedia.org/wiki/Mus%C3%A9e_du_Quai_Branly_%E2%80%93_Jacques_Chirac",
+     "revisions": "https://en.wikipedia.org/wiki/Special:History/Mus%C3%A9e_du_Quai_Branly_%E2%80%93_Jacques_Chirac",
+     "edit": "https://en.wikipedia.org/wiki/Mus%C3%A9e_du_Quai_Branly_%E2%80%93_Jacques_Chirac?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Mus%C3%A9e_du_Quai_Branly_%E2%80%93_Jacques_Chirac"
+    }
+   },
+   "extract": "The Musée du Quai Branly – Jacques Chirac is an art museum located in Paris, France. The museum, designed by French architect Jean Nouvel, features the indigenous art and cultures of Africa, Asia, Oceania, and the Americas. The museum collection comprises more than a million objects, of which 3,500 are on display at any given time in both permanent and temporary thematic exhibits. A selection of objects from the museum is also displayed in the Gallery of the Five Continents of the Louvre.",
+   "extract_html": "<p>The <b>Musée du Quai Branly – Jacques Chirac</b> is an art museum located in Paris, France. The museum, designed by French architect Jean Nouvel, features the indigenous art and cultures of Africa, Asia, Oceania, and the Americas. The museum collection comprises more than a million objects, of which 3,500 are on display at any given time in both permanent and temporary thematic exhibits. A selection of objects from the museum is also displayed in the Gallery of the Five Continents of the Louvre.</p>"
+  },
+  "Champ de Mars": {
+   "type": "standard",
+   "title": "Champ de Mars",
+   "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Champ de Mars</span></span>",
+   "namespace": {
+    "id": 0,
+    "text": ""
+   },
+   "wikibase_item": "Q217925",
+   "titles": {
+    "canonical": "Champ_de_Mars",
+    "normalized": "Champ de Mars",
+    "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Champ de Mars</span></span>"
+   },
+   "pageid": 212301,
+   "thumbnail": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/29/MG-Paris-Champ_de_Mars.jpg/330px-MG-Paris-Champ_de_Mars.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 330,
+    "height": 613
+   },
+   "originalimage": {
+    "source": "https://upload.wikimedia.org/wikipedia/commons/2/29/MG-Paris-Champ_de_Mars.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "width": 3777,
+    "height": 7013
+   },
+   "lang": "en",
+   "dir": "ltr",
+   "revision": "1376743408",
+   "tid": "30ec485b-b941-11f1-939d-a1b8683764f1",
+   "timestamp": "2026-09-26T00:28:27Z",
+   "description": "Public park in Paris, France",
+   "description_source": "local",
+   "coordinates": {
+    "lat": 48.85611111,
+    "lon": 2.29833333
+   },
+   "content_urls": {
+    "desktop": {
+     "page": "https://en.wikipedia.org/wiki/Champ_de_Mars",
+     "revisions": "https://en.wikipedia.org/wiki/Champ_de_Mars?action=history",
+     "edit": "https://en.wikipedia.org/wiki/Champ_de_Mars?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Champ_de_Mars"
+    },
+    "mobile": {
+     "page": "https://en.wikipedia.org/wiki/Champ_de_Mars",
+     "revisions": "https://en.wikipedia.org/wiki/Special:History/Champ_de_Mars",
+     "edit": "https://en.wikipedia.org/wiki/Champ_de_Mars?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Champ_de_Mars"
+    }
+   },
+   "extract": "The Champ de Mars is a large public greenspace in Paris, France, located in the seventh arrondissement, between the Eiffel Tower to the northwest and the École Militaire to the southeast. The park is named after the Campus Martius in Rome, which was dedicated to the god Mars. The name alludes to the fact that the lawns here were formerly used as drilling and marching grounds by the French military.",
+   "extract_html": "<p>The <b>Champ de Mars</b> is a large public greenspace in Paris, France, located in the <span>seventh <i>arrondissement</i></span>, between the Eiffel Tower to the northwest and the École Militaire to the southeast. The park is named after the Campus Martius in Rome, which was dedicated to the god Mars. The name alludes to the fact that the lawns here were formerly used as drilling and marching grounds by the French military.</p>"
+  },
+  "Bir-Hakeim station": {
+   "type": "standard",
+   "title": "Bir-Hakeim station",
+   "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Bir-Hakeim station</span></span>",
+   "namespace": {
+    "id": 0,
+    "text": ""
+   },
+   "wikibase_item": "Q1783899",
+   "titles": {
+    "canonical": "Bir-Hakeim_station",
+    "normalized": "Bir-Hakeim station",
+    "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Bir-Hakeim station</span></span>"
+   },
+   "pageid": 504321,
+   "thumbnail": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/78/Station_Bir_Hakeim_M%C3%A9tro_Paris_Ligne_6_-_Paris_XV_%28FR75%29_-_2022-07-01_-_6.jpg/330px-Station_Bir_Hakeim_M%C3%A9tro_Paris_Ligne_6_-_Paris_XV_%28FR75%29_-_2022-07-01_-_6.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 330,
+    "height": 248
+   },
+   "originalimage": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/78/Station_Bir_Hakeim_M%C3%A9tro_Paris_Ligne_6_-_Paris_XV_%28FR75%29_-_2022-07-01_-_6.jpg/3840px-Station_Bir_Hakeim_M%C3%A9tro_Paris_Ligne_6_-_Paris_XV_%28FR75%29_-_2022-07-01_-_6.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 4032,
+    "height": 3024
+   },
+   "lang": "en",
+   "dir": "ltr",
+   "revision": "1370811363",
+   "tid": "bb114069-9eb3-11f1-a275-62e07a8a0196",
+   "timestamp": "2026-08-23T05:30:20Z",
+   "description": "Metro station in Paris, France",
+   "description_source": "local",
+   "coordinates": {
+    "lat": 48.853917,
+    "lon": 2.289332
+   },
+   "content_urls": {
+    "desktop": {
+     "page": "https://en.wikipedia.org/wiki/Bir-Hakeim_station",
+     "revisions": "https://en.wikipedia.org/wiki/Bir-Hakeim_station?action=history",
+     "edit": "https://en.wikipedia.org/wiki/Bir-Hakeim_station?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Bir-Hakeim_station"
+    },
+    "mobile": {
+     "page": "https://en.wikipedia.org/wiki/Bir-Hakeim_station",
+     "revisions": "https://en.wikipedia.org/wiki/Special:History/Bir-Hakeim_station",
+     "edit": "https://en.wikipedia.org/wiki/Bir-Hakeim_station?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Bir-Hakeim_station"
+    }
+   },
+   "extract": "Bir-Hakeim is an elevated station on Line 6 of the Paris Métro on the Boulevard de Grenelle in the 15th arrondissement. It is situated on the left bank of the Pont de Bir-Hakeim over the Seine and is the closest Métro station to the Eiffel Tower. After being built in 1906 as \"Grenelle\", it was renamed together with the bridge to commemorate the World War II battle of Bir Hakeim. The signs on the station walls now say \"Bir-Hakeim — Tour Eiffel\".",
+   "extract_html": "<p><b>Bir-Hakeim</b> is an elevated station on Line 6 of the Paris Métro on the Boulevard de Grenelle in the 15th arrondissement. It is situated on the left bank of the Pont de Bir-Hakeim over the Seine and is the closest Métro station to the Eiffel Tower. After being built in 1906 as \"Grenelle\", it was renamed together with the bridge to commemorate the World War II battle of Bir Hakeim. The signs on the station walls now say \"Bir-Hakeim — Tour Eiffel\".</p>"
+  },
+  "Flame of Liberty": {
+   "type": "standard",
+   "title": "Flame of Liberty",
+   "displaytitle": "<i>Flame of Liberty</i>",
+   "namespace": {
+    "id": 0,
+    "text": ""
+   },
+   "wikibase_item": "Q3036228",
+   "titles": {
+    "canonical": "Flame_of_Liberty",
+    "normalized": "Flame of Liberty",
+    "display": "<i>Flame of Liberty</i>"
+   },
+   "pageid": 1474868,
+   "thumbnail": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/37/Sculpture_pont_de_l%27alma_Paris_FRA.jpg/330px-Sculpture_pont_de_l%27alma_Paris_FRA.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 330,
+    "height": 496
+   },
+   "originalimage": {
+    "source": "https://upload.wikimedia.org/wikipedia/commons/3/37/Sculpture_pont_de_l%27alma_Paris_FRA.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "width": 2311,
+    "height": 3471
+   },
+   "lang": "en",
+   "dir": "ltr",
+   "revision": "1353971033",
+   "tid": "240c12e7-4ed4-11f1-b56b-f598fc079bb3",
+   "timestamp": "2026-05-13T14:00:47Z",
+   "description": "Monument in Paris, France",
+   "description_source": "local",
+   "coordinates": {
+    "lat": 48.86416667,
+    "lon": 2.30083333
+   },
+   "content_urls": {
+    "desktop": {
+     "page": "https://en.wikipedia.org/wiki/Flame_of_Liberty",
+     "revisions": "https://en.wikipedia.org/wiki/Flame_of_Liberty?action=history",
+     "edit": "https://en.wikipedia.org/wiki/Flame_of_Liberty?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Flame_of_Liberty"
+    },
+    "mobile": {
+     "page": "https://en.wikipedia.org/wiki/Flame_of_Liberty",
+     "revisions": "https://en.wikipedia.org/wiki/Special:History/Flame_of_Liberty",
+     "edit": "https://en.wikipedia.org/wiki/Flame_of_Liberty?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Flame_of_Liberty"
+    }
+   },
+   "extract": "The Flame of Liberty in Paris is a full-sized, gold-leaf-covered replica of the flame of the torch from New York City's Statue of Liberty. The monument, which measures about 3.5 metres in height, is a sculpture of a flame, executed in gilded copper, supported by a pedestal of gray-and-black marble. It is located near the northern end of the Pont de l'Alma on the Place Diana, in the 16th arrondissement.",
+   "extract_html": "<p>The <i><b>Flame of Liberty</b></i> in Paris is a full-sized, gold-leaf-covered replica of the flame of the torch from New York City's Statue of Liberty. The monument, which measures about 3.5 metres in height, is a sculpture of a flame, executed in gilded copper, supported by a pedestal of gray-and-black marble. It is located near the northern end of the Pont de l'Alma on the Place Diana, in the 16th arrondissement.</p>"
+  },
+  "Avenue Montaigne": {
+   "type": "standard",
+   "title": "Avenue Montaigne",
+   "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Avenue Montaigne</span></span>",
+   "namespace": {
+    "id": 0,
+    "text": ""
+   },
+   "wikibase_item": "Q735620",
+   "titles": {
+    "canonical": "Avenue_Montaigne",
+    "normalized": "Avenue Montaigne",
+    "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Avenue Montaigne</span></span>"
+   },
+   "pageid": 5347624,
+   "thumbnail": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/33/Plaza_Ath%C3%A9n%C3%A9e_1.jpg/330px-Plaza_Ath%C3%A9n%C3%A9e_1.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 330,
+    "height": 271
+   },
+   "originalimage": {
+    "source": "https://upload.wikimedia.org/wikipedia/commons/3/33/Plaza_Ath%C3%A9n%C3%A9e_1.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "width": 3524,
+    "height": 2890
+   },
+   "lang": "en",
+   "dir": "ltr",
+   "revision": "1366813033",
+   "tid": "6f4addf2-8c08-11f1-aab7-7e0a661a196c",
+   "timestamp": "2026-07-30T11:18:48Z",
+   "description": "Street in Paris, France",
+   "description_source": "local",
+   "coordinates": {
+    "lat": 48.86666667,
+    "lon": 2.30611111
+   },
+   "content_urls": {
+    "desktop": {
+     "page": "https://en.wikipedia.org/wiki/Avenue_Montaigne",
+     "revisions": "https://en.wikipedia.org/wiki/Avenue_Montaigne?action=history",
+     "edit": "https://en.wikipedia.org/wiki/Avenue_Montaigne?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Avenue_Montaigne"
+    },
+    "mobile": {
+     "page": "https://en.wikipedia.org/wiki/Avenue_Montaigne",
+     "revisions": "https://en.wikipedia.org/wiki/Special:History/Avenue_Montaigne",
+     "edit": "https://en.wikipedia.org/wiki/Avenue_Montaigne?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Avenue_Montaigne"
+    }
+   },
+   "extract": "The Avenue Montaigne is a street in the 8th arrondissement of Paris, France.",
+   "extract_html": "<p>The <b>Avenue Montaigne</b> is a street in the 8th arrondissement of Paris, France.</p>"
+  },
+  "Palais de Tokyo": {
+   "type": "standard",
+   "title": "Palais de Tokyo",
+   "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Palais de Tokyo</span></span>",
+   "namespace": {
+    "id": 0,
+    "text": ""
+   },
+   "wikibase_item": "Q1535247",
+   "titles": {
+    "canonical": "Palais_de_Tokyo",
+    "normalized": "Palais de Tokyo",
+    "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Palais de Tokyo</span></span>"
+   },
+   "pageid": 3648981,
+   "thumbnail": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f5/Palais_de_Tokyo_%40_Paris_%2831028565970%29.jpg/330px-Palais_de_Tokyo_%40_Paris_%2831028565970%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 330,
+    "height": 220
+   },
+   "originalimage": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f5/Palais_de_Tokyo_%40_Paris_%2831028565970%29.jpg/3840px-Palais_de_Tokyo_%40_Paris_%2831028565970%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 5472,
+    "height": 3648
+   },
+   "lang": "en",
+   "dir": "ltr",
+   "revision": "1371836447",
+   "tid": "19f20f98-a319-11f1-9994-a3c6fd61a7bc",
+   "timestamp": "2026-08-28T19:46:03Z",
+   "description": "Building in Paris",
+   "description_source": "local",
+   "coordinates": {
+    "lat": 48.86408,
+    "lon": 2.29713
+   },
+   "content_urls": {
+    "desktop": {
+     "page": "https://en.wikipedia.org/wiki/Palais_de_Tokyo",
+     "revisions": "https://en.wikipedia.org/wiki/Palais_de_Tokyo?action=history",
+     "edit": "https://en.wikipedia.org/wiki/Palais_de_Tokyo?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Palais_de_Tokyo"
+    },
+    "mobile": {
+     "page": "https://en.wikipedia.org/wiki/Palais_de_Tokyo",
+     "revisions": "https://en.wikipedia.org/wiki/Special:History/Palais_de_Tokyo",
+     "edit": "https://en.wikipedia.org/wiki/Palais_de_Tokyo?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Palais_de_Tokyo"
+    }
+   },
+   "extract": "The Palais de Tokyo is a building dedicated to modern and contemporary art, located at 13 avenue du Président-Wilson, facing the Trocadéro, in the 16th arrondissement of Paris. The eastern wing of the building belongs to the City of Paris, and hosts the Musée d'Art Moderne de Paris. The western wing belongs to the French state and since 2002, has hosted the Palais de Tokyo / Site de création contemporaine, the largest museum in France dedicated to temporary exhibitions of contemporary art.",
+   "extract_html": "<p>The <b>Palais de Tokyo</b> is a building dedicated to modern and contemporary art, located at 13 avenue du Président-Wilson, facing the Trocadéro, in the 16th arrondissement of Paris. The eastern wing of the building belongs to the City of Paris, and hosts the Musée d'Art Moderne de Paris. The western wing belongs to the French state and since 2002, has hosted the <b>Palais de Tokyo / Site de création contemporaine</b>, the largest museum in France dedicated to temporary exhibitions of contemporary art.</p>"
+  },
+  "Pont des Invalides": {
+   "type": "standard",
+   "title": "Pont des Invalides",
+   "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Pont des Invalides</span></span>",
+   "namespace": {
+    "id": 0,
+    "text": ""
+   },
+   "wikibase_item": "Q1073098",
+   "titles": {
+    "canonical": "Pont_des_Invalides",
+    "normalized": "Pont des Invalides",
+    "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Pont des Invalides</span></span>"
+   },
+   "pageid": 13918696,
+   "thumbnail": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7e/Pont_des_Invalides_%2834471766401%29.jpg/330px-Pont_des_Invalides_%2834471766401%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 330,
+    "height": 247
+   },
+   "originalimage": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7e/Pont_des_Invalides_%2834471766401%29.jpg/3840px-Pont_des_Invalides_%2834471766401%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 3936,
+    "height": 2946
+   },
+   "lang": "en",
+   "dir": "ltr",
+   "revision": "1381604267",
+   "tid": "e3dca289-cf01-11f1-b08c-75a02ec4a852",
+   "timestamp": "2026-10-23T16:50:45Z",
+   "description": "Bridge in Paris, France",
+   "description_source": "local",
+   "coordinates": {
+    "lat": 48.86361111,
+    "lon": 2.31027778
+   },
+   "content_urls": {
+    "desktop": {
+     "page": "https://en.wikipedia.org/wiki/Pont_des_Invalides",
+     "revisions": "https://en.wikipedia.org/wiki/Pont_des_Invalides?action=history",
+     "edit": "https://en.wikipedia.org/wiki/Pont_des_Invalides?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Pont_des_Invalides"
+    },
+    "mobile": {
+     "page": "https://en.wikipedia.org/wiki/Pont_des_Invalides",
+     "revisions": "https://en.wikipedia.org/wiki/Special:History/Pont_des_Invalides",
+     "edit": "https://en.wikipedia.org/wiki/Pont_des_Invalides?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Pont_des_Invalides"
+    }
+   },
+   "extract": "The Pont des Invalides is the lowest bridge traversing the Seine in Paris.",
+   "extract_html": "<p>The <b>Pont des Invalides</b> is the lowest bridge traversing the Seine in Paris.</p>"
+  },
+  "Pont Alexandre III": {
+   "type": "standard",
+   "title": "Pont Alexandre III",
+   "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Pont Alexandre III</span></span>",
+   "namespace": {
+    "id": 0,
+    "text": ""
+   },
+   "wikibase_item": "Q390418",
+   "titles": {
+    "canonical": "Pont_Alexandre_III",
+    "normalized": "Pont Alexandre III",
+    "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Pont Alexandre III</span></span>"
+   },
+   "pageid": 2936554,
+   "thumbnail": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a9/Pont_Alexandre_III_depuis_pont_de_la_Concorde_Paris.jpg/330px-Pont_Alexandre_III_depuis_pont_de_la_Concorde_Paris.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 330,
+    "height": 162
+   },
+   "originalimage": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a9/Pont_Alexandre_III_depuis_pont_de_la_Concorde_Paris.jpg/3840px-Pont_Alexandre_III_depuis_pont_de_la_Concorde_Paris.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 4566,
+    "height": 2239
+   },
+   "lang": "en",
+   "dir": "ltr",
+   "revision": "1362351066",
+   "tid": "8829a79a-76cd-11f1-9332-a2a1c25ca6d9",
+   "timestamp": "2026-07-03T10:54:15Z",
+   "description": "Deck arch bridge in Paris",
+   "description_source": "local",
+   "coordinates": {
+    "lat": 48.86361111,
+    "lon": 2.31361111
+   },
+   "content_urls": {
+    "desktop": {
+     "page": "https://en.wikipedia.org/wiki/Pont_Alexandre_III",
+     "revisions": "https://en.wikipedia.org/wiki/Pont_Alexandre_III?action=history",
+     "edit": "https://en.wikipedia.org/wiki/Pont_Alexandre_III?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Pont_Alexandre_III"
+    },
+    "mobile": {
+     "page": "https://en.wikipedia.org/wiki/Pont_Alexandre_III",
+     "revisions": "https://en.wikipedia.org/wiki/Special:History/Pont_Alexandre_III",
+     "edit": "https://en.wikipedia.org/wiki/Pont_Alexandre_III?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Pont_Alexandre_III"
+    }
+   },
+   "extract": "The Pont Alexandre III is a deck arch bridge that spans the Seine in Paris. It connects the Champs-Élysées quarter with those of the Invalides and Eiffel Tower. The bridge is widely regarded as the most ornate, extravagant bridge in the city. It has been classified as a French monument historique since 1975.",
+   "extract_html": "<p>The <b>Pont Alexandre III</b> is a deck arch bridge that spans the Seine in Paris. It connects the Champs-Élysées quarter with those of the Invalides and Eiffel Tower. The bridge is widely regarded as the most ornate, extravagant bridge in the city. It has been classified as a French <i>monument historique</i> since 1975.</p>"
+  },
+  "Petit Palais": {
+   "type": "standard",
+   "title": "Petit Palais",
+   "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Petit Palais</span></span>",
+   "namespace": {
+    "id": 0,
+    "text": ""
+   },
+   "wikibase_item": "Q820892",
+   "titles": {
+    "canonical": "Petit_Palais",
+    "normalized": "Petit Palais",
+    "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Petit Palais</span></span>"
+   },
+   "pageid": 2936018,
+   "thumbnail": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/71/Petit-Palais-Paris-02-2018.jpg/330px-Petit-Palais-Paris-02-2018.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 330,
+    "height": 163
+   },
+   "originalimage": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/71/Petit-Palais-Paris-02-2018.jpg/3840px-Petit-Palais-Paris-02-2018.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 4059,
+    "height": 2000
+   },
+   "lang": "en",
+   "dir": "ltr",
+   "revision": "1362773734",
+   "tid": "d8c81be8-78e6-11f1-8734-661f067c554a",
+   "timestamp": "2026-07-06T03:00:30Z",
+   "description": "Historic site, exhibition hall in Paris, France",
+   "description_source": "local",
+   "coordinates": {
+    "lat": 48.86604,
+    "lon": 2.31453
+   },
+   "content_urls": {
+    "desktop": {
+     "page": "https://en.wikipedia.org/wiki/Petit_Palais",
+     "revisions": "https://en.wikipedia.org/wiki/Petit_Palais?action=history",
+     "edit": "https://en.wikipedia.org/wiki/Petit_Palais?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Petit_Palais"
+    },
+    "mobile": {
+     "page": "https://en.wikipedia.org/wiki/Petit_Palais",
+     "revisions": "https://en.wikipedia.org/wiki/Special:History/Petit_Palais",
+     "edit": "https://en.wikipedia.org/wiki/Petit_Palais?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Petit_Palais"
+    }
+   },
+   "extract": "The Petit Palais is an art museum in the 8th arrondissement of Paris, France.",
+   "extract_html": "<p>The <b><span><span style=\"font-style:normal\">Petit Palais</span></span></b> is an art museum in the 8th arrondissement of Paris, France.</p>"
+  },
+  "Hôtel des Invalides": {
+   "type": "standard",
+   "title": "Les Invalides",
+   "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Les Invalides</span></span>",
+   "namespace": {
+    "id": 0,
+    "text": ""
+   },
+   "wikibase_item": "Q188977",
+   "titles": {
+    "canonical": "Les_Invalides",
+    "normalized": "Les Invalides",
+    "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Les Invalides</span></span>"
+   },
+   "pageid": 62633,
+   "thumbnail": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/12/H%C3%B4tel_des_Invalides_from_the_Eiffel_Tower%2C_23_July_2009.jpg/330px-H%C3%B4tel_des_Invalides_from_the_Eiffel_Tower%2C_23_July_2009.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 330,
+    "height": 220
+   },
+   "originalimage": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/12/H%C3%B4tel_des_Invalides_from_the_Eiffel_Tower%2C_23_July_2009.jpg/3840px-H%C3%B4tel_des_Invalides_from_the_Eiffel_Tower%2C_23_July_2009.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 4272,
+    "height": 2848
+   },
+   "lang": "en",
+   "dir": "ltr",
+   "revision": "1376320908",
+   "tid": "ddfd7089-b74b-11f1-b783-8ade4ccd10c0",
+   "timestamp": "2026-09-23T12:39:50Z",
+   "description": "Building complex in Paris, France",
+   "description_source": "local",
+   "coordinates": {
+    "lat": 48.855,
+    "lon": 2.3125
+   },
+   "content_urls": {
+    "desktop": {
+     "page": "https://en.wikipedia.org/wiki/Les_Invalides",
+     "revisions": "https://en.wikipedia.org/wiki/Les_Invalides?action=history",
+     "edit": "https://en.wikipedia.org/wiki/Les_Invalides?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Les_Invalides"
+    },
+    "mobile": {
+     "page": "https://en.wikipedia.org/wiki/Les_Invalides",
+     "revisions": "https://en.wikipedia.org/wiki/Special:History/Les_Invalides",
+     "edit": "https://en.wikipedia.org/wiki/Les_Invalides?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Les_Invalides"
+    }
+   },
+   "extract": "The Hôtel des Invalides, commonly called Les Invalides, is a complex of buildings in the 7th arrondissement of Paris, France, containing museums and monuments, all relating to the military history of France, as well as a hospital and an old soldiers' retirement home, the building's original purpose. The buildings house the Musée de l'Armée, the Musée des Plans-Reliefs, and the Musée d'Histoire Contemporaine. The complex also includes the Cathedral of Saint-Louis-des-Invalides, the national cathedral of the French military. It is adjacent to the Royal Chapel known as the Dôme des Invalides, the tallest church building in Paris at a height of 107 metres (351 ft). The latter has been converted into a shrine to some of France's leading military figures, most notably the tomb of Napoleon.",
+   "extract_html": "<p>The <b>Hôtel des Invalides</b>, commonly called <b><span><span style=\"font-style:normal\">Les Invalides</span></span></b>, is a complex of buildings in the 7th arrondissement of Paris, France, containing museums and monuments, all relating to the military history of France, as well as a hospital and an old soldiers' retirement home, the building's original purpose. The buildings house the Musée de l'Armée, the Musée des Plans-Reliefs, and the Musée d'Histoire Contemporaine. The complex also includes the Cathedral of Saint-Louis-des-Invalides, the national cathedral of the French military. It is adjacent to the Royal Chapel known as the <span><i lang=\"fr\">Dôme des Invalides</i></span>, the tallest church building in Paris at a height of 107 metres (351 ft). The latter has been converted into a shrine to some of France's leading military figures, most notably the tomb of Napoleon.</p>"
+  },
+  "Palais Bourbon": {
+   "type": "standard",
+   "title": "Palais Bourbon",
+   "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Palais Bourbon</span></span>",
+   "namespace": {
+    "id": 0,
+    "text": ""
+   },
+   "wikibase_item": "Q936633",
+   "titles": {
+    "canonical": "Palais_Bourbon",
+    "normalized": "Palais Bourbon",
+    "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Palais Bourbon</span></span>"
+   },
+   "pageid": 372251,
+   "thumbnail": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/39/Fa%C3%A7ade_Palais_Bourbon_3.jpg/330px-Fa%C3%A7ade_Palais_Bourbon_3.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 330,
+    "height": 220
+   },
+   "originalimage": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/39/Fa%C3%A7ade_Palais_Bourbon_3.jpg/3840px-Fa%C3%A7ade_Palais_Bourbon_3.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 4511,
+    "height": 3007
+   },
+   "lang": "en",
+   "dir": "ltr",
+   "revision": "1379182854",
+   "tid": "b6da9ec0-c30c-11f1-b647-92ecc9830501",
+   "timestamp": "2026-10-08T11:38:00Z",
+   "description": "Seat of the National Assembly in Paris, France",
+   "description_source": "local",
+   "coordinates": {
+    "lat": 48.862036,
+    "lon": 2.318593
+   },
+   "content_urls": {
+    "desktop": {
+     "page": "https://en.wikipedia.org/wiki/Palais_Bourbon",
+     "revisions": "https://en.wikipedia.org/wiki/Palais_Bourbon?action=history",
+     "edit": "https://en.wikipedia.org/wiki/Palais_Bourbon?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Palais_Bourbon"
+    },
+    "mobile": {
+     "page": "https://en.wikipedia.org/wiki/Palais_Bourbon",
+     "revisions": "https://en.wikipedia.org/wiki/Special:History/Palais_Bourbon",
+     "edit": "https://en.wikipedia.org/wiki/Palais_Bourbon?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Palais_Bourbon"
+    }
+   },
+   "extract": "The Palais Bourbon is the meeting place of the National Assembly, the lower legislative chamber of the French Parliament. It is in the 7th arrondissement of Paris, on the Rive Gauche of the Seine across from the Place de la Concorde. The official address is on the Rue de l'Université, facing the Place du Palais-Bourbon.",
+   "extract_html": "<p>The <b>Palais Bourbon</b> is the meeting place of the National Assembly, the lower legislative chamber of the French Parliament. It is in the 7th arrondissement of Paris, on the Rive Gauche of the Seine across from the Place de la Concorde. The official address is on the Rue de l'Université, facing the Place du Palais-Bourbon.</p>"
+  },
+  "Luxor Obelisk": {
+   "type": "standard",
+   "title": "Luxor Obelisks",
+   "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Luxor Obelisks</span></span>",
+   "namespace": {
+    "id": 0,
+    "text": ""
+   },
+   "wikibase_item": "Q1503331",
+   "titles": {
+    "canonical": "Luxor_Obelisks",
+    "normalized": "Luxor Obelisks",
+    "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Luxor Obelisks</span></span>"
+   },
+   "pageid": 23508272,
+   "thumbnail": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ac/Paris%2C_Obelisk_in_the_Place_de_la_Concorde%2C_July_22%2C_2008.jpg/330px-Paris%2C_Obelisk_in_the_Place_de_la_Concorde%2C_July_22%2C_2008.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 330,
+    "height": 330
+   },
+   "originalimage": {
+    "source": "https://upload.wikimedia.org/wikipedia/commons/a/ac/Paris%2C_Obelisk_in_the_Place_de_la_Concorde%2C_July_22%2C_2008.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "width": 2735,
+    "height": 2736
+   },
+   "lang": "en",
+   "dir": "ltr",
+   "revision": "1380422974",
+   "tid": "bec0b13e-c8b9-11f1-85e0-2fcafe7c260d",
+   "timestamp": "2026-10-15T16:59:12Z",
+   "description": "Pair of Egyptian obelisks, one of which is now in Paris",
+   "description_source": "local",
+   "coordinates": {
+    "lat": 48.86555556,
+    "lon": 2.32111111
+   },
+   "content_urls": {
+    "desktop": {
+     "page": "https://en.wikipedia.org/wiki/Luxor_Obelisks",
+     "revisions": "https://en.wikipedia.org/wiki/Luxor_Obelisks?action=history",
+     "edit": "https://en.wikipedia.org/wiki/Luxor_Obelisks?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Luxor_Obelisks"
+    },
+    "mobile": {
+     "page": "https://en.wikipedia.org/wiki/Luxor_Obelisks",
+     "revisions": "https://en.wikipedia.org/wiki/Special:History/Luxor_Obelisks",
+     "edit": "https://en.wikipedia.org/wiki/Luxor_Obelisks?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Luxor_Obelisks"
+    }
+   },
+   "extract": "The Luxor Obelisks are a pair of ancient Egyptian obelisks, over 3,000 years old, carved to stand at either side of the portal of the Luxor Temple in the reign of Ramesses II. The right-hand (western) stone, 23 metres (75 ft) high, was gifted by Egypt to France in the 1830s and moved to the Place de la Concorde in Paris, while the left-hand (eastern) obelisk remains in its location in Egypt. The Luxor Obelisk in Paris was classified officially as a monument historique in 1936.",
+   "extract_html": "<p>The <b>Luxor Obelisks</b> are a pair of ancient Egyptian obelisks, over 3,000 years old, carved to stand at either side of the portal of the Luxor Temple in the reign of Ramesses II. The right-hand (western) stone, 23 metres (75 ft) high, was gifted by Egypt to France in the 1830s and moved to the Place de la Concorde in Paris, while the left-hand (eastern) obelisk remains in its location in Egypt. The Luxor Obelisk in Paris was classified officially as a <i>monument historique</i> in 1936.</p>"
+  },
+  "Hôtel de la Marine": {
+   "type": "standard",
+   "title": "Hôtel de la Marine",
+   "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Hôtel de la Marine</span></span>",
+   "namespace": {
+    "id": 0,
+    "text": ""
+   },
+   "wikibase_item": "Q2059518",
+   "titles": {
+    "canonical": "Hôtel_de_la_Marine",
+    "normalized": "Hôtel de la Marine",
+    "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Hôtel de la Marine</span></span>"
+   },
+   "pageid": 20610071,
+   "thumbnail": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/46/H%C3%B4tel_de_la_Marine.jpg/330px-H%C3%B4tel_de_la_Marine.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 330,
+    "height": 177
+   },
+   "originalimage": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/46/H%C3%B4tel_de_la_Marine.jpg/3840px-H%C3%B4tel_de_la_Marine.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 4232,
+    "height": 2265
+   },
+   "lang": "en",
+   "dir": "ltr",
+   "revision": "1353722534",
+   "tid": "667c04ef-4d97-11f1-8064-f5dbf3c1e61e",
+   "timestamp": "2026-05-12T00:13:28Z",
+   "description": "Historic building in Paris",
+   "description_source": "local",
+   "coordinates": {
+    "lat": 48.86677778,
+    "lon": 2.32308333
+   },
+   "content_urls": {
+    "desktop": {
+     "page": "https://en.wikipedia.org/wiki/H%C3%B4tel_de_la_Marine",
+     "revisions": "https://en.wikipedia.org/wiki/H%C3%B4tel_de_la_Marine?action=history",
+     "edit": "https://en.wikipedia.org/wiki/H%C3%B4tel_de_la_Marine?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:H%C3%B4tel_de_la_Marine"
+    },
+    "mobile": {
+     "page": "https://en.wikipedia.org/wiki/H%C3%B4tel_de_la_Marine",
+     "revisions": "https://en.wikipedia.org/wiki/Special:History/H%C3%B4tel_de_la_Marine",
+     "edit": "https://en.wikipedia.org/wiki/H%C3%B4tel_de_la_Marine?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:H%C3%B4tel_de_la_Marine"
+    }
+   },
+   "extract": "The Hôtel de la Marine, also known (formerly) as the Hôtel du Garde-Meuble, is a historic building on the Place de la Concorde in Paris, just east of Rue Royale. It was designed by the architect Ange-Jacques Gabriel and built between 1757 and 1774 on the newly created square first called Place Louis XV. The identical building across the street, constructed at the same time, now houses the Hôtel de Crillon and the Automobile Club of France.",
+   "extract_html": "<p>The <b>Hôtel de la Marine</b>, also known (formerly) as the <b>Hôtel du Garde-Meuble</b>, is a historic building on the Place de la Concorde in Paris, just east of Rue Royale. It was designed by the architect Ange-Jacques Gabriel and built between 1757 and 1774 on the newly created square first called Place Louis XV. The identical building across the street, constructed at the same time, now houses the Hôtel de Crillon and the Automobile Club of France.</p>"
+  },
+  "Musée de l'Orangerie": {
+   "type": "standard",
+   "title": "Musée de l'Orangerie",
+   "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Musée de l&#039;Orangerie</span></span>",
+   "namespace": {
+    "id": 0,
+    "text": ""
+   },
+   "wikibase_item": "Q726781",
+   "titles": {
+    "canonical": "Musée_de_l'Orangerie",
+    "normalized": "Musée de l'Orangerie",
+    "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Musée de l&#039;Orangerie</span></span>"
+   },
+   "pageid": 5571631,
+   "thumbnail": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/bb/Mus%C3%A9e_de_l%E2%80%99Orangerie_exterior.JPG/330px-Mus%C3%A9e_de_l%E2%80%99Orangerie_exterior.JPG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 330,
+    "height": 248
+   },
+   "originalimage": {
+    "source": "https://upload.wikimedia.org/wikipedia/commons/b/bb/Mus%C3%A9e_de_l%E2%80%99Orangerie_exterior.JPG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "width": 3072,
+    "height": 2304
+   },
+   "lang": "en",
+   "dir": "ltr",
+   "revision": "1381207367",
+   "tid": "20b15a7e-ccb0-11f1-9e63-09feaa3d4c0b",
+   "timestamp": "2026-10-20T18:00:26Z",
+   "description": "Art museum in Paris",
+   "description_source": "local",
+   "coordinates": {
+    "lat": 48.86384535,
+    "lon": 2.32253834
+   },
+   "content_urls": {
+    "desktop": {
+     "page": "https://en.wikipedia.org/wiki/Mus%C3%A9e_de_l'Orangerie",
+     "revisions": "https://en.wikipedia.org/wiki/Mus%C3%A9e_de_l'Orangerie?action=history",
+     "edit": "https://en.wikipedia.org/wiki/Mus%C3%A9e_de_l'Orangerie?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Mus%C3%A9e_de_l'Orangerie"
+    },
+    "mobile": {
+     "page": "https://en.wikipedia.org/wiki/Mus%C3%A9e_de_l'Orangerie",
+     "revisions": "https://en.wikipedia.org/wiki/Special:History/Mus%C3%A9e_de_l'Orangerie",
+     "edit": "https://en.wikipedia.org/wiki/Mus%C3%A9e_de_l'Orangerie?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Mus%C3%A9e_de_l'Orangerie"
+    }
+   },
+   "extract": "The Musée de l'Orangerie is an art gallery of Impressionist and Post-Impressionist paintings located in the west corner of the Tuileries Garden next to the Place de la Concorde in Paris. The museum is most famous as the permanent home of eight large Water Lilies murals by Claude Monet, and also contains works by Paul Cézanne, Henri Matisse, Amedeo Modigliani, Pablo Picasso, Pierre-Auguste Renoir, Henri Rousseau, Alfred Sisley, Chaïm Soutine, Maurice Utrillo, and others.",
+   "extract_html": "<p>The <b>Musée de l'Orangerie</b> is an art gallery of Impressionist and Post-Impressionist paintings located in the west corner of the Tuileries Garden next to the Place de la Concorde in Paris. The museum is most famous as the permanent home of eight large <i>Water Lilies</i> murals by Claude Monet, and also contains works by Paul Cézanne, Henri Matisse, Amedeo Modigliani, Pablo Picasso, Pierre-Auguste Renoir, Henri Rousseau, Alfred Sisley, Chaïm Soutine, Maurice Utrillo, and others.</p>"
+  },
+  "Jeu de Paume": {
+   "type": "standard",
+   "title": "Jeu de paume",
+   "displaytitle": "<i>Jeu de paume</i>",
+   "namespace": {
+    "id": 0,
+    "text": ""
+   },
+   "wikibase_item": "Q797108",
+   "titles": {
+    "canonical": "Jeu_de_paume",
+    "normalized": "Jeu de paume",
+    "display": "<i>Jeu de paume</i>"
+   },
+   "pageid": 191311,
+   "thumbnail": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d1/Jeu_de_paume.jpg/330px-Jeu_de_paume.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 330,
+    "height": 439
+   },
+   "originalimage": {
+    "source": "https://upload.wikimedia.org/wikipedia/commons/d/d1/Jeu_de_paume.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "width": 346,
+    "height": 460
+   },
+   "lang": "en",
+   "dir": "ltr",
+   "revision": "1372245551",
+   "tid": "ff6396b7-a4d2-11f1-ba8c-ccfc97c12e92",
+   "timestamp": "2026-08-31T00:29:16Z",
+   "description": "Indoor precursor of tennis",
+   "description_source": "local",
+   "content_urls": {
+    "desktop": {
+     "page": "https://en.wikipedia.org/wiki/Jeu_de_paume",
+     "revisions": "https://en.wikipedia.org/wiki/Jeu_de_paume?action=history",
+     "edit": "https://en.wikipedia.org/wiki/Jeu_de_paume?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Jeu_de_paume"
+    },
+    "mobile": {
+     "page": "https://en.wikipedia.org/wiki/Jeu_de_paume",
+     "revisions": "https://en.wikipedia.org/wiki/Special:History/Jeu_de_paume",
+     "edit": "https://en.wikipedia.org/wiki/Jeu_de_paume?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Jeu_de_paume"
+    }
+   },
+   "extract": "Jeu de paume was a ball-and-court game that originated in France and was the precursor of real tennis and ultimately of the modern game of tennis. Jeu de paume was played without racquets, and so was a \"game of the hand\", though these were eventually introduced. It is a former Olympic sport, and has the oldest ongoing annual world championship in sport, first established over 250 years ago. The term also refers to the court on which the game is played and its building, which in the 17th century was sometimes converted into a theatre.",
+   "extract_html": "<p><i><b>Jeu de paume</b></i> was a ball-and-court game that originated in France and was the precursor of real tennis and ultimately of the modern game of tennis. <i>Jeu de paume</i> was played without racquets, and so was a \"game of the hand\", though these were eventually introduced. It is a former Olympic sport, and has the oldest ongoing annual world championship in sport, first established over 250 years ago. The term also refers to the court on which the game is played and its building, which in the 17th century was sometimes converted into a theatre.</p>"
+  },
+  "Tuileries Garden": {
+   "type": "standard",
+   "title": "Tuileries Garden",
+   "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Tuileries Garden</span></span>",
+   "namespace": {
+    "id": 0,
+    "text": ""
+   },
+   "wikibase_item": "Q818517",
+   "titles": {
+    "canonical": "Tuileries_Garden",
+    "normalized": "Tuileries Garden",
+    "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Tuileries Garden</span></span>"
+   },
+   "pageid": 299713,
+   "thumbnail": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/43/Crowd_in_the_Jardin_des_Tuileries%2C_Paris_July_2014.jpg/330px-Crowd_in_the_Jardin_des_Tuileries%2C_Paris_July_2014.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 330,
+    "height": 248
+   },
+   "originalimage": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/43/Crowd_in_the_Jardin_des_Tuileries%2C_Paris_July_2014.jpg/3840px-Crowd_in_the_Jardin_des_Tuileries%2C_Paris_July_2014.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 3968,
+    "height": 2976
+   },
+   "lang": "en",
+   "dir": "ltr",
+   "revision": "1373554007",
+   "tid": "bea6d90f-aa10-11f1-8c6e-8b5b9aa3a618",
+   "timestamp": "2026-09-06T16:33:52Z",
+   "description": "Public garden in Paris, France",
+   "description_source": "local",
+   "coordinates": {
+    "lat": 48.8639,
+    "lon": 2.3261
+   },
+   "content_urls": {
+    "desktop": {
+     "page": "https://en.wikipedia.org/wiki/Tuileries_Garden",
+     "revisions": "https://en.wikipedia.org/wiki/Tuileries_Garden?action=history",
+     "edit": "https://en.wikipedia.org/wiki/Tuileries_Garden?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Tuileries_Garden"
+    },
+    "mobile": {
+     "page": "https://en.wikipedia.org/wiki/Tuileries_Garden",
+     "revisions": "https://en.wikipedia.org/wiki/Special:History/Tuileries_Garden",
+     "edit": "https://en.wikipedia.org/wiki/Tuileries_Garden?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Tuileries_Garden"
+    }
+   },
+   "extract": "The Tuileries Garden is a public garden between the Louvre and the Place de la Concorde in the 1st arrondissement of Paris, France. Created by Catherine de' Medici as the garden of the Tuileries Palace in 1564, it was opened to the public in 1667 and became a public park after the French Revolution. Since the 19th century, it has been a place for Parisians to celebrate, meet, stroll and relax. After the demolition of the main block of the Tuileries Palace in the 1880s, the gardens expanded into the Place du Carrousel, the palace's former internal courtyard. Covering an area of 25.5 hectares, it is one of the most iconic parks in Paris. During the 2024 Summer Olympics and Paralympics, it was the site of the Olympic and Paralympic cauldron.",
+   "extract_html": "<p>The <b>Tuileries Garden</b> is a public garden between the Louvre and the Place de la Concorde in the 1st arrondissement of Paris, France. Created by Catherine de' Medici as the garden of the Tuileries Palace in 1564, it was opened to the public in 1667 and became a public park after the French Revolution. Since the 19th century, it has been a place for Parisians to celebrate, meet, stroll and relax. After the demolition of the main block of the Tuileries Palace in the 1880s, the gardens expanded into the Place du Carrousel, the palace's former internal courtyard. Covering an area of 25.5 hectares, it is one of the most iconic parks in Paris. During the 2024 Summer Olympics and Paralympics, it was the site of the Olympic and Paralympic cauldron.</p>"
+  },
+  "Musée d'Orsay": {
+   "type": "standard",
+   "title": "Musée d'Orsay",
+   "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Musée d&#039;Orsay</span></span>",
+   "namespace": {
+    "id": 0,
+    "text": ""
+   },
+   "wikibase_item": "Q23402",
+   "titles": {
+    "canonical": "Musée_d'Orsay",
+    "normalized": "Musée d'Orsay",
+    "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Musée d&#039;Orsay</span></span>"
+   },
+   "pageid": 53919,
+   "lang": "en",
+   "dir": "ltr",
+   "revision": "1381972136",
+   "tid": "47f696bf-d0bb-11f1-81e1-291fdaba881d",
+   "timestamp": "2026-10-25T21:30:21Z",
+   "description": "Art museum in Paris, France",
+   "description_source": "local",
+   "coordinates": {
+    "lat": 48.859972,
+    "lon": 2.326527
+   },
+   "content_urls": {
+    "desktop": {
+     "page": "https://en.wikipedia.org/wiki/Mus%C3%A9e_d'Orsay",
+     "revisions": "https://en.wikipedia.org/wiki/Mus%C3%A9e_d'Orsay?action=history",
+     "edit": "https://en.wikipedia.org/wiki/Mus%C3%A9e_d'Orsay?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Mus%C3%A9e_d'Orsay"
+    },
+    "mobile": {
+     "page": "https://en.wikipedia.org/wiki/Mus%C3%A9e_d'Orsay",
+     "revisions": "https://en.wikipedia.org/wiki/Special:History/Mus%C3%A9e_d'Orsay",
+     "edit": "https://en.wikipedia.org/wiki/Mus%C3%A9e_d'Orsay?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Mus%C3%A9e_d'Orsay"
+    }
+   },
+   "extract": "The Musée d'Orsay is a museum in Paris, France, on the Left Bank of the Seine. It is housed in the former Gare d'Orsay, a Beaux-Arts railway station built from 1898 to 1900. The museum holds mainly French art dating from 1848 to 1914, including paintings, sculptures, furniture, and photography. It houses the largest collection of Impressionist and post-Impressionist masterpieces in the world, by painters including Berthe Morisot, Claude Monet, Édouard Manet, Degas, Renoir, Cézanne, Seurat, Sisley, Gauguin, and van Gogh. Many of these works were held at the Galerie nationale du Jeu de Paume prior to the museum's opening in 1986. It is one of the largest art museums in Europe.",
+   "extract_html": "<p>The <b>Musée d'Orsay</b> is a museum in Paris, France, on the Left Bank of the Seine. It is housed in the former <span><span style=\"font-style:normal\">Gare d'Orsay</span></span>, a Beaux-Arts railway station built from 1898 to 1900. The museum holds mainly French art dating from 1848 to 1914, including paintings, sculptures, furniture, and photography. It houses the largest collection of Impressionist and post-Impressionist masterpieces in the world, by painters including Berthe Morisot, Claude Monet, Édouard Manet, Degas, Renoir, Cézanne, Seurat, Sisley, Gauguin, and van Gogh. Many of these works were held at the Galerie nationale du Jeu de Paume prior to the museum's opening in 1986. It is one of the largest art museums in Europe.</p>"
+  },
+  "Arc de Triomphe du Carrousel": {
+   "type": "standard",
+   "title": "Arc de Triomphe du Carrousel",
+   "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Arc de Triomphe du Carrousel</span></span>",
+   "namespace": {
+    "id": 0,
+    "text": ""
+   },
+   "wikibase_item": "Q631104",
+   "titles": {
+    "canonical": "Arc_de_Triomphe_du_Carrousel",
+    "normalized": "Arc de Triomphe du Carrousel",
+    "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Arc de Triomphe du Carrousel</span></span>"
+   },
+   "pageid": 756324,
+   "thumbnail": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/77/Paris_-_Jardin_des_Tuileries_-_Arc_de_Triomphe_du_Carrousel_-_PA00085992_-_003.jpg/330px-Paris_-_Jardin_des_Tuileries_-_Arc_de_Triomphe_du_Carrousel_-_PA00085992_-_003.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 330,
+    "height": 233
+   },
+   "originalimage": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/77/Paris_-_Jardin_des_Tuileries_-_Arc_de_Triomphe_du_Carrousel_-_PA00085992_-_003.jpg/3840px-Paris_-_Jardin_des_Tuileries_-_Arc_de_Triomphe_du_Carrousel_-_PA00085992_-_003.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 4238,
+    "height": 2998
+   },
+   "lang": "en",
+   "dir": "ltr",
+   "revision": "1361751751",
+   "tid": "672d319c-7401-11f1-b839-a5dc7078a255",
+   "timestamp": "2026-06-29T21:28:00Z",
+   "description": "Triumphal arch in Paris, France",
+   "description_source": "local",
+   "coordinates": {
+    "lat": 48.86173,
+    "lon": 2.33291
+   },
+   "content_urls": {
+    "desktop": {
+     "page": "https://en.wikipedia.org/wiki/Arc_de_Triomphe_du_Carrousel",
+     "revisions": "https://en.wikipedia.org/wiki/Arc_de_Triomphe_du_Carrousel?action=history",
+     "edit": "https://en.wikipedia.org/wiki/Arc_de_Triomphe_du_Carrousel?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Arc_de_Triomphe_du_Carrousel"
+    },
+    "mobile": {
+     "page": "https://en.wikipedia.org/wiki/Arc_de_Triomphe_du_Carrousel",
+     "revisions": "https://en.wikipedia.org/wiki/Special:History/Arc_de_Triomphe_du_Carrousel",
+     "edit": "https://en.wikipedia.org/wiki/Arc_de_Triomphe_du_Carrousel?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Arc_de_Triomphe_du_Carrousel"
+    }
+   },
+   "extract": "The Arc de Triomphe du Carrousel is a triumphal arch in Paris, located in the Place du Carrousel. It is an example of Neoclassical architecture in the Corinthian order. It was built between 1806 and 1808 to commemorate Napoleon's military victories in the Wars of the Third and Fourth Coalitions. The Arc de Triomphe de l'Étoile, at the far end of the Champs-Élysées, is about twice the size and was designed in the same year but not completed until 1836.",
+   "extract_html": "<p>The <b>Arc de Triomphe du Carrousel</b> is a triumphal arch in Paris, located in the Place du Carrousel. It is an example of Neoclassical architecture in the Corinthian order. It was built between 1806 and 1808 to commemorate Napoleon's military victories in the Wars of the Third and Fourth Coalitions. The Arc de Triomphe de l'Étoile, at the far end of the Champs-Élysées, is about twice the size and was designed in the same year but not completed until 1836.</p>"
+  },
+  "Louvre Pyramid": {
+   "type": "standard",
+   "title": "Louvre Pyramid",
+   "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Louvre Pyramid</span></span>",
+   "namespace": {
+    "id": 0,
+    "text": ""
+   },
+   "wikibase_item": "Q13397",
+   "titles": {
+    "canonical": "Louvre_Pyramid",
+    "normalized": "Louvre Pyramid",
+    "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Louvre Pyramid</span></span>"
+   },
+   "pageid": 3305865,
+   "thumbnail": {
+    "source": "https://thumb.wikimedia.org/wikipedia/en/thumb/4/42/Louvre_Pyramid.jpg/330px-Louvre_Pyramid.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 330,
+    "height": 220
+   },
+   "originalimage": {
+    "source": "https://thumb.wikimedia.org/wikipedia/en/thumb/4/42/Louvre_Pyramid.jpg/3840px-Louvre_Pyramid.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 5184,
+    "height": 3456
+   },
+   "lang": "en",
+   "dir": "ltr",
+   "revision": "1373344244",
+   "tid": "34d110ff-a92b-11f1-8215-4316532d5c6c",
+   "timestamp": "2026-09-05T13:10:46Z",
+   "description": "Glass-and-metal pyramid in the main courtyard of the Louvre Palace",
+   "description_source": "local",
+   "coordinates": {
+    "lat": 48.861,
+    "lon": 2.33586111
+   },
+   "content_urls": {
+    "desktop": {
+     "page": "https://en.wikipedia.org/wiki/Louvre_Pyramid",
+     "revisions": "https://en.wikipedia.org/wiki/Louvre_Pyramid?action=history",
+     "edit": "https://en.wikipedia.org/wiki/Louvre_Pyramid?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Louvre_Pyramid"
+    },
+    "mobile": {
+     "page": "https://en.wikipedia.org/wiki/Louvre_Pyramid",
+     "revisions": "https://en.wikipedia.org/wiki/Special:History/Louvre_Pyramid",
+     "edit": "https://en.wikipedia.org/wiki/Louvre_Pyramid?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Louvre_Pyramid"
+    }
+   },
+   "extract": "The Louvre Pyramid is a large glass-and-metal entrance way and skylight designed by the Chinese-American architect I. M. Pei. The pyramid is in the main courtyard of the Louvre Palace in Paris, surrounded by three smaller pyramids of the same style which also serve as lightwells. A companion Inverted Pyramid also provides light to underground passageways of the Louvre. The large pyramid serves as the main entrance way to the Louvre Museum, allowing light to the below ground visitors hall, while also allowing sight lines of the palace to visitors in the hall, and through access galleries to the different wings of the palace. On three sides are low modernist triangular reflecting pools with fountains. Completed in 1989 as part of the broader Grand Louvre project, it has become a landmark of Paris and a symbol of the museum.",
+   "extract_html": "<p>The <b>Louvre Pyramid</b> is a large glass-and-metal entrance way and skylight designed by the Chinese-American architect I. M. Pei. The pyramid is in the main courtyard of the Louvre Palace in Paris, surrounded by three smaller pyramids of the same style which also serve as lightwells. A companion Inverted Pyramid also provides light to underground passageways of the Louvre. The large pyramid serves as the main entrance way to the Louvre Museum, allowing light to the below ground visitors hall, while also allowing sight lines of the palace to visitors in the hall, and through access galleries to the different wings of the palace. On three sides are low modernist triangular reflecting pools with fountains. Completed in 1989 as part of the broader Grand Louvre project, it has become a landmark of Paris and a symbol of the museum.</p>"
+  },
+  "Pont Royal": {
+   "type": "standard",
+   "title": "Pont Royal",
+   "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Pont Royal</span></span>",
+   "namespace": {
+    "id": 0,
+    "text": ""
+   },
+   "wikibase_item": "Q1758497",
+   "titles": {
+    "canonical": "Pont_Royal",
+    "normalized": "Pont Royal",
+    "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Pont Royal</span></span>"
+   },
+   "pageid": 14692224,
+   "thumbnail": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/59/Pont_Royal_2009.jpg/330px-Pont_Royal_2009.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 330,
+    "height": 220
+   },
+   "originalimage": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/59/Pont_Royal_2009.jpg/3840px-Pont_Royal_2009.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 3888,
+    "height": 2592
+   },
+   "lang": "en",
+   "dir": "ltr",
+   "revision": "1339698345",
+   "tid": "785ac1fa-0f75-11f1-97cd-0936e439657a",
+   "timestamp": "2026-02-21T22:34:23Z",
+   "description": "Bridge",
+   "description_source": "local",
+   "coordinates": {
+    "lat": 48.86009722,
+    "lon": 2.32987778
+   },
+   "content_urls": {
+    "desktop": {
+     "page": "https://en.wikipedia.org/wiki/Pont_Royal",
+     "revisions": "https://en.wikipedia.org/wiki/Pont_Royal?action=history",
+     "edit": "https://en.wikipedia.org/wiki/Pont_Royal?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Pont_Royal"
+    },
+    "mobile": {
+     "page": "https://en.wikipedia.org/wiki/Pont_Royal",
+     "revisions": "https://en.wikipedia.org/wiki/Special:History/Pont_Royal",
+     "edit": "https://en.wikipedia.org/wiki/Pont_Royal?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Pont_Royal"
+    }
+   },
+   "extract": "The Pont Royal is a bridge crossing the river Seine in Paris. It is the third oldest bridge in Paris, after the Pont Neuf and the Pont Marie.",
+   "extract_html": "<p>The <b>Pont Royal</b> is a bridge crossing the river Seine in Paris. It is the third oldest bridge in Paris, after the Pont Neuf and the Pont Marie.</p>"
+  },
+  "Pont de la Concorde": {
+   "type": "disambiguation",
+   "title": "Pont de la Concorde",
+   "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Pont de la Concorde</span></span>",
+   "namespace": {
+    "id": 0,
+    "text": ""
+   },
+   "wikibase_item": "Q3397259",
+   "titles": {
+    "canonical": "Pont_de_la_Concorde",
+    "normalized": "Pont de la Concorde",
+    "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Pont de la Concorde</span></span>"
+   },
+   "pageid": 14744534,
+   "lang": "en",
+   "dir": "ltr",
+   "revision": "933060685",
+   "tid": "d1a24f22-2a70-11ea-97d6-c728f085b65e",
+   "timestamp": "2019-12-29T19:24:23Z",
+   "description": "Topics referred to by the same term",
+   "description_source": "local",
+   "content_urls": {
+    "desktop": {
+     "page": "https://en.wikipedia.org/wiki/Pont_de_la_Concorde",
+     "revisions": "https://en.wikipedia.org/wiki/Pont_de_la_Concorde?action=history",
+     "edit": "https://en.wikipedia.org/wiki/Pont_de_la_Concorde?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Pont_de_la_Concorde"
+    },
+    "mobile": {
+     "page": "https://en.wikipedia.org/wiki/Pont_de_la_Concorde",
+     "revisions": "https://en.wikipedia.org/wiki/Special:History/Pont_de_la_Concorde",
+     "edit": "https://en.wikipedia.org/wiki/Pont_de_la_Concorde?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Pont_de_la_Concorde"
+    }
+   },
+   "extract": "Pont de la Concorde may refer to:Pont de la Concorde (Paris), a bridge crossing the Seine\nPont de la Concorde (Montreal), a bridge crossing the St. Lawrence",
+   "extract_html": "<p><b>Pont de la Concorde</b> may refer to:</p><ul><li>Pont de la Concorde (Paris), a bridge crossing the Seine</li>\n<li>Pont de la Concorde (Montreal), a bridge crossing the St. Lawrence</li></ul>"
+  },
+  "Hôtel de Crillon": {
+   "type": "standard",
+   "title": "Hôtel de Crillon",
+   "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Hôtel de Crillon</span></span>",
+   "namespace": {
+    "id": 0,
+    "text": ""
+   },
+   "wikibase_item": "Q692768",
+   "titles": {
+    "canonical": "Hôtel_de_Crillon",
+    "normalized": "Hôtel de Crillon",
+    "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Hôtel de Crillon</span></span>"
+   },
+   "pageid": 25017610,
+   "thumbnail": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/98/H%C3%B4tels_Crillon_Cartier_Plessis_Belli%C3%A8re_Coislin_Paris_2.jpg/330px-H%C3%B4tels_Crillon_Cartier_Plessis_Belli%C3%A8re_Coislin_Paris_2.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 330,
+    "height": 111
+   },
+   "originalimage": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/98/H%C3%B4tels_Crillon_Cartier_Plessis_Belli%C3%A8re_Coislin_Paris_2.jpg/3840px-H%C3%B4tels_Crillon_Cartier_Plessis_Belli%C3%A8re_Coislin_Paris_2.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 9634,
+    "height": 3229
+   },
+   "lang": "en",
+   "dir": "ltr",
+   "revision": "1347609349",
+   "tid": "c10ed5e5-32aa-11f1-935b-c9807d501875",
+   "timestamp": "2026-04-07T17:53:59Z",
+   "description": "Historic luxury hotel in Paris",
+   "description_source": "local",
+   "content_urls": {
+    "desktop": {
+     "page": "https://en.wikipedia.org/wiki/H%C3%B4tel_de_Crillon",
+     "revisions": "https://en.wikipedia.org/wiki/H%C3%B4tel_de_Crillon?action=history",
+     "edit": "https://en.wikipedia.org/wiki/H%C3%B4tel_de_Crillon?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:H%C3%B4tel_de_Crillon"
+    },
+    "mobile": {
+     "page": "https://en.wikipedia.org/wiki/H%C3%B4tel_de_Crillon",
+     "revisions": "https://en.wikipedia.org/wiki/Special:History/H%C3%B4tel_de_Crillon",
+     "edit": "https://en.wikipedia.org/wiki/H%C3%B4tel_de_Crillon?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:H%C3%B4tel_de_Crillon"
+    }
+   },
+   "extract": "Hôtel de Crillon, A Rosewood Hotel is a historic luxury hotel in Paris which opened in 1909 in a building dating to 1758. Located at the foot of the Champs-Élysées, the Crillon, along with the Hôtel de la Marine, is one of two identical stone palaces on the Place de la Concorde. Since 1900, the French Ministry of Culture has listed the Hôtel de Crillon as a monument historique.",
+   "extract_html": "<p><b>Hôtel de Crillon, A Rosewood Hotel</b> is a historic luxury hotel in Paris which opened in 1909 in a building dating to 1758. Located at the foot of the Champs-Élysées, the Crillon, along with the Hôtel de la Marine, is one of two identical stone palaces on the Place de la Concorde. Since 1900, the French Ministry of Culture has listed the Hôtel de Crillon as a <i>monument historique</i>.</p>"
+  },
+  "Pont de l'Alma station": {
+   "type": "standard",
+   "title": "Pont de l'Alma station",
+   "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Pont de l&#039;Alma station</span></span>",
+   "namespace": {
+    "id": 0,
+    "text": ""
+   },
+   "wikibase_item": "Q1858826",
+   "titles": {
+    "canonical": "Pont_de_l'Alma_station",
+    "normalized": "Pont de l'Alma station",
+    "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Pont de l&#039;Alma station</span></span>"
+   },
+   "pageid": 20864936,
+   "thumbnail": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/90/Gare_RER_C_-_Pont_de_l%27Alma.jpg/330px-Gare_RER_C_-_Pont_de_l%27Alma.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 330,
+    "height": 248
+   },
+   "originalimage": {
+    "source": "https://upload.wikimedia.org/wikipedia/commons/9/90/Gare_RER_C_-_Pont_de_l%27Alma.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "width": 3264,
+    "height": 2448
+   },
+   "lang": "en",
+   "dir": "ltr",
+   "revision": "1370972807",
+   "tid": "658b6f6e-9f51-11f1-a8a0-505e47e7a7bd",
+   "timestamp": "2026-08-24T00:18:57Z",
+   "description": "Railway station in Paris, France",
+   "description_source": "local",
+   "coordinates": {
+    "lat": 48.8625,
+    "lon": 2.30111111
+   },
+   "content_urls": {
+    "desktop": {
+     "page": "https://en.wikipedia.org/wiki/Pont_de_l'Alma_station",
+     "revisions": "https://en.wikipedia.org/wiki/Pont_de_l'Alma_station?action=history",
+     "edit": "https://en.wikipedia.org/wiki/Pont_de_l'Alma_station?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Pont_de_l'Alma_station"
+    },
+    "mobile": {
+     "page": "https://en.wikipedia.org/wiki/Pont_de_l'Alma_station",
+     "revisions": "https://en.wikipedia.org/wiki/Special:History/Pont_de_l'Alma_station",
+     "edit": "https://en.wikipedia.org/wiki/Pont_de_l'Alma_station?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Pont_de_l'Alma_station"
+    }
+   },
+   "extract": "Pont de l'Alma is a railway station on the RER C line of the Paris Region's express suburban rail system, the Réseau Express Régional (RER). The station is in the 7th arrondissement of Paris. It is named for the nearby Pont de l'Alma and Musée du Quai Branly – Jacques Chirac. Alma–Marceau on Line 9 of the Paris Métro is on the other side of the Pont de l'Alma.",
+   "extract_html": "<p><b>Pont de l'Alma</b> is a railway station on the RER C line of the Paris Region's express suburban rail system, the Réseau Express Régional (RER). The station is in the 7th arrondissement of Paris. It is named for the nearby Pont de l'Alma and Musée du Quai Branly – Jacques Chirac. Alma–Marceau on Line 9 of the Paris Métro is on the other side of the Pont de l'Alma.</p>"
+  },
+  "Grand Palais (Paris)": {
+   "type": "standard",
+   "title": "Grand Palais",
+   "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Grand Palais</span></span>",
+   "namespace": {
+    "id": 0,
+    "text": ""
+   },
+   "wikibase_item": "Q457318",
+   "titles": {
+    "canonical": "Grand_Palais",
+    "normalized": "Grand Palais",
+    "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Grand Palais</span></span>"
+   },
+   "pageid": 2730731,
+   "thumbnail": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d6/France-000296_-_Paris%27_Grand_Palais_%2814525102530%29.jpg/330px-France-000296_-_Paris%27_Grand_Palais_%2814525102530%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 330,
+    "height": 220
+   },
+   "originalimage": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d6/France-000296_-_Paris%27_Grand_Palais_%2814525102530%29.jpg/3840px-France-000296_-_Paris%27_Grand_Palais_%2814525102530%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 6000,
+    "height": 4000
+   },
+   "lang": "en",
+   "dir": "ltr",
+   "revision": "1382340864",
+   "tid": "509dc534-d28b-11f1-87b1-afa9ec60461a",
+   "timestamp": "2026-10-28T04:52:02Z",
+   "description": "Historic site, exhibition hall in Paris, France",
+   "description_source": "local",
+   "coordinates": {
+    "lat": 48.8661,
+    "lon": 2.3125
+   },
+   "content_urls": {
+    "desktop": {
+     "page": "https://en.wikipedia.org/wiki/Grand_Palais",
+     "revisions": "https://en.wikipedia.org/wiki/Grand_Palais?action=history",
+     "edit": "https://en.wikipedia.org/wiki/Grand_Palais?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Grand_Palais"
+    },
+    "mobile": {
+     "page": "https://en.wikipedia.org/wiki/Grand_Palais",
+     "revisions": "https://en.wikipedia.org/wiki/Special:History/Grand_Palais",
+     "edit": "https://en.wikipedia.org/wiki/Grand_Palais?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Grand_Palais"
+    }
+   },
+   "extract": "The Grand Palais des Champs-Élysées, commonly known as the Grand Palais, is a historic site, exhibition hall and museum complex located in the 8th arrondissement of Paris between the Champs-Élysées and the Seine, France, on Avenue Winston-Churchill. Construction of the Grand Palais began in 1897 following the demolition of the Palais de l'Industrie to prepare for the Universal Exposition of 1900. That exposition also produced the adjacent Petit Palais and Pont Alexandre III.",
+   "extract_html": "<p>The <b><span><span style=\"font-style:normal\">Grand Palais des Champs-Élysées</span></span></b>, commonly known as the <b><span><span style=\"font-style:normal\">Grand Palais</span></span></b>, is a historic site, exhibition hall and museum complex located in the 8th arrondissement of Paris between the Champs-Élysées and the Seine, France, on Avenue Winston-Churchill. Construction of the <span><span style=\"font-style:normal\">Grand Palais</span></span> began in 1897 following the demolition of the Palais de l'Industrie to prepare for the Universal Exposition of 1900. That exposition also produced the adjacent <span><span style=\"font-style:normal\">Petit Palais</span></span> and Pont Alexandre III.</p>"
+  },
+  "Louvre": {
+   "type": "standard",
+   "title": "Louvre",
+   "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Louvre</span></span>",
+   "namespace": {
+    "id": 0,
+    "text": ""
+   },
+   "wikibase_item": "Q19675",
+   "titles": {
+    "canonical": "Louvre",
+    "normalized": "Louvre",
+    "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Louvre</span></span>"
+   },
+   "pageid": 17546,
+   "thumbnail": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/66/Louvre_Museum_Wikimedia_Commons.jpg/330px-Louvre_Museum_Wikimedia_Commons.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 330,
+    "height": 139
+   },
+   "originalimage": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/66/Louvre_Museum_Wikimedia_Commons.jpg/3840px-Louvre_Museum_Wikimedia_Commons.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 6740,
+    "height": 2832
+   },
+   "lang": "en",
+   "dir": "ltr",
+   "revision": "1379049247",
+   "tid": "affc4e78-c26c-11f1-aa9a-663a194e586f",
+   "timestamp": "2026-10-07T16:32:29Z",
+   "description": "Art museum in Paris, France",
+   "description_source": "local",
+   "coordinates": {
+    "lat": 48.8611,
+    "lon": 2.3358
+   },
+   "content_urls": {
+    "desktop": {
+     "page": "https://en.wikipedia.org/wiki/Louvre",
+     "revisions": "https://en.wikipedia.org/wiki/Louvre?action=history",
+     "edit": "https://en.wikipedia.org/wiki/Louvre?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Louvre"
+    },
+    "mobile": {
+     "page": "https://en.wikipedia.org/wiki/Louvre",
+     "revisions": "https://en.wikipedia.org/wiki/Special:History/Louvre",
+     "edit": "https://en.wikipedia.org/wiki/Louvre?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Louvre"
+    }
+   },
+   "extract": "The Louvre is a national art museum in Paris, France. It is located on the Right Bank of the Seine in the city's 1st arrondissement (district) and home to some of the most canonical works of Western art, including the Mona Lisa, Venus de Milo, and Winged Victory. The museum is housed in the Louvre Palace, originally built in the late 12th to 13th century under Philip II. Remnants of the Medieval Louvre fortress are visible in the basement of the museum. Due to urban expansion, the fortress eventually lost its defensive function, and in 1546 Francis I converted it into the primary residence of the French kings.",
+   "extract_html": "<p>The <b>Louvre</b> is a national art museum in Paris, France. It is located on the Right Bank of the Seine in the city's 1st arrondissement (district) and home to some of the most canonical works of Western art, including the <i>Mona Lisa</i>, <i>Venus de Milo</i>, and <i>Winged Victory</i>. The museum is housed in the Louvre Palace, originally built in the late 12th to 13th century under Philip II. Remnants of the Medieval Louvre fortress are visible in the basement of the museum. Due to urban expansion, the fortress eventually lost its defensive function, and in 1546 Francis I converted it into the primary residence of the French kings.</p>"
+  },
+  "Musée du Quai Branly – Jacques Chirac": {
+   "type": "standard",
+   "title": "Musée du Quai Branly – Jacques Chirac",
+   "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Musée du Quai Branly – Jacques Chirac</span></span>",
+   "namespace": {
+    "id": 0,
+    "text": ""
+   },
+   "wikibase_item": "Q167863",
+   "titles": {
+    "canonical": "Musée_du_Quai_Branly_–_Jacques_Chirac",
+    "normalized": "Musée du Quai Branly – Jacques Chirac",
+    "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Musée du Quai Branly – Jacques Chirac</span></span>"
+   },
+   "pageid": 5455300,
+   "thumbnail": {
+    "source": "https://thumb.wikimedia.org/wikipedia/en/thumb/f/f2/Musee_du_quai_Branly_exterieur.jpg/330px-Musee_du_quai_Branly_exterieur.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 330,
+    "height": 248
+   },
+   "originalimage": {
+    "source": "https://upload.wikimedia.org/wikipedia/en/f/f2/Musee_du_quai_Branly_exterieur.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "width": 3264,
+    "height": 2448
+   },
+   "lang": "en",
+   "dir": "ltr",
+   "revision": "1378005433",
+   "tid": "4804cc1f-be54-11f1-b5b0-aa29369dcbfe",
+   "timestamp": "2026-10-02T11:27:42Z",
+   "description": "Museum for indigenous art in Paris",
+   "description_source": "local",
+   "coordinates": {
+    "lat": 48.8608,
+    "lon": 2.2975
+   },
+   "content_urls": {
+    "desktop": {
+     "page": "https://en.wikipedia.org/wiki/Mus%C3%A9e_du_Quai_Branly_%E2%80%93_Jacques_Chirac",
+     "revisions": "https://en.wikipedia.org/wiki/Mus%C3%A9e_du_Quai_Branly_%E2%80%93_Jacques_Chirac?action=history",
+     "edit": "https://en.wikipedia.org/wiki/Mus%C3%A9e_du_Quai_Branly_%E2%80%93_Jacques_Chirac?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Mus%C3%A9e_du_Quai_Branly_%E2%80%93_Jacques_Chirac"
+    },
+    "mobile": {
+     "page": "https://en.wikipedia.org/wiki/Mus%C3%A9e_du_Quai_Branly_%E2%80%93_Jacques_Chirac",
+     "revisions": "https://en.wikipedia.org/wiki/Special:History/Mus%C3%A9e_du_Quai_Branly_%E2%80%93_Jacques_Chirac",
+     "edit": "https://en.wikipedia.org/wiki/Mus%C3%A9e_du_Quai_Branly_%E2%80%93_Jacques_Chirac?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Mus%C3%A9e_du_Quai_Branly_%E2%80%93_Jacques_Chirac"
+    }
+   },
+   "extract": "The Musée du Quai Branly – Jacques Chirac is an art museum located in Paris, France. The museum, designed by French architect Jean Nouvel, features the indigenous art and cultures of Africa, Asia, Oceania, and the Americas. The museum collection comprises more than a million objects, of which 3,500 are on display at any given time in both permanent and temporary thematic exhibits. A selection of objects from the museum is also displayed in the Gallery of the Five Continents of the Louvre.",
+   "extract_html": "<p>The <b>Musée du Quai Branly – Jacques Chirac</b> is an art museum located in Paris, France. The museum, designed by French architect Jean Nouvel, features the indigenous art and cultures of Africa, Asia, Oceania, and the Americas. The museum collection comprises more than a million objects, of which 3,500 are on display at any given time in both permanent and temporary thematic exhibits. A selection of objects from the museum is also displayed in the Gallery of the Five Continents of the Louvre.</p>"
+  },
+  "Les Invalides": {
+   "type": "standard",
+   "title": "Les Invalides",
+   "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Les Invalides</span></span>",
+   "namespace": {
+    "id": 0,
+    "text": ""
+   },
+   "wikibase_item": "Q188977",
+   "titles": {
+    "canonical": "Les_Invalides",
+    "normalized": "Les Invalides",
+    "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Les Invalides</span></span>"
+   },
+   "pageid": 62633,
+   "thumbnail": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/12/H%C3%B4tel_des_Invalides_from_the_Eiffel_Tower%2C_23_July_2009.jpg/330px-H%C3%B4tel_des_Invalides_from_the_Eiffel_Tower%2C_23_July_2009.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 330,
+    "height": 220
+   },
+   "originalimage": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/12/H%C3%B4tel_des_Invalides_from_the_Eiffel_Tower%2C_23_July_2009.jpg/3840px-H%C3%B4tel_des_Invalides_from_the_Eiffel_Tower%2C_23_July_2009.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 4272,
+    "height": 2848
+   },
+   "lang": "en",
+   "dir": "ltr",
+   "revision": "1376320908",
+   "tid": "ddfd7089-b74b-11f1-b783-8ade4ccd10c0",
+   "timestamp": "2026-09-23T12:39:50Z",
+   "description": "Building complex in Paris, France",
+   "description_source": "local",
+   "coordinates": {
+    "lat": 48.855,
+    "lon": 2.3125
+   },
+   "content_urls": {
+    "desktop": {
+     "page": "https://en.wikipedia.org/wiki/Les_Invalides",
+     "revisions": "https://en.wikipedia.org/wiki/Les_Invalides?action=history",
+     "edit": "https://en.wikipedia.org/wiki/Les_Invalides?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Les_Invalides"
+    },
+    "mobile": {
+     "page": "https://en.wikipedia.org/wiki/Les_Invalides",
+     "revisions": "https://en.wikipedia.org/wiki/Special:History/Les_Invalides",
+     "edit": "https://en.wikipedia.org/wiki/Les_Invalides?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Les_Invalides"
+    }
+   },
+   "extract": "The Hôtel des Invalides, commonly called Les Invalides, is a complex of buildings in the 7th arrondissement of Paris, France, containing museums and monuments, all relating to the military history of France, as well as a hospital and an old soldiers' retirement home, the building's original purpose. The buildings house the Musée de l'Armée, the Musée des Plans-Reliefs, and the Musée d'Histoire Contemporaine. The complex also includes the Cathedral of Saint-Louis-des-Invalides, the national cathedral of the French military. It is adjacent to the Royal Chapel known as the Dôme des Invalides, the tallest church building in Paris at a height of 107 metres (351 ft). The latter has been converted into a shrine to some of France's leading military figures, most notably the tomb of Napoleon.",
+   "extract_html": "<p>The <b>Hôtel des Invalides</b>, commonly called <b><span><span style=\"font-style:normal\">Les Invalides</span></span></b>, is a complex of buildings in the 7th arrondissement of Paris, France, containing museums and monuments, all relating to the military history of France, as well as a hospital and an old soldiers' retirement home, the building's original purpose. The buildings house the Musée de l'Armée, the Musée des Plans-Reliefs, and the Musée d'Histoire Contemporaine. The complex also includes the Cathedral of Saint-Louis-des-Invalides, the national cathedral of the French military. It is adjacent to the Royal Chapel known as the <span><i lang=\"fr\">Dôme des Invalides</i></span>, the tallest church building in Paris at a height of 107 metres (351 ft). The latter has been converted into a shrine to some of France's leading military figures, most notably the tomb of Napoleon.</p>"
+  },
+  "Luxor Obelisks": {
+   "type": "standard",
+   "title": "Luxor Obelisks",
+   "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Luxor Obelisks</span></span>",
+   "namespace": {
+    "id": 0,
+    "text": ""
+   },
+   "wikibase_item": "Q1503331",
+   "titles": {
+    "canonical": "Luxor_Obelisks",
+    "normalized": "Luxor Obelisks",
+    "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Luxor Obelisks</span></span>"
+   },
+   "pageid": 23508272,
+   "thumbnail": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ac/Paris%2C_Obelisk_in_the_Place_de_la_Concorde%2C_July_22%2C_2008.jpg/330px-Paris%2C_Obelisk_in_the_Place_de_la_Concorde%2C_July_22%2C_2008.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 330,
+    "height": 330
+   },
+   "originalimage": {
+    "source": "https://upload.wikimedia.org/wikipedia/commons/a/ac/Paris%2C_Obelisk_in_the_Place_de_la_Concorde%2C_July_22%2C_2008.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "width": 2735,
+    "height": 2736
+   },
+   "lang": "en",
+   "dir": "ltr",
+   "revision": "1380422974",
+   "tid": "bec0b13e-c8b9-11f1-85e0-2fcafe7c260d",
+   "timestamp": "2026-10-15T16:59:12Z",
+   "description": "Pair of Egyptian obelisks, one of which is now in Paris",
+   "description_source": "local",
+   "coordinates": {
+    "lat": 48.86555556,
+    "lon": 2.32111111
+   },
+   "content_urls": {
+    "desktop": {
+     "page": "https://en.wikipedia.org/wiki/Luxor_Obelisks",
+     "revisions": "https://en.wikipedia.org/wiki/Luxor_Obelisks?action=history",
+     "edit": "https://en.wikipedia.org/wiki/Luxor_Obelisks?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Luxor_Obelisks"
+    },
+    "mobile": {
+     "page": "https://en.wikipedia.org/wiki/Luxor_Obelisks",
+     "revisions": "https://en.wikipedia.org/wiki/Special:History/Luxor_Obelisks",
+     "edit": "https://en.wikipedia.org/wiki/Luxor_Obelisks?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Luxor_Obelisks"
+    }
+   },
+   "extract": "The Luxor Obelisks are a pair of ancient Egyptian obelisks, over 3,000 years old, carved to stand at either side of the portal of the Luxor Temple in the reign of Ramesses II. The right-hand (western) stone, 23 metres (75 ft) high, was gifted by Egypt to France in the 1830s and moved to the Place de la Concorde in Paris, while the left-hand (eastern) obelisk remains in its location in Egypt. The Luxor Obelisk in Paris was classified officially as a monument historique in 1936.",
+   "extract_html": "<p>The <b>Luxor Obelisks</b> are a pair of ancient Egyptian obelisks, over 3,000 years old, carved to stand at either side of the portal of the Luxor Temple in the reign of Ramesses II. The right-hand (western) stone, 23 metres (75 ft) high, was gifted by Egypt to France in the 1830s and moved to the Place de la Concorde in Paris, while the left-hand (eastern) obelisk remains in its location in Egypt. The Luxor Obelisk in Paris was classified officially as a <i>monument historique</i> in 1936.</p>"
+  },
+  "Jeu de paume": {
+   "type": "standard",
+   "title": "Jeu de paume",
+   "displaytitle": "<i>Jeu de paume</i>",
+   "namespace": {
+    "id": 0,
+    "text": ""
+   },
+   "wikibase_item": "Q797108",
+   "titles": {
+    "canonical": "Jeu_de_paume",
+    "normalized": "Jeu de paume",
+    "display": "<i>Jeu de paume</i>"
+   },
+   "pageid": 191311,
+   "thumbnail": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d1/Jeu_de_paume.jpg/330px-Jeu_de_paume.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 330,
+    "height": 439
+   },
+   "originalimage": {
+    "source": "https://upload.wikimedia.org/wikipedia/commons/d/d1/Jeu_de_paume.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "width": 346,
+    "height": 460
+   },
+   "lang": "en",
+   "dir": "ltr",
+   "revision": "1372245551",
+   "tid": "ff6396b7-a4d2-11f1-ba8c-ccfc97c12e92",
+   "timestamp": "2026-08-31T00:29:16Z",
+   "description": "Indoor precursor of tennis",
+   "description_source": "local",
+   "content_urls": {
+    "desktop": {
+     "page": "https://en.wikipedia.org/wiki/Jeu_de_paume",
+     "revisions": "https://en.wikipedia.org/wiki/Jeu_de_paume?action=history",
+     "edit": "https://en.wikipedia.org/wiki/Jeu_de_paume?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Jeu_de_paume"
+    },
+    "mobile": {
+     "page": "https://en.wikipedia.org/wiki/Jeu_de_paume",
+     "revisions": "https://en.wikipedia.org/wiki/Special:History/Jeu_de_paume",
+     "edit": "https://en.wikipedia.org/wiki/Jeu_de_paume?action=edit",
+     "talk": "https://en.wikipedia.org/wiki/Talk:Jeu_de_paume"
+    }
+   },
+   "extract": "Jeu de paume was a ball-and-court game that originated in France and was the precursor of real tennis and ultimately of the modern game of tennis. Jeu de paume was played without racquets, and so was a \"game of the hand\", though these were eventually introduced. It is a former Olympic sport, and has the oldest ongoing annual world championship in sport, first established over 250 years ago. The term also refers to the court on which the game is played and its building, which in the 17th century was sometimes converted into a theatre.",
+   "extract_html": "<p><i><b>Jeu de paume</b></i> was a ball-and-court game that originated in France and was the precursor of real tennis and ultimately of the modern game of tennis. <i>Jeu de paume</i> was played without racquets, and so was a \"game of the hand\", though these were eventually introduced. It is a former Olympic sport, and has the oldest ongoing annual world championship in sport, first established over 250 years ago. The term also refers to the court on which the game is played and its building, which in the 17th century was sometimes converted into a theatre.</p>"
+  }
+ },
+ "geosearch": [
+  {
+   "pageid": 9232,
+   "title": "Eiffel Tower",
+   "coordinates": [
+    {
+     "lat": 48.85822222,
+     "lon": 2.2945,
+     "primary": true,
+     "globe": "earth"
+    }
+   ],
+   "description": "Tower in Paris, France",
+   "thumbnail": {
+    "source": "https://thumb.wikimedia.org/wikipedia/en/thumb/b/ba/Eiffel_Tower_logo.svg/330px-Eiffel_Tower_logo.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 330,
+    "height": 423
+   }
+  },
+  {
+   "pageid": 13506119,
+   "title": "Pont de l'Alma",
+   "coordinates": [
+    {
+     "lat": 48.8635,
+     "lon": 2.3018,
+     "primary": true,
+     "globe": "earth"
+    }
+   ],
+   "description": "Road bridge in Paris, France",
+   "thumbnail": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/af/Pont_de_l%27Alma%2C_Paris_5_December_2016.jpg/330px-Pont_de_l%27Alma%2C_Paris_5_December_2016.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 330,
+    "height": 220
+   }
+  },
+  {
+   "pageid": 2730731,
+   "title": "Grand Palais",
+   "coordinates": [
+    {
+     "lat": 48.8661,
+     "lon": 2.3125,
+     "primary": true,
+     "globe": "earth"
+    }
+   ],
+   "description": "Historic site, exhibition hall in Paris, France",
+   "thumbnail": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d6/France-000296_-_Paris%27_Grand_Palais_%2814525102530%29.jpg/330px-France-000296_-_Paris%27_Grand_Palais_%2814525102530%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 330,
+    "height": 220
+   }
+  },
+  {
+   "pageid": 80899,
+   "title": "Place de la Concorde",
+   "coordinates": [
+    {
+     "lat": 48.8656331,
+     "lon": 2.3212357,
+     "primary": true,
+     "globe": "earth"
+    }
+   ],
+   "description": "Square in Paris, France",
+   "thumbnail": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fa/Place_de_la_Concorde_from_the_Eiffel_Tower%2C_Paris_April_2011.jpg/330px-Place_de_la_Concorde_from_the_Eiffel_Tower%2C_Paris_April_2011.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 330,
+    "height": 220
+   }
+  },
+  {
+   "pageid": 17546,
+   "title": "Louvre",
+   "coordinates": [
+    {
+     "lat": 48.8611,
+     "lon": 2.3358,
+     "primary": true,
+     "globe": "earth"
+    }
+   ],
+   "description": "Art museum in Paris, France",
+   "thumbnail": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/66/Louvre_Museum_Wikimedia_Commons.jpg/330px-Louvre_Museum_Wikimedia_Commons.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 330,
+    "height": 139
+   }
+  },
+  {
+   "pageid": 5455300,
+   "title": "Musée du Quai Branly – Jacques Chirac",
+   "coordinates": [
+    {
+     "lat": 48.8608,
+     "lon": 2.2975,
+     "primary": true,
+     "globe": "earth"
+    }
+   ],
+   "description": "Museum for indigenous art in Paris",
+   "thumbnail": {
+    "source": "https://thumb.wikimedia.org/wikipedia/en/thumb/f/f2/Musee_du_quai_Branly_exterieur.jpg/330px-Musee_du_quai_Branly_exterieur.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 330,
+    "height": 248
+   }
+  },
+  {
+   "pageid": 212301,
+   "title": "Champ de Mars",
+   "coordinates": [
+    {
+     "lat": 48.85611111,
+     "lon": 2.29833333,
+     "primary": true,
+     "globe": "earth"
+    }
+   ],
+   "description": "Public park in Paris, France",
+   "thumbnail": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/29/MG-Paris-Champ_de_Mars.jpg/330px-MG-Paris-Champ_de_Mars.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 330,
+    "height": 613
+   }
+  },
+  {
+   "pageid": 504321,
+   "title": "Bir-Hakeim station",
+   "coordinates": [
+    {
+     "lat": 48.853917,
+     "lon": 2.289332,
+     "primary": true,
+     "globe": "earth"
+    }
+   ],
+   "description": "Metro station in Paris, France",
+   "thumbnail": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/78/Station_Bir_Hakeim_M%C3%A9tro_Paris_Ligne_6_-_Paris_XV_%28FR75%29_-_2022-07-01_-_6.jpg/330px-Station_Bir_Hakeim_M%C3%A9tro_Paris_Ligne_6_-_Paris_XV_%28FR75%29_-_2022-07-01_-_6.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 330,
+    "height": 248
+   }
+  },
+  {
+   "pageid": 1474868,
+   "title": "Flame of Liberty",
+   "coordinates": [
+    {
+     "lat": 48.86416667,
+     "lon": 2.30083333,
+     "primary": true,
+     "globe": "earth"
+    }
+   ],
+   "description": "Monument in Paris, France",
+   "thumbnail": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/37/Sculpture_pont_de_l%27alma_Paris_FRA.jpg/330px-Sculpture_pont_de_l%27alma_Paris_FRA.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 330,
+    "height": 496
+   }
+  },
+  {
+   "pageid": 5347624,
+   "title": "Avenue Montaigne",
+   "coordinates": [
+    {
+     "lat": 48.86666667,
+     "lon": 2.30611111,
+     "primary": true,
+     "globe": "earth"
+    }
+   ],
+   "description": "Street in Paris, France",
+   "thumbnail": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/33/Plaza_Ath%C3%A9n%C3%A9e_1.jpg/330px-Plaza_Ath%C3%A9n%C3%A9e_1.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 330,
+    "height": 271
+   }
+  },
+  {
+   "pageid": 3648981,
+   "title": "Palais de Tokyo",
+   "coordinates": [
+    {
+     "lat": 48.86408,
+     "lon": 2.29713,
+     "primary": true,
+     "globe": "earth"
+    }
+   ],
+   "description": "Building in Paris",
+   "thumbnail": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f5/Palais_de_Tokyo_%40_Paris_%2831028565970%29.jpg/330px-Palais_de_Tokyo_%40_Paris_%2831028565970%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 330,
+    "height": 220
+   }
+  },
+  {
+   "pageid": 13918696,
+   "title": "Pont des Invalides",
+   "coordinates": [
+    {
+     "lat": 48.86361111,
+     "lon": 2.31027778,
+     "primary": true,
+     "globe": "earth"
+    }
+   ],
+   "description": "Bridge in Paris, France",
+   "thumbnail": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7e/Pont_des_Invalides_%2834471766401%29.jpg/330px-Pont_des_Invalides_%2834471766401%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 330,
+    "height": 247
+   }
+  },
+  {
+   "pageid": 2936554,
+   "title": "Pont Alexandre III",
+   "coordinates": [
+    {
+     "lat": 48.86361111,
+     "lon": 2.31361111,
+     "primary": true,
+     "globe": "earth"
+    }
+   ],
+   "description": "Deck arch bridge in Paris",
+   "thumbnail": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a9/Pont_Alexandre_III_depuis_pont_de_la_Concorde_Paris.jpg/330px-Pont_Alexandre_III_depuis_pont_de_la_Concorde_Paris.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 330,
+    "height": 162
+   }
+  },
+  {
+   "pageid": 2936018,
+   "title": "Petit Palais",
+   "coordinates": [
+    {
+     "lat": 48.86604,
+     "lon": 2.31453,
+     "primary": true,
+     "globe": "earth"
+    }
+   ],
+   "description": "Historic site, exhibition hall in Paris, France",
+   "thumbnail": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/71/Petit-Palais-Paris-02-2018.jpg/330px-Petit-Palais-Paris-02-2018.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 330,
+    "height": 163
+   }
+  },
+  {
+   "pageid": 62633,
+   "title": "Les Invalides",
+   "coordinates": [
+    {
+     "lat": 48.855,
+     "lon": 2.3125,
+     "primary": true,
+     "globe": "earth"
+    }
+   ],
+   "description": "Building complex in Paris, France",
+   "thumbnail": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/12/H%C3%B4tel_des_Invalides_from_the_Eiffel_Tower%2C_23_July_2009.jpg/330px-H%C3%B4tel_des_Invalides_from_the_Eiffel_Tower%2C_23_July_2009.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 330,
+    "height": 220
+   }
+  },
+  {
+   "pageid": 372251,
+   "title": "Palais Bourbon",
+   "coordinates": [
+    {
+     "lat": 48.862036,
+     "lon": 2.318593,
+     "primary": true,
+     "globe": "earth"
+    }
+   ],
+   "description": "Seat of the National Assembly in Paris, France",
+   "thumbnail": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/39/Fa%C3%A7ade_Palais_Bourbon_3.jpg/330px-Fa%C3%A7ade_Palais_Bourbon_3.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 330,
+    "height": 220
+   }
+  },
+  {
+   "pageid": 23508272,
+   "title": "Luxor Obelisks",
+   "coordinates": [
+    {
+     "lat": 48.86555556,
+     "lon": 2.32111111,
+     "primary": true,
+     "globe": "earth"
+    }
+   ],
+   "description": "Pair of Egyptian obelisks, one of which is now in Paris",
+   "thumbnail": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ac/Paris%2C_Obelisk_in_the_Place_de_la_Concorde%2C_July_22%2C_2008.jpg/330px-Paris%2C_Obelisk_in_the_Place_de_la_Concorde%2C_July_22%2C_2008.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 330,
+    "height": 330
+   }
+  },
+  {
+   "pageid": 20610071,
+   "title": "Hôtel de la Marine",
+   "coordinates": [
+    {
+     "lat": 48.86677778,
+     "lon": 2.32308333,
+     "primary": true,
+     "globe": "earth"
+    }
+   ],
+   "description": "Historic building in Paris",
+   "thumbnail": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/46/H%C3%B4tel_de_la_Marine.jpg/330px-H%C3%B4tel_de_la_Marine.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 330,
+    "height": 177
+   }
+  },
+  {
+   "pageid": 5571631,
+   "title": "Musée de l'Orangerie",
+   "coordinates": [
+    {
+     "lat": 48.86384535,
+     "lon": 2.32253834,
+     "primary": true,
+     "globe": "earth"
+    }
+   ],
+   "description": "Art museum in Paris",
+   "thumbnail": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/bb/Mus%C3%A9e_de_l%E2%80%99Orangerie_exterior.JPG/330px-Mus%C3%A9e_de_l%E2%80%99Orangerie_exterior.JPG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 330,
+    "height": 248
+   }
+  },
+  {
+   "pageid": 299713,
+   "title": "Tuileries Garden",
+   "coordinates": [
+    {
+     "lat": 48.8639,
+     "lon": 2.3261,
+     "primary": true,
+     "globe": "earth"
+    }
+   ],
+   "description": "Public garden in Paris, France",
+   "thumbnail": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/43/Crowd_in_the_Jardin_des_Tuileries%2C_Paris_July_2014.jpg/330px-Crowd_in_the_Jardin_des_Tuileries%2C_Paris_July_2014.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 330,
+    "height": 248
+   }
+  },
+  {
+   "pageid": 53919,
+   "title": "Musée d'Orsay",
+   "coordinates": [
+    {
+     "lat": 48.859972,
+     "lon": 2.326527,
+     "primary": true,
+     "globe": "earth"
+    }
+   ],
+   "description": "Art museum in Paris, France"
+  },
+  {
+   "pageid": 756324,
+   "title": "Arc de Triomphe du Carrousel",
+   "coordinates": [
+    {
+     "lat": 48.86173,
+     "lon": 2.33291,
+     "primary": true,
+     "globe": "earth"
+    }
+   ],
+   "description": "Triumphal arch in Paris, France",
+   "thumbnail": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/77/Paris_-_Jardin_des_Tuileries_-_Arc_de_Triomphe_du_Carrousel_-_PA00085992_-_003.jpg/330px-Paris_-_Jardin_des_Tuileries_-_Arc_de_Triomphe_du_Carrousel_-_PA00085992_-_003.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 330,
+    "height": 233
+   }
+  },
+  {
+   "pageid": 3305865,
+   "title": "Louvre Pyramid",
+   "coordinates": [
+    {
+     "lat": 48.861,
+     "lon": 2.33586111,
+     "primary": true,
+     "globe": "earth"
+    }
+   ],
+   "description": "Glass-and-metal pyramid in the main courtyard of the Louvre Palace",
+   "thumbnail": {
+    "source": "https://thumb.wikimedia.org/wikipedia/en/thumb/4/42/Louvre_Pyramid.jpg/330px-Louvre_Pyramid.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 330,
+    "height": 220
+   }
+  },
+  {
+   "pageid": 14692224,
+   "title": "Pont Royal",
+   "coordinates": [
+    {
+     "lat": 48.86009722,
+     "lon": 2.32987778,
+     "primary": true,
+     "globe": "earth"
+    }
+   ],
+   "description": "Bridge",
+   "thumbnail": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/59/Pont_Royal_2009.jpg/330px-Pont_Royal_2009.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 330,
+    "height": 220
+   }
+  },
+  {
+   "pageid": 20864936,
+   "title": "Pont de l'Alma station",
+   "coordinates": [
+    {
+     "lat": 48.8625,
+     "lon": 2.30111111,
+     "primary": true,
+     "globe": "earth"
+    }
+   ],
+   "description": "Railway station in Paris, France",
+   "thumbnail": {
+    "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/90/Gare_RER_C_-_Pont_de_l%27Alma.jpg/330px-Gare_RER_C_-_Pont_de_l%27Alma.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+    "width": 330,
+    "height": 248
+   }
+  }
+ ]
+}
