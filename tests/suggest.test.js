@@ -164,6 +164,42 @@ test('findFoodNear uses Overpass, and the place search when Overpass is down', a
   assert.deepEqual(fallback.map((p) => p.name), ['Fallback Café']);
 });
 
+test('fame comes first: places many languages write about beat long articles about lesser ones', () => {
+  const famous = interestScore({ title: 'Empire State Building', description: 'Office skyscraper in Manhattan', length: 250000, langs: 117 });
+  const tower = interestScore({ title: 'One Astor Plaza', description: 'Office skyscraper in Manhattan', length: 170000, langs: 20 });
+  const church = interestScore({ title: 'Corner Church', description: 'church in Paris', length: 6000, langs: 4 });
+  assert.ok(famous > tower + 0.5 && tower > church + 1, `${famous} > ${tower} > ${church}`);
+});
+
+test('organisations, events, places that are gone and objects in a collection are not stops', () => {
+  const ok = (description, extra = {}) => Number.isFinite(interestScore({ title: 'X', description, length: 50000, langs: 40, ...extra }));
+  assert.ok(!ok('British intelligence agency'), 'an agency');
+  assert.ok(!ok('Multi-sport event in Barcelona, Spain'), 'an event');
+  assert.ok(!ok('Storming of the Tuileries Palace in Paris during the French Revolution'), 'a historic event');
+  assert.ok(!ok('Royal and imperial palace in Paris (1564–1883)'), 'demolished');
+  assert.ok(!ok('Government of France from 1792 to 1804'), 'a former government');
+  assert.ok(!ok('Ancient Greek sculptures held in London'), 'inside a museum');
+  assert.ok(!ok('Capital of England and the United Kingdom'), 'a whole city');
+  assert.ok(!ok('Area of central London') && !ok('Human settlement in England'), 'areas');
+  assert.ok(!ok('Medieval state', { title: 'Principality of Catalonia' }), 'a former state');
+  assert.ok(!ok('', { title: 'Parliament of the United Kingdom' }), 'an institution');
+  assert.ok(!ok('Railway station in Paris', { coordType: 'railwaystation', langs: 10 }), 'an ordinary station');
+  assert.ok(ok('Railway terminal in Manhattan, New York', { coordType: 'railwaystation', langs: 50 }), 'a landmark station');
+  assert.ok(ok('State opera house in Vienna') && ok('War memorial in London') && ok('Office skyscraper in Manhattan'), 'real places stay');
+});
+
+test('a must-see a little further away beats a cluster of minor places, and the walk still fills up', () => {
+  // Different names, or they would count as one place ("Little Church 1" and "Little Church 2").
+  const names = ['Annunziata', 'Blasius', 'Cyriacus', 'Dionysius', 'Eligius', 'Fiacrius', 'Gilles', 'Hilarius'];
+  const minor = names.map((name, i) => place(name, 'church', 6000, 150 + 60 * i, 120 * (i % 2), { langs: 3 }));
+  const candidates = [...minor, place('Great Cathedral', 'Gothic cathedral', 120000, 0, 1100, { langs: 90 })];
+  const r = suggestRoute({ start, candidates, modeId: 'walk', minutes: 90, loop: true });
+  const titles = r.stops.map((s) => s.title);
+  assert.ok(titles.includes('Great Cathedral'), titles.join());
+  assert.ok(titles.filter((t) => names.includes(t)).length >= 3, `and nearby places too: ${titles.join()}`);
+  assert.ok(r.minutes <= 90, `fits (${r.minutes} min)`);
+});
+
 test('areas are recognised by what they are, not by words further on', () => {
   assert.equal(interestScore({ title: 'Seine', description: 'major river in France', length: 90000 }), -Infinity);
   assert.equal(interestScore({ title: 'Champs-Élysées', description: 'avenue in Paris', length: 90000 }), -Infinity);

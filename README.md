@@ -84,11 +84,20 @@ ChatGPT search), run `npm run indexnow` once the site is live: no account needed
 ## Let Roamie plan it: "Suggest a route for me"
 
 Tap **Use my location** (or type your city), then **Suggest a route for me** and answer one question:
-**how long do you want to be out?** (30 min, 1 hour, 2 hours, half a day or a full day). Roamie then:
+**how long do you want to be out?** (30 min, 1 hour, 2 hours, half a day or a full day). If you've shared
+your location but typed another city (planning tomorrow from your hotel), Roamie plans in that city. Then it:
 
-- **picks the places with the most history around you**: churches, palaces, castles, monuments, old markets,
-  bridges… (recognised in all five languages), favouring the places Wikipedia has the most to say about,
-  and skipping filler (streets, metro stations, whole districts, stub articles) and near-duplicates;
+- **picks the places most worth seeing**: it searches both the nearest places and the most notable ones
+  anywhere within reach (in a dense centre like London's, the nearest few hundred articles only cover a few
+  streets). Fame comes first, measured by how many Wikipedia languages have an article about a place (the
+  Sagrada Família ~95, a neighbourhood church ~5), then how much there is to tell, with a nudge for
+  churches, palaces, monuments and museums (recognised in all five languages);
+- **skips what isn't a stop**: streets, districts and whole cities, metro stations, stub articles,
+  organisations and events that Wikipedia places at an address (an intelligence agency, an Olympic Games),
+  buildings that no longer exist ("palace (1564–1883)"), objects inside a museum (the Elgin Marbles: the
+  British Museum is the stop), and near-duplicates;
+- **balances fame against walking**: it adds, one at a time, the place worth the most for the minutes it
+  adds, so a must-see a little further away still makes it, but the walk isn't spent crossing town;
 - **puts museums on the route** when there's time to go inside (about an hour each, one for half a day, two
   for a full day), and stays quiet while you visit;
 - **adds food and drink at the right time**: lunch around 12:30, dinner around 19:45, a coffee or a drink in

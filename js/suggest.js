@@ -37,7 +37,20 @@ const MUSEUM_RE = /(?:^|[^\p{L}])(?:museum|musée|musee|museo|museu|gallery|gale
 // Matched against what a place *is* (the start of its description: "river in France",
 // "arrondissement of Paris"), not words further on ("bridge over the river").
 const AREA_RE =
-  /^(?:[\p{L}'’-]+\s+){0,2}(?:arrondissement|district|neighbou?rhood|quarter|quartier|borough|ward|commune|municipality|city|town|village|river|fleuve|rivière|río|fluss|fiume|lake|region|province|department|département|metropolitan|island|street|avenue|boulevard|rue|calle|straße|strasse|metro line|railway line)(?![\p{L}])/iu;
+  /^(?:[\p{L}'’-]+\s+){0,2}(?:arrondissement|district|neighbou?rhood|suburb|area|space|point|junction|intersection|settlement|quarter|quartier|borough|ward|commune|municipality|city|town|village|capital|river|fleuve|rivière|río|fluss|fiume|lake|region|province|department|département|metropolitan|island|street|avenue|boulevard|rue|calle|straße|strasse|metro line|railway line)(?![\p{L}])/iu;
+
+// Wikipedia also places organisations, events and works at an address: not places to walk to.
+// (Matched on the short description: "British intelligence agency", "Satirical magazine", "Fire in 1666".)
+const NOT_A_PLACE_RE =
+  /(?:^|[^\p{L}])(?:agency|company|corporation|government|body|conglomerate|firm|manufacturer|magazine|newspaper|tabloid|broadcaster|publisher|record label|band|political party|parliament|legislat|senate|ministry|government department|central bank|stock exchange|university|college|school|religious order|higher education|research institution|educational institution|école|ecole|lycée|escuela|schule|scuola|society|association|organi[sz]ation|charity|foundation|club|team|brand|fashion house|retailer|airline|television|radio|channel|film|novel|album|song|video game|battle|siege|attack|bombing|storming|uprising|insurrection|rebellion|revolt|coup|protest|riot|election|treaty|festival|event|olympics|games|championship|tournament|competition|conflagration|massacre|scandal|police|intelligence|embassy|consulate|series|former (?:country|state)|historical (?:country|state))(?![\p{L}])/iu;
+// Institutions named after what they are, with no description to go on.
+const INSTITUTION_TITLE_RE = /^(?:parliament|government|ministry|house of (?:lords|commons|representatives)|senate|congress|principality|kingdom|duchy|county|republic|empire|province|diocese|archdiocese) of\b/i;
+// Places that are gone: "Royal palace in Paris (1564–1883)", "Government of France from 1792 to 1804".
+const GONE_RE = /\(\s*\d{3,4}\s*[–-]\s*\d{3,4}\s*\)|\bfrom \d{3,4} to \d{3,4}\b|\b(?:demolished|destroyed)\b/i;
+// Objects inside a collection ("Ancient Greek sculptures held in London"): the museum is the stop.
+const IN_A_COLLECTION_RE = /(?:^(?:painting|portrait|fresco|manuscript|tapestry|artwork)\b)|\b(?:held|housed|kept|displayed|exhibited) (?:in|at|by)\b/i;
+// Coordinate kinds (from Wikipedia's {{coord}}) that are never a stop on a walk.
+const NOT_A_STOP_TYPES = new Set(['country', 'state', 'adm1st', 'adm2nd', 'adm3rd', 'city', 'event', 'edu', 'airport', 'waterbody', 'river', 'mountain', 'satellite', 'glacier', 'pass', 'forest']);
 
 /** 'museum' | 'historic' | 'sight' */
 export function placeKind(poi) {
@@ -48,21 +61,32 @@ export function placeKind(poi) {
 }
 
 /**
- * How worth visiting a place is. Long Wikipedia articles mean there's a lot of story to
- * tell; historic kinds of places get a boost; areas, streets and filler are excluded.
+ * How worth visiting a place is. Fame first: how many Wikipedia languages have an article
+ * about it (the Sagrada Família ~95, a neighbourhood church ~5). Then how much there is to
+ * tell (article length), and a nudge for historic places and museums. Areas, streets,
+ * organisations, events and filler are excluded.
  */
 export function interestScore(poi) {
   if (poi.category === 'skip' || poi.disambiguation) return -Infinity;
-  if (AREA_RE.test(poi.description ?? '')) return -Infinity;
+  const description = poi.description ?? '';
+  if (AREA_RE.test(description) || NOT_A_PLACE_RE.test(description) || IN_A_COLLECTION_RE.test(description) || GONE_RE.test(description)) return -Infinity;
+  if (INSTITUTION_TITLE_RE.test(poi.title ?? '') || NOT_A_STOP_TYPES.has(poi.coordType)) return -Infinity;
+  // A railway station is a stop only when it's a landmark in its own right (Grand Central, St Pancras).
+  if (poi.coordType === 'railwaystation' && (poi.langs ?? 0) < 40) return -Infinity;
   if ((poi.length ?? 3000) < 2500) return -Infinity; // a stub: too little to tell
-  let score = Math.log10(Math.max(1000, poi.length ?? 3000)); // ~3 (stub) to ~5.5 (major landmark)
+  const story = Math.log10(Math.max(1000, poi.length ?? 3000)); // ~3.4 (short) to ~5.3 (major landmark)
+  // Without the language count (older data), the article length stands in for fame.
+  let score = poi.langs != null ? 1.8 * Math.log10(1 + poi.langs) + 0.4 * story : story;
   const kind = placeKind(poi);
-  if (kind === 'historic') score += 1;
-  if (kind === 'museum') score += 1.2;
-  if (poi.thumbnail) score += 0.3;
-  if (poi.category === 'minor') score -= 2;
+  if (kind === 'historic') score += 0.5;
+  if (kind === 'museum') score += 0.6;
+  if (poi.thumbnail) score += 0.2;
+  if (poi.category === 'minor') score -= 1.5;
   return score;
 }
+
+// Below this score a place adds next to nothing to a walk (see interestScore's range).
+const SCORE_FLOOR = 3.3;
 
 /** Travel pace for planning: speed, time spent at an ordinary stop, and how much longer streets are than a straight line. */
 export const PACE = {
@@ -267,11 +291,11 @@ export function suggestRoute({ start, candidates, modeId = 'walk', minutes = 60,
   const chosen = [];
   let used = 0; // minutes so far
 
-  /** Slot a place in where it adds the least travel, if it fits the time left. */
-  const tryAdd = (c, visitMinutes = null) => {
-    if (chosen.length >= maxStops || chosen.includes(c)) return false;
+  /** Where a place would slot in with the least extra travel, if it may and fits the time left. */
+  const insertionCost = (c, visitMinutes = null) => {
+    if (chosen.length >= maxStops || chosen.includes(c)) return null;
     // Skip near-duplicates: the Louvre Pyramid right next to the Louvre.
-    if (chosen.some((s) => distanceMeters(s, c) < 60 || (distanceMeters(s, c) < 400 && sharesNameToken(s.title, c.title)))) return false;
+    if (chosen.some((s) => distanceMeters(s, c) < 60 || (distanceMeters(s, c) < 400 && sharesNameToken(s.title, c.title)))) return null;
     const dwell = visitMinutes ?? pace.dwell;
     let best = null;
     const lastSlot = loop ? points.length - 1 : points.length;
@@ -281,7 +305,14 @@ export function suggestRoute({ start, candidates, modeId = 'walk', minutes = 60,
       const extra = next ? legMinutes(prev, c, pace) + legMinutes(c, next, pace) - legMinutes(prev, next, pace) : legMinutes(prev, c, pace);
       if (!best || extra < best.extra) best = { i, extra };
     }
-    if (used + best.extra + dwell > budget) return false;
+    return used + best.extra + dwell > budget ? null : best;
+  };
+
+  /** Slot a place in where it adds the least travel, if it fits the time left. */
+  const tryAdd = (c, visitMinutes = null) => {
+    const best = insertionCost(c, visitMinutes);
+    if (!best) return false;
+    const dwell = visitMinutes ?? pace.dwell;
     const stop = { ...c, visitMinutes };
     points.splice(best.i, 0, stop);
     chosen.push(c);
@@ -289,14 +320,24 @@ export function suggestRoute({ start, candidates, modeId = 'walk', minutes = 60,
     return true;
   };
 
-  // 1. On longer outings, museum visits go on the route first (the best museums nearby).
-  let museumsLeft = visits.count;
-  for (const c of pool) {
-    if (museumsLeft <= 0) break;
-    if (c.kind === 'museum' && tryAdd(c, visits.minutes)) museumsLeft--;
-  }
-  // 2. Then the most interesting places, best first, while they fit.
-  for (const c of pool) tryAdd(c);
+  // One at a time, add the place worth the most for the minutes it adds (getting there and
+  // time spent), while any fits. Worth grows steeply with fame, so a must-see a little further
+  // away still beats a cluster of minor places, but the walk isn't spent crossing town.
+  const addBest = (eligible, visitMinutes = null) => {
+    let best = null;
+    for (const c of pool) {
+      if (!eligible(c)) continue;
+      const cost = insertionCost(c, visitMinutes);
+      if (!cost) continue;
+      const ratio = Math.max(0.05, c.score - SCORE_FLOOR) ** 3 / (cost.extra + (visitMinutes ?? pace.dwell));
+      if (!best || ratio > best.ratio) best = { c, ratio };
+    }
+    return Boolean(best) && tryAdd(best.c, visitMinutes);
+  };
+  // 1. On longer outings, museum visits go on the route first.
+  for (let museums = 0; museums < visits.count && addBest((c) => c.kind === 'museum', visits.minutes); museums++);
+  // 2. Then everything else worth seeing.
+  while (addBest(() => true));
 
   untangle(points, pace);
   const stops = points.slice(1, loop ? -1 : undefined);

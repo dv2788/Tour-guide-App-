@@ -202,6 +202,29 @@ const LIVE = process.env.LIVE === '1';
   });
   expect(mapUnderBar.behind, 'the map was scrolled behind the "Begin the tour" bar');
   expect(!mapUnderBar.covered, `the map stays under the "Begin the tour" bar (on top: ${mapUnderBar.what})`);
+  // A tester typed another city after sharing their location, and the route was still planned around them.
+  await page3.route('https://nominatim.openstreetmap.org/search?**', (route) => {
+    if (new URL(route.request().url()).searchParams.get('q') !== 'Paris') return route.fallback();
+    const paris = { lat: '48.8566', lon: '2.3522', name: 'Paris', display_name: 'Paris, Île-de-France, France', category: 'boundary', type: 'administrative', addresstype: 'city', importance: 0.9, boundingbox: ['48.8156', '48.9022', '2.2241', '2.4698'] };
+    return route.fulfill({ contentType: 'application/json', body: JSON.stringify([paris]) });
+  });
+  const explored = [];
+  page3.on('request', (r) => {
+    const u = new URL(r.url());
+    if (u.hostname.endsWith('wikipedia.org') && u.searchParams.get('list') === 'geosearch') explored.push(u.searchParams.get('gscoord'));
+  });
+  await page3.fill('#city', 'Paris');
+  await page3.dispatchEvent('#city', 'change');
+  const typedNote = await page3.textContent('#locate-note');
+  expect(/plan around Paris/.test(typedNote), `the note says it will plan around the typed city (${typedNote})`);
+  await page3.click('#suggest-open');
+  await page3.click('#suggest-go');
+  await page3.waitForFunction(() => /couldn't find|✓/.test(document.getElementById('import-note').textContent), null, { timeout: 60000 });
+  expect(explored.length > 0 && explored.every((c) => Math.abs(Number(c.split('|')[0]) - 48.8566) < 0.01), `planned around Paris, not where the phone is (${explored.join(' ')})`);
+  await page3.click('#suggest-open'); // fold the panel again
+  await page3.fill('#city', 'Barcelona');
+  await page3.dispatchEvent('#city', 'change');
+  expect(/plan around where you are/.test(await page3.textContent('#locate-note')), 'back to planning around you');
   await page3.click('#suggest-open');
   await page3.click('.chip-opt:has(input[value="240"])');
   await page3.click('#suggest-go');

@@ -149,12 +149,27 @@ async function mockNetwork(context, { routeCacheName = 'smoke' } = {}) {
       const [lat, lon] = p.get('gscoord').split('|').map(Number);
       const found = near(lat, lon, Number(p.get('gsradius')), Number(p.get('gslimit')));
       json(route, { query: { geosearch: found.map(({ page, d }) => ({ pageid: page.pageid, title: page.title, lat: page.coordinates[0].lat, lon: page.coordinates[0].lon, dist: d })) } });
+    } else if (p.get('list') === 'search') {
+      // "Explore this area" step 1b: the most notable places in the radius ("nearcoord:3000m,lat,lon").
+      const [, meters, lat, lon] = (p.get('srsearch').match(/nearcoord:(\d+)m,(-?[\d.]+),(-?[\d.]+)/) ?? []).map(Number);
+      const found = near(lat, lon, meters, Infinity)
+        .sort((a, b) => articleLength(b.page.title) - articleLength(a.page.title))
+        .slice(0, Number(p.get('srlimit')));
+      json(route, { query: { search: found.map(({ page }) => ({ ns: 0, title: page.title, pageid: page.pageid })) } });
     } else if (p.get('pageids')) {
-      // Step 2: details, including article length.
+      // Step 2: details, including article length, how many languages cover it (a stand-in) and its position.
       const ids = new Set(p.get('pageids').split('|').map(Number));
       const pages = fixtures.geosearch
         .filter((page) => ids.has(page.pageid))
-        .map((page) => ({ pageid: page.pageid, title: page.title, length: articleLength(page.title), description: page.description, thumbnail: page.thumbnail }));
+        .map((page) => ({
+          pageid: page.pageid,
+          title: page.title,
+          length: articleLength(page.title),
+          description: page.description,
+          thumbnail: page.thumbnail,
+          langlinkscount: Math.round(articleLength(page.title) / 1500),
+          coordinates: page.coordinates.map((c) => ({ lat: c.lat, lon: c.lon, primary: true })),
+        }));
       json(route, { query: { pages } });
     } else {
       const [lat, lon] = p.get('ggscoord').split('|').map(Number);

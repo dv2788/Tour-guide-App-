@@ -135,51 +135,62 @@ export function createWikiService({ lang = 'en', fetchImpl = defaultFetch } = {}
    * Many articles around a point, with how long each article is (a good sign of how much
    * there is to tell): used to suggest routes. Up to `limit` articles within `radius` m.
    */
-  async function exploreArea(lat, lon, radius = 2000, limit = 250) {
-    const list = new URLSearchParams({
-      action: 'query',
-      format: 'json',
-      formatversion: '2',
-      origin: '*',
-      list: 'geosearch',
-      gscoord: `${lat}|${lon}`,
-      gsradius: String(Math.min(10000, Math.max(10, Math.round(radius)))),
-      gslimit: String(Math.min(500, limit)),
-    });
-    const found = (await getJson(`${host}/w/api.php?${list}`))?.query?.geosearch ?? [];
-    const byId = new Map(found.map((p) => [p.pageid, { id: p.pageid, title: p.title, lat: p.lat, lon: p.lon }]));
+  /**
+   * Places worth a stop within `radius` meters. Two searches: the nearest articles (the
+   * nearest few hundred only reach a few streets in a dense city centre) and the most notable
+   * ones anywhere in the radius (Wikipedia's search ranks by how linked and read a page is).
+   * Each place comes with what it takes to judge it: article length, description, how many
+   * languages have an article about it, and what kind of place its coordinates mark.
+   */
+  async function exploreArea(lat, lon, radius = 2000, limit = 300, notable = 200) {
+    const meters = Math.min(10000, Math.max(10, Math.round(radius)));
+    const query = (params) => getJson(`${host}/w/api.php?${new URLSearchParams({ action: 'query', format: 'json', formatversion: '2', origin: '*', ...params })}`);
+    const [near, famous] = await Promise.all([
+      query({ list: 'geosearch', gscoord: `${lat}|${lon}`, gsradius: String(meters), gslimit: String(Math.min(500, limit)) }),
+      notable > 0
+        ? query({ list: 'search', srsearch: `nearcoord:${meters}m,${lat},${lon}`, srlimit: String(Math.min(500, notable)), srprop: '' }).catch(() => null) // whole meters: "3.0km" isn't understood
+        : null,
+    ]);
+    const byId = new Map((near?.query?.geosearch ?? []).map((p) => [p.pageid, { id: p.pageid, title: p.title, lat: p.lat, lon: p.lon }]));
+    for (const p of famous?.query?.search ?? []) if (!byId.has(p.pageid)) byId.set(p.pageid, { id: p.pageid, title: p.title, lat: null, lon: null });
     const ids = [...byId.keys()];
     const batches = [];
     for (let i = 0; i < ids.length; i += 50) batches.push(ids.slice(i, i + 50));
     await Promise.all(
       batches.map(async (batch) => {
-        const params = new URLSearchParams({
-          action: 'query',
-          format: 'json',
-          formatversion: '2',
-          origin: '*',
-          pageids: batch.join('|'),
-          prop: 'info|description|pageimages|pageprops',
-          piprop: 'thumbnail',
-          pithumbsize: '240',
-          pilimit: 'max',
-          ppprop: 'disambiguation',
-        });
-        const pages = (await getJson(`${host}/w/api.php?${params}`))?.query?.pages ?? [];
+        const pages =
+          (
+            await query({
+              pageids: batch.join('|'),
+              prop: 'info|description|pageimages|pageprops|langlinkscount|coordinates',
+              piprop: 'thumbnail',
+              pithumbsize: '240',
+              pilimit: 'max',
+              ppprop: 'disambiguation',
+              coprop: 'type',
+              colimit: 'max',
+            })
+          )?.query?.pages ?? [];
         for (const p of pages) {
           const poi = byId.get(p.pageid);
           if (!poi) continue;
+          const coord = p.coordinates?.[0];
           Object.assign(poi, {
+            lat: poi.lat ?? coord?.lat ?? null,
+            lon: poi.lon ?? coord?.lon ?? null,
+            coordType: coord?.type ?? null,
             length: p.length ?? null,
             description: p.description ?? '',
             thumbnail: p.thumbnail?.source ?? null,
             disambiguation: !!p.pageprops && 'disambiguation' in p.pageprops,
+            langs: p.langlinkscount ?? 0, // left out when there are none
           });
           poi.category = classifyPlace(poi);
         }
       }),
     );
-    return [...byId.values()].filter((p) => p.category !== undefined);
+    // Search finds pages by any coordinate; keep the ones whose main location is in the radius.
+    return [...byId.values()].filter((p) => p.category !== undefined && p.lat != null && distanceMeters({ lat, lon }, p) <= meters * 1.05);
   }
 
   return { lang, nearby, summary, titleFromWikidata, resolveArticle, exploreArea };

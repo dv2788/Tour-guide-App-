@@ -10,6 +10,7 @@ import { Narrator } from './narrator.js';
 import { GpsSource, SimulatedSource } from './location.js';
 import { TourEngine } from './tourEngine.js';
 import { distanceMeters } from './geo.js';
+import { sharesNameToken } from './text.js';
 import { parseItinerary, parseTextList, SOURCE_LABELS } from './itineraryImport.js';
 import { NEURAL_VOICES, neuralVoiceKey, parseVoiceKey, rankSystemVoices, PREVIEW_TEXT, PREVIEW_TEXT_DOCUMENTARY, voiceProfile } from './voices.js';
 import { isVoiceDownloaded, neuralVoicesSupported } from './neuralVoice.js';
@@ -284,6 +285,29 @@ function showLocateNote(text, tone = '') {
   note.dataset.tone = tone;
 }
 
+/**
+ * A city typed in the box that isn't the one you're in: then we plan there, not around you
+ * (you might be planning tomorrow's trip from your hotel, or from home).
+ */
+function otherCityTyped() {
+  const typed = $('city').value.trim();
+  if (!typed || !startPoint) return null;
+  return startPoint.name && sharesNameToken(typed, startPoint.name) ? null : typed;
+}
+
+function describeLocation() {
+  if (!startPoint) return;
+  const other = otherCityTyped();
+  if (other && startPoint.name) showLocateNote(`✓ You're in ${startPoint.name}. I'll plan around ${other}, as typed.`);
+  else if (other) showLocateNote(`✓ Got your location. I'll plan around ${other}, as typed.`);
+  else showLocateNote(startPoint.name ? `✓ You're in ${startPoint.name}. I'll plan around where you are.` : "✓ Got your location. I'll plan around where you are.");
+}
+
+$('city').addEventListener('change', () => {
+  describeLocation();
+  if (!plan) showPlanMap();
+});
+
 /** Ask the browser where we are, name the city, and centre the plan around it. */
 async function locateMe({ silent = false } = {}) {
   if (!('geolocation' in navigator)) {
@@ -314,7 +338,7 @@ async function locateMe({ silent = false } = {}) {
   here.name = city?.name ?? null;
   startPoint = here;
   if (here.name && !$('city').value.trim()) $('city').value = here.name;
-  showLocateNote(here.name ? `✓ You're in ${here.name}. I'll plan around where you are.` : "✓ Got your location. I'll plan around where you are.");
+  describeLocation();
   showPlanMap();
   save(readForm());
   return here;
@@ -357,12 +381,20 @@ async function planRoute() {
   const loop = $('loop').checked;
   button.disabled = true;
   try {
-    let origin = startPoint ?? (await locateMe());
-    if (!origin && $('city').value.trim()) {
-      showImportNote(`Finding ${$('city').value.trim()}…`);
-      const city = await createGeocoder({ lang }).findCity($('city').value.trim()).catch(() => null);
-      if (city) origin = { lat: city.lat, lon: city.lon, name: city.name };
+    // Around you, unless you typed another city: then around that city's centre.
+    const typed = $('city').value.trim();
+    let origin = startPoint && !otherCityTyped() ? startPoint : null;
+    if (!origin && typed) {
+      showImportNote(`Finding ${typed}…`);
+      const city = await createGeocoder({ lang }).findCity(typed).catch(() => null);
+      if (!city) {
+        showImportNote(`I couldn't find "${typed}". Check the spelling, or clear it to plan around where you are.`, 'warn');
+        return;
+      }
+      // "Brussels" typed while your phone says "Saint-Gilles": that's where you are.
+      origin = startPoint && distanceMeters(startPoint, city) < 20000 ? startPoint : { lat: city.lat, lon: city.lon, name: city.name };
     }
+    if (!origin) origin = await locateMe();
     if (!origin) {
       showImportNote('Tell me where you are first: tap "Use my location" or type your city.', 'warn');
       return;
@@ -551,7 +583,7 @@ function showPlanMap() {
   const box = $('plan-map');
   const lines = $('stops').value.split('\n').map((l) => l.trim()).filter(Boolean);
   const stops = lines.map((name) => ({ name, ...imported.get(name) })).filter((s) => s.lat != null);
-  const origin = plan?.start ?? startPoint;
+  const origin = plan?.start ?? (otherCityTyped() ? null : startPoint);
   if (!L || (!origin && !stops.length)) {
     box.hidden = true;
     return;
@@ -748,7 +780,7 @@ if (saved) fillForm(saved);
 populateGuides(saved?.voice ?? null);
 syncFormHints();
 renderPlan();
-if (startPoint?.name) showLocateNote(`✓ You're in ${startPoint.name}.`);
+if (startPoint) describeLocation();
 // A link to a sample tour (?tour=barcelona, from the tour pages) opens with that tour loaded.
 const linkedTour = new URLSearchParams(location.search).get('tour');
 if (linkedTour && SAMPLES.some((s) => s.id === linkedTour)) {

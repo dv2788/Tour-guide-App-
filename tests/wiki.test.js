@@ -74,3 +74,33 @@ test('resolveArticle rejects a same-named article in another city', async () => 
   const article = await wiki.resolveArticle({ name: 'Eiffel Tower', lat: 33.6609, lon: -95.5555 });
   assert.equal(article, null);
 });
+
+test('exploreArea adds the most notable places in the whole radius to the nearest ones', async () => {
+  // 48.86,2.33 is the centre; 0.009° of latitude is about 1 km.
+  const { fetchImpl, seen } = mockFetch([
+    ['list=geosearch', { query: { geosearch: [{ pageid: 1, title: 'Corner Church', lat: 48.8605, lon: 2.33 }] } }],
+    ['list=search', { query: { search: [{ pageid: 2, title: 'Famous Cathedral' }, { pageid: 1, title: 'Corner Church' }, { pageid: 3, title: 'Far Away Tower' }] } }],
+    [
+      'pageids=',
+      {
+        query: {
+          pages: [
+            { pageid: 1, title: 'Corner Church', length: 9000, description: 'church in Paris' },
+            { pageid: 2, title: 'Famous Cathedral', length: 90000, description: 'Gothic cathedral', langlinkscount: 95, coordinates: [{ lat: 48.878, lon: 2.33, type: 'landmark' }] },
+            { pageid: 3, title: 'Far Away Tower', length: 50000, description: 'tower', langlinkscount: 40, coordinates: [{ lat: 48.95, lon: 2.33 }] },
+          ],
+        },
+      },
+    ],
+  ]);
+  const wiki = createWikiService({ lang: 'en', fetchImpl });
+  const pois = await wiki.exploreArea(48.86, 2.33, 3000);
+  assert.ok(seen.some((u) => /srsearch=nearcoord%3A3000m%2C48\.86%2C2\.33/.test(u)), 'asks for notable places in the radius (in whole meters: Wikipedia ignores "3.0km")');
+  assert.ok(seen.some((u) => /prop=[^&]*langlinkscount/.test(u) && /coprop=type/.test(u)), 'with how many languages cover each, and what its coordinates mark');
+  const byTitle = Object.fromEntries(pois.map((p) => [p.title, p]));
+  assert.deepEqual(Object.keys(byTitle).sort(), ['Corner Church', 'Famous Cathedral'], 'the far tower (10 km) is outside the radius');
+  assert.equal(byTitle['Famous Cathedral'].langs, 95);
+  assert.equal(byTitle['Famous Cathedral'].coordType, 'landmark');
+  assert.ok(Math.abs(byTitle['Famous Cathedral'].lat - 48.878) < 1e-9, 'position from its coordinates');
+  assert.equal(byTitle['Corner Church'].langs, 0, 'no language links means none');
+});
