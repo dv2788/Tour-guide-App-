@@ -276,6 +276,15 @@ export function stepInstruction(lang, step, stopName = '') {
   return step.name ? fill(w.onto, { action, name: step.name }) : action;
 }
 
+/** Closer than this to the place and there is no way left to show: it's right there. */
+const HERE_METERS = 25;
+
+/** "Casa Batlló is just ahead", or "Your starting point is just ahead" (a sentence starts with a capital). */
+function hereSentence(lang, stopName) {
+  const text = fill((NAV[lang] ?? NAV.en).arrive, { stop: stopName });
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
 /** The full sentence for the next maneuver, with distance and any "then …". */
 export function maneuverSentence(lang, maneuver, stopName, { withDistance = true } = {}) {
   const w = NAV[lang] ?? NAV.en;
@@ -496,17 +505,26 @@ export class Navigator {
     if (!this.target) return base;
     if (!this.route || !progress) {
       const straight = this.position ? distanceMeters(this.position, this.target) : null;
-      return { ...base, remaining: straight, minutes: straight != null ? Math.max(1, Math.round(straight / this.settings.speed)) : null };
+      // Already there (e.g. back at the start of a round trip): no route to wait for.
+      const here = straight != null && straight <= HERE_METERS;
+      return {
+        ...base,
+        sentence: here ? hereSentence(this.lang, this.target.name) : null,
+        icon: here ? 'flag' : null,
+        remaining: straight,
+        minutes: straight != null ? Math.max(1, Math.round(straight / this.settings.speed)) : null,
+      };
     }
     const remaining = Math.max(0, this.route.length - progress.along) + progress.off;
     const maneuver = upcomingManeuver(this.route, progress.along);
     const offRoute = Boolean(progress.offRoute);
+    const arrived = !maneuver && !offRoute; // past the last step of the route
     return {
       ...base,
       maneuver,
       // While re-routing, don't keep giving directions for the road you've left.
-      sentence: maneuver && !offRoute ? maneuverSentence(this.lang, maneuver, this.target.name) : null,
-      icon: maneuver && !offRoute ? maneuverIcon(maneuver.step) : null,
+      sentence: maneuver && !offRoute ? maneuverSentence(this.lang, maneuver, this.target.name) : arrived ? hereSentence(this.lang, this.target.name) : null,
+      icon: maneuver && !offRoute ? maneuverIcon(maneuver.step) : arrived ? 'flag' : null,
       remaining,
       minutes: Math.max(1, Math.round(remaining / this.settings.speed)),
       offRoute,

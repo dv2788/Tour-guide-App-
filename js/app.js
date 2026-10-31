@@ -817,6 +817,7 @@ function quietStyle(url) {
 }
 
 function addBaseMap(target) {
+  target.attributionControl?.setPrefix(false); // drop the optional "Leaflet" credit so the map data credits fit on one line
   if (!canDrawVectorMaps()) return addRasterMap(target);
   target.getContainer().classList.add('vector-map');
   const dark = window.matchMedia?.('(prefers-color-scheme: dark)').matches;

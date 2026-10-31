@@ -234,6 +234,28 @@ test('Navigator: your dot is drawn on the route while you follow it', async () =
   assert.equal(nav.snap(far), far, 'left where it is when you are clearly elsewhere');
 });
 
+test('Navigator: at the end of the way, or already there, the place is "just ahead" (not "Finding the way…")', async () => {
+  const target = { name: 'Grand Palais', lat: 48.866704, lon: 2.312009 };
+  const { nav, route: r } = await walk(osrm, target);
+  let state;
+  nav.onUpdate = (s) => (state = s);
+  nav.update(pointAlongPath(r, r.length));
+  assert.equal(state.sentence, 'Grand Palais is just ahead');
+  assert.equal(state.icon, 'flag');
+  // Back at the start of a round trip: the route service has no way to give (you're there), nothing to wait for.
+  let home;
+  const back = new Navigator({ lang: 'en', modeId: 'walk', getDirections: async () => { throw new Error('No route'); }, onUpdate: (s) => (home = s), now: () => 0 });
+  back.update({ lat: 41.387, lon: 2.1701 });
+  back.setTarget({ name: 'your starting point', lat: 41.38705, lon: 2.17012 });
+  await flush();
+  assert.equal(home.sentence, 'Your starting point is just ahead');
+  assert.equal(home.icon, 'flag');
+  // Still 200 m away with no route yet: that is when it is finding the way.
+  back.setTarget({ name: 'Plaça Reial', lat: 41.3888, lon: 2.1701 });
+  await flush();
+  assert.equal(home.sentence, null);
+});
+
 test('Navigator: names an unnamed street before announcing the turn', async () => {
   const unnamed = synth(
     [[0, 0], [150, 0], [150, 120]],

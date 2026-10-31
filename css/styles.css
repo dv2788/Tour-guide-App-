@@ -1615,6 +1615,9 @@ select:focus {
 
 .leaflet-container {
   font-family: var(--sans);
+  /* Keep Leaflet's own layers (z-index 400 to 1000) inside the map, so a map scrolled under the
+     app bar or the "Begin the tour" bar doesn't draw on top of them. */
+  isolation: isolate;
 }
 
 .leaflet-container .leaflet-control-attribution {

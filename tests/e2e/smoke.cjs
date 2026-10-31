@@ -186,6 +186,22 @@ const LIVE = process.env.LIVE === '1';
   await page3.click('#locate-me');
   await page3.waitForFunction(() => /You're in Barcelona/.test(document.getElementById('locate-note').textContent), null, { timeout: 30000 });
   expect((await page3.$eval('#city', (el) => el.value)) === 'Barcelona', 'city filled in from the location');
+  // A tester saw the small map of where you are drawn on top of the "Begin the tour" bar when scrolled behind it.
+  await page3.waitForSelector('#plan-map:not([hidden])');
+  const mapUnderBar = await page3.evaluate(() => {
+    const map = document.getElementById('plan-map');
+    const btn = document.querySelector('.cta-bar .btn-primary');
+    const b = btn.getBoundingClientRect();
+    window.scrollBy(0, map.getBoundingClientRect().top - (b.top + b.height / 2) + 30);
+    const m = map.getBoundingClientRect();
+    const x = b.left + b.width / 2;
+    const y = b.top + b.height / 2;
+    const el = document.elementFromPoint(x, y);
+    window.scrollTo(0, 0);
+    return { behind: m.top < y && m.bottom > y && m.left < x && m.right > x, covered: map.contains(el), what: String(el?.className?.baseVal ?? el?.className) };
+  });
+  expect(mapUnderBar.behind, 'the map was scrolled behind the "Begin the tour" bar');
+  expect(!mapUnderBar.covered, `the map stays under the "Begin the tour" bar (on top: ${mapUnderBar.what})`);
   await page3.click('#suggest-open');
   await page3.click('.chip-opt:has(input[value="240"])');
   await page3.click('#suggest-go');
