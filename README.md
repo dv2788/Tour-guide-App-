@@ -7,7 +7,7 @@ stops) or let Roamie curate a route, pick your guide, and put the phone in your 
 As you walk, run, cycle or drive, a private voice guide shows you the way and tells you the stories of the
 places you pass. No tour guide or travel agency needed.
 
-> "On your left: Hôtel de la Marine. Designed by Ange-Jacques Gabriel and built between 1757 and 1774…"
+> "You have arrived at Casa Batlló. It was designed by Antoni Gaudí, and is considered one of his masterpieces…"
 
 ## Try it
 
@@ -17,9 +17,29 @@ It's a web app (works on any phone browser, nothing to install, no account, no A
 npm start            # serves Roamie on http://localhost:8080 (needs Python 3)
 ```
 
-Open it, tap **"or try a sample Paris walk"**, then **Start the tour**. "Try from the couch" drives a
-virtual you along the route, so you can hear a tour of Paris from home. Tap **▶** on any guide to hear
-them first.
+Open it, pick one of the **sample tours** at the top (or tap **"or try a sample tour of Barcelona"**), then
+**Begin the tour**. "Try from the couch" drives a virtual you along the route, so you can hear a tour of
+Barcelona, Cape Town or Tokyo from home. Tap **▶** on any guide to hear them first.
+
+### Sample tours
+
+Ready to try, and real tours: each was checked against the live services (every stop found on the map under
+this name, a real route joining them, a Wikipedia article for each). Use them from the sofa or on the spot.
+
+| City | Tour | Stops |
+| --- | --- | --- |
+| **Barcelona** | Gaudí, La Rambla and the Gothic Quarter · 3 km on foot | Casa Batlló, Plaça de Catalunya, La Boqueria, Plaça Reial, Barcelona Cathedral, Santa Maria del Mar |
+| **Brussels** | From Manneken Pis to the Royal Palace · 2.3 km | Manneken Pis, Grand-Place, Galeries Royales Saint-Hubert, the cathedral, Mont des Arts, Royal Palace |
+| **Cape Town** | The Castle, the old city and the Bo-Kaap · 2.9 km | Castle of Good Hope, City Hall, Greenmarket Square, Bo-Kaap Museum, St. George's Cathedral, Company's Garden |
+| **Kinshasa** | A drive past the landmarks of Lingwala and Gombe · 16 km by car | Palais du Peuple, Stade des Martyrs, Notre-Dame du Congo, the botanical garden, Palais de la Nation |
+| **Miami Beach** | Art Deco South Beach · 2.9 km | Art Deco Welcome Center, Casa Casuarina (Versace mansion), The Wolfsonian–FIU, Española Way, Lincoln Road |
+| **Paris** | From the Eiffel Tower to the Louvre · 4.5 km | Eiffel Tower, Pont de l'Alma, Grand Palais, Place de la Concorde, Louvre |
+| **San Francisco** | California: the Ferry Building up to Coit Tower · 3.7 km | Ferry Building, Transamerica Pyramid, Dragon Gate, Washington Square, Coit Tower |
+| **Shenzhen** | Lotus Hill to the Ping An tower · 4 km | Lianhuashan Park, Shenzhen Library, Civic Center, Shenzhen Museum, Ping An Finance Center |
+| **Tokyo** | Asakusa's temples to the Skytree · 2.9 km | Kaminarimon, Sensō-ji, Asakusa Shrine, Sumida Park, Tokyo Skytree |
+
+They live in `js/samples.js`; any city works the same way: type your own stops, paste a route, or let Roamie
+curate one.
 
 **On your phone:** location only works over HTTPS. The easiest way is GitHub Pages
 (repo **Settings → Pages → Deploy from a branch**, pick this branch and `/ (root)`). Open the URL on your
@@ -85,10 +105,17 @@ Checked on real walking routes in Paris, London, New York, Rome, Barcelona, Toky
 and before you reach it, with no re-routing while you're on the route. A simulation with a drifting GPS
 error of ±15 m reached every destination; one with a wrong turn on each walk re-routed every time.
 
-**How fresh is the map?** Roamie doesn't keep its own copy of the map: every map tile, route and street name
-is fetched live from OpenStreetMap, which volunteers update every minute. Edits show on the map tiles usually
-within minutes (sometimes a few hours, while older copies expire), place search (Nominatim) follows within
-minutes, and the routing service rebuilds its road network from the latest data roughly every two days.
+**A sharp map.** The map is drawn on the phone from vector data
+([OpenFreeMap](https://openfreemap.org), built from OpenStreetMap; free, no account, no key), so it stays crisp
+at any zoom and on any screen, down to every pavement, crossing and building outline. It opens at street
+level around the way ahead, in an ivory day style or a midnight-blue night style, without the bus-stop and
+shop clutter. Your dot sits on the route while you follow it (GPS wanders a few meters into buildings; your
+path doesn't). Phones that can't draw vector maps get OpenStreetMap's map images instead.
+
+**How fresh is the map?** Roamie doesn't keep its own copy of the map: every map, route and street name is
+fetched live from OpenStreetMap data, which volunteers update every minute. Place search (Nominatim) follows
+within minutes, the routing service rebuilds its road network roughly every two days, and the vector map is
+rebuilt every week (the copy in use today is from 25 October 2026).
 
 ## Paste your route from any maps app
 
@@ -120,7 +147,7 @@ Two kinds of guide, in every language:
 - **Calm guides** (Jenny, Amy, Siwis, Claude, Kerstin, Paola…): soft, steady, unhurried.
 - **Documentary narrators** (Arthur, Pierre, Marcos, Thorsten): a deep, slow storyteller in the spirit of
   classic nature documentaries, with long pauses and their own way of telling it: *"And here, on your
-  left… the Grand Palais."* An original voice, not an imitation of any real person.
+  left… Casa Batlló."* An original voice, not an imitation of any real person.
 
 All of them are **natural AI voices that run on the phone itself**
 ([Piper](https://github.com/rhasspy/piper)): free, private (nothing you hear is sent anywhere), and it works
@@ -152,11 +179,12 @@ still downloading or ever fails, the phone's voice takes over without a gap.
 
 ### Your itinerary comes first
 
-- Arriving at a stop interrupts any other story: *"You have arrived at Grand Palais… Next stop: Place de la Concorde, 650 meters away."*
+- Arriving at a stop interrupts any other story: *"You have arrived at Plaça Reial… Next stop: Barcelona Cathedral, 450 meters away."*
 - Big places count as reached when you get to their edge, not their centre point (the Louvre is 600 m long).
 - Stops are detected along the whole path you travelled, so fast driving or a weak GPS signal can't skip one.
 - Visiting stops out of order works. No itinerary at all also works ("free roam").
-- The guide uses the names you typed, and picks the bridge "Pont de l'Alma", not the station named after it.
+- The guide uses the names you typed ("Plaça Reial", not OpenStreetMap's English "Royal Square"), and picks
+  the square "Plaça de Catalunya", not the metro station under it.
 
 ### Also
 
@@ -172,7 +200,8 @@ still downloading or ever fails, the phone's voice takes over without a gap.
 ```
 index.html            the two screens: plan the trip, then on tour
 css/styles.css
-js/app.js             screen wiring, map (Leaflet)
+js/app.js             screen wiring, map (Leaflet + MapLibre vector maps)
+js/samples.js         the sample tours
 js/tourEngine.js      decides what to say and when (no DOM: fully unit-tested)
 js/narration.js       builds the sentences the guide says
 js/narrator.js        what to say next: queue, pause/skip/repeat, priority for arrivals, voice fallback
@@ -200,7 +229,7 @@ Plain JavaScript modules: no framework, no build step.
 ```bash
 npm test             # unit tests (Node 18+): geo math, text cleanup, the tour engine, Wikipedia/OSM parsing,
                      # directions on real walking routes in 8 cities
-npm run e2e          # browser runs on a phone-sized screen: the Paris walk, a pasted Google Maps route,
+npm run e2e          # browser runs on a phone-sized screen: the Barcelona walk, a pasted Google Maps route,
                      # and "use my location" + a suggested half-day route with a museum visit and meals
 npm run e2e:voice    # the AI voice for real: download, preview, and a tour read by it (needs internet)
 ```
@@ -217,8 +246,11 @@ Screenshots of each run are saved in `tests/e2e/screenshots/`.
   but a native app (iOS/Android) is needed to keep talking with the screen off, or to show up in CarPlay / Android Auto.
 - **The AI voice is an 80 MB download** the first time (Wi-Fi recommended), and very old phones may be too
   slow for it. The phone's own voice is used meanwhile or instead.
-- **Free public services** (Nominatim, routing.openstreetmap.de, OpenStreetMap tiles) are fine for trying this
-  out, but not for thousands of users. A real launch needs paid or self-hosted equivalents.
+- **Free public services** (Nominatim, routing.openstreetmap.de, OpenFreeMap, OpenStreetMap tiles) are fine for
+  a first launch, but not for heavy use. Growth needs paid or self-hosted equivalents.
+- **Mainland China:** Wikipedia (the stories) is blocked on Chinese networks. Visitors with a foreign SIM or
+  eSIM on roaming, or a VPN, get the full tour (that's how most travellers connect there); on Chinese Wi-Fi or a
+  local SIM, the map and directions may work but the stories won't.
 - **Directions are only as good as OpenStreetMap.** It's very complete in most cities, but a missing footpath
   or a wrong one-way street means a detour. Anyone can fix the map at openstreetmap.org; the routing service
   picks up fixes within about two days.
@@ -240,7 +272,8 @@ Screenshots of each run are saved in `tests/e2e/screenshots/`.
 
 Icons: [Material Symbols](https://fonts.google.com/icons) (Apache 2.0). Fonts: [Cormorant Garamond](https://fonts.google.com/specimen/Cormorant+Garamond) and [Jost](https://fonts.google.com/specimen/Jost) (SIL OFL).
 Place information © [Wikipedia](https://www.wikipedia.org/) contributors (CC BY-SA). Map data ©
-[OpenStreetMap](https://www.openstreetmap.org/copyright) contributors (ODbL). Map display by [Leaflet](https://leafletjs.com/).
+[OpenStreetMap](https://www.openstreetmap.org/copyright) contributors (ODbL). Map display by [Leaflet](https://leafletjs.com/) and [MapLibre](https://maplibre.org/); vector maps by
+[OpenFreeMap](https://openfreemap.org) © [OpenMapTiles](https://www.openmaptiles.org/).
 Voices: [Piper](https://github.com/rhasspy/piper) and the [piper-voices](https://huggingface.co/rhasspy/piper-voices)
 collection (see [docs/voices.md](docs/voices.md) for each voice's dataset licence; the Arthur voice uses the
 VCTK corpus, CC BY 4.0, CSTR, University of Edinburgh), running on

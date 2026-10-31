@@ -131,16 +131,16 @@ export function prepareForNeuralVoice(text, lang) {
 }
 
 export const PREVIEW_TEXT_DOCUMENTARY = {
-  en: "And here, on your left… the Pont Alexandre the Third. Built for the great Exhibition of 1900, it is, quite simply, the most beautiful bridge in Paris.",
-  fr: "Et ici, sur votre gauche… le pont Alexandre-III. Construit pour l'Exposition universelle de 1900, il est, tout simplement, le plus beau pont de Paris.",
-  es: 'Y aquí, a nuestra izquierda… el puente de Alejandro III. Construido para la gran Exposición de 1900, es, sencillamente, el puente más bello de París.',
-  de: 'Und hier, zu unserer Linken… die Pont Alexandre III. Erbaut für die große Weltausstellung von 1900, ist sie schlicht die schönste Brücke von Paris.',
+  en: 'And here, on your left… Casa Batlló. Rebuilt by Gaudí in 1904, its roof rises like the back of a sleeping dragon.',
+  fr: "Et ici, sur votre gauche… la Casa Batlló. Transformée par Gaudí en 1904, son toit s'élève comme le dos d'un dragon endormi.",
+  es: 'Y aquí, a nuestra izquierda… la Casa Batlló. Transformada por Gaudí en 1904, su tejado se alza como el lomo de un dragón dormido.',
+  de: 'Und hier, zu unserer Linken… die Casa Batlló. Von Gaudí 1904 umgestaltet, erhebt sich ihr Dach wie der Rücken eines schlafenden Drachen.',
 };
 
 export const PREVIEW_TEXT = {
-  en: "Hello, I'll be your guide today. On your left: the Pont Alexandre the Third, often called the most beautiful bridge in Paris.",
-  fr: "Bonjour, je serai votre guide aujourd'hui. Sur votre gauche : le pont Alexandre-III, souvent considéré comme le plus beau pont de Paris.",
-  es: 'Hola, hoy seré tu guía. A tu izquierda: el puente de Alejandro III, a menudo considerado el puente más bello de París.',
-  de: 'Hallo, ich bin heute Ihr Reiseführer. Zu Ihrer Linken: die Pont Alexandre III, oft als die schönste Brücke von Paris bezeichnet.',
-  it: 'Ciao, oggi sarò la tua guida. Alla tua sinistra: il ponte Alessandro III, spesso considerato il ponte più bello di Parigi.',
+  en: "Hello, I'll be your guide today. On your left: Casa Batlló, the house Gaudí rebuilt in 1904, with balconies like masks and a roof like a dragon's back.",
+  fr: "Bonjour, je serai votre guide aujourd'hui. Sur votre gauche : la Casa Batlló, que Gaudí a transformée en 1904, avec des balcons comme des masques et un toit comme le dos d'un dragon.",
+  es: 'Hola, hoy seré tu guía. A tu izquierda: la Casa Batlló, que Gaudí transformó en 1904, con balcones como máscaras y un tejado como el lomo de un dragón.',
+  de: 'Hallo, ich bin heute Ihr Reiseführer. Zu Ihrer Linken: die Casa Batlló, die Gaudí 1904 umgestaltet hat, mit Balkonen wie Masken und einem Dach wie dem Rücken eines Drachen.',
+  it: 'Ciao, oggi sarò la tua guida. Alla tua sinistra: Casa Batlló, che Gaudí trasformò nel 1904, con balconi come maschere e un tetto come il dorso di un drago.',
 };

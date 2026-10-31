@@ -75,8 +75,8 @@ The narrator profile then makes the chosen voice sound older and more intimate:
   only the pitch drops, not the pace,
 - **slower**: ~20% slower than the model's default, with **0.6 s pauses** between sentences,
 - **closer**: more low body (+3.5 dB) and softer highs (−5.5 dB), for a hushed, close-to-the-mic feel,
-- **documentary phrasing**: *"And here, on your left… the Grand Palais."*, *"And so, we arrive at the
-  Louvre."*, *"Our journey continues to…"* (in English, French, Spanish and German).
+- **documentary phrasing**: *"And here, on your left… Casa Batlló."*, *"And so, we arrive at Santa
+  Maria del Mar."*, *"Our journey continues to…"* (in English, French, Spanish and German).
 
 Narrators in other languages: **Pierre** (French, upmc), **Marcos** (Spanish, sharvard male speaker) and
 **Thorsten** (German, already deep, so no pitch drop: it blurred German consonants). Rendered with the full
@@ -87,7 +87,7 @@ Named "Arthur" in the app (the dataset speaker has no name).
 
 ## Listen
 
-The same sentence, exactly as the app plays it:
+The same sentence (the one used to compare the voices), exactly as the app plays it:
 
 - English: [Jenny (Dioco)](voice-samples/en-jenny.mp3), [Amy](voice-samples/en-amy.mp3), narrator [Arthur](voice-samples/en-arthur.mp3)
 - Français : [Siwis](voice-samples/fr-siwis.mp3), [Jessica](voice-samples/fr-jessica.mp3), narrateur [Pierre](voice-samples/fr-pierre.mp3)

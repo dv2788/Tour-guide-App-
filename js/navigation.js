@@ -226,32 +226,32 @@ const NAV = {
   en: {
     depart: 'Head {compass}', left: 'Turn left', right: 'Turn right', 'slight left': 'Bear left', 'slight right': 'Bear right', 'keep left': 'Keep left', 'keep right': 'Keep right',
     'sharp left': 'Turn sharp left', 'sharp right': 'Turn sharp right', straight: 'Continue straight', uturn: 'Turn around',
-    roundabout: 'At the roundabout, take exit {exit}', onto: '{action} onto {name}', arrive: '{stop} is just ahead',
+    roundabout: 'At the roundabout, take exit {exit}', onto: '{action} onto {name}', arrive: '{stop} is just ahead', arriveIn: '{stop} is {d} ahead',
     then: '{first}, then {second}', in: 'In {d}, {action}', lowerFirst: true,
   },
   fr: {
     depart: 'Partez vers {compass}', left: 'Tournez à gauche', right: 'Tournez à droite', 'slight left': 'Tournez légèrement à gauche',
     'slight right': 'Tournez légèrement à droite', 'keep left': 'Restez à gauche', 'keep right': 'Restez à droite', 'sharp left': 'Tournez franchement à gauche', 'sharp right': 'Tournez franchement à droite',
     straight: 'Continuez tout droit', uturn: 'Faites demi-tour', roundabout: 'Au rond-point, prenez la sortie {exit}',
-    onto: '{action} sur {name}', arrive: '{stop} est juste devant vous', then: '{first}, puis {second}', in: 'Dans {d}, {action}', lowerFirst: true,
+    onto: '{action} sur {name}', arrive: '{stop} est juste devant vous', arriveIn: '{stop} est à {d} devant vous', then: '{first}, puis {second}', in: 'Dans {d}, {action}', lowerFirst: true,
   },
   es: {
     depart: 'Dirígete hacia {compass}', left: 'Gira a la izquierda', right: 'Gira a la derecha', 'slight left': 'Gira ligeramente a la izquierda',
     'slight right': 'Gira ligeramente a la derecha', 'keep left': 'Mantente a la izquierda', 'keep right': 'Mantente a la derecha', 'sharp left': 'Gira bruscamente a la izquierda', 'sharp right': 'Gira bruscamente a la derecha',
     straight: 'Sigue recto', uturn: 'Da la vuelta', roundabout: 'En la rotonda, toma la salida {exit}', onto: '{action} hacia {name}',
-    arrive: '{stop} está justo delante', then: '{first} y luego {second}', in: 'En {d}, {action}', lowerFirst: true,
+    arrive: '{stop} está justo delante', arriveIn: '{stop} está a {d}', then: '{first} y luego {second}', in: 'En {d}, {action}', lowerFirst: true,
   },
   de: {
     depart: 'Gehen Sie Richtung {compass}', left: 'Links abbiegen', right: 'Rechts abbiegen', 'slight left': 'Leicht links abbiegen',
     'slight right': 'Leicht rechts abbiegen', 'keep left': 'Links halten', 'keep right': 'Rechts halten', 'sharp left': 'Scharf links abbiegen', 'sharp right': 'Scharf rechts abbiegen',
     straight: 'Geradeaus weiter', uturn: 'Wenden Sie', roundabout: 'Im Kreisverkehr die {exit}. Ausfahrt nehmen', onto: '{action} in {name}',
-    arrive: '{stop} liegt direkt vor Ihnen', then: '{first}, dann {second}', in: 'In {d}: {action}', lowerFirst: false,
+    arrive: '{stop} liegt direkt vor Ihnen', arriveIn: '{stop} liegt {d} vor Ihnen', then: '{first}, dann {second}', in: 'In {d}: {action}', lowerFirst: false,
   },
   it: {
     depart: 'Procedi verso {compass}', left: 'Gira a sinistra', right: 'Gira a destra', 'slight left': 'Svolta leggermente a sinistra',
     'slight right': 'Svolta leggermente a destra', 'keep left': 'Tieni la sinistra', 'keep right': 'Tieni la destra', 'sharp left': 'Gira decisamente a sinistra', 'sharp right': 'Gira decisamente a destra',
     straight: 'Prosegui dritto', uturn: 'Torna indietro', roundabout: 'Alla rotonda, prendi la uscita {exit}', onto: '{action} in {name}',
-    arrive: '{stop} è proprio davanti a te', then: '{first}, poi {second}', in: 'Tra {d}, {action}', lowerFirst: true,
+    arrive: '{stop} è proprio davanti a te', arriveIn: '{stop} è a {d} davanti a te', then: '{first}, poi {second}', in: 'Tra {d}, {action}', lowerFirst: true,
   },
 };
 
@@ -279,6 +279,10 @@ export function stepInstruction(lang, step, stopName = '') {
 /** The full sentence for the next maneuver, with distance and any "then …". */
 export function maneuverSentence(lang, maneuver, stopName, { withDistance = true } = {}) {
   const w = NAV[lang] ?? NAV.en;
+  if (maneuver.step.type === 'arrive') {
+    // "Plaça de Catalunya is 100 meters ahead": a name never loses its capital.
+    return withDistance && maneuver.distance >= 15 ? fill(w.arriveIn, { stop: stopName, d: formatDistance(lang, maneuver.distance) }) : fill(w.arrive, { stop: stopName });
+  }
   let text = stepInstruction(lang, maneuver.step, stopName);
   if (maneuver.then) text = fill(w.then, { first: text, second: w.lowerFirst ? lowerFirst(stepInstruction(lang, maneuver.then, stopName)) : stepInstruction(lang, maneuver.then, stopName) });
   if (withDistance && maneuver.distance >= 15 && maneuver.step.type !== 'depart') {
@@ -378,6 +382,18 @@ export class Navigator {
 
   stop() {
     this.running = false;
+  }
+
+  /**
+   * Where to draw you: on the route when you're clearly following it (GPS wanders a few
+   * meters into buildings; the way you're walking doesn't), else where the GPS says.
+   */
+  snap(position) {
+    const p = this.progress;
+    if (!this.route || !p || p.offRoute) return position;
+    if (p.off > Math.max(20, Math.min(position.accuracy ?? 0, 35))) return position;
+    const on = pointAlongPath(this.route, p.along);
+    return on ? { ...position, lat: on.lat, lon: on.lon, snapped: true } : position;
   }
 
   /** How far off the route counts as a wrong turn, given how sure the GPS is. */

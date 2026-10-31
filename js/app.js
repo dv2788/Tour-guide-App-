@@ -1,6 +1,7 @@
 // Screen wiring: the setup form, the map, the "now playing" card and the controls.
 
 import { getMode, MODES } from './modes.js';
+import { SAMPLES, DEFAULT_SAMPLE, sampleById } from './samples.js';
 import { LANGUAGES, speechLocale } from './i18n.js';
 import { createWikiService } from './wiki.js';
 import { createGeocoder, fetchRoute, fetchDirections, fetchStreetName } from './geocode.js';
@@ -27,13 +28,6 @@ import {
 const $ = (id) => document.getElementById(id);
 const STORAGE_KEY = 'roamie:setup';
 const OLD_STORAGE_KEY = 'tour-guide:setup'; // before the app was called Roamie
-const SAMPLE = {
-  city: 'Paris',
-  stops: ['Eiffel Tower', "Pont de l'Alma", 'Grand Palais', 'Place de la Concorde', 'Louvre Museum'].join('\n'),
-  mode: 'walk',
-  source: 'sim',
-  simSpeed: '8',
-};
 
 // ---------- Setup form ----------
 
@@ -106,12 +100,37 @@ function save(values) {
 }
 
 form.addEventListener('change', syncFormHints);
-$('demo').addEventListener('click', () => {
+// ---------- Sample tours ----------
+
+function loadSample(id) {
+  const sample = sampleById(id);
   imported = new Map();
-  fillForm({ ...SAMPLE, lang: $('lang').value });
-  showImportNote('');
+  plan = null;
+  renderPlan();
+  showPlanMap();
+  // Start from the first stop (not from wherever you are now), simulated from the sofa.
+  fillForm({ city: sample.city, stops: sample.stops.join('\n'), mode: sample.mode, source: 'sim', simSpeed: '8', start: null, lang: $('lang').value });
+  for (const el of document.querySelectorAll('.sample')) el.setAttribute('aria-pressed', String(el.dataset.id === sample.id));
+  showImportNote(`✓ Sample tour of ${sample.label}: ${sample.stops.length} stops. Tap “Begin the tour” to try it from your sofa.`);
   $('setup-error').textContent = '';
-});
+}
+
+$('samples').replaceChildren(
+  ...SAMPLES.map((sample) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'sample';
+    button.dataset.id = sample.id;
+    button.setAttribute('aria-pressed', 'false');
+    const how = sample.mode === 'drive' ? 'by car' : 'on foot';
+    button.innerHTML = `<span class="sample-city"></span><span class="sample-blurb"></span><span class="sample-meta"><svg class="icon" role="img" aria-label="${how}"><use href="#i-${sample.mode === 'drive' ? 'car' : 'walk'}" /></svg>${sample.stops.length} stops · ${sample.km} km</span>`;
+    button.querySelector('.sample-city').textContent = sample.label;
+    button.querySelector('.sample-blurb').textContent = sample.blurb;
+    button.addEventListener('click', () => loadSample(sample.id));
+    return button;
+  }),
+);
+$('demo').addEventListener('click', () => loadSample(DEFAULT_SAMPLE));
 
 // ---------- Importing a route from a maps app ----------
 
@@ -317,8 +336,9 @@ const MEAL_ICON = { coffee: 'cafe', lunch: 'restaurant', dinner: 'restaurant', d
 
 function formatMinutes(min) {
   if (min < 60) return `${min} min`;
-  const h = Math.floor(min / 60);
-  const m = Math.round((min % 60) / 5) * 5;
+  const rounded = Math.round(min / 5) * 5; // 3 h 58 -> "4 h", never "3 h 60"
+  const h = Math.floor(rounded / 60);
+  const m = rounded % 60;
   return m ? `${h} h ${String(m).padStart(2, '0')}` : `${h} h`;
 }
 
@@ -390,7 +410,8 @@ async function planRoute() {
     imported = new Map();
     const seen = new Map();
     const items = stops.map((stop, i) => {
-      let name = stop.title;
+      // "Royal Square (Barcelona)" is Wikipedia's way to tell places apart: say "Royal Square".
+      let name = stop.kind === 'food' ? stop.title : stop.title.replace(/\s+\([^)]*\)$/, '');
       const n = (seen.get(name) ?? 0) + 1;
       seen.set(name, n);
       if (n > 1) name = `${name} (${n})`;
@@ -402,7 +423,7 @@ async function planRoute() {
         visitMinutes: stop.visitMinutes ?? null,
         meal: stop.meal ?? null,
         breakMinutes: stop.breakMinutes ?? null,
-        wikipedia: stop.tags?.wikipedia ?? null,
+        wikipedia: stop.tags?.wikipedia ?? (stop.kind !== 'food' && stop.id ? `${lang}:${stop.title}` : null), // the very article it was picked from
         wikidata: stop.tags?.wikidata ?? null,
       });
       const item = { name, kind: stop.kind, meal: stop.meal ?? null, visitMinutes: stop.visitMinutes ?? null, breakMinutes: stop.breakMinutes ?? null, description: stop.description ?? '', arrive: times[i].arrive, lat: stop.lat, lon: stop.lon };
@@ -533,11 +554,8 @@ function showPlanMap() {
   }
   box.hidden = false;
   if (!planMap) {
-    planMap = L.map(box, { zoomControl: false, attributionControl: true, dragging: true, scrollWheelZoom: false });
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-    }).addTo(planMap);
+    planMap = L.map(box, { zoomControl: false, attributionControl: true, dragging: true, scrollWheelZoom: false, zoomSnap: 0.25, maxZoom: 20 });
+    addBaseMap(planMap);
     planLayer = L.layerGroup().addTo(planMap);
   }
   planMap.invalidateSize();
@@ -738,6 +756,76 @@ function label(text) {
   return span;
 }
 
+// ---------- The base map ----------
+// Sharp vector maps (OpenFreeMap, built from OpenStreetMap data) drawn on the phone: crisp at
+// any zoom and on any screen, with every pavement, crossing and building. Plain OpenStreetMap
+// map images when the phone can't draw vector maps or the vector service doesn't answer.
+
+const VECTOR_STYLES = {
+  light: 'https://tiles.openfreemap.org/styles/bright',
+  dark: 'https://tiles.openfreemap.org/styles/fiord',
+};
+const VECTOR_ATTRIBUTION =
+  '<a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a> © <a href="https://www.openmaptiles.org/" target="_blank" rel="noopener">OpenMapTiles</a> Data from <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>';
+const RASTER_ATTRIBUTION = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+
+function canDrawVectorMaps() {
+  if (!window.maplibregl || !window.L?.maplibreGL) return false;
+  try {
+    const canvas = document.createElement('canvas');
+    return Boolean(canvas.getContext('webgl2') || canvas.getContext('webgl'));
+  } catch {
+    return false;
+  }
+}
+
+function addRasterMap(target) {
+  const box = target.getContainer();
+  box.classList.remove('vector-map');
+  box.classList.add('raster-map');
+  return window.L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: RASTER_ATTRIBUTION }).addTo(target);
+}
+
+// Bus stops, shops and road numbers crowd out what a walker needs: streets and their names,
+// water, parks, buildings, and the gold route on top. (Our own markers show the sights.)
+const CLUTTER = /^(poi|highway-shield|road_shield|highway_ref|airport)/;
+const styleCache = new Map();
+function quietStyle(url) {
+  if (!styleCache.has(url)) {
+    styleCache.set(
+      url,
+      fetch(url)
+        .then((res) => (res.ok ? res.json() : Promise.reject(new Error(`HTTP ${res.status}`))))
+        .then((style) => ({ ...style, layers: style.layers.filter((layer) => !CLUTTER.test(layer.id)) }))
+        .catch((err) => {
+          styleCache.delete(url);
+          throw err;
+        }),
+    );
+  }
+  return styleCache.get(url);
+}
+
+function addBaseMap(target) {
+  if (!canDrawVectorMaps()) return addRasterMap(target);
+  target.getContainer().classList.add('vector-map');
+  const dark = window.matchMedia?.('(prefers-color-scheme: dark)').matches;
+  quietStyle(VECTOR_STYLES[dark ? 'dark' : 'light'])
+    .then((style) => {
+      const layer = window.L.maplibreGL({ style, attribution: VECTOR_ATTRIBUTION, maxZoom: 22 }).addTo(target);
+      const gl = layer.getMaplibreMap?.();
+      let loaded = false;
+      gl?.on('load', () => (loaded = true));
+      // The vector service didn't answer: switch to map images rather than show nothing.
+      gl?.on('error', () => {
+        if (loaded || !target.hasLayer(layer)) return;
+        target.removeLayer(layer);
+        addRasterMap(target);
+      });
+    })
+    .catch(() => addRasterMap(target));
+}
+
 let map = null;
 let layers = null;
 let userMarker = null;
@@ -754,11 +842,8 @@ function initMap() {
   }
   if (!map) {
     const centre = startPoint ? [[startPoint.lat, startPoint.lon], 14] : [[20, 0], 2];
-    map = L.map('map', { zoomControl: false }).setView(...centre);
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    }).addTo(map);
+    map = L.map('map', { zoomControl: false, zoomSnap: 0.25, maxZoom: 20 }).setView(...centre);
+    addBaseMap(map);
     // You are always drawn on top, even standing on a stop's pin.
     map.createPane('you').style.zIndex = 650;
     layers = {
@@ -811,13 +896,16 @@ function fitTo(points) {
 let navRouteDrawn = null;
 let navFittedTarget = null;
 
-/** Zoom to the way to the next stop (clear of the directions card), once per stop. */
+/** Zoom to the way ahead (clear of the directions card), once per stop. */
 function fitNavRoute(route, target) {
   if (!map || !follow || navFittedTarget === target) return;
   navFittedTarget = target;
   const card = $('next-stop');
   const top = (card.hidden ? 0 : card.offsetHeight + 12) + 16;
-  map.fitBounds(route.points.map((p) => [p.lat, p.lon]), { paddingTopLeft: [24, top], paddingBottomRight: [24, 36], maxZoom: 17 });
+  // Street level: you and the next few hundred meters (the map then follows you along).
+  const near = route.points.filter((p, i) => route.cumulative[i] <= 350);
+  const points = near.length >= 2 ? near : route.points;
+  map.fitBounds(points.map((p) => [p.lat, p.lon]), { paddingTopLeft: [24, top], paddingBottomRight: [24, 36], maxZoom: 17.5 });
 }
 function drawNavRoute(route) {
   if (!map || route === navRouteDrawn) return;
@@ -1174,7 +1262,7 @@ form.addEventListener('submit', async (event) => {
       stops,
       onEvent: (type, data) => {
         if (!alive()) return;
-        if (type === 'position') moveUser(data);
+        if (type === 'position') moveUser(current.navigator?.snap(data) ?? data);
         else if (type === 'pois') drawPois(data.added);
         else if (type === 'narrated') markPoiHeard(data.poi.id);
         else if (type === 'stop-reached') {
@@ -1218,8 +1306,8 @@ form.addEventListener('submit', async (event) => {
 
     const onPosition = (pos) => {
       if (!alive()) return;
+      current.navigator.update(pos); // first, so your dot can be drawn on the route
       engine.update(pos);
-      current.navigator.update(pos);
     };
     const missingNote = missing.length ? ` (couldn't find: ${missing.join(', ')})` : '';
     const voiceNote =

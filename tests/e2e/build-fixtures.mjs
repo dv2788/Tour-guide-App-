@@ -1,56 +1,58 @@
-// Records real answers from OpenStreetMap and Wikipedia for the sample Paris walk,
-// so the browser smoke test runs offline and deterministically.
+// Records real answers from OpenStreetMap (place search) and Wikipedia for the sample
+// Barcelona walk, so the browser tests run offline and deterministically. (Routes are not
+// recorded here: the tests use the real routing service, see mocks.cjs.)
 // Usage: node tests/e2e/build-fixtures.mjs
 import { writeFile } from 'node:fs/promises';
-import { pickBestResult } from '../../js/geocode.js';
 
 const UA = 'TourGuideApp-tests/0.1 (https://github.com/dv2788/Tour-guide-App-)';
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 async function json(url) {
-  const res = await fetch(url, { headers: { 'User-Agent': UA, 'Api-User-Agent': UA, Accept: 'application/json' } });
-  if (!res.ok) throw new Error(`${res.status} ${url}`);
-  return res.json();
+  for (let attempt = 0; ; attempt++) {
+    const res = await fetch(url, { headers: { 'User-Agent': UA, 'Api-User-Agent': UA, Accept: 'application/json' } });
+    if (res.ok) return res.json();
+    if (res.status !== 429 || attempt >= 6) throw new Error(`${res.status} ${url}`);
+    await sleep(3000 * 2 ** attempt); // rate limited: wait and try again
+  }
 }
 
-const CITY = 'Paris';
-const STOPS = ['Eiffel Tower', "Pont de l'Alma", 'Grand Palais', 'Place de la Concorde', 'Louvre Museum'];
-// Real articles along the route, used to fake Wikipedia's "what's nearby" search.
+const CITY = 'Barcelona';
+// The sample walk: from Gaudí's Casa Batlló down through the old town.
+const STOPS = ['Casa Batlló', 'Plaça de Catalunya', 'La Boqueria', 'Plaça Reial', 'Barcelona Cathedral', 'Santa Maria del Mar'];
+// The stops of the Google Maps link pasted in the second test.
+const LINK_STOPS = ['Sagrada Família', 'Casa Milà'];
+// Real articles around the old town, used to fake Wikipedia's "what's nearby" search.
 const PLACES = [
-  'Musée du quai Branly – Jacques Chirac', 'Champ de Mars', 'Bir-Hakeim station', 'Flame of Liberty',
-  'Avenue Montaigne', 'Palais de Tokyo', 'Pont des Invalides', 'Pont Alexandre III', 'Petit Palais',
-  'Avenue Winston-Churchill', 'Hôtel des Invalides', 'Palais Bourbon', 'Luxor Obelisk', 'Fontaine des Mers',
-  'Hôtel de la Marine', "Musée de l'Orangerie", 'Jeu de Paume', 'Tuileries Garden', 'Musée d\'Orsay',
-  'Arc de Triomphe du Carrousel', 'Louvre Pyramid', 'Pont Royal', 'Pont de la Concorde', 'Hôtel de Crillon',
-  "Pont de l'Alma station", 'Grand Palais (Paris)',
+  'Casa Amatller', 'Casa Lleó Morera', 'Passeig de Gràcia', 'Passeig de Gràcia station', 'Catalunya station',
+  'La Rambla, Barcelona', 'Palau de la Virreina', 'Gran Teatre del Liceu', 'Liceu station', 'Palau Güell',
+  'Santa Maria del Pi, Barcelona', 'Plaça de Sant Jaume', 'Palau de la Generalitat de Catalunya', 'Barcelona City Hall',
+  'Temple of Augustus, Barcelona', 'Plaça del Rei', 'Barcelona City History Museum', 'Frederic Marès Museum',
+  'Palau de la Música Catalana', 'Museu Picasso', 'El Born Centre de Cultura i Memòria', 'Fossar de les Moreres',
+  'Jaume I station', 'Museu d\'Art Contemporani de Barcelona', 'Columbus Monument, Barcelona', 'Basílica de la Mercè',
+  'Arc de Triomf', 'Parc de la Ciutadella', 'Santa Maria del Mar, Barcelona',
 ];
 
 const nominatim = {};
-for (const q of [CITY, ...STOPS]) {
+for (const q of [CITY, ...STOPS, ...LINK_STOPS]) {
   const params = new URLSearchParams({ q, format: 'jsonv2', limit: '5', extratags: '1', 'accept-language': 'en' });
   if (q === CITY) params.set('featureType', 'city');
   nominatim[q] = await json(`https://nominatim.openstreetmap.org/search?${params}`);
   await sleep(1100);
 }
 
-const stopCoords = STOPS.map((q) => pickBestResult(nominatim[q], q)).map((r) => `${(+r.lon).toFixed(6)},${(+r.lat).toFixed(6)}`);
-const route = await json(
-  `https://routing.openstreetmap.de/routed-foot/route/v1/driving/${stopCoords.join(';')}?overview=full&geometries=geojson&steps=false`,
-);
-
 const summaries = {};
-for (const title of [CITY, ...STOPS, ...PLACES]) {
+for (const title of [CITY, ...STOPS, ...LINK_STOPS, ...PLACES]) {
   try {
     summaries[title] = await json(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title.replace(/ /g, '_'))}`);
   } catch (e) {
     console.warn('skip', title, e.message);
   }
-  await sleep(250);
+  await sleep(1200);
 }
 // The app asks for an article by its exact title (after OSM tags/redirects); index by canonical title too.
 for (const s of Object.values(summaries)) summaries[s.title] = s;
 
 const geosearch = Object.values(summaries)
-  .filter((s, i, all) => s.coordinates && all.findIndex((o) => o.pageid === s.pageid) === i && s.title !== 'Paris')
+  .filter((s, i, all) => s.coordinates && all.findIndex((o) => o.pageid === s.pageid) === i && s.title !== CITY)
   .map((s) => ({
     pageid: s.pageid,
     title: s.title,
@@ -59,8 +61,5 @@ const geosearch = Object.values(summaries)
     thumbnail: s.thumbnail ? { source: s.thumbnail.source, width: s.thumbnail.width, height: s.thumbnail.height } : undefined,
   }));
 
-await writeFile(
-  new URL('./fixtures.json', import.meta.url),
-  JSON.stringify({ nominatim, route, summaries, geosearch }, null, 1),
-);
-console.log(`saved ${Object.keys(nominatim).length} places, a ${Math.round(route.routes[0].distance)} m route, ${Object.keys(summaries).length} summaries, ${geosearch.length} nearby articles`);
+await writeFile(new URL('./fixtures.json', import.meta.url), JSON.stringify({ city: CITY, stops: STOPS, linkStops: LINK_STOPS, nominatim, summaries, geosearch }, null, 1));
+console.log(`saved ${Object.keys(nominatim).length} places, ${Object.keys(summaries).length} summaries, ${geosearch.length} nearby articles`);

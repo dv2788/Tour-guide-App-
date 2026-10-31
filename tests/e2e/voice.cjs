@@ -10,7 +10,7 @@ const { serve, mockNetwork, saveRouteCaches } = require('./mocks.cjs');
 (async () => {
   const server = await serve();
   const base = `http://127.0.0.1:${server.address().port}/`;
-  const browser = await chromium.launch({ args: ['--autoplay-policy=no-user-gesture-required'] });
+  const browser = await chromium.launch({ args: ['--autoplay-policy=no-user-gesture-required', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });
   const context = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, serviceWorkers: 'block' });
   await mockNetwork(context, { routeCacheName: 'voice' });
   // Count the seconds of audio actually handed to the speakers.
@@ -55,11 +55,11 @@ const { serve, mockNetwork, saveRouteCaches } = require('./mocks.cjs');
   await page.selectOption('#sim-speed', '1');
   const before = await played();
   await page.click('button[type=submit]');
-  // Documentary phrasing: "Welcome to Paris. Let us take a closer look." then "And so, we arrive at…"
-  await page.waitForFunction(() => /^Welcome to Paris\. Let us take a closer look\./.test(document.getElementById('now-text').textContent), null, {
+  // Documentary phrasing: "Welcome to Barcelona. Let us take a closer look." then "And so, we arrive at…"
+  await page.waitForFunction(() => /^Welcome to Barcelona\. Let us take a closer look\./.test(document.getElementById('now-text').textContent), null, {
     timeout: 60000,
   });
-  await page.waitForFunction(() => /^And so, we arrive at Eiffel Tower/.test(document.getElementById('now-text').textContent), null, {
+  await page.waitForFunction(() => /^And so, we arrive at Casa Batlló/.test(document.getElementById('now-text').textContent), null, {
     timeout: 120000,
   });
   await page.waitForTimeout(3000);

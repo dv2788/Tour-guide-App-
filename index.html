@@ -22,6 +22,12 @@
       integrity="sha384-c6Rcwz4e4CITMbu/NBmnNS8yN2sC3cUElMEMfP3vqqKFp7GOYaaBBCqmaWBjmkjb"
       crossorigin="anonymous"
     />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/4.7.1/maplibre-gl.css"
+      integrity="sha384-MinO0mNliZ3vwppuPOUnGa+iq619pfMhLVUXfC4LHwSCvF9H+6P/KO4Q7qBOYV5V"
+      crossorigin="anonymous"
+    />
     <link rel="stylesheet" href="css/styles.css" />
   </head>
   <body>
@@ -87,6 +93,11 @@
           <p class="lede">Where shall we go? Tell me where you are and I'll curate the route, then tell you its stories as you go: on foot, by bike or by car.</p>
         </div>
 
+        <section class="samples" aria-labelledby="samples-title">
+          <p id="samples-title" class="samples-title">Sample tours <span>· try one from your sofa</span></p>
+          <div id="samples" class="samples-row"></div>
+        </section>
+
         <form id="setup-form" novalidate>
           <section class="card">
             <h2 class="card-title"><span class="step">I</span>Where are you?</h2>
@@ -96,7 +107,7 @@
             <label for="city" class="or">or type the city you're staying in</label>
             <label class="input-with-icon">
               <svg class="icon"><use href="#i-pin" /></svg>
-              <input id="city" name="city" type="text" placeholder="City, e.g. Paris" autocomplete="off" />
+              <input id="city" name="city" type="text" placeholder="City, e.g. Barcelona" autocomplete="off" />
             </label>
             <p id="locate-note" class="import-note" role="status" hidden></p>
           </section>
@@ -136,7 +147,7 @@
               <svg class="icon"><use href="#i-paste" /></svg>Paste a route from a maps app
             </button>
             <label for="stops" class="or">or type your stops, one per line</label>
-            <textarea id="stops" name="stops" rows="4" placeholder="Eiffel Tower&#10;Grand Palais&#10;Louvre Museum"></textarea>
+            <textarea id="stops" name="stops" rows="4" placeholder="Sagrada Família&#10;Casa Batlló&#10;Barcelona Cathedral"></textarea>
             <p id="import-note" class="import-note" role="status" hidden></p>
             <details class="howto">
               <summary>How do I copy my route?</summary>
@@ -147,7 +158,7 @@
                 <li><strong>On a computer:</strong> copy the address from the browser's address bar.</li>
               </ul>
               <p class="hint">
-                OpenStreetMap, Bing and HERE links work too, and so do coordinates and plain lists ("Eiffel Tower → Louvre").
+                OpenStreetMap, Bing and HERE links work too, and so do coordinates and plain lists ("Sagrada Família → Casa Batlló").
                 The travel mode is picked up from the link when it has one.
               </p>
             </details>
@@ -216,7 +227,7 @@
             <button type="submit" class="btn-primary">
               <svg class="icon"><use href="#i-headphones" /></svg>Begin the tour
             </button>
-            <button type="button" id="demo" class="link">or try a sample Paris walk</button>
+            <button type="button" id="demo" class="link">or try a sample tour of Barcelona</button>
           </div>
         </form>
       </section>
@@ -278,6 +289,19 @@
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"
       integrity="sha384-NElt3Op+9NBMCYaef5HxeJmU4Xeard/Lku8ek6hoPTvYkQPh3zLIrJP7KiRocsxO"
+      crossorigin="anonymous"
+      defer
+    ></script>
+    <!-- Sharp vector maps drawn on the phone (MapLibre GL), shown inside Leaflet -->
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/4.7.1/maplibre-gl.js"
+      integrity="sha384-SYKAG6cglRMN0RVvhNeBY0r3FYKNOJtznwA0v7B5Vp9tr31xAHsZC0DqkQ/pZDmj"
+      crossorigin="anonymous"
+      defer
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/@maplibre/maplibre-gl-leaflet@0.1.3/leaflet-maplibre-gl.js"
+      integrity="sha384-LIxE/QjpJKC2A91yD40ZisdYtFbgAjl58jqpo9/MUZNgwhqsTfzwrTlqv6nDdzzB"
       crossorigin="anonymous"
       defer
     ></script>

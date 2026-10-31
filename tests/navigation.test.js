@@ -144,6 +144,8 @@ test('instructions in words, with distance and "then"', () => {
   assert.equal(stepInstruction('en', { type: 'roundabout', exit: 2 }), 'At the roundabout, take exit 2');
   assert.equal(stepInstruction('en', { type: 'fork', modifier: 'slight right', name: 'Birdcage Walk' }), 'Keep right onto Birdcage Walk');
   assert.equal(stepInstruction('en', { type: 'arrive' }, 'Grand Palais'), 'Grand Palais is just ahead');
+  assert.equal(maneuverSentence('en', { step: { type: 'arrive' }, distance: 100, then: null }, 'Plaça de Catalunya'), 'Plaça de Catalunya is 100 meters ahead');
+  assert.equal(maneuverSentence('fr', { step: { type: 'arrive' }, distance: 100, then: null }, 'Plaça de Catalunya'), 'Plaça de Catalunya est à 100 mètres devant vous');
   const m = { step: turn, distance: 80, then: { type: 'turn', modifier: 'right', name: '' } };
   assert.equal(maneuverSentence('en', m, 'X'), 'In 80 meters, turn left onto Rue de Rivoli, then turn right');
   assert.equal(maneuverSentence('fr', m, 'X'), 'Dans 80 mètres, tournez à gauche sur Rue de Rivoli, puis tournez à droite');
@@ -217,6 +219,19 @@ test('Navigator: a GPS jump is not a wrong turn; staying off the route is', asyn
   assert.ok(off.fetches() >= 2, 're-routed');
   const after = off.spoken.find((s) => s.along > 200 && /^Head/.test(s.text));
   assert.ok(after?.urgent, 'the new direction cuts in');
+});
+
+test('Navigator: your dot is drawn on the route while you follow it', async () => {
+  const target = { name: 'Grand Palais', lat: 48.866704, lon: 2.312009 };
+  const { nav } = await walk(osrm, target, { offsets: () => null });
+  const p = pointAlongPath(nav.route, 300);
+  const wobbly = { lat: p.lat + 8 / 111320, lon: p.lon, accuracy: 10 }; // GPS 8 m into a building
+  nav.update(wobbly);
+  const drawn = nav.snap(wobbly);
+  assert.ok(drawn.snapped && progressOn(nav.route, drawn).off < 0.5, 'on the route');
+  const far = { lat: p.lat + 60 / 111320, lon: p.lon, accuracy: 10 };
+  nav.update(far);
+  assert.equal(nav.snap(far), far, 'left where it is when you are clearly elsewhere');
 });
 
 test('Navigator: names an unnamed street before announcing the turn', async () => {

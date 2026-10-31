@@ -1058,6 +1058,95 @@ select:focus {
   font-size: 0.98rem;
 }
 
+/* ---------- Sample tours ---------- */
+
+.samples {
+  margin: 0 -20px 22px;
+}
+
+.samples-title {
+  margin: 0 20px 10px;
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.samples-title span {
+  color: var(--muted);
+  letter-spacing: 0.12em;
+}
+
+.samples-row {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding: 0 20px;
+  padding: 2px 20px 6px;
+  scrollbar-width: none;
+}
+
+.samples-row::-webkit-scrollbar {
+  display: none;
+}
+
+.sample {
+  flex: 0 0 172px;
+  scroll-snap-align: start;
+  display: grid;
+  gap: 4px;
+  align-content: start;
+  text-align: left;
+  padding: 14px 14px 12px;
+  border: 1px solid var(--hairline);
+  border-radius: 14px;
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+  transition: border-color 0.2s var(--ease), transform 0.15s var(--ease);
+}
+
+.sample:active {
+  transform: scale(0.98);
+}
+
+.sample[aria-pressed='true'] {
+  border-color: var(--gold-bright);
+  box-shadow: 0 0 0 1px var(--gold-bright) inset;
+}
+
+.sample-city {
+  font-family: var(--serif);
+  font-size: 1.32rem;
+  font-weight: 500;
+  line-height: 1.1;
+}
+
+.sample-blurb {
+  font-size: 0.8rem;
+  line-height: 1.35;
+  color: var(--muted);
+  min-height: 2.7em;
+}
+
+.sample-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 4px;
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  color: var(--gold);
+}
+
+.sample-meta .icon {
+  width: 15px;
+  height: 15px;
+}
+
 /* ---------- Tour ---------- */
 
 #tour {
@@ -1075,13 +1164,22 @@ select:focus {
 }
 
 /* A quiet map so the gold route stands out, but with enough colour left to tell the river,
-   the parks and the streets apart (you need them to find your way). */
-.leaflet-tile-pane {
+   the parks and the streets apart (you need them to find your way). Vector maps come in
+   their own day (ivory) and night (midnight blue) styles; map images get a filter. */
+.vector-map .leaflet-tile-pane {
+  filter: saturate(0.72) contrast(1.02);
+}
+
+.raster-map .leaflet-tile-pane {
   filter: saturate(0.5) sepia(0.12) contrast(0.96) brightness(1.02);
 }
 
 @media (prefers-color-scheme: dark) {
-  .leaflet-tile-pane {
+  .vector-map .leaflet-tile-pane {
+    filter: saturate(0.85) brightness(0.92);
+  }
+
+  .raster-map .leaflet-tile-pane {
     filter: invert(1) hue-rotate(180deg) saturate(0.45) contrast(0.88) brightness(0.9);
   }
 }

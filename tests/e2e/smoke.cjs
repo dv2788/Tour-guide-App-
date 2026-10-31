@@ -1,4 +1,4 @@
-// Browser smoke test: runs the sample Paris walk in simulation mode on a phone-sized
+// Browser smoke test: runs the sample Barcelona walk in simulation mode on a phone-sized
 // screen and checks what the guide says and the way it shows. Place search and Wikipedia
 // are answered from fixtures.json (recorded by build-fixtures.mjs); routes always come from
 // the real routing service, or its recording when offline (see mocks.cjs). LIVE=1 uses
@@ -17,7 +17,8 @@ const LIVE = process.env.LIVE === '1';
   fs.mkdirSync(SHOTS, { recursive: true });
   const server = await serve();
   const base = `http://127.0.0.1:${server.address().port}/`;
-  const browser = await chromium.launch();
+  // Software WebGL, so the vector map is drawn as on a phone.
+  const browser = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });
   const context = await browser.newContext({
     viewport: { width: 390, height: 844 },
     deviceScaleFactor: 2,
@@ -48,8 +49,8 @@ const LIVE = process.env.LIVE === '1';
   const failures = [];
   const expect = (ok, msg) => ok || failures.push(msg);
 
-  // Records everything the guide says, then runs the tour until the Louvre.
-  async function runTour(shotPrefix, page = mainPage, until = 'You have arrived at Louvre Museum') {
+  // Records everything the guide says, then runs the tour until the last stop.
+  async function runTour(shotPrefix, page = mainPage, until = 'You have arrived at Santa Maria del Mar') {
     await page.evaluate(() => {
       window.__said = [];
       new MutationObserver(() => {
@@ -74,6 +75,7 @@ const LIVE = process.env.LIVE === '1';
         target: document.getElementById('nav-target').textContent,
         link: document.getElementById('nav-open').href,
         navLinePoints: vertices(document.querySelector('.nav-line')),
+        vectorMap: document.getElementById('map').classList.contains('vector-map'),
         status: document.getElementById('status').textContent,
       };
     });
@@ -83,6 +85,7 @@ const LIVE = process.env.LIVE === '1';
     expect(nav.navLinePoints >= 6, `the way to the next stop follows the streets (${nav.navLinePoints} points)`);
     expect(!/didn't answer/.test(nav.status), 'the tour route follows the streets');
     expect(/maps/.test(nav.link), 'open-in-maps link');
+    expect(nav.vectorMap, 'the sharp vector map is used');
     if (shotPrefix) await page.screenshot({ path: path.join(SHOTS, `${shotPrefix}-on-tour.png`) });
     await page.waitForFunction((u) => (window.__said ?? []).some((t) => t.startsWith(u)), until, {
       timeout: 240000,
@@ -99,28 +102,36 @@ const LIVE = process.env.LIVE === '1';
 
   // ---- Scenario 1: the sample walk, typed stops ----
   await page.goto(base);
+  const samples = await page.$$eval('.sample .sample-city', (els) => els.map((e) => e.textContent));
+  console.log('Sample tours:', samples.join(', '));
+  expect(['Barcelona', 'Brussels', 'Cape Town', 'Kinshasa', 'Miami Beach', 'San Francisco', 'Shenzhen'].every((c) => samples.includes(c)), 'sample tours from several cities');
+  await page.click('.sample[data-id="cape-town"]');
+  expect((await page.$eval('#city', (el) => el.value)) === 'Cape Town', 'a sample tour fills in its city');
   await page.click('#demo');
+  expect((await page.$eval('#city', (el) => el.value)) === 'Barcelona', 'the default sample is Barcelona');
   await page.screenshot({ path: path.join(SHOTS, '1-setup.png'), fullPage: true });
   const said = await runTour('2');
   console.log('\nScenario 1, typed itinerary. The guide said:\n');
   said.forEach((t, i) => console.log(`${String(i + 1).padStart(2)}. ${t}\n`));
-  expect(said[0]?.startsWith('Welcome to Paris.'), 'starts with a welcome to Paris');
+  expect(said[0]?.startsWith('Welcome to Barcelona.'), 'starts with a welcome to Barcelona');
   const arrivals = arrivalsIn(said);
   expect(
-    JSON.stringify(arrivals) === JSON.stringify(['Eiffel Tower', "Pont de l'Alma", 'Grand Palais', 'Place de la Concorde', 'Louvre Museum']),
+    JSON.stringify(arrivals) === JSON.stringify(fixtures.stops),
     `arrives at every stop in order (got ${JSON.stringify(arrivals)})`,
   );
   expect(said.some((t) => /^(On your (left|right)|Ahead of you|Just behind you): /.test(t)), 'mentions places passed on the way');
-  expect(!said.some((t) => /Great Palace|Concorde Square/.test(t)), 'uses the names the traveller typed');
-  expect(!said.some((t) => /Bir-Hakeim/.test(t)), 'skips metro stations');
-  expect(!said.some((t) => /\bRER\b|railway station/i.test(t)), "describes the Pont de l'Alma bridge, not the station");
+  // OpenStreetMap's English names are "Batlló House", "Royal Square", "Cathedral of Santa Eulalia".
+  expect(!said.some((t) => /(^You have arrived at|Next stop:) (Batlló House|Royal Square|Cathedral of Santa Eulalia)/.test(t)), 'uses the names the traveller typed');
+  expect(!said.some((t) => /^(On your (left|right)|Ahead of you|Just behind you): [^.]*station/.test(t)), 'skips metro and railway stations');
+  const square = said.find((t) => t.startsWith('You have arrived at Plaça de Catalunya')) ?? '';
+  expect(/square/i.test(square) && !/metro|railway/i.test(square), `describes the Plaça de Catalunya square, not the station under it (${square.slice(0, 120)})`);
 
   // ---- Scenario 2: paste a Google Maps walking route ----
   const g = (q) => fixtures.nominatim[q][0];
-  const [eiffel, palais, louvre] = [g('Eiffel Tower'), g('Grand Palais'), g('Louvre Museum')];
+  const [sagrada, mila, batllo] = [g('Sagrada Família'), g('Casa Milà'), g('Casa Batlló')];
   const googleLink =
-    'https://www.google.com/maps/dir/Eiffel+Tower,+Av.+Gustave+Eiffel,+75007+Paris,+France/Grand+Palais,+3+Av.+du+G%C3%A9n%C3%A9ral+Eisenhower,+75008+Paris,+France/Louvre+Museum,+Rue+de+Rivoli,+75001+Paris,+France/@48.8606,2.3092,14z/data=!3m1!4b1!4m20!4m19' +
-    [eiffel, palais, louvre].map((p) => `!1m5!1m1!1s0x0:0x0!2m2!1d${p.lon}!2d${p.lat}`).join('') +
+    'https://www.google.com/maps/dir/Sagrada+Fam%C3%ADlia,+C%2F+de+Mallorca,+401,+L%27Eixample,+08013+Barcelona,+Spain/Casa+Mil%C3%A0,+Pg.+de+Gr%C3%A0cia,+92,+L%27Eixample,+08008+Barcelona,+Spain/Casa+Batll%C3%B3,+Pg.+de+Gr%C3%A0cia,+43,+L%27Eixample,+08007+Barcelona,+Spain/@41.3966,2.1652,15z/data=!3m1!4b1!4m20!4m19' +
+    [sagrada, mila, batllo].map((p) => `!1m5!1m1!1s0x0:0x0!2m2!1d${p.lon}!2d${p.lat}`).join('') +
     '!3e2';
   await page.evaluate(() => localStorage.clear());
   await page.goto(base);
@@ -136,15 +147,15 @@ const LIVE = process.env.LIVE === '1';
   }));
   console.log('Scenario 2, pasted Google Maps link:', JSON.stringify(imported));
   await page.screenshot({ path: path.join(SHOTS, '4-imported.png'), fullPage: true });
-  expect(imported.stops === 'Eiffel Tower\nGrand Palais\nLouvre Museum', `pasted link becomes stops (got ${JSON.stringify(imported.stops)})`);
+  expect(imported.stops === 'Sagrada Família\nCasa Milà\nCasa Batlló', `pasted link becomes stops (got ${JSON.stringify(imported.stops)})`);
   expect(imported.mode === 'walk', 'travel mode taken from the link');
-  expect(imported.city === 'Paris', 'city worked out from the stops');
+  expect(imported.city === 'Barcelona', 'city worked out from the stops');
   await page.click('label:has(input[value=sim])');
   await page.selectOption('#sim-speed', '8');
-  const said2 = await runTour();
+  const said2 = await runTour(null, page, 'You have arrived at Casa Batlló');
   console.log('\nScenario 2. Arrivals:', JSON.stringify(arrivalsIn(said2)));
   expect(
-    JSON.stringify(arrivalsIn(said2)) === JSON.stringify(['Eiffel Tower', 'Grand Palais', 'Louvre Museum']),
+    JSON.stringify(arrivalsIn(said2)) === JSON.stringify(['Sagrada Família', 'Casa Milà', 'Casa Batlló']),
     `tour from a pasted link visits its stops (got ${JSON.stringify(arrivalsIn(said2))})`,
   );
 
@@ -156,7 +167,7 @@ const LIVE = process.env.LIVE === '1';
     hasTouch: true,
     locale: 'en-US',
     serviceWorkers: 'block',
-    geolocation: { latitude: 48.8656, longitude: 2.3212 }, // Place de la Concorde
+    geolocation: { latitude: 41.387, longitude: 2.1701 }, // Plaça de Catalunya
     permissions: ['geolocation'],
   });
   if (!LIVE) await mockNetwork(context3);
@@ -173,8 +184,8 @@ const LIVE = process.env.LIVE === '1';
   page3.on('pageerror', (e) => errors.push(e.message));
   await page3.goto(base);
   await page3.click('#locate-me');
-  await page3.waitForFunction(() => /You're in Paris/.test(document.getElementById('locate-note').textContent), null, { timeout: 30000 });
-  expect((await page3.$eval('#city', (el) => el.value)) === 'Paris', 'city filled in from the location');
+  await page3.waitForFunction(() => /You're in Barcelona/.test(document.getElementById('locate-note').textContent), null, { timeout: 30000 });
+  expect((await page3.$eval('#city', (el) => el.value)) === 'Barcelona', 'city filled in from the location');
   await page3.click('#suggest-open');
   await page3.click('.chip-opt:has(input[value="240"])');
   await page3.click('#suggest-go');
@@ -189,6 +200,8 @@ const LIVE = process.env.LIVE === '1';
   planned.items.forEach((it) => console.log('   ', it));
   await page3.screenshot({ path: path.join(SHOTS, '7-suggested-route.png'), fullPage: true });
   expect(planned.items.length >= 4, `a route with several stops (${planned.items.length})`);
+  expect(!planned.items.some((t) => /\((Barcelona|Paris)\)/.test(t)), 'stop names without Wikipedia\'s "(Barcelona)"');
+  expect(!/ h 60/.test(planned.summary), `durations read naturally (${planned.summary})`);
   expect(planned.items.length === planned.stops.length, 'the plan and the itinerary box match');
   expect(planned.items.some((t) => /Museum visit/.test(t)), 'a museum visit is on the route');
   expect(planned.items.some((t) => /Coffee break|Lunch|Dinner|A drink/.test(t)), 'a food or drink break is on the route');

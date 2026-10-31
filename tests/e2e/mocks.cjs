@@ -123,14 +123,14 @@ async function mockNetwork(context, { routeCacheName = 'smoke' } = {}) {
     route.fulfill({ status, contentType: 'application/json', headers: { 'Access-Control-Allow-Origin': '*' }, body: JSON.stringify(body) });
 
   await context.route('https://nominatim.openstreetmap.org/search?**', (route) => {
-    const q = new URL(route.request().url()).searchParams.get('q').replace(/, Paris$/, '');
-    // Full addresses from pasted links ("Grand Palais, 3 Av. du …"): match on the place name.
+    const q = new URL(route.request().url()).searchParams.get('q').replace(new RegExp(`, ${fixtures.city}$`), '');
+    // Full addresses from pasted links ("Casa Milà, Pg. de Gràcia, 92…"): match on the place name.
     json(route, fixtures.nominatim[q] ?? fixtures.nominatim[q.split(',')[0]] ?? []);
   });
   await context.route('https://nominatim.openstreetmap.org/reverse?**', (route) => {
     const p = new URL(route.request().url()).searchParams;
-    const paris = fixtures.nominatim.Paris[0];
-    const city = { ...paris, lat: p.get('lat'), lon: p.get('lon'), address: { city: 'Paris' } };
+    const recorded = fixtures.nominatim[fixtures.city][0];
+    const city = { ...recorded, lat: p.get('lat'), lon: p.get('lon'), address: { city: fixtures.city } };
     json(route, Number(p.get('zoom')) <= 10 ? city : { name: 'Somewhere', lat: p.get('lat'), lon: p.get('lon'), address: {} });
   });
   await context.route('https://routing.openstreetmap.de/**', (route) => answerRouting(route, json, routeCacheName));
