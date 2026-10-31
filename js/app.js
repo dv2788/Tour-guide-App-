@@ -18,6 +18,8 @@ import { formatClock } from './openingHours.js';
 import {
   suggestRoute,
   searchRadiusFor,
+  interestScore,
+  DURATIONS,
   breakSchedule,
   placeBreaks,
   addBreaks,
@@ -146,11 +148,13 @@ $('demo').addEventListener('click', () => loadSample(DEFAULT_SAMPLE));
 let imported = new Map();
 let importRun = 0;
 
-function showImportNote(text, tone = '') {
+function showImportNote(text, tone = '', action = null) {
   const note = $('import-note');
   note.hidden = !text;
   note.textContent = text;
   note.dataset.tone = tone;
+  // An optional way out: "Plan 1 hour instead".
+  if (action) note.append(' ', el('button', { type: 'button', className: 'text-btn', textContent: action.label, onclick: action.run }));
 }
 
 /** Ask our tiny server function to expand a short link (only exists on Cloudflare Pages). */
@@ -455,6 +459,37 @@ function clock(date) {
   return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 }
 
+const RANGE_LABEL = (meters) => (meters >= 1000 ? `${Math.round(meters / 100) / 10} km` : `${meters} m`);
+const pickChip = (name, value) => {
+  const input = form.querySelector(`input[name=${name}][value="${value}"]`);
+  if (input) input.checked = true;
+};
+
+/** No stops: say why, and offer the way out (more time, or a wider range). */
+function explainEmptyPlan({ origin, candidates, modeId, minutes, loop, radius }) {
+  const worth = candidates.filter((c) => Number.isFinite(interestScore(c)));
+  const label = (m) => DURATIONS.find((d) => d.minutes === m)?.label.toLowerCase() ?? `${m} min`;
+  if (!worth.length) {
+    const wider = [3000, 5000, 10000].find((r) => r > radius);
+    showImportNote(
+      `I found no monuments, museums or landmarks within ${RANGE_LABEL(radius)} of ${origin.name ?? 'here'}.` +
+        (wider ? ` Look further, or type the places you'd like to visit.` : " Type the places you'd like to visit instead."),
+      'warn',
+      wider ? { label: `Look within ${RANGE_LABEL(wider)}`, run: () => (pickChip('range', String(wider)), planRoute()) } : null,
+    );
+    return;
+  }
+  // There are places, but none fits in the time: the shortest outing that reaches some.
+  const longer = DURATIONS.map((d) => d.minutes).find((m) => m > minutes && suggestRoute({ start: origin, candidates, modeId, minutes: m, loop }).stops.length);
+  const nearest = [...worth].sort((a, b) => distanceMeters(origin, a) - distanceMeters(origin, b)).slice(0, 2);
+  const names = nearest.map((c) => `${c.title.replace(/\s+\([^)]*\)$/, '')} (${formatMeters(distanceMeters(origin, c))})`).join(' and ');
+  showImportNote(
+    `Nothing worth a stop fits in ${label(minutes)} from here: the nearest are ${names}.` + (longer ? '' : ' Try cycling, or a longer outing.'),
+    'warn',
+    longer ? { label: `Plan ${label(longer)} instead`, run: () => (pickChip('duration', String(longer)), planRoute()) } : null,
+  );
+}
+
 async function planRoute() {
   const button = $('suggest-go');
   const { mode: modeId, lang } = readForm();
@@ -486,10 +521,17 @@ async function planRoute() {
       return;
     }
 
-    showImportNote('Looking for the places with the most history around you…');
-    const candidates = await createWikiService({ lang })
-      .exploreArea(origin.lat, origin.lon, searchRadiusFor(modeId, minutes), 300)
-      .catch(() => []);
+    // How far to look: what the time allows, or the range chosen.
+    const rangeChoice = form.querySelector('input[name=range]:checked')?.value ?? 'auto';
+    const lookWithin = rangeChoice === 'auto' ? searchRadiusFor(modeId, minutes) : Number(rangeChoice);
+    showImportNote('Looking for the monuments, museums and landmarks around you…');
+    let candidates;
+    try {
+      candidates = await createWikiService({ lang }).exploreArea(origin.lat, origin.lon, lookWithin);
+    } catch {
+      showImportNote("Wikipedia didn't answer just now, so I couldn't look for places. Wait a moment, then tap “Curate my route” again.", 'warn');
+      return;
+    }
     const startedAt = new Date();
     const schedule = breakSchedule(startedAt, minutes);
     const route = suggestRoute({
@@ -501,7 +543,7 @@ async function planRoute() {
       reservedMinutes: schedule.reduce((n, b) => n + b.minutes, 0),
     });
     if (!route.stops.length) {
-      showImportNote("I couldn't find enough interesting places nearby. Try a longer outing, or another way of getting around.", 'warn');
+      explainEmptyPlan({ origin, candidates, modeId, minutes, loop, radius: lookWithin });
       return;
     }
 

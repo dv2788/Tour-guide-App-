@@ -163,10 +163,18 @@
                 <label class="chip-opt"><input type="radio" name="duration" value="240" /><span>Half day</span></label>
                 <label class="chip-opt"><input type="radio" name="duration" value="480" /><span>Full day</span></label>
               </div>
+              <p class="suggest-q" id="range-label"><svg class="icon"><use href="#i-near" /></svg>How far should I look for monuments, museums and landmarks?</p>
+              <div class="chips" role="radiogroup" aria-labelledby="range-label">
+                <label class="chip-opt"><input type="radio" name="range" value="auto" checked /><span>As far as my time allows</span></label>
+                <label class="chip-opt"><input type="radio" name="range" value="1000" /><span>1 km</span></label>
+                <label class="chip-opt"><input type="radio" name="range" value="3000" /><span>3 km</span></label>
+                <label class="chip-opt"><input type="radio" name="range" value="5000" /><span>5 km</span></label>
+                <label class="chip-opt"><input type="radio" name="range" value="10000" /><span>10 km</span></label>
+              </div>
               <label class="check"><input type="checkbox" id="loop" checked /><span>End where I started</span></label>
               <p class="hint">
-                I'll pick the places with the most history around you. On longer outings I'll add museum visits and stop
-                for a coffee, lunch, dinner or a drink at the right time.
+                I'll pick the best-known monuments, museums and landmarks within reach. On longer outings I'll add museum
+                visits and stop for a coffee, lunch, dinner or a drink at the right time.
               </p>
               <button type="button" id="suggest-go" class="btn-primary btn-small">
                 <svg class="icon"><use href="#i-stars" /></svg>Curate my route

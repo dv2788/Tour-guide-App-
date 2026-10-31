@@ -84,7 +84,9 @@ ChatGPT search), run `npm run indexnow` once the site is live: no account needed
 ## Let Roamie plan it: "Suggest a route for me"
 
 Tap **Use my location** (or type your city), then **Suggest a route for me** and answer one question:
-**how long do you want to be out?** (30 min, 1 hour, 2 hours, half a day or a full day).
+**how long do you want to be out?** (30 min, 1 hour, 2 hours, half a day or a full day). You can also choose
+**how far to look** for monuments, museums and landmarks: as far as your time allows (the default), or within
+1, 3, 5 or 10 km. If nothing fits, it says why and offers the way out ("Plan 1 hour instead", "Look within 3 km").
 
 Where the route starts: **the part of town you're staying in**, if you tell it (a neighbourhood, your hotel or
 a street; the box suggests the city's neighbourhoods, best known first, from Wikipedia). Otherwise where you
@@ -112,7 +114,9 @@ are, or, if you've typed another city (planning tomorrow's trip from home), that
   way of getting around, and shows it as a timeline with times and a map. You can still edit the list.
 
 Places come from Wikipedia; cafés, restaurants and bars from OpenStreetMap (Overpass, falling back to
-Nominatim). The planning logic is in `js/suggest.js` (pure functions, unit-tested).
+Nominatim). Wikipedia allows a web page at most 3 requests at a time, so the app sends at most 2 (a shared
+queue in `js/wiki.js`), finds places in two requests, waits and retries when Wikipedia asks it to, and says
+"Wikipedia didn't answer" rather than "nothing nearby" when it can't get through. The planning logic is in `js/suggest.js` (pure functions, unit-tested).
 
 ## Finding your way to the next stop
 

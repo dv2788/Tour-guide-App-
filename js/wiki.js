@@ -5,19 +5,53 @@ import { distanceMeters } from './geo.js';
 import { classifyPlace, sharesNameToken } from './text.js';
 
 const defaultFetch = (...args) => globalThis.fetch(...args);
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const TRANSIT_RE = /\b(station|stop|gare|bahnhof|estaci[óo]n|stazione|fermata)\b/i;
 // "Neighbourhood in Barcelona", "District of Paris", "Quartier de Lyon", "Barrio de Madrid"…
 const NEIGHBOURHOOD_RE =
   /^(?:[\p{L}'’-]+\s+){0,3}(?:district|neighbou?rhood|quarter|borough|arrondissement|ward|barrio|quartier|bairro|stadtteil|stadtbezirk|ortsteil|quartiere|rione|sestiere)(?![\p{L}])/iu;
 
-export function createWikiService({ lang = 'en', fetchImpl = defaultFetch } = {}) {
+// Wikipedia allows a browser app at most 3 requests at a time (and 200 a minute); more and it
+// answers "429 Too Many Requests". So every request in the page waits its turn here, two at a
+// time, and a refused one is retried after the pause Wikipedia asks for.
+const MAX_AT_ONCE = 2;
+const line = { active: 0, waiting: [] };
+function inTurn(task) {
+  return new Promise((resolve, reject) => {
+    const run = () => {
+      line.active++;
+      Promise.resolve()
+        .then(task)
+        .then(resolve, reject)
+        .finally(() => {
+          line.active--;
+          line.waiting.shift()?.();
+        });
+    };
+    if (line.active < MAX_AT_ONCE) run();
+    else line.waiting.push(run);
+  });
+}
+
+export class WikipediaBusyError extends Error {}
+
+export function createWikiService({ lang = 'en', fetchImpl = defaultFetch, retryDelayMs = 2000, retries = 2 } = {}) {
   const host = `https://${lang}.wikipedia.org`;
   const summaries = new Map();
 
   async function getJson(url) {
-    const res = await fetchImpl(url, { headers: { Accept: 'application/json' } });
-    if (!res.ok) throw new Error(`Wikipedia request failed (HTTP ${res.status})`);
-    return res.json();
+    for (let attempt = 0; ; attempt++) {
+      const res = await inTurn(() => fetchImpl(url, { headers: { Accept: 'application/json' } }));
+      if (res.ok) return res.json();
+      const busy = res.status === 429 || res.status === 503;
+      if (!busy || attempt >= retries) {
+        throw busy ? new WikipediaBusyError(`Wikipedia is busy (HTTP ${res.status})`) : new Error(`Wikipedia request failed (HTTP ${res.status})`);
+      }
+      // Wait as long as asked (Retry-After, in seconds), else a little longer each time.
+      const asked = Number(res.headers?.get?.('Retry-After'));
+      const wait = Number.isFinite(asked) && asked > 0 ? Math.min(8000, asked * 1000) : retryDelayMs * 2 ** attempt;
+      await sleep(wait);
+    }
   }
 
   /** Articles with coordinates within `radius` meters, nearest first. */
@@ -139,61 +173,48 @@ export function createWikiService({ lang = 'en', fetchImpl = defaultFetch } = {}
    * there is to tell): used to suggest routes. Up to `limit` articles within `radius` m.
    */
   /**
-   * Places worth a stop within `radius` meters. Two searches: the nearest articles (the
-   * nearest few hundred only reach a few streets in a dense city centre) and the most notable
-   * ones anywhere in the radius (Wikipedia's search ranks by how linked and read a page is).
-   * Each place comes with what it takes to judge it: article length, description, how many
+   * Places worth a stop within `radius` meters, in two requests: the nearest articles, and the
+   * most notable ones anywhere in the radius (in a dense centre the nearest few hundred only
+   * reach a few streets; Wikipedia's search ranks by how linked and read a page is). Each
+   * place comes with what it takes to judge it: article length, description, how many
    * languages have an article about it, and what kind of place its coordinates mark.
+   * Throws only if both requests fail.
    */
-  async function exploreArea(lat, lon, radius = 2000, limit = 300, notable = 200) {
+  async function exploreArea(lat, lon, radius = 2000, limit = 200, notable = 200) {
     const meters = Math.min(10000, Math.max(10, Math.round(radius)));
-    const query = (params) => getJson(`${host}/w/api.php?${new URLSearchParams({ action: 'query', format: 'json', formatversion: '2', origin: '*', ...params })}`);
-    const [near, famous] = await Promise.all([
-      query({ list: 'geosearch', gscoord: `${lat}|${lon}`, gsradius: String(meters), gslimit: String(Math.min(500, limit)) }),
+    const details = { prop: 'info|description|pageprops|langlinkscount|coordinates', ppprop: 'disambiguation', coprop: 'type', colimit: 'max' };
+    const query = (params) =>
+      getJson(`${host}/w/api.php?${new URLSearchParams({ action: 'query', format: 'json', formatversion: '2', origin: '*', ...details, ...params })}`);
+    const answers = await Promise.allSettled([
+      query({ generator: 'geosearch', ggscoord: `${lat}|${lon}`, ggsradius: String(meters), ggslimit: String(Math.min(500, limit)) }),
       notable > 0
-        ? query({ list: 'search', srsearch: `nearcoord:${meters}m,${lat},${lon}`, srlimit: String(Math.min(500, notable)), srprop: '' }).catch(() => null) // whole meters: "3.0km" isn't understood
-        : null,
+        ? query({ generator: 'search', gsrsearch: `nearcoord:${meters}m,${lat.toFixed(5)},${lon.toFixed(5)}`, gsrnamespace: '0', gsrlimit: String(Math.min(500, notable)) }) // whole meters: "3.0km" isn't understood
+        : Promise.resolve(null),
     ]);
-    const byId = new Map((near?.query?.geosearch ?? []).map((p) => [p.pageid, { id: p.pageid, title: p.title, lat: p.lat, lon: p.lon }]));
-    for (const p of famous?.query?.search ?? []) if (!byId.has(p.pageid)) byId.set(p.pageid, { id: p.pageid, title: p.title, lat: null, lon: null });
-    const ids = [...byId.keys()];
-    const batches = [];
-    for (let i = 0; i < ids.length; i += 50) batches.push(ids.slice(i, i + 50));
-    await Promise.all(
-      batches.map(async (batch) => {
-        const pages =
-          (
-            await query({
-              pageids: batch.join('|'),
-              prop: 'info|description|pageimages|pageprops|langlinkscount|coordinates',
-              piprop: 'thumbnail',
-              pithumbsize: '240',
-              pilimit: 'max',
-              ppprop: 'disambiguation',
-              coprop: 'type',
-              colimit: 'max',
-            })
-          )?.query?.pages ?? [];
-        for (const p of pages) {
-          const poi = byId.get(p.pageid);
-          if (!poi) continue;
-          const coord = p.coordinates?.[0];
-          Object.assign(poi, {
-            lat: poi.lat ?? coord?.lat ?? null,
-            lon: poi.lon ?? coord?.lon ?? null,
-            coordType: coord?.type ?? null,
-            length: p.length ?? null,
-            description: p.description ?? '',
-            thumbnail: p.thumbnail?.source ?? null,
-            disambiguation: !!p.pageprops && 'disambiguation' in p.pageprops,
-            langs: p.langlinkscount ?? 0, // left out when there are none
-          });
-          poi.category = classifyPlace(poi);
-        }
-      }),
-    );
+    if (answers.every((a) => a.status === 'rejected')) throw answers[0].reason;
+    const byId = new Map();
+    for (const answer of answers) {
+      for (const p of answer.value?.query?.pages ?? []) {
+        const coord = p.coordinates?.[0];
+        if (!coord || byId.has(p.pageid)) continue;
+        const poi = {
+          id: p.pageid,
+          title: p.title,
+          lat: coord.lat,
+          lon: coord.lon,
+          coordType: coord.type ?? null,
+          length: p.length ?? null,
+          description: p.description ?? '',
+          thumbnail: null,
+          disambiguation: !!p.pageprops && 'disambiguation' in p.pageprops,
+          langs: p.langlinkscount ?? 0, // left out when there are none
+        };
+        poi.category = classifyPlace(poi);
+        byId.set(p.pageid, poi);
+      }
+    }
     // Search finds pages by any coordinate; keep the ones whose main location is in the radius.
-    return [...byId.values()].filter((p) => p.category !== undefined && p.lat != null && distanceMeters({ lat, lon }, p) <= meters * 1.05);
+    return [...byId.values()].filter((p) => distanceMeters({ lat, lon }, p) <= meters * 1.05);
   }
 
   /**

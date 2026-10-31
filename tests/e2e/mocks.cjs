@@ -136,6 +136,8 @@ async function mockNetwork(context, { routeCacheName = 'smoke' } = {}) {
   await context.route('https://routing.openstreetmap.de/**', (route) => answerRouting(route, json, routeCacheName));
   // Article sizes aren't in the recorded summaries: derive a stable stand-in from the intro.
   const articleLength = (title) => (fixtures.summaries[title]?.extract?.length ?? 300) * 40;
+  // A recorded page with what the place search asks for: length, languages (a stand-in), position.
+  const withDetails = (page) => ({ ...page, length: articleLength(page.title), langlinkscount: Math.round(articleLength(page.title) / 1500) });
   await context.route('https://*.wikipedia.org/w/api.php?**', (route) => {
     const p = new URL(route.request().url()).searchParams;
     const near = (lat, lon, radius, limit) =>
@@ -171,6 +173,13 @@ async function mockNetwork(context, { routeCacheName = 'smoke' } = {}) {
           coordinates: page.coordinates.map((c) => ({ lat: c.lat, lon: c.lon, primary: true })),
         }));
       json(route, { query: { pages } });
+    } else if (p.get('generator') === 'search' && /coordinates/.test(p.get('prop') ?? '')) {
+      // "Explore this area": the most notable places in the radius ("nearcoord:3000m,lat,lon"), with details.
+      const [, meters, lat, lon] = (p.get('gsrsearch').match(/nearcoord:(\d+)m,(-?[\d.]+),(-?[\d.]+)/) ?? []).map(Number);
+      const found = near(lat, lon, meters, Infinity)
+        .sort((a, b) => articleLength(b.page.title) - articleLength(a.page.title))
+        .slice(0, Number(p.get('gsrlimit')));
+      json(route, { query: { pages: found.map(({ page }, i) => ({ ...withDetails(page), index: i + 1 })) } });
     } else if (p.get('generator') === 'search') {
       // Suggestions for "which part of town": the recorded places plus a few neighbourhoods.
       const quarters = [
@@ -181,8 +190,9 @@ async function mockNetwork(context, { routeCacheName = 'smoke' } = {}) {
       const pages = [...quarters, ...fixtures.geosearch.map((page) => ({ title: page.title, description: page.description }))].map((page, i) => ({ pageid: 900000 + i, index: i + 1, ...page }));
       json(route, { query: { pages } });
     } else {
+      // Nearest places with details ("Explore this area", and what's around you during a tour).
       const [lat, lon] = p.get('ggscoord').split('|').map(Number);
-      const pages = near(lat, lon, Number(p.get('ggsradius')), Number(p.get('ggslimit'))).map(({ page }) => page);
+      const pages = near(lat, lon, Number(p.get('ggsradius')), Number(p.get('ggslimit'))).map(({ page }) => withDetails(page));
       json(route, { batchcomplete: true, query: { pages } });
     }
   });

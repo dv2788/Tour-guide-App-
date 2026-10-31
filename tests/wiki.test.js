@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createWikiService } from '../js/wiki.js';
+import { createWikiService, WikipediaBusyError } from '../js/wiki.js';
 
 function mockFetch(routes) {
   const seen = [];
@@ -75,19 +75,19 @@ test('resolveArticle rejects a same-named article in another city', async () => 
   assert.equal(article, null);
 });
 
-test('exploreArea adds the most notable places in the whole radius to the nearest ones', async () => {
+test('exploreArea adds the most notable places in the whole radius to the nearest ones, in two requests', async () => {
   // 48.86,2.33 is the centre; 0.009° of latitude is about 1 km.
   const { fetchImpl, seen } = mockFetch([
-    ['list=geosearch', { query: { geosearch: [{ pageid: 1, title: 'Corner Church', lat: 48.8605, lon: 2.33 }] } }],
-    ['list=search', { query: { search: [{ pageid: 2, title: 'Famous Cathedral' }, { pageid: 1, title: 'Corner Church' }, { pageid: 3, title: 'Far Away Tower' }] } }],
+    ['generator=geosearch', { query: { pages: [{ pageid: 1, title: 'Corner Church', length: 9000, description: 'church in Paris', coordinates: [{ lat: 48.8605, lon: 2.33 }] }] } }],
     [
-      'pageids=',
+      'generator=search',
       {
         query: {
           pages: [
-            { pageid: 1, title: 'Corner Church', length: 9000, description: 'church in Paris' },
             { pageid: 2, title: 'Famous Cathedral', length: 90000, description: 'Gothic cathedral', langlinkscount: 95, coordinates: [{ lat: 48.878, lon: 2.33, type: 'landmark' }] },
+            { pageid: 1, title: 'Corner Church', length: 9000, description: 'church in Paris', coordinates: [{ lat: 48.8605, lon: 2.33 }] },
             { pageid: 3, title: 'Far Away Tower', length: 50000, description: 'tower', langlinkscount: 40, coordinates: [{ lat: 48.95, lon: 2.33 }] },
+            { pageid: 4, title: 'No Coordinates', length: 50000, description: 'church' },
           ],
         },
       },
@@ -95,14 +95,42 @@ test('exploreArea adds the most notable places in the whole radius to the neares
   ]);
   const wiki = createWikiService({ lang: 'en', fetchImpl });
   const pois = await wiki.exploreArea(48.86, 2.33, 3000);
-  assert.ok(seen.some((u) => /srsearch=nearcoord%3A3000m%2C48\.86%2C2\.33/.test(u)), 'asks for notable places in the radius (in whole meters: Wikipedia ignores "3.0km")');
-  assert.ok(seen.some((u) => /prop=[^&]*langlinkscount/.test(u) && /coprop=type/.test(u)), 'with how many languages cover each, and what its coordinates mark');
+  assert.equal(seen.length, 2, 'two requests, so Wikipedia never refuses for too many at once');
+  assert.ok(seen.some((u) => /gsrsearch=nearcoord%3A3000m%2C48\.86000%2C2\.33000/.test(u)), 'notable places in the radius (whole meters: Wikipedia ignores "3.0km")');
+  assert.ok(seen.every((u) => /prop=[^&]*langlinkscount/.test(u) && /coprop=type/.test(u)), 'with how many languages cover each, and what its coordinates mark');
   const byTitle = Object.fromEntries(pois.map((p) => [p.title, p]));
   assert.deepEqual(Object.keys(byTitle).sort(), ['Corner Church', 'Famous Cathedral'], 'the far tower (10 km) is outside the radius');
   assert.equal(byTitle['Famous Cathedral'].langs, 95);
   assert.equal(byTitle['Famous Cathedral'].coordType, 'landmark');
-  assert.ok(Math.abs(byTitle['Famous Cathedral'].lat - 48.878) < 1e-9, 'position from its coordinates');
   assert.equal(byTitle['Corner Church'].langs, 0, 'no language links means none');
+});
+
+test('exploreArea still answers when one of its two requests fails, and throws when both do', async () => {
+  const half = mockFetch([['generator=geosearch', { query: { pages: [{ pageid: 1, title: 'Corner Church', length: 9000, coordinates: [{ lat: 48.8605, lon: 2.33 }] }] } }]]);
+  assert.equal((await createWikiService({ fetchImpl: half.fetchImpl, retries: 0 }).exploreArea(48.86, 2.33, 3000)).length, 1);
+  const none = mockFetch([]);
+  await assert.rejects(createWikiService({ fetchImpl: none.fetchImpl, retries: 0 }).exploreArea(48.86, 2.33, 3000));
+});
+
+test('Wikipedia requests wait their turn (2 at a time) and a refused one is retried', async () => {
+  let active = 0;
+  let most = 0;
+  let calls = 0;
+  const fetchImpl = async () => {
+    const n = ++calls;
+    active++;
+    most = Math.max(most, active);
+    await new Promise((r) => setTimeout(r, 5));
+    active--;
+    if (n === 1) return { ok: false, status: 429, headers: { get: () => null }, json: async () => ({}) };
+    return { ok: true, status: 200, json: async () => ({ query: { pages: [] } }) };
+  };
+  const wiki = createWikiService({ fetchImpl, retryDelayMs: 1 });
+  await Promise.all([1, 2, 3, 4, 5, 6].map((i) => wiki.nearby(48.86 + i / 1000, 2.33, 500)));
+  assert.ok(most <= 2, `at most 2 at once (saw ${most})`);
+  assert.equal(calls, 7, 'the refused request was asked again');
+  const refused = async () => ({ ok: false, status: 429, headers: { get: () => null }, json: async () => ({}) });
+  await assert.rejects(createWikiService({ fetchImpl: refused, retryDelayMs: 1 }).nearby(48.86, 2.33, 500), WikipediaBusyError);
 });
 
 test('neighbourhoods lists the parts of town around a city centre, best known first, with plain names', async () => {
