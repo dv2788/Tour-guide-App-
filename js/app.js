@@ -3,7 +3,8 @@
 import { getMode, MODES } from './modes.js';
 import { LANGUAGES, speechLocale } from './i18n.js';
 import { createWikiService } from './wiki.js';
-import { createGeocoder, fetchRoute } from './geocode.js';
+import { createGeocoder, fetchRoute, fetchDirections } from './geocode.js';
+import { Navigator, mapsLink } from './navigation.js';
 import { Narrator } from './narrator.js';
 import { GpsSource, SimulatedSource } from './location.js';
 import { TourEngine } from './tourEngine.js';
@@ -752,6 +753,7 @@ function initMap() {
     }).addTo(map);
     layers = {
       route: L.layerGroup().addTo(map),
+      nav: L.layerGroup().addTo(map),
       pois: L.layerGroup().addTo(map),
       stops: L.layerGroup().addTo(map),
       user: L.layerGroup().addTo(map),
@@ -762,6 +764,7 @@ function initMap() {
     });
   }
   Object.values(layers).forEach((layer) => layer.clearLayers());
+  navRouteDrawn = null;
   poiMarkers.clear();
   stopMarkers.clear();
   userMarker = null;
@@ -791,6 +794,38 @@ function fitTo(points) {
   if (!map || !points.length) return;
   if (points.length === 1) map.setView([points[0].lat, points[0].lon], 15);
   else map.fitBounds(points.map((p) => [p.lat, p.lon]), { padding: [30, 30] });
+}
+
+// The way to the next stop: a bold gold line; the rest of the tour route fades back.
+let navRouteDrawn = null;
+function drawNavRoute(route) {
+  if (!map || route === navRouteDrawn) return;
+  navRouteDrawn = route;
+  layers.nav.clearLayers();
+  layers.route.eachLayer((l) => l.setStyle?.({ opacity: route ? 0.35 : 0.9 }));
+  if (!route) return;
+  window.L.polyline(route.points.map((p) => [p.lat, p.lon]), { color: '#c9a55c', weight: 7, opacity: 1, className: 'nav-line', lineCap: 'round' }).addTo(layers.nav);
+  window.L.polyline(route.points.map((p) => [p.lat, p.lon]), { color: '#fffdf8', weight: 2, opacity: 0.9, dashArray: '1 9', lineCap: 'round' }).addTo(layers.nav);
+}
+
+const isApple = /iPhone|iPad|iPod|Macintosh/.test(navigator.userAgent) && 'ontouchend' in document;
+
+function showDirections(state, modeId) {
+  const card = $('next-stop');
+  if (!state.target) {
+    card.hidden = true;
+    drawNavRoute(null);
+    return;
+  }
+  card.hidden = false;
+  $('nav-icon').setAttribute('href', `#i-${state.icon ?? 'navigation'}`);
+  $('nav-sentence').textContent = state.sentence ?? (state.offRoute ? 'Finding a new way…' : 'Finding the way…');
+  const parts = [state.target.name];
+  if (state.remaining != null) parts.push(formatMeters(state.remaining));
+  if (state.minutes != null) parts.push(`${state.minutes} min`);
+  $('nav-target').textContent = parts.join(' · ');
+  $('nav-open').href = mapsLink(state.target, modeId, { apple: isApple });
+  drawNavRoute(state.route);
 }
 
 function drawRoute(points) {
@@ -925,6 +960,7 @@ function endTour() {
   session.ended = true;
   session.source?.stop();
   session.engine?.stop();
+  session.navigator?.stop();
   session.narrator.stop();
   session.wakeLock?.release?.().catch(() => {});
   session = null;
@@ -1036,9 +1072,17 @@ form.addEventListener('submit', async (event) => {
   requestWakeLock();
 
   narrator.on('start', (item) => {
+    if (item.meta?.interjection) {
+      // A spoken direction: highlight the direction card, leave the story card alone.
+      const card = $('next-stop');
+      card.dataset.spoken = item.text;
+      card.classList.add('speaking');
+      setTimeout(() => card.classList.remove('speaking'), 2500);
+      return;
+    }
     const neural = narrator.backend.kind === 'neural';
     showNowPlaying(item, neural ? narrator.voiceLabel?.replace(/\s*\(.*\)$/, '') : null);
-    if (!item.repeated) addToJournal(item.meta);
+    if (!item.repeated && !item.resumed) addToJournal(item.meta);
   });
   narrator.on('idle', () => {
     $('now').classList.add('idle');
@@ -1109,14 +1153,27 @@ form.addEventListener('submit', async (event) => {
         if (type === 'position') moveUser(data);
         else if (type === 'pois') drawPois(data.added);
         else if (type === 'narrated') markPoiHeard(data.poi.id);
-        else if (type === 'stop-reached') stopMarkers.get(data.stop.index)?.getElement()?.classList.add('reached');
-        else if (type === 'next-stop') {
-          $('next-stop').hidden = false;
-          $('next-stop').textContent = `Next stop: ${data.stop.name} · ${formatMeters(data.distance)}`;
-        } else if (type === 'error') setStatus(data.message, 'warn');
+        else if (type === 'stop-reached') {
+          stopMarkers.get(data.stop.index)?.getElement()?.classList.add('reached');
+          if (data.stop.index === stops.length - 1) {
+            // Last stop: guide back to the start of a round trip, or stop guiding.
+            const home = plan?.loop && plan.start ? { name: 'your starting point', lat: plan.start.lat, lon: plan.start.lon } : null;
+            current.navigator?.setTarget(home);
+          }
+        }
+        else if (type === 'next-stop') current.navigator?.setTarget(data.stop);
+        else if (type === 'error') setStatus(data.message, 'warn');
       },
     });
     current.engine = engine;
+    // Directions to the next stop: on the map, on screen, and spoken before each turn.
+    current.navigator = new Navigator({
+      lang: cfg.lang,
+      modeId: mode.id,
+      getDirections: (from, to) => fetchDirections(from, to, mode.routeProfile),
+      narrator,
+      onUpdate: (state) => alive() && showDirections(state, mode.id),
+    });
 
     // If the soothing voice is already on this phone, wait (briefly) so it reads the welcome.
     if (voiceKey?.kind === 'neural' && (await isVoiceDownloaded(voiceKey.id))) {
@@ -1125,7 +1182,11 @@ form.addEventListener('submit', async (event) => {
       if (!alive()) return;
     }
 
-    const onPosition = (pos) => alive() && engine.update(pos);
+    const onPosition = (pos) => {
+      if (!alive()) return;
+      engine.update(pos);
+      current.navigator.update(pos);
+    };
     const missingNote = missing.length ? ` (couldn't find: ${missing.join(', ')})` : '';
     const voiceNote =
       narrator.hasVoice || voiceKey?.kind === 'neural' ? '' : ' No voice found on this device, so showing the text only.';

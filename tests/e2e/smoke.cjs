@@ -60,12 +60,25 @@ const LIVE = process.env.LIVE === '1';
     await page.click('button[type=submit]');
     await page.waitForFunction(() => document.querySelectorAll('#journal li').length >= 3, null, { timeout: 90000 });
     await page.waitForTimeout(1500);
+    // Directions to the next stop: card, gold line, a spoken turn.
+    await page.waitForFunction(() => /min/.test(document.getElementById('nav-target').textContent) && document.querySelector('.nav-line'), null, { timeout: 30000 });
+    const nav = await page.evaluate(() => ({
+      sentence: document.getElementById('nav-sentence').textContent,
+      target: document.getElementById('nav-target').textContent,
+      link: document.getElementById('nav-open').href,
+    }));
+    console.log('Directions:', JSON.stringify(nav));
+    expect(/head|turn|bear|continue|just ahead/i.test(nav.sentence), `a direction is shown (${nav.sentence})`);
+    expect(/maps/.test(nav.link), 'open-in-maps link');
     if (shotPrefix) await page.screenshot({ path: path.join(SHOTS, `${shotPrefix}-on-tour.png`) });
     await page.waitForFunction((u) => (window.__said ?? []).some((t) => t.startsWith(u)), until, {
       timeout: 240000,
     });
     await page.waitForTimeout(1000);
     const said = await page.evaluate(() => window.__said);
+    const spoken = await page.$eval('#next-stop', (el) => el.dataset.spoken ?? '');
+    console.log('Last spoken direction:', spoken);
+    expect(/Head|turn|Turn|Bear/.test(spoken), 'directions are spoken too');
     await page.click('#btn-end');
     return said;
   }

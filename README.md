@@ -2,9 +2,10 @@
 
 # Roamie
 
-**Your city, told as you go.** Paste your route from Google Maps, Apple Maps or Waze (or type your
-stops), pick your guide, and put the phone in your pocket or on the dashboard. As you walk, run, cycle or
-drive, a friendly voice tells you the stories of the places you pass. No tour guide or travel agency needed.
+**The city, narrated.** Paste your route from Google Maps, Apple Maps or Waze (or type your
+stops) or let Roamie curate a route, pick your guide, and put the phone in your pocket or on the dashboard.
+As you walk, run, cycle or drive, a private voice guide shows you the way and tells you the stories of the
+places you pass. No tour guide or travel agency needed.
 
 > "On your left: Hôtel de la Marine. Designed by Ange-Jacques Gabriel and built between 1757 and 1774…"
 
@@ -35,13 +36,33 @@ Tap **Use my location** (or type your city), then **Suggest a route for me** and
 - **puts museums on the route** when there's time to go inside (about an hour each, one for half a day, two
   for a full day), and stays quiet while you visit;
 - **adds food and drink at the right time**: lunch around 12:30, dinner around 19:45, a coffee or a drink in
-  the longest stretches without a break. It prefers notable places (a historic café with its own Wikipedia
-  article beats a chain) and the right kind (a restaurant for lunch, a bar for a drink);
+  the longest stretches without a break. It reads opening hours and skips places that will be closed, prefers
+  independent and notable places (a historic café with its own Wikipedia article) over chains, picks the right
+  kind (a restaurant for lunch, a bar for a drink), offers up to three alternatives ("Another place"), and
+  links to reviews in Google Maps;
 - orders everything into an efficient loop back to where you started (or one-way), fitted to your time and
   way of getting around, and shows it as a timeline with times and a map. You can still edit the list.
 
 Places come from Wikipedia; cafés, restaurants and bars from OpenStreetMap (Overpass, falling back to
 Nominatim). The planning logic is in `js/suggest.js` (pure functions, unit-tested).
+
+## Finding your way to the next stop
+
+During the tour Roamie shows and tells you how to reach the next stop:
+
+- a bold **gold line** from where you are to the next stop on the map (the rest of the route fades back);
+- a **direction card**: the next turn with its arrow ("In 80 m, turn left onto Rue de Rivoli"), plus the next
+  stop, the distance and the walking time;
+- a short **spoken direction** just before each turn. A story in progress pauses for it and then carries on
+  from the same sentence; the first "head east…" after a stop waits until the stop's story is finished.
+  Turns a few meters apart are said together ("turn left, then turn right"); "carry straight on" isn't said.
+  Spoken turns are off when driving (use your car's navigation);
+- **re-routing** when you wander off the route, and after the last stop of a round trip, the way back to
+  where you started;
+- an **open in Maps** button that hands the next stop to Apple Maps (iPhone) or Google Maps for full navigation.
+
+Directions come from the same open routing service used for planning (OSRM on routing.openstreetmap.de), in
+all five languages. The logic is in `js/navigation.js`.
 
 ## Paste your route from any maps app
 
@@ -133,6 +154,8 @@ js/neuralVoice.js     the on-device AI voice (Piper on ONNX Runtime Web), warm E
 js/voices.js          voice catalogue, calm built-in voice ranking, pronunciation fixes
 js/itineraryImport.js reading routes pasted from maps apps and plain lists
 js/suggest.js         suggested routes: interest scoring, museum visits, meal breaks, route order
+js/openingHours.js    reading OpenStreetMap opening hours
+js/navigation.js      directions to the next stop: route, next turn, spoken prompts, re-routing
 js/wiki.js            Wikipedia: nearby places, stories, matching a stop to its article
 js/geocode.js         OpenStreetMap: finding places, routes
 js/location.js        GPS and the trip simulator
@@ -182,7 +205,7 @@ data recorded by `node tests/e2e/build-fixtures.mjs`. Run it with `LIVE=1` to us
 
 ## Credits
 
-Icons: [Material Symbols](https://fonts.google.com/icons) (Apache 2.0). Font: [Nunito](https://fonts.google.com/specimen/Nunito) (SIL OFL).
+Icons: [Material Symbols](https://fonts.google.com/icons) (Apache 2.0). Fonts: [Cormorant Garamond](https://fonts.google.com/specimen/Cormorant+Garamond) and [Jost](https://fonts.google.com/specimen/Jost) (SIL OFL).
 Place information © [Wikipedia](https://www.wikipedia.org/) contributors (CC BY-SA). Map data ©
 [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors (ODbL). Map display by [Leaflet](https://leafletjs.com/).
 Voices: [Piper](https://github.com/rhasspy/piper) and the [piper-voices](https://huggingface.co/rhasspy/piper-voices)

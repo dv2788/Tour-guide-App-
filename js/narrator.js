@@ -233,6 +233,30 @@ export class Narrator {
     }
   }
 
+  /**
+   * Say something short right now (a turn: "In 30 meters, turn left"). If a story is being
+   * told, it pauses at the current sentence and carries on from there afterwards.
+   */
+  interject(text, meta = {}, { urgent = true } = {}) {
+    if (!text) return;
+    const item = { text, meta: { ...meta, interjection: true }, priority: true, chunks: null, index: 0 };
+    // Replace any direction still waiting: only the latest one matters.
+    this.queue = this.queue.filter((q) => !q.meta?.interjection);
+    if (!urgent && this.current) {
+      // Not time-critical ("head east"): say it as soon as the current story ends.
+      this.queue.unshift(item);
+    } else if (this.current && !this.current.meta?.interjection) {
+      const story = this.current;
+      this.#cancelSpeech();
+      this.current = null;
+      this.queue.unshift(item, story); // the story resumes at the sentence it was on
+      if (!this.paused) this.#scheduleNext();
+    } else {
+      this.queue.unshift(item);
+      if (!this.current && !this.paused) this.#next();
+    }
+  }
+
   pause() {
     if (this.paused) return;
     this.paused = true;
@@ -297,8 +321,9 @@ export class Narrator {
       return;
     }
     item.chunks ??= this.#chunksFor(item.text);
+    item.resumed = item.index > 0; // picking a story up again after a direction
     this.current = item;
-    this.lastItem = item;
+    if (!item.meta?.interjection) this.lastItem = item;
     this.#emit('start', item);
     this.#speakChunk();
   }

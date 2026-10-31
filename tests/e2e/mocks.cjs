@@ -47,6 +47,35 @@ async function mockNetwork(context) {
     const coords = decodeURIComponent(new URL(route.request().url()).pathname.split('/driving/')[1] ?? '')
       .split(';')
       .map((c) => c.split(',').map(Number));
+    if (new URL(route.request().url()).searchParams.get('steps') === 'true' && coords.length === 2) {
+      // Directions: an L-shaped walk (north/south first, then east/west) with a real turn in it.
+      const [[lon1, lat1], [lon2, lat2]] = coords;
+      const corner = [lon1, lat2];
+      const legA = distance({ lat: lat1, lon: lon1 }, { lat: lat2, lon: lon1 });
+      const legB = distance({ lat: lat2, lon: lon1 }, { lat: lat2, lon: lon2 });
+      const north = lat2 > lat1;
+      const east = lon2 > lon1;
+      const modifier = north === east ? 'right' : 'left';
+      json(route, {
+        routes: [
+          {
+            distance: legA + legB,
+            duration: (legA + legB) / 1.3,
+            geometry: { type: 'LineString', coordinates: [coords[0], corner, coords[1]] },
+            legs: [
+              {
+                steps: [
+                  { distance: legA, name: 'Rue du Test', maneuver: { type: 'depart', bearing_after: north ? 0 : 180, location: coords[0] } },
+                  { distance: legB, name: 'Quai des Essais', maneuver: { type: 'turn', modifier, location: corner } },
+                  { distance: 0, name: '', maneuver: { type: 'arrive', location: coords[1] } },
+                ],
+              },
+            ],
+          },
+        ],
+      });
+      return;
+    }
     const recorded = fixtures.route.waypoints.map((w) => w.location);
     const same = coords.length === recorded.length && coords.every(([lon, lat], i) => distance({ lat, lon }, { lat: recorded[i][1], lon: recorded[i][0] }) < 50);
     // The recorded real route for the sample walk; straight lines between any other stops.

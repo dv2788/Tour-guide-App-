@@ -105,3 +105,42 @@ test('repeat says the last story again', async () => {
   assert.deepEqual(voice.spoken, ['A story.', 'A story.']);
   assert.equal(n.current.repeated, true);
 });
+
+test('a direction interrupts a story briefly, then the story carries on where it was', async () => {
+  const voice = fakeVoice();
+  const n = new Narrator({ backend: voice });
+  const starts = [];
+  n.on('start', (item) => starts.push({ text: item.text.slice(0, 12), resumed: item.resumed, direction: !!item.meta.interjection }));
+  n.speak('First sentence of the story. Second sentence of the story.', { kind: 'poi' });
+  // Make the story two pieces long so we can interrupt after the first.
+  n.current.chunks = ['First sentence of the story.', 'Second sentence of the story.'];
+  n.current.index = 1;
+  n.interject('In 30 meters, turn left.', { kind: 'direction' });
+  await wait(120);
+  assert.equal(voice.spoken.at(-1), 'In 30 meters, turn left.');
+  await voice.finishCurrent();
+  assert.equal(voice.spoken.at(-1), 'Second sentence of the story.', 'resumes at the same sentence');
+  assert.deepEqual(starts.map((s) => [s.direction, s.resumed]), [[false, false], [true, false], [false, true]]);
+  // Repeat still means the story, not the direction.
+  assert.match(n.lastItem.text, /^First sentence/);
+});
+
+test('only the latest waiting direction is kept', async () => {
+  const voice = fakeVoice();
+  const n = new Narrator({ backend: voice });
+  n.speak('Welcome.');
+  n.pause();
+  n.interject('Turn left.');
+  n.interject('Turn right.');
+  assert.deepEqual(n.queue.filter((q) => q.meta.interjection).map((q) => q.text), ['Turn right.']);
+});
+
+test('a non-urgent direction waits for the end of the story', async () => {
+  const voice = fakeVoice();
+  const n = new Narrator({ backend: voice });
+  n.speak('You have arrived at the Louvre. A long story.', { kind: 'stop' });
+  n.interject('Head east onto Rue de Rivoli.', { kind: 'direction' }, { urgent: false });
+  assert.equal(voice.pending[0].cancelled, false, 'the story is not cut off');
+  await voice.finishCurrent();
+  assert.equal(voice.spoken.at(-1), 'Head east onto Rue de Rivoli.');
+});

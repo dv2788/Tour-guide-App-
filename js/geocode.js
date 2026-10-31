@@ -174,3 +174,12 @@ export async function fetchRoute(stops, profile = 'foot', fetchImpl = defaultFet
   }
   return straight;
 }
+
+/** Turn-by-turn directions from one point to another (OSRM JSON with steps), or null. */
+export async function fetchDirections(from, to, profile = 'foot', fetchImpl = defaultFetch) {
+  const coords = [from, to].map((p) => `${p.lon.toFixed(6)},${p.lat.toFixed(6)}`).join(';');
+  const url = `${ROUTERS[profile] ?? ROUTERS.foot}/route/v1/driving/${coords}?overview=full&geometries=geojson&steps=true`;
+  const res = await fetchImpl(url);
+  if (!res.ok) throw new Error(`Directions failed (HTTP ${res.status})`);
+  return res.json();
+}

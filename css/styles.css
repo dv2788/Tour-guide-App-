@@ -1085,6 +1085,78 @@ select:focus {
   }
 }
 
+/* Directions to the next stop, floating over the top of the map */
+.nav-card {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  z-index: 500;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 12px 12px 14px;
+  border: 1px solid var(--hairline-strong);
+  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--surface) 94%, transparent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 8px 28px rgb(11 15 23 / 18%);
+  transition: border-color 0.3s var(--ease);
+}
+
+.nav-card.speaking {
+  border-color: var(--gold-bright);
+}
+
+.nav-icon {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: #0b0f17;
+  color: #e3c98b;
+  border: 1px solid #c9a55c;
+}
+
+.nav-icon .icon {
+  width: 28px;
+  height: 28px;
+}
+
+.nav-body {
+  min-width: 0;
+}
+
+.nav-sentence {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 1.22rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.nav-target {
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nav-open {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1px solid var(--hairline-strong);
+  color: var(--gold);
+}
+
 /* Keep the map's credits and buttons clear of the card that overlaps the map's bottom edge. */
 .map-wrap .leaflet-bottom {
   bottom: 28px;

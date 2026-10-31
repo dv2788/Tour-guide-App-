@@ -96,3 +96,16 @@ export function distanceToSegmentMeters(p, a, b) {
   const t = len2 > 0 ? Math.max(0, Math.min(1, -(ax * dx + ay * dy) / len2)) : 0;
   return Math.hypot(ax + t * dx, ay + t * dy);
 }
+
+/** Where p falls on segment a–b: { distance (m) to the segment, t (0..1 along it) }. */
+export function projectOnSegment(p, a, b) {
+  const kx = 111320 * Math.cos(toRad(p.lat));
+  const ky = 111320;
+  const ax = (a.lon - p.lon) * kx;
+  const ay = (a.lat - p.lat) * ky;
+  const dx = (b.lon - a.lon) * kx;
+  const dy = (b.lat - a.lat) * ky;
+  const len2 = dx * dx + dy * dy;
+  const t = len2 > 0 ? Math.max(0, Math.min(1, -(ax * dx + ay * dy) / len2)) : 0;
+  return { distance: Math.hypot(ax + t * dx, ay + t * dy), t };
+}
