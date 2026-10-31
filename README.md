@@ -50,6 +50,8 @@ a preview card (`icons/og-image.jpg`); if you move to your own domain, update th
 Short map links (`maps.app.goo.gl/…`) need the small Cloudflare function in `functions/`, so on GitHub Pages
 paste the full link instead.
 
+**Launching it:** the ad, the visuals, ready-to-paste copy and a launch plan are in [`marketing/`](marketing/).
+
 ## Let Roamie plan it: "Suggest a route for me"
 
 Tap **Use my location** (or type your city), then **Suggest a route for me** and answer one question:
