@@ -42,7 +42,7 @@ const AREA_RE =
 // Wikipedia also places organisations, events and works at an address: not places to walk to.
 // (Matched on the short description: "British intelligence agency", "Satirical magazine", "Fire in 1666".)
 const NOT_A_PLACE_RE =
-  /(?:^|[^\p{L}])(?:agency|company|corporation|government|body|conglomerate|firm|manufacturer|magazine|newspaper|tabloid|broadcaster|publisher|record label|band|political party|parliament|legislat|senate|ministry|government department|central bank|stock exchange|university|college|school|religious order|higher education|research institution|educational institution|école|ecole|lycée|escuela|schule|scuola|society|association|organi[sz]ation|charity|foundation|club|team|brand|fashion house|retailer|airline|television|radio|channel|film|novel|album|song|video game|battle|siege|attack|bombing|storming|uprising|insurrection|rebellion|revolt|coup|protest|riot|election|treaty|festival|event|olympics|games|championship|tournament|competition|conflagration|massacre|scandal|police|intelligence|embassy|consulate|series|former (?:country|state)|historical (?:country|state))(?![\p{L}])/iu;
+  /(?:^|[^\p{L}])(?:agency|company|corporation|government|body|conglomerate|firm|manufacturer|magazine|newspaper|tabloid|broadcaster|publisher|record label|band|political party|parliament|legislat|senate|ministry|government department|central bank|stock exchange|university|college|school|religious order|higher education|research institution|educational institution|école|ecole|lycée|escuela|schule|scuola|society|association|organi[sz]ation|charity|foundation|club|team|brand|fashion house|retailer|airline|television|radio|channel|film|novel|album|song|video game|battle|siege|attack|assault|incident|affair|arson|explosion|bombing|storming|uprising|insurrection|rebellion|revolt|coup|protest|riot|election|treaty|festival|event|olympics|games|championship|tournament|competition|conflagration|massacre|scandal|police|intelligence|embassy|consulate|series|former (?:country|state)|historical (?:country|state))(?![\p{L}])/iu;
 // Institutions named after what they are, with no description to go on.
 const INSTITUTION_TITLE_RE = /^(?:parliament|government|ministry|house of (?:lords|commons|representatives)|senate|congress|principality|kingdom|duchy|county|republic|empire|province|diocese|archdiocese) of\b/i;
 // Places that are gone: "Royal palace in Paris (1564–1883)", "Government of France from 1792 to 1804".
@@ -155,7 +155,10 @@ export function breakSchedule(start, minutes) {
     const m = (hour - startHour) * 60 + shift;
     const lo = Math.max(30, (earliest - startHour) * 60 + shift);
     const hi = Math.min(minutes - 30, (latest - startHour) * 60 + shift);
-    if (lo <= hi) out.push({ atMinute: Math.round(Math.min(Math.max(m, lo), hi)), meal, minutes: BREAKS[meal].minutes });
+    // Only when the outing has room for the meal and at least an hour of sightseeing: an hour's
+    // walk at dinner time is a walk, not a dinner that leaves no time for anything else.
+    const roomy = minutes >= BREAKS[meal].minutes + 60;
+    if (lo <= hi && roomy) out.push({ atMinute: Math.round(Math.min(Math.max(m, lo), hi)), meal, minutes: BREAKS[meal].minutes });
   }
   const extra = Math.max(0, Math.round(minutes / 150) - out.length);
   for (let k = 0; k < extra; k++) {

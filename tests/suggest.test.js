@@ -123,6 +123,19 @@ test('breaks follow the clock: coffee, lunch, a drink, dinner', () => {
   assert.equal(noon[0].atMinute, 30);
   assert.deepEqual(breakSchedule(d(13), 180).map((b) => [b.meal, b.atMinute])[0], ['lunch', 30], 'lunch at 13:30');
   assert.ok(!breakSchedule(d(14, 30), 180).some((b) => b.meal === 'lunch'), 'too late for lunch');
+  // An hour's walk at lunch or dinner time is a walk: a meal would leave no time to see anything.
+  assert.deepEqual(breakSchedule(d(12), 60), [], 'no lunch in a one-hour outing');
+  assert.deepEqual(breakSchedule(d(20), 60), [], 'no dinner in a one-hour outing');
+  assert.ok(!breakSchedule(d(19, 30), 120).some((b) => b.meal === 'dinner'), 'no 75-minute dinner in a two-hour outing');
+  assert.deepEqual(breakSchedule(d(12), 120).map((b) => b.meal), ['lunch'], 'lunch fits in two hours, with an hour to see things');
+});
+
+test('an hour out at dinner time still finds places to see', () => {
+  const candidates = [place('Old Church', 'church', 60000, 200, 100), place('Old Bridge', 'bridge', 60000, -300, 100)];
+  const evening = new Date(2026, 9, 31, 20, 0);
+  const reserved = breakSchedule(evening, 60).reduce((n, b) => n + b.minutes, 0);
+  const r = suggestRoute({ start, candidates, modeId: 'walk', minutes: 60, loop: true, reservedMinutes: reserved });
+  assert.ok(r.stops.length >= 2, r.stops.map((s) => s.title).join());
 });
 
 test('food places: the right kind, close by, notable ones first', () => {
@@ -176,6 +189,7 @@ test('organisations, events, places that are gone and objects in a collection ar
   assert.ok(!ok('British intelligence agency'), 'an agency');
   assert.ok(!ok('Multi-sport event in Barcelona, Spain'), 'an event');
   assert.ok(!ok('Storming of the Tuileries Palace in Paris during the French Revolution'), 'a historic event');
+  assert.ok(!ok('Assault conducted by Spanish officers'), 'an incident');
   assert.ok(!ok('Royal and imperial palace in Paris (1564–1883)'), 'demolished');
   assert.ok(!ok('Government of France from 1792 to 1804'), 'a former government');
   assert.ok(!ok('Ancient Greek sculptures held in London'), 'inside a museum');
