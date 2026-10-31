@@ -36,10 +36,32 @@
             <input id="city" name="city" type="text" placeholder="e.g. Paris" autocomplete="off" />
           </label>
 
-          <label class="field">
-            <span class="field-label">Your itinerary <span class="hint">one stop per line, in order (optional)</span></span>
-            <textarea id="stops" name="stops" rows="5" placeholder="Eiffel Tower&#10;Grand Palais&#10;Louvre Museum"></textarea>
-          </label>
+          <div class="field">
+            <div class="field-head">
+              <label for="stops" class="field-label">Your itinerary <span class="hint">(optional)</span></label>
+              <button type="button" id="paste-route" class="chip">📋 Paste from a maps app</button>
+            </div>
+            <textarea
+              id="stops"
+              name="stops"
+              rows="5"
+              placeholder="Paste a route from Google Maps, Apple Maps or Waze, or type one stop per line:&#10;Eiffel Tower&#10;Grand Palais&#10;Louvre Museum"
+            ></textarea>
+            <p id="import-note" class="import-note" role="status" hidden></p>
+            <details class="howto">
+              <summary>How do I copy my route from a maps app?</summary>
+              <ul>
+                <li><strong>Google Maps:</strong> plan your route (add stops if you like), tap <em>Share</em>, then <em>Copy</em>.</li>
+                <li><strong>Apple Maps:</strong> plan your route, tap the share button, then <em>Copy</em>.</li>
+                <li><strong>Waze:</strong> open your destination, tap <em>Share</em>, then <em>Copy</em>.</li>
+                <li><strong>On a computer:</strong> copy the address from the browser's address bar.</li>
+              </ul>
+              <p class="hint">
+                Links from OpenStreetMap, Bing and HERE WeGo work too, and so do coordinates and plain lists (numbered,
+                bulleted, or "Eiffel Tower → Louvre"). Your travel mode is picked up from the link when it has one.
+              </p>
+            </details>
+          </div>
 
           <fieldset class="field">
             <legend class="field-label">How are you getting around?</legend>
@@ -62,13 +84,22 @@
               <select id="lang" name="lang"></select>
             </label>
             <label class="field">
-              <span class="field-label">Voice speed</span>
+              <span class="field-label">Pace</span>
               <select id="rate" name="rate">
                 <option value="0.9">Relaxed</option>
                 <option value="1" selected>Normal</option>
                 <option value="1.15">Brisk</option>
               </select>
             </label>
+          </div>
+
+          <div class="field">
+            <label for="voice" class="field-label">Voice</label>
+            <div class="voice-row">
+              <select id="voice" name="voice"></select>
+              <button type="button" id="voice-preview" class="chip">▶ Listen</button>
+            </div>
+            <p id="voice-status" class="hint" aria-live="polite"></p>
           </div>
 
           <fieldset class="field">
@@ -103,6 +134,7 @@
         </div>
 
         <p id="status" class="status" aria-live="polite">Preparing your tour…</p>
+        <p id="voice-line" class="status" hidden></p>
         <p id="next-stop" class="next-stop" hidden></p>
 
         <article id="now" class="now" hidden>

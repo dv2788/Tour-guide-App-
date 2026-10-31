@@ -1,6 +1,7 @@
 // Keeps the app itself available with a weak connection. Map tiles and Wikipedia
 // always come from the network (they're live data), so they're not cached here.
-const CACHE = 'tour-guide-v1';
+// The AI voice files are cached separately by js/neuralVoice.js.
+const CACHE = 'tour-guide-v2';
 const SHELL = [
   './',
   './index.html',
@@ -12,12 +13,15 @@ const SHELL = [
   './js/geo.js',
   './js/geocode.js',
   './js/i18n.js',
+  './js/itineraryImport.js',
   './js/location.js',
   './js/modes.js',
   './js/narration.js',
   './js/narrator.js',
+  './js/neuralVoice.js',
   './js/text.js',
   './js/tourEngine.js',
+  './js/voices.js',
   './js/wiki.js',
 ];
 

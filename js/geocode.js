@@ -2,7 +2,7 @@
 
 import { distanceMeters } from './geo.js';
 
-const NOMINATIM = 'https://nominatim.openstreetmap.org/search';
+const NOMINATIM = 'https://nominatim.openstreetmap.org';
 const ROUTERS = {
   foot: 'https://routing.openstreetmap.de/routed-foot',
   bike: 'https://routing.openstreetmap.de/routed-bike',
@@ -43,21 +43,22 @@ function toPlace(r, typedName) {
   };
 }
 
+// Nominatim's usage policy allows at most one request per second. The queue is shared by
+// every geocoder on the page (importing a link and starting a tour can overlap).
+const queue = { lastAt: 0, chain: Promise.resolve() };
+
 export function createGeocoder({ lang = 'en', fetchImpl = defaultFetch, minIntervalMs = 1100 } = {}) {
-  // Nominatim's usage policy allows at most one request per second: queue requests.
-  let lastAt = 0;
-  let chain = Promise.resolve();
   function throttledJson(url) {
     const run = async () => {
-      const wait = lastAt + minIntervalMs - Date.now();
+      const wait = queue.lastAt + minIntervalMs - Date.now();
       if (wait > 0) await sleep(wait);
-      lastAt = Date.now();
+      queue.lastAt = Date.now();
       const res = await fetchImpl(url, { headers: { Accept: 'application/json' } });
       if (!res.ok) throw new Error(`Place search failed (HTTP ${res.status})`);
       return res.json();
     };
-    const p = chain.then(run, run);
-    chain = p.catch(() => {});
+    const p = queue.chain.then(run, run);
+    queue.chain = p.catch(() => {});
     return p;
   }
 
@@ -70,7 +71,7 @@ export function createGeocoder({ lang = 'en', fetchImpl = defaultFetch, minInter
       'accept-language': lang,
       ...extra,
     });
-    return pickBestResult(await throttledJson(`${NOMINATIM}?${params}`), q);
+    return pickBestResult(await throttledJson(`${NOMINATIM}/search?${params}`), q);
   }
 
   async function findCity(name) {
@@ -79,7 +80,7 @@ export function createGeocoder({ lang = 'en', fetchImpl = defaultFetch, minInter
   }
 
   /** Find a place, preferring matches inside (or near) the city you're staying in. */
-  async function findPlace(query, city = null) {
+  async function findPlace(query, city = null, name = query) {
     const near = (r) => !city || distanceMeters(city, { lat: Number(r.lat), lon: Number(r.lon) }) < 100000;
     if (city?.bbox) {
       const [s, n, w, e] = city.bbox;
@@ -87,17 +88,49 @@ export function createGeocoder({ lang = 'en', fetchImpl = defaultFetch, minInter
       const padLon = (e - w) * 0.3;
       const viewbox = [w - padLon, n + padLat, e + padLon, s - padLat].map((v) => v.toFixed(5)).join(',');
       const r = await search(query, { viewbox, bounded: '1' });
-      if (r) return toPlace(r, query);
+      if (r) return toPlace(r, name);
     }
     if (city) {
       const r = await search(`${query}, ${city.osmName ?? city.name}`);
-      if (r && near(r)) return toPlace(r, query);
+      if (r && near(r)) return toPlace(r, name);
     }
     const r = await search(query);
-    return r && near(r) ? toPlace(r, query) : null;
+    return r && near(r) ? toPlace(r, name) : null;
   }
 
-  return { findCity, findPlace };
+  /**
+   * A stop we already have coordinates for (from a map link): look it up by name right
+   * there, to learn its outline and Wikipedia link. Falls back to the coordinates alone.
+   */
+  async function findPlaceNear(query, { lat, lon }, name = query) {
+    const d = 0.01; // ~1 km box
+    const viewbox = [lon - d, lat + d, lon + d, lat - d].map((v) => v.toFixed(5)).join(',');
+    const r = await search(query, { viewbox, bounded: '1' }).catch(() => null);
+    if (r && distanceMeters({ lat, lon }, { lat: Number(r.lat), lon: Number(r.lon) }) < 1500) return toPlace(r, name);
+    return { name, osmName: null, displayName: query, lat, lon, bbox: null, isArea: false, wikipedia: null, wikidata: null };
+  }
+
+  /** What's at these coordinates? zoom 18 = a building or address, 10 = the city. */
+  async function reverse({ lat, lon }, zoom = 18) {
+    const params = new URLSearchParams({
+      lat: String(lat),
+      lon: String(lon),
+      zoom: String(zoom),
+      format: 'jsonv2',
+      extratags: '1',
+      'accept-language': lang,
+    });
+    const r = await throttledJson(`${NOMINATIM}/reverse?${params}`);
+    if (!r || r.error) return null;
+    const a = r.address ?? {};
+    const name =
+      zoom <= 10
+        ? a.city ?? a.town ?? a.village ?? a.municipality ?? r.name
+        : r.name || [a.road && a.house_number ? `${a.house_number} ${a.road}` : a.road, a.suburb].find(Boolean);
+    return { ...toPlace(r, name || (r.display_name ?? '').split(',')[0]), lat, lon };
+  }
+
+  return { findCity, findPlace, findPlaceNear, reverse };
 }
 
 /**

@@ -51,3 +51,27 @@ test('t falls back to English and fills placeholders', () => {
   assert.equal(t('fr', 'arrived', { name: 'Louvre' }), 'Vous voici à Louvre.');
   assert.equal(t('xx', 'arrived', { name: 'Louvre' }), 'You have arrived at Louvre.');
 });
+
+test('voices: calm built-in voices ranked first, novelty voices never', async () => {
+  const { rankSystemVoices, prepareForNeuralVoice, parseVoiceKey, defaultVoiceKey } = await import('../js/voices.js');
+  const voices = [
+    { name: 'Zarvox', lang: 'en-US', localService: true },
+    { name: 'Fred', lang: 'en-US', localService: true },
+    { name: 'Google US English', lang: 'en-US', localService: false },
+    { name: 'Ava (Premium)', lang: 'en-US', localService: true },
+    { name: 'Samantha', lang: 'en-US', localService: true },
+    { name: 'Thomas', lang: 'fr-FR', localService: true },
+  ];
+  const ranked = rankSystemVoices(voices, 'en', 'en-US').map((v) => v.name);
+  assert.deepEqual(ranked.slice(0, 3), ['Ava (Premium)', 'Samantha', 'Google US English']);
+  assert.ok(ranked.indexOf('Zarvox') > ranked.indexOf('Google US English'));
+  assert.ok(!ranked.includes('Thomas'));
+
+  assert.equal(prepareForNeuralVoice('Sur votre gauche : le pont Alexandre-III, voulu par Louis XIV.', 'fr'), 'Sur votre gauche : le pont Alexandre 3, voulu par Louis 14.');
+  assert.equal(prepareForNeuralVoice('Ludwig XIV. baute Saint-Louis.', 'de'), 'Ludwig 14. baute Saint-Louis.');
+  assert.equal(prepareForNeuralVoice('Louis XIV', 'en'), 'Louis XIV', 'English voices read numerals correctly');
+
+  assert.deepEqual(parseVoiceKey('neural:es_ES-sharvard-medium:1'), { kind: 'neural', id: 'es_ES-sharvard-medium', speaker: 1 });
+  assert.deepEqual(parseVoiceKey('system:Ava (Premium)'), { kind: 'system', name: 'Ava (Premium)' });
+  assert.equal(defaultVoiceKey('fr'), 'neural:fr_FR-siwis-medium:0');
+});
