@@ -6,6 +6,7 @@
 import { cameraHeading, smoothHeading, placesInView, placesAround, whereItIs } from './lens.js';
 import { distanceMeters, bearingDegrees, angleDiff } from './geo.js';
 import { firstSentences } from './text.js';
+import { photoPage } from './wiki.js';
 
 const $ = (id) => document.getElementById(id);
 const REFETCH_AFTER_M = 40; // look for places again after moving this far
@@ -254,6 +255,17 @@ export function createLens({ wiki, streetName, narrator }) {
       el('h3', { textContent: summary?.title ?? name }),
       ...(summary?.description ? [el('p', { className: 'lens-popup-desc', textContent: summary.description })] : []),
       el('p', { className: 'lens-popup-text', id: 'lens-text', textContent: text || "Wikipedia has nothing about this place yet." }),
+      // Credit for Wikipedia's text (CC BY-SA) and the photo's author and licence (on its page).
+      ...(summary?.url
+        ? [
+            el('p', { className: 'lens-popup-credit' }, [
+              el('a', { href: summary.url, target: '_blank', rel: 'noopener', textContent: 'From Wikipedia' }),
+              ' · ',
+              el('a', { href: 'https://creativecommons.org/licenses/by-sa/4.0/', target: '_blank', rel: 'noopener', textContent: 'CC BY-SA 4.0' }),
+              ...(photoPage(summary.thumbnail) ? [' · ', el('a', { href: photoPage(summary.thumbnail), target: '_blank', rel: 'noopener', textContent: 'Photo credit' })] : []),
+            ]),
+          ]
+        : []),
       el('div', { className: 'lens-popup-actions' }, [
         ...(summary?.extract
           ? [el('button', { type: 'button', className: 'btn-primary btn-small', textContent: 'Hear its story', onclick: () => tell(summary) })]

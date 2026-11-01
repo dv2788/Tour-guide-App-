@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createWikiService, WikipediaBusyError } from '../js/wiki.js';
+import { createWikiService, WikipediaBusyError, photoPage } from '../js/wiki.js';
 
 function mockFetch(routes) {
   const seen = [];
@@ -169,4 +169,14 @@ test('exploreArea looks further than 10 km with the notable-places search (drivi
   await createWikiService({ fetchImpl }).exploreArea(41.387, 2.17, 30000);
   assert.ok(seen.some((u) => /ggsradius=10000/.test(u)), 'nearest articles: Wikipedia stops at 10 km');
   assert.ok(seen.some((u) => /nearcoord%3A30000m/.test(u)), 'notable places: the whole 30 km');
+});
+
+test('photoPage finds the page that names a photo’s author and licence', () => {
+  assert.equal(
+    photoPage('https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Casa_Batll%C3%B3.jpg/320px-Casa_Batll%C3%B3.jpg'),
+    'https://commons.wikimedia.org/wiki/File:Casa_Batll%C3%B3.jpg',
+  );
+  assert.equal(photoPage('https://upload.wikimedia.org/wikipedia/en/c/c4/Poster.png'), 'https://en.wikipedia.org/wiki/File:Poster.png');
+  assert.equal(photoPage('https://example.org/x.jpg'), null);
+  assert.equal(photoPage(null), null);
 });

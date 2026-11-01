@@ -48,3 +48,52 @@ test('keyboard users can skip straight to the form; no JavaScript is explained',
   assert.match(index, /<body>\s*<a class="skip-link" href="#setup-form">/);
   assert.match(index, /<noscript>/);
 });
+
+test('privacy, terms and credits pages exist and are linked from the app and every tour page', () => {
+  for (const page of ['privacy.html', 'terms.html', 'credits.html']) {
+    assert.ok(existsSync(new URL(`../${page}`, import.meta.url)), `${page} exists`);
+    assert.ok(read('index.html').includes(`href="${page}"`), `${page} linked from the app`);
+    for (const sample of SAMPLES) assert.ok(read(`tours/${sample.id}/index.html`).includes(`href="../../${page}"`), `${page} linked from ${sample.id}`);
+  }
+});
+
+test('the privacy page names every outside service the app contacts', async () => {
+  const { readdirSync } = await import('node:fs');
+  const privacy = read('privacy.html').toLowerCase();
+  const code = readdirSync(new URL('../js/', import.meta.url)).map((f) => read(`js/${f}`)).join('\n') + read('index.html');
+  // Hosts the app sends requests to (links the user taps, like Google Maps, are listed too).
+  const NAMES = {
+    'nominatim.openstreetmap.org': 'nominatim',
+    'wikipedia.org': 'wikipedia',
+    'www.wikidata.org': 'wikidata',
+    'routing.openstreetmap.de': 'routing service',
+    'tiles.openfreemap.org': 'openfreemap',
+    'tile.openstreetmap.org': "openstreetmap's map tiles",
+    'overpass-api.de': 'overpass',
+    'cdnjs.cloudflare.com': 'cdnjs',
+    'cdn.jsdelivr.net': 'jsdelivr',
+    'huggingface.co': 'hugging face',
+    'www.google.com': 'google maps',
+    'maps.apple.com': 'apple maps',
+  };
+  for (const [host, name] of Object.entries(NAMES)) {
+    if (code.includes(host)) assert.ok(privacy.includes(name), `the privacy page mentions ${name} (${host})`);
+  }
+  const contacted = new Set([...code.matchAll(/fetch[A-Za-z]*\(\s*`https:\/\/([a-z0-9.-]+)/g)].map((m) => m[1]));
+  for (const host of contacted) assert.ok(Object.keys(NAMES).some((h) => host.endsWith(h)), `a new service (${host}) must be added to the privacy page`);
+});
+
+test('no Google Fonts: the fonts are served from the site', () => {
+  for (const page of ['index.html', 'privacy.html', 'terms.html', 'credits.html', '404.html', ...SAMPLES.map((s) => `tours/${s.id}/index.html`)]) {
+    assert.ok(!/fonts\.(googleapis|gstatic)\.com/.test(read(page)), `${page} doesn't load Google Fonts`);
+  }
+  for (const m of read('css/fonts.css').matchAll(/url\(\.\.\/(fonts\/[^)]+)\)/g)) assert.ok(existsSync(new URL(`../${m[1]}`, import.meta.url)), `${m[1]} exists`);
+});
+
+test('credits include what the licences ask for', () => {
+  const credits = read('credits.html');
+  assert.ok(credits.includes('Jenny (Dioco)'), 'the Jenny voice is credited as its licence asks');
+  assert.ok(credits.includes('openstreetmap.org/fixthemap'), '"Fix the map", as the routing service asks');
+  assert.ok(read('index.html').includes('openstreetmap.org/fixthemap'), 'and next to the directions');
+  assert.ok(credits.includes('creativecommons.org/licenses/by-sa/4.0'), "Wikipedia's licence");
+});

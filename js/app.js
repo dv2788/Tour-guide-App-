@@ -3,7 +3,7 @@
 import { getMode, MODES } from './modes.js';
 import { SAMPLES, DEFAULT_SAMPLE, sampleById } from './samples.js';
 import { LANGUAGES, speechLocale } from './i18n.js';
-import { createWikiService } from './wiki.js';
+import { createWikiService, photoPage } from './wiki.js';
 import { createGeocoder, fetchRoute, fetchDirections, fetchStreetName } from './geocode.js';
 import { Navigator, mapsLink, routeMapsLinks } from './navigation.js';
 import { createLens } from './lensView.js';
@@ -1278,6 +1278,20 @@ function showNowPlaying(item, voiceName) {
   body.classList.add('clamp');
   requestAnimationFrame(() => ($('now-more').hidden = body.scrollHeight <= body.clientHeight + 2));
   $('now-more').textContent = 'Show more';
+  // Wikipedia's licence (CC BY-SA) asks for credit wherever its text is shown; photos credit their page.
+  const credit = $('now-credit');
+  const photo = photoPage(meta.thumbnail);
+  credit.hidden = !meta.url;
+  credit.replaceChildren(
+    ...(meta.url
+      ? [
+          el('a', { href: meta.url, target: '_blank', rel: 'noopener', textContent: 'From Wikipedia' }),
+          ' · ',
+          el('a', { href: 'https://creativecommons.org/licenses/by-sa/4.0/', target: '_blank', rel: 'noopener', textContent: 'CC BY-SA 4.0' }),
+          ...(photo ? [' · ', el('a', { href: photo, target: '_blank', rel: 'noopener', textContent: 'Photo credit' })] : []),
+        ]
+      : []),
+  );
   const img = $('now-img');
   img.onerror = () => (img.hidden = true);
   if (meta.thumbnail) {

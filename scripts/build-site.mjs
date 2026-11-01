@@ -170,9 +170,7 @@ function tourPage(sample) {
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="theme-color" content="#0B0F17" />
 <link rel="icon" href="../../icons/icon.svg" type="image/svg+xml" />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,500&family=Jost:wght@300;400;500&display=swap" />
+<link rel="stylesheet" href="../../css/fonts.css" />
 <style>${STYLE}</style>
 <script type="application/ld+json">${JSON.stringify(jsonLd).replace(/</g, '\\u003c')}</script>
 </head>
@@ -215,7 +213,7 @@ ${stops
 ${others.map((o) => `      <a href="../${o.id}/">${esc(o.label)}</a>`).join('\n')}
     </nav>
   </main>
-  <footer>Roamie, the city narrated: a free voice guide for walking, cycling and driving tours. Stop descriptions from <a href="https://www.wikipedia.org/" rel="noopener">Wikipedia</a> (CC BY-SA 4.0). Map data © <a href="https://www.openstreetmap.org/copyright" rel="noopener">OpenStreetMap</a> contributors.</footer>
+  <footer>Roamie, the city narrated: a free voice guide for walking, cycling and driving tours. Stop descriptions from <a href="https://www.wikipedia.org/" rel="noopener">Wikipedia</a> (CC BY-SA 4.0). Map data © <a href="https://www.openstreetmap.org/copyright" rel="noopener">OpenStreetMap</a> contributors. <a href="../../privacy.html">Privacy</a> · <a href="../../terms.html">Terms of use</a> · <a href="../../credits.html">Credits</a></footer>
 </div>
 </body>
 </html>

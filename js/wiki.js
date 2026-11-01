@@ -35,6 +35,18 @@ function inTurn(task) {
 
 export class WikipediaBusyError extends Error {}
 
+/**
+ * The page of a Wikipedia photo, which names its author and licence (credit for showing it):
+ * ".../wikipedia/commons/thumb/a/ab/Casa_Batlló.jpg/320px-Casa_Batlló.jpg" ->
+ * "https://commons.wikimedia.org/wiki/File:Casa_Batlló.jpg". Null if it isn't one.
+ */
+export function photoPage(imageUrl) {
+  const m = /upload\.wikimedia\.org\/wikipedia\/([a-z-]+)\/(?:thumb\/)?[0-9a-f]\/[0-9a-f]{2}\/([^/]+)/.exec(imageUrl ?? '');
+  if (!m) return null;
+  const host = m[1] === 'commons' ? 'commons.wikimedia.org' : `${m[1]}.wikipedia.org`;
+  return `https://${host}/wiki/File:${m[2]}`;
+}
+
 export function createWikiService({ lang = 'en', fetchImpl = defaultFetch, retryDelayMs = 2000, retries = 2 } = {}) {
   const host = `https://${lang}.wikipedia.org`;
   const summaries = new Map();

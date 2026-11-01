@@ -38,12 +38,9 @@
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="icons/icon-192.png" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Jost:wght@300;400;500&display=swap"
-      rel="stylesheet"
-    />
+    <!-- Fonts served from this site (not Google Fonts): no visitor's address goes to Google. -->
+    <link rel="preload" href="fonts/jost-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="css/fonts.css" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"
@@ -300,6 +297,7 @@
             <!-- tours:end -->
           </nav>
           <p>Roamie, the city narrated: a free voice guide that curates your route, shows you the way and tells you the story of every place you pass. Stories from Wikipedia · Map data © OpenStreetMap contributors.</p>
+          <nav class="legal-links" aria-label="About Roamie"><a href="privacy.html">Privacy</a><a href="terms.html">Terms of use</a><a href="credits.html">Credits</a></nav>
         </footer>
       </section>
 
@@ -337,6 +335,7 @@
                 <h2 id="now-title"></h2>
                 <p id="now-text" class="clamp"></p>
                 <button type="button" id="now-more" class="link small" hidden>Show more</button>
+                <p id="now-credit" class="now-credit" hidden></p>
               </div>
               <img id="now-img" alt="" hidden />
             </div>
@@ -350,6 +349,7 @@
 
           <p id="status" class="status" aria-live="polite">Preparing your tour…</p>
           <p id="voice-line" class="status" hidden></p>
+          <p class="map-credit">Directions by the <a href="https://routing.openstreetmap.de/about.html" target="_blank" rel="noopener">FOSSGIS routing service</a> · Map data © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a> · <a href="https://www.openstreetmap.org/fixthemap" target="_blank" rel="noopener">Fix the map</a></p>
         </div>
 
         <section class="journal">

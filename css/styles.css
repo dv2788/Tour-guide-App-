@@ -2027,3 +2027,42 @@ body.lens-open {
   font-size: 0.92rem;
   line-height: 1.55;
 }
+
+/* Credits: Wikipedia's text licence, photo pages, the legal pages */
+.now-credit,
+.lens-popup-credit {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 0.7rem;
+}
+
+.lens-popup-credit {
+  margin: -6px 0 14px;
+}
+
+.now-credit a,
+.lens-popup-credit a {
+  color: inherit;
+}
+
+.legal-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  font-size: 0.8rem;
+}
+
+.legal-links a {
+  color: var(--muted);
+}
+
+.map-credit {
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-size: 0.66rem;
+  text-align: center;
+}
+
+.map-credit a {
+  color: inherit;
+}

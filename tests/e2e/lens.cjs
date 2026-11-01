@@ -78,6 +78,7 @@ const at = (title) => fixtures.geosearch.find((p) => p.title === title).coordina
     hear: Boolean([...document.querySelectorAll('#lens-popup button')].find((b) => /Hear its story/.test(b.textContent))),
   }));
   expect(/Casa Batlló is a building/.test(popup.text) && popup.hear && /wikipedia\.org/.test(popup.link ?? ''), `the window tells its story, with "Hear" and "Read more" (${popup.text.slice(0, 80)} | ${popup.link})`);
+  expect(/From Wikipedia · CC BY-SA 4\.0/.test(popup.text), "the window credits Wikipedia, as its licence asks");
   await page.screenshot({ path: path.join(SHOTS, 'lens-2-story.png') });
   await page.click('#lens-popup button:has-text("Close")');
 

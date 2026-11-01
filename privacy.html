@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Privacy · Roamie</title>
+    <meta name="description" content="What Roamie does with your location, camera and searches: no account, no cookies, no tracking." />
+    <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="css/fonts.css" />
+    <link rel="stylesheet" href="css/page.css" />
+  </head>
+  <body>
+    <header><a href="./"><img src="icons/icon.svg" alt="" />Roamie</a></header>
+    <main>
+      <h1>Privacy</h1>
+      <p class="updated">Last updated 1 November 2026</p>
+
+      <div class="box">
+        <strong>In short:</strong> Roamie has no account, no cookies, no analytics and no ads, and no server of its own
+        that stores anything about you. What you type and where you are stays on your phone, except what has to be sent
+        to the map, route and encyclopedia services below to answer you. The camera picture never leaves your phone.
+      </div>
+
+      <h2>What stays on your phone</h2>
+      <ul>
+        <li><strong>Your settings and plans:</strong> city, part of town, stops, way of getting around, language, voice,
+          range, your last suggested route. Kept in your browser's storage so they're there next time.</li>
+        <li><strong>The app itself and any voice you download,</strong> so they work with a weak connection.</li>
+        <li><strong>Your location</strong> is used on the phone to guide you and to tell you about places you pass. Roamie
+          keeps no history of where you've been.</li>
+        <li><strong>The camera</strong> (in "Point your camera") shows the picture on your screen only. It is not recorded,
+          stored or sent anywhere: what you're looking at is worked out from your position and compass.</li>
+      </ul>
+      <div class="box">
+        <p style="margin-top: 0">Delete everything Roamie keeps on this phone (settings, plans, downloaded voices, the
+          offline copy of the app):</p>
+        <button type="button" id="forget">Forget everything on this phone</button>
+        <p id="forgot" class="muted" role="status" hidden></p>
+      </div>
+
+      <h2>What is sent, and to whom</h2>
+      <p>Like any website, each service below receives your device's internet address (IP address) with each request,
+        and the details listed. Roamie doesn't add your name, an identifier or anything else about you.</p>
+      <table>
+        <thead><tr><th>Service</th><th>Receives</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td><a href="https://osmfoundation.org/wiki/Privacy_Policy">Nominatim</a> (OpenStreetMap Foundation, UK)</td><td>Names you type (city, part of town, stops); your position when you use your location</td><td>To find places, and the city you're in</td></tr>
+          <tr><td><a href="https://foundation.wikimedia.org/wiki/Policy:Privacy_policy">Wikipedia and Wikidata</a> (Wikimedia Foundation, USA)</td><td>Coordinates of where you are or plan to go; names of places</td><td>To find the places worth seeing and their stories</td></tr>
+          <tr><td><a href="https://routing.openstreetmap.de/about.html">Routing service</a> (FOSSGIS e.V., Germany)</td><td>Coordinates of your stops and of where you are</td><td>To work out the way, and the street you're in</td></tr>
+          <tr><td><a href="https://openfreemap.org/privacy/">OpenFreeMap</a>, and OpenStreetMap's map tiles as a backup</td><td>Which part of the map is on screen</td><td>To draw the map</td></tr>
+          <tr><td><a href="https://wiki.openstreetmap.org/wiki/Overpass_API">Overpass API</a> (overpass-api.de, Germany)</td><td>Coordinates near your stops</td><td>To find cafés and restaurants for breaks</td></tr>
+          <tr><td>cdnjs (Cloudflare) and jsDelivr</td><td>Requests for the map and voice software</td><td>To deliver the software the app runs on</td></tr>
+          <tr><td>Hugging Face</td><td>Requests for a voice's files</td><td>Only if you download an AI voice</td></tr>
+          <tr><td><a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement">GitHub Pages</a> (GitHub, USA)</td><td>Requests for Roamie's pages</td><td>Hosting the app</td></tr>
+          <tr><td>Google Maps or Apple Maps</td><td>Your route or next stop</td><td>Only when you tap to open it there; their privacy policy applies</td></tr>
+        </tbody>
+      </table>
+      <p>Roamie's fonts are served from Roamie itself, not from Google Fonts. Some of these services are outside the
+        European Union; they receive only what's needed for the request. Roamie doesn't sell, share or use your data for
+        anything else.</p>
+
+      <h2>Permissions</h2>
+      <p>Your phone asks before Roamie may use your location, camera or compass ("motion & orientation"), and you can say
+        no: you can still type a city, plan a route, try a tour from your sofa, and read about places. You can change
+        these permissions at any time in your browser's settings.</p>
+
+      <h2>Your rights</h2>
+      <p>Roamie holds no data about you on any server, so there is nothing for us to look up, correct or delete: use the
+        button above to clear your phone. For what the services above receive, see their privacy policies (linked). If you
+        are in the EU or UK you can also complain to your data protection authority.</p>
+
+      <h2>Contact</h2>
+      <p>Questions about privacy: <a href="https://github.com/dv2788/Tour-guide-App-/issues">open an issue on Roamie's
+        GitHub page</a>.</p>
+      <p class="muted">If this policy changes, the new version will be published here with a new date.</p>
+    </main>
+    <footer><a href="./">Roamie</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="credits.html">Credits</a></footer>
+    <script>
+      // Clear what Roamie keeps on this phone: settings, the offline copy, downloaded voices.
+      document.getElementById('forget').addEventListener('click', async () => {
+        const done = document.getElementById('forgot');
+        try {
+          localStorage.clear();
+          sessionStorage.clear();
+        } catch {}
+        try {
+          for (const key of await caches.keys()) await caches.delete(key);
+        } catch {}
+        try {
+          for (const reg of (await navigator.serviceWorker?.getRegistrations()) ?? []) await reg.unregister();
+        } catch {}
+        try {
+          for (const db of (await indexedDB.databases?.()) ?? []) indexedDB.deleteDatabase(db.name);
+        } catch {}
+        done.hidden = false;
+        done.textContent = 'Done: Roamie has forgotten everything on this phone.';
+      });
+    </script>
+  </body>
+</html>

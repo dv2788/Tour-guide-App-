@@ -340,6 +340,9 @@ const LIVE = process.env.LIVE === '1';
   console.log('Scenario 3, first arrival:', first?.slice(0, 90));
   expect(first?.includes(planned.stops[0]), `the tour starts with the first suggested stop (${planned.stops[0]})`);
 
+  // Wikipedia's text is credited where it's shown (its licence, CC BY-SA, asks for it).
+  const credit = await page3.$eval('#now-credit', (el) => ({ shown: !el.hidden, text: el.textContent, link: el.querySelector('a')?.href ?? '' }));
+  expect(credit.shown && /From Wikipedia · CC BY-SA 4\.0/.test(credit.text) && /wikipedia\.org\/wiki\//.test(credit.link), `the story card credits Wikipedia (${credit.text} ${credit.link})`);
   expect(errors.length === 0, `no page errors (got ${errors.join(' | ')})`);
 
   await browser.close();

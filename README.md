@@ -121,6 +121,24 @@ Nominatim). Wikipedia allows a web page at most 3 requests at a time, so the app
 queue in `js/wiki.js`), finds places in two requests, waits and retries when Wikipedia asks it to, and says
 "Wikipedia didn't answer" rather than "nothing nearby" when it can't get through. The planning logic is in `js/suggest.js` (pure functions, unit-tested).
 
+## Privacy, terms and credits
+
+`privacy.html`, `terms.html` and `credits.html` (linked from every page's footer):
+
+- **Privacy** says exactly what stays on the phone and what is sent to whom (place search, Wikipedia,
+  routing, map tiles, Overpass, the software CDNs, Hugging Face for voices, GitHub Pages), with a button that
+  clears everything Roamie keeps on the phone. A test fails if the code starts contacting a service the page
+  doesn't name. Fonts are served from the site (`fonts/`, `css/fonts.css`), not Google Fonts.
+- **Terms** cover safety (watch where you're going; in a car, set up before driving), that directions and
+  information can be wrong, "as is", and the content licences.
+- **Credits** list the data, voices, software and type with their licences, including what licences ask
+  for: "Jenny (Dioco)", "Fix the map" (also next to the directions), CC BY-SA for Wikipedia (also on every story
+  shown, with a link to the photo's page for its author and licence).
+
+Still to decide before any commercial use: most Piper voices were trained from the "Lessac" voice, whose
+recordings (Blizzard Challenge 2013) are licensed for research only; a legal notice needs the publisher's
+details; and the name "Roamie" should be checked against trademarks (roamieapp.com is a travel app).
+
 ## Point your camera
 
 Tap **Point your camera at a building** (on the start screen), or the camera button on the directions card
