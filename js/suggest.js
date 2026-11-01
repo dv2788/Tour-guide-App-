@@ -38,6 +38,9 @@ const MUSEUM_RE = /(?:^|[^\p{L}])(?:museum|musée|musee|museo|museu|gallery|gale
 // "arrondissement of Paris"), not words further on ("bridge over the river").
 const AREA_RE =
   /^(?:[\p{L}'’-]+\s+){0,2}(?:arrondissement|district|neighbou?rhood|suburb|area|space|point|junction|intersection|settlement|ville|cité|région|región|regione|provincia|département|departamento|bundesland|ciudad|stadt|città|comune|gemeinde|île|isla|insel|isola|barrio|bairro|stadtteil|quartiere|rione|quarter|quartier|borough|ward|commune|municipality|municipio|municipalité|city|town|village|capital|river|fleuve|rivière|río|fluss|fiume|lake|region|province|department|département|metropolitan|island|street|avenue|boulevard|rue|calle|straße|strasse|metro line|railway line|prefecture|canton|strait|estuary|bay|lagoon|gulf|canal|former name|thoroughfare|sektor|sector|secteur|country|sovereign state)(?![\p{L}])/iu;
+// "Innermost part of London", "Southern part of Manhattan" (but "Scottish National Gallery: Part of
+// National Galleries Scotland" is a gallery).
+const PART_OF_RE = /^(?:[\p{L}'’-]+\s+){0,2}part(?![\p{L}])/iu;
 
 // …but a town's buildings are places: "City hall in Bruges", "hôtel de ville à Bruxelles",
 // "City walls in Edinburgh", "ehemaliges Wiener Stadttor".
@@ -47,10 +50,10 @@ const TOWN_BUILDING_RE =
 // Wikipedia also places organisations, events and works at an address: not places to walk to.
 // (Matched on the short description: "British intelligence agency", "Satirical magazine", "Fire in 1666".)
 const NOT_A_PLACE_RE =
-  /(?:^|[^\p{L}])(?:agency|company|corporation|government|body|conglomerate|firm|manufacturer|magazine|newspaper|tabloid|broadcaster|publisher|record label|band|political party|parliament|legislat|senate|ministry|government department|central bank|stock exchange|securities exchange|university|college|school|religious order|higher education|research institution|educational institution|école|ecole|lycée|escuela|schule|scuola|society|association|organi[sz]ation|charity|foundation|club|team|brand|fashion house|retailer|airline|television|radio|channel|film|novel|album|song|video game|battle|siege|attack|assault|incident|affair|arson|explosion|bombing|storming|uprising|insurrection|rebellion|revolt|coup|protest|riot|election|treaty|festival|event|olympics|games|championship|tournament|competition|conflagration|massacre|scandal|police|intelligence|embassy|consulate|series|former (?:country|state)|historical (?:country|state))(?![\p{L}])/iu;
+  /(?:^|[^\p{L}])(?:agency|company|corporation|government|body|conglomerate|firm|manufacturer|magazine|newspaper|tabloid|broadcaster|publisher|record label|band|political party|parliament|legislat|senate|ministry|government department|central bank|stock exchange|securities exchange|university|college|school|religious order|higher education|research institution|educational institution|école|ecole|lycée|escuela|schule|scuola|society|association|organi[sz]ation|charity|foundation|club|team|brand|fashion house|retailer|airline|television|radio|channel|film|novel|album|song|video game|battle|siege|attack|assault|incident|affair|arson|explosion|bombing|storming|uprising|insurrection|rebellion|revolt|coup|protest|riot|election|treaty|festival|event|olympics|games|championship|tournament|competition|conflagration|massacre|scandal|police|intelligence|embassy|consulate|series|former (?:country|state)|historical (?:country|state)|christmas tree|christmas market)(?![\p{L}])/iu;
 // The same in French, Spanish, German and Italian (descriptions come in the reader's language).
 const NOT_A_PLACE_INTL_RE =
-  /(?:^|[^\p{L}])(?:épisode|événement|evento|acontecimiento|ereignis|agence|agencia|agentur|agenzia|académies?|academias?|akademien?|accademi[ae]|entreprise|société|journal|quotidien|parti politique|ministère|gouvernement|université|banque|association|fondation|attentat|bataille|incendie|siège|émeute|traité|conférence|élection|jeux olympiques|libération|manifestation|empresa|periódico|partido político|ministerio|gobierno|universidad|banco|fundación|asociación|atentado|batalla|incendio|asedio|motín|tratado|conferencia|elecciones|juegos olímpicos|unternehmen|zeitung|partei|ministerium|regierung|universität|verein|stiftung|anschlag|schlacht|belagerung|aufstand|vertrag|konferenz|olympische|azienda|società|giornale|partito|ministero|governo|università|banca|fondazione|associazione|attentato|battaglia|assedio|rivolta|trattato|conferenza|elezioni|olimpiadi|giochi olimpici)(?![\p{L}])/iu;
+  /(?:^|[^\p{L}])(?:épisode|événement|evento|acontecimiento|ereignis|agence|agencia|agentur|agenzia|académies?|academias?|akademien?|accademi[ae]|entreprise|société|journal|quotidien|parti politique|ministère|gouvernement|université|banque|association|fondation|attentat|bataille|incendie|siège|émeute|traité|conférence|élection|jeux olympiques|libération|manifestation|empresa|periódico|partido político|ministerio|gobierno|universidad|banco|fundación|asociación|atentado|batalla|incendio|asedio|motín|tratado|conferencia|elecciones|juegos olímpicos|unternehmen|zeitung|partei|ministerium|regierung|universität|verein|stiftung|anschlag|schlacht|belagerung|aufstand|vertrag|konferenz|olympische|azienda|società|giornale|partito|ministero|governo|università|banca|fondazione|associazione|attentato|battaglia|assedio|rivolta|trattato|conferenza|elezioni|olimpiadi|giochi olimpici|sapin de noël|marché de noël|árbol de navidad|mercado navideño|mercadillo navideño|albero di natale|mercatino di natale|weihnachtsbaum|weihnachtsmarkt|christkindlmarkt)(?![\p{L}])/iu;
 // What a place *is* (the first words of its description) when that's an institution or a group,
 // not a building: "British think tank", "Scotland's national academy of science", "réseau
 // d'universités européennes", "national church of Scotland", "cámara baja de las Cortes".
@@ -72,8 +75,12 @@ const INSTITUTION_TITLE_RE = new RegExp(
 // Events named after what happened: "Battle of Waterloo", "Bataille d'Argentovaria", "Great Fire of
 // London", and years: "1973 UCI Cyclo-cross World Championships", "2019 fire at Notre-Dame".
 const EVENT_TITLE_RE =
-  /^(?:\d{4}\s|(?:battle|siege|sack|great fire|fire|massacre|bombing|treaty|peace|council|liberation) of\b|(?:bataille|siège|sac|incendie|massacre|bombardement|traité|paix|libération|concile) d(?:e|u|es|’|')|(?:batalla|sitio|asedio|saqueo|incendio|masacre|bombardeo|tratado|paz) de\b|(?:schlacht|belagerung|frieden|vertrag) (?:von|bei|um)\b|(?:battaglia|assedio|sacco|incendio|strage|trattato|pace) d)/iu;
+  /^(?:(?:battle|siege|sack|great fire|fire|massacre|bombing|treaty|peace|council|liberation) of\b|(?:bataille|siège|sac|incendie|massacre|bombardement|traité|paix|libération|concile) d(?:e|u|es|’|')|(?:batalla|sitio|asedio|saqueo|incendio|masacre|bombardeo|tratado|paz) de\b|(?:schlacht|belagerung|frieden|vertrag) (?:von|bei|um)\b|(?:battaglia|assedio|sacco|incendio|strage|trattato|pace) d)/iu;
 const EVENT_DESCRIPTION_RE = /^\d{3,4}\s/; // "2019 structural fire in Paris" (not "1920s building")
+// A title that starts with a year: "2020 Summer Olympics opening ceremony" (but "1000 De La
+// Gauchetière" is a skyscraper at that address: see STRUCTURE_RE).
+const YEAR_TITLE_RE = /^\d{4}\s/;
+const STRUCTURE_RE = /skyscraper|gratte-ciel|rascacielos|grattacielo|hochhaus|wolkenkratzer|building|bâtiment|immeuble|edificio|gebäude|tower|tour|torre|turm/iu;
 // …or by their last word: "Hōgen rebellion", "Great Kantō earthquake", "2015 Paris attacks".
 const EVENT_TITLE_END_RE = /(?:^|\s)(?:rebellion|uprising|revolt|riots?|massacre|disaster|earthquake|bombings?|attacks?|incident|affair|crisis|protests?|war|siege|shooting|hostage crisis)(?:\s*\(.*\))?$/iu;
 // Organisations by their first word: "Asociación del Fútbol Argentino", "Fédération française…".
@@ -120,8 +127,10 @@ export function isPlaceToSee(poi) {
   // "2019 structural fire in Paris" is an event; "1973 Thames road bridge" is London Bridge.
   if (EVENT_DESCRIPTION_RE.test(description) && !HISTORIC_RE.test(description) && !MUSEUM_RE.test(description)) return false;
   if (INSTITUTION_TITLE_RE.test(title) || EVENT_TITLE_RE.test(title)) return false;
+  if (YEAR_TITLE_RE.test(title) && !STRUCTURE_RE.test(description) && !HISTORIC_RE.test(description) && !MUSEUM_RE.test(description)) return false;
   // "Museum of the Second World War", "University Church": the title names a place to see.
   const namesAPlace = MUSEUM_RE.test(title) || HISTORIC_RE.test(title);
+  if (PART_OF_RE.test(description) && !namesAPlace && !MUSEUM_RE.test(description) && !HISTORIC_RE.test(description)) return false;
   if (!namesAPlace && (ORGANISATION_TITLE_RE.test(title) || EVENT_TITLE_END_RE.test(title))) return false;
   // Named like a street and nothing says otherwise: a street. Not an address ("10 Downing
   // Street"), an arch ("Rua Augusta Arch": triumphal arch) or a stadium ("Loftus Road").

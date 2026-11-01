@@ -242,6 +242,10 @@ test('found in real cities: groups, assemblies, events, paintings and streets ar
   assert.ok(!ok('Australian Securities Exchange', 'Australian securities exchange'), 'a stock market');
   assert.ok(!ok("Organisation de l'aviation civile internationale") && !ok('Archidiocèse de Montréal') && !ok('2008 Singapore Grand Prix'), 'Montreal, Singapore');
   assert.ok(!ok('Marina Bay, Singapore', 'bay in Singapore') && !ok('Grand Union Canal', 'canal in England'), 'a bay, a canal');
+  assert.ok(!ok('Brussels Christmas tree', 'Public Christmas tree in Brussels, Belgium') && !ok('Christkindelsmärik', 'marché de Noël de Strasbourg') && !ok('Central London', 'Innermost part of London, England'), 'seasonal, and part of a city');
+  assert.ok(ok('Parthenon', 'temple on the Athenian Acropolis') && ok('Parc Güell', 'public park in Barcelona'), 'words that start the same');
+  assert.ok(ok('1000 De La Gauchetière', 'gratte-ciel à Montréal') && ok('1250 René-Lévesque', 'gratte-ciel à Montréal') && !ok('2020 Summer Olympics opening ceremony'), 'an address that looks like a year');
+  assert.ok(ok('Scottish National Gallery', 'Part of National Galleries Scotland in Edinburgh') && !ok('Lower Manhattan', 'Southern part of Manhattan, New York City'), 'part of a group of galleries, part of a city');
   assert.ok(!ok('Czechoslovakia', '1918–1992 country in Central Europe') && !ok('Portugal', 'country in southwestern Europe'), 'countries, then and now');
   assert.ok(!ok('Strand, London', 'Major thoroughfare in the City of Westminster, London, England') && !ok('Ost-Berlin', 'ehemaliger sowjetischer Sektor von Berlin und Hauptstadt der DDR'), 'a thoroughfare, a sector');
   assert.ok(!ok('Kyoto Prefecture', 'prefecture of Japan') && !ok('Edo', 'former name of Tokyo') && !ok('East River', 'tidal strait in New York City'), 'a region, an old name, a strait');
