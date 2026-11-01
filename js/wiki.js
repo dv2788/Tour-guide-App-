@@ -82,7 +82,7 @@ export function createWikiService({ lang = 'en', fetchImpl = defaultFetch, retry
       formatversion: '2',
       origin: '*',
       generator: 'geosearch',
-      ggscoord: `${lat}|${lon}`,
+      ggscoord: `${lat.toFixed(4)}|${lon.toFixed(4)}`, // ~11 m is plenty for a search this wide
       ggsradius: String(Math.min(10000, Math.max(10, Math.round(radius)))),
       ggslimit: String(Math.min(50, Math.max(1, limit))),
       prop: 'coordinates|description|pageimages|pageprops|langlinkscount',
@@ -208,9 +208,9 @@ export function createWikiService({ lang = 'en', fetchImpl = defaultFetch, retry
     const query = (params) =>
       getJson(`${host}/w/api.php?${new URLSearchParams({ action: 'query', format: 'json', formatversion: '2', origin: '*', ...details, ...params })}`);
     const answers = await Promise.allSettled([
-      query({ generator: 'geosearch', ggscoord: `${lat}|${lon}`, ggsradius: String(Math.min(10000, meters)), ggslimit: String(Math.min(500, limit)) }),
+      query({ generator: 'geosearch', ggscoord: `${lat.toFixed(4)}|${lon.toFixed(4)}`, ggsradius: String(Math.min(10000, meters)), ggslimit: String(Math.min(500, limit)) }),
       notable > 0
-        ? query({ generator: 'search', gsrsearch: `nearcoord:${meters}m,${lat.toFixed(5)},${lon.toFixed(5)}`, gsrnamespace: '0', gsrlimit: String(Math.min(500, notable)) }) // whole meters: "3.0km" isn't understood
+        ? query({ generator: 'search', gsrsearch: `nearcoord:${meters}m,${lat.toFixed(4)},${lon.toFixed(4)}`, gsrnamespace: '0', gsrlimit: String(Math.min(500, notable)) }) // whole meters: "3.0km" isn't understood
         : Promise.resolve(null),
     ]);
     if (answers.every((a) => a.status === 'rejected')) throw answers[0].reason;
@@ -251,7 +251,7 @@ export function createWikiService({ lang = 'en', fetchImpl = defaultFetch, retry
       formatversion: '2',
       origin: '*',
       generator: 'search',
-      gsrsearch: `nearcoord:${Math.round(Math.min(20000, radius))}m,${lat},${lon}`, // whole meters only
+      gsrsearch: `nearcoord:${Math.round(Math.min(20000, radius))}m,${lat.toFixed(3)},${lon.toFixed(3)}`, // whole meters only; ~100 m is plenty
       gsrnamespace: '0',
       gsrlimit: '500',
       prop: 'description',

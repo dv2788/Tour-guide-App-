@@ -80,7 +80,10 @@ const at = (title) => fixtures.geosearch.find((p) => p.title === title).coordina
   expect(/Casa Batlló is a building/.test(popup.text) && popup.hear && /wikipedia\.org/.test(popup.link ?? ''), `the window tells its story, with "Hear" and "Read more" (${popup.text.slice(0, 80)} | ${popup.link})`);
   expect(/From Wikipedia · CC BY-SA 4\.0/.test(popup.text), "the window credits Wikipedia, as its licence asks");
   await page.screenshot({ path: path.join(SHOTS, 'lens-2-story.png') });
-  await page.click('#lens-popup button:has-text("Close")');
+  // Keyboard: the story window has the focus; Escape closes it (and only it).
+  expect(await page.evaluate(() => document.activeElement?.id === 'lens-popup'), 'the story window takes the focus');
+  await page.keyboard.press('Escape');
+  expect(await page.evaluate(() => document.getElementById('lens-popup').hidden && !document.getElementById('lens').hidden), 'Escape closes the story window, not the camera');
 
   // Guide me to Casa Lleó Morera: face it, ask to be guided, turn away, follow the arrow back.
   const toMorera = bearingDegrees(here, MORERA);
@@ -102,8 +105,10 @@ const at = (title) => fixtures.geosearch.find((p) => p.title === title).coordina
   console.log('Facing it:', JSON.stringify({ ...found, popup: found.popup.slice(0, 70) }));
   expect(/^Ahead/.test(found.where) && /Lleó Morera is a building/.test(found.popup), `found: the window pops up by itself (${found.where})`);
   await page.screenshot({ path: path.join(SHOTS, 'lens-4-found.png') });
-  await page.click('#lens-close');
-  expect(await page.$eval('#lens', (el) => el.hidden), 'closing the camera view');
+  await page.keyboard.press('Escape'); // the story window
+  await page.keyboard.press('Escape'); // the camera view
+  expect(await page.$eval('#lens', (el) => el.hidden), 'closing the camera view with Escape');
+  expect(await page.evaluate(() => document.activeElement?.id === 'lens-open'), 'the focus goes back to the button that opened it');
   expect(!(await page.evaluate(() => Boolean(document.getElementById('lens-video').srcObject))), 'the camera is turned off when closed');
 
   // During a tour: the camera button looks for the next stop.

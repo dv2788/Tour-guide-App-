@@ -45,3 +45,13 @@ test('fetchRoute falls back to straight lines when routing is unavailable', asyn
   assert.equal(route.routed, false);
   assert.deepEqual(route.points, stops);
 });
+
+test('finding the city you are in sends your position to ~1 km, not to the metre', async () => {
+  const urls = [];
+  const fetchImpl = async (url) => (urls.push(url), { ok: true, json: async () => ({ name: 'Paris', address: { city: 'Paris' }, lat: '48.85', lon: '2.29' }) });
+  const geocoder = createGeocoder({ fetchImpl, minIntervalMs: 0 });
+  await geocoder.reverse({ lat: 48.858370123, lon: 2.294481987 }, 10);
+  assert.match(urls[0], /lat=48\.86&lon=2\.29&/);
+  await geocoder.reverse({ lat: 48.858370123, lon: 2.294481987 }, 18);
+  assert.match(urls[1], /lat=48\.85837&lon=2\.29448&/, 'an address needs more');
+});

@@ -112,9 +112,11 @@ export function createGeocoder({ lang = 'en', fetchImpl = defaultFetch, minInter
 
   /** What's at these coordinates? zoom 18 = a building or address, 10 = the city. */
   async function reverse({ lat, lon }, zoom = 18) {
+    // Send no more precision than the answer needs: the city (zoom 10) needs ~1 km, not your doorstep.
+    const digits = zoom <= 10 ? 2 : 5;
     const params = new URLSearchParams({
-      lat: String(lat),
-      lon: String(lon),
+      lat: lat.toFixed(digits),
+      lon: lon.toFixed(digits),
       zoom: String(zoom),
       format: 'jsonv2',
       extratags: '1',

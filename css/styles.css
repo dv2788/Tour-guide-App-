@@ -106,7 +106,7 @@ button {
 }
 
 :focus-visible {
-  outline: 1px solid var(--gold-bright);
+  outline: 2px solid var(--gold); /* 5:1 or more in both themes: visible to keyboard users */
   outline-offset: 3px;
 }
 
@@ -312,12 +312,13 @@ input[type='text']:focus,
 textarea:focus,
 select:focus {
   outline: none;
-  border-color: var(--gold-bright);
+  border-color: var(--gold);
+  box-shadow: 0 1px 0 0 var(--gold); /* a clear 2px line where you're typing */
 }
 
 ::placeholder {
   color: var(--muted);
-  opacity: 0.8;
+  opacity: 1; /* full strength keeps it readable (5:1) */
 }
 
 .input-with-icon {
@@ -517,7 +518,7 @@ select:focus {
 }
 
 .chip-opt input:focus-visible + span {
-  outline: 1px solid var(--gold-bright);
+  outline: 2px solid var(--gold);
   outline-offset: 3px;
 }
 
@@ -788,7 +789,7 @@ select:focus {
 }
 
 .tile:has(input:focus-visible) {
-  outline: 1px solid var(--gold-bright);
+  outline: 2px solid var(--gold);
   outline-offset: 3px;
 }
 
@@ -874,7 +875,7 @@ select:focus {
 }
 
 .guide:has(input:focus-visible) {
-  outline: 1px solid var(--gold-bright);
+  outline: 2px solid var(--gold);
   outline-offset: 2px;
 }
 
@@ -1053,7 +1054,7 @@ select:focus {
 }
 
 .segmented input:focus-visible + span {
-  outline: 1px solid var(--gold-bright);
+  outline: 2px solid var(--gold);
 }
 
 .error {

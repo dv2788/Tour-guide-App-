@@ -29,8 +29,20 @@ function el(tag, props = {}, children = []) {
 export function createLens({ wiki, streetName, narrator }) {
   let state = null; // everything about the open view; null when closed
 
+  // Keyboard: Escape closes the story window, then the camera view.
+  function onKey(e) {
+    if (e.key !== 'Escape' || !state) return;
+    e.preventDefault();
+    if (!$('lens-popup').hidden) {
+      $('lens-popup').hidden = true;
+      $('lens-close').focus();
+    } else close();
+  }
+
   function close() {
     if (!state) return;
+    const opener = state.opener;
+    document.removeEventListener('keydown', onKey);
     state.closed = true;
     state.stream?.getTracks().forEach((t) => t.stop());
     if (state.watch != null) navigator.geolocation?.clearWatch(state.watch);
@@ -41,18 +53,21 @@ export function createLens({ wiki, streetName, narrator }) {
     $('lens').hidden = true;
     document.body.classList.remove('lens-open');
     state = null;
+    opener?.focus?.(); // back to where you were
   }
 
   /** Open the camera view; with a target ({ name, lat, lon, … }), guide the way to it. Call from a tap. */
   async function open({ target = null } = {}) {
     close();
-    const s = (state = { places: [], heading: null, position: null, target: null, best: null, foundAt: null, popped: new Set() });
+    const s = (state = { places: [], heading: null, position: null, target: null, best: null, foundAt: null, popped: new Set(), opener: document.activeElement });
     // iPhone asks for the compass separately, and only during a tap: ask first, before any wait.
     const compassAsk = typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function'
       ? DeviceOrientationEvent.requestPermission().catch(() => 'denied')
       : Promise.resolve('granted');
     $('lens').hidden = false;
     document.body.classList.add('lens-open');
+    document.addEventListener('keydown', onKey);
+    $('lens-close').focus();
     $('lens-popup').hidden = true;
     $('lens-card').hidden = true;
     $('lens-street').hidden = true;
@@ -247,7 +262,9 @@ export function createLens({ wiki, streetName, narrator }) {
 
   function popup({ name }, summary) {
     const box = $('lens-popup');
+    const opening = box.hidden;
     box.hidden = false;
+    box.tabIndex = -1;
     box.dataset.name = name;
     const text = summary?.extract ? firstSentences(summary.extract, 5) : summary === null ? 'Looking it up…' : '';
     box.replaceChildren(
@@ -271,9 +288,10 @@ export function createLens({ wiki, streetName, narrator }) {
           ? [el('button', { type: 'button', className: 'btn-primary btn-small', textContent: 'Hear its story', onclick: () => tell(summary) })]
           : []),
         ...(summary?.url ? [el('a', { className: 'btn-soft btn-small', href: summary.url, target: '_blank', rel: 'noopener', textContent: 'Read more ↗' })] : []),
-        el('button', { type: 'button', className: 'text-btn', textContent: 'Close', onclick: () => (box.hidden = true) }),
+        el('button', { type: 'button', className: 'text-btn', textContent: 'Close', onclick: () => ((box.hidden = true), $('lens-close').focus()) }),
       ]),
     );
+    if (opening) box.focus(); // screen readers and keyboards land on the story
   }
 
   function tell(summary) {

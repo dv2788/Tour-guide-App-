@@ -96,7 +96,7 @@ test('exploreArea adds the most notable places in the whole radius to the neares
   const wiki = createWikiService({ lang: 'en', fetchImpl });
   const pois = await wiki.exploreArea(48.86, 2.33, 3000);
   assert.equal(seen.length, 2, 'two requests, so Wikipedia never refuses for too many at once');
-  assert.ok(seen.some((u) => /gsrsearch=nearcoord%3A3000m%2C48\.86000%2C2\.33000/.test(u)), 'notable places in the radius (whole meters: Wikipedia ignores "3.0km")');
+  assert.ok(seen.some((u) => /gsrsearch=nearcoord%3A3000m%2C48\.8600%2C2\.3300/.test(u)), 'notable places in the radius (whole meters: Wikipedia ignores "3.0km")');
   assert.ok(seen.every((u) => /prop=[^&]*langlinkscount/.test(u) && /coprop=type/.test(u)), 'with how many languages cover each, and what its coordinates mark');
   const byTitle = Object.fromEntries(pois.map((p) => [p.title, p]));
   assert.deepEqual(Object.keys(byTitle).sort(), ['Corner Church', 'Famous Cathedral'], 'the far tower (10 km) is outside the radius');
@@ -179,4 +179,10 @@ test('photoPage finds the page that names a photo’s author and licence', () =>
   assert.equal(photoPage('https://upload.wikimedia.org/wikipedia/en/c/c4/Poster.png'), 'https://en.wikipedia.org/wiki/File:Poster.png');
   assert.equal(photoPage('https://example.org/x.jpg'), null);
   assert.equal(photoPage(null), null);
+});
+
+test('no more precision than needed is sent: ~11 m for nearby places', async () => {
+  const { fetchImpl, seen } = mockFetch([['generator=geosearch', { query: { pages: [] } }]]);
+  await createWikiService({ fetchImpl }).nearby(48.858370123456, 2.294481987654, 500);
+  assert.match(seen[0], /ggscoord=48\.8584%7C2\.2945&/);
 });
