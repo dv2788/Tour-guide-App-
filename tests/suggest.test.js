@@ -242,6 +242,7 @@ test('found in real cities: groups, assemblies, events, paintings and streets ar
   assert.ok(!ok('Australian Securities Exchange', 'Australian securities exchange'), 'a stock market');
   assert.ok(!ok("Organisation de l'aviation civile internationale") && !ok('Archidiocèse de Montréal') && !ok('2008 Singapore Grand Prix'), 'Montreal, Singapore');
   assert.ok(!ok('Marina Bay, Singapore', 'bay in Singapore') && !ok('Grand Union Canal', 'canal in England'), 'a bay, a canal');
+  assert.ok(!ok('Strand, London', 'Major thoroughfare in the City of Westminster, London, England') && !ok('Ost-Berlin', 'ehemaliger sowjetischer Sektor von Berlin und Hauptstadt der DDR'), 'a thoroughfare, a sector');
   assert.ok(!ok('Kyoto Prefecture', 'prefecture of Japan') && !ok('Edo', 'former name of Tokyo') && !ok('East River', 'tidal strait in New York City'), 'a region, an old name, a strait');
   assert.ok(!ok('World Trade Center (1973–2001)', 'former complex in Manhattan'), 'the one that stood there then');
   assert.ok(!ok('Rhein-Neckar-Zeitung', 'Tageszeitung in Heidelberg') && !ok('Heidelberger Druckmaschinen', 'Maschinenbauunternehmen'), 'German compounds: a newspaper, a company');
@@ -257,6 +258,8 @@ test('found in real cities: groups, assemblies, events, paintings and streets ar
   assert.ok(ok('Rua Augusta Arch', 'triumphal arch in Lisbon') && ok('Hôtel de préfecture de la Haute-Savoie', 'préfecture de la Haute-Savoie'), 'what stands in a street; a prefecture building');
   assert.ok(ok('Union Station (Washington, D.C.)', 'train station') && ok('Universitätskirche Leipzig', 'Kirche') && ok('Imperial War Museum', 'museum in London'), 'words inside names');
   assert.ok(ok('Verkehrshaus der Schweiz', 'Verkehrsmuseum in Luzern') && ok('Kunsthaus Zürich', 'Kunstmuseum'), 'German museums');
+  assert.ok(ok('London Bridge', '1973 Thames road bridge in London') && ok('Loftus Road', "Stadium in Shepherd's Bush, London, England"), 'a bridge described by its year, a stadium named like a road');
+  assert.ok(!ok('Wheatfield with Crows', '1890 painting by Vincent van Gogh') && !ok('Expo \'98', "1998 World's Fair in Lisbon, Portugal") && !ok('Via del Corso (Roma)', 'strada di Roma') && !ok('Rue Saint-Honoré', 'voie parisienne'), 'a painting and a fair by their year; streets by their description');
   assert.ok(ok('Museum of the Second World War', 'museum in Gdańsk') && ok('University Church of St Mary the Virgin', 'church in Oxford') && ok('Oxford University Museum of Natural History', 'museum in Oxford'), 'titles that name a museum or a church');
 });
 

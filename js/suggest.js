@@ -37,7 +37,7 @@ const MUSEUM_RE = /(?:^|[^\p{L}])(?:museum|musée|musee|museo|museu|gallery|gale
 // Matched against what a place *is* (the start of its description: "river in France",
 // "arrondissement of Paris"), not words further on ("bridge over the river").
 const AREA_RE =
-  /^(?:[\p{L}'’-]+\s+){0,2}(?:arrondissement|district|neighbou?rhood|suburb|area|space|point|junction|intersection|settlement|ville|cité|région|región|regione|provincia|département|departamento|bundesland|ciudad|stadt|città|comune|gemeinde|île|isla|insel|isola|barrio|bairro|stadtteil|quartiere|rione|quarter|quartier|borough|ward|commune|municipality|city|town|village|capital|river|fleuve|rivière|río|fluss|fiume|lake|region|province|department|département|metropolitan|island|street|avenue|boulevard|rue|calle|straße|strasse|metro line|railway line|prefecture|canton|strait|estuary|bay|lagoon|gulf|canal|former name)(?![\p{L}])/iu;
+  /^(?:[\p{L}'’-]+\s+){0,2}(?:arrondissement|district|neighbou?rhood|suburb|area|space|point|junction|intersection|settlement|ville|cité|région|región|regione|provincia|département|departamento|bundesland|ciudad|stadt|città|comune|gemeinde|île|isla|insel|isola|barrio|bairro|stadtteil|quartiere|rione|quarter|quartier|borough|ward|commune|municipality|city|town|village|capital|river|fleuve|rivière|río|fluss|fiume|lake|region|province|department|département|metropolitan|island|street|avenue|boulevard|rue|calle|straße|strasse|metro line|railway line|prefecture|canton|strait|estuary|bay|lagoon|gulf|canal|former name|thoroughfare|sektor|sector|secteur)(?![\p{L}])/iu;
 
 // Wikipedia also places organisations, events and works at an address: not places to walk to.
 // (Matched on the short description: "British intelligence agency", "Satirical magazine", "Fire in 1666".)
@@ -77,6 +77,10 @@ const ORGANISATION_TITLE_RE = /^(?:association|asociación|associazione|fédéra
 const NOT_A_PLACE_DE_RE = /\p{L}(?:unternehmen|zeitung|partei|verein|stiftung|verband|konzern|hersteller|festival)(?![\p{L}])/iu;
 // Dates in the title: "World Trade Center (1973–2001)" is the one that stood there then.
 const GONE_TITLE_RE = /\(\s*\d{3,4}\s*[–-]\s*\d{3,4}\s*\)\s*$/;
+// Descriptions of streets in the five languages ("voie parisienne", "strada di Roma",
+// "Einkaufsstraße in Wien", "bulevar y paseo de Madrid").
+const STREETISH_RE =
+  /^(?:[\p{L}'’-]+\s+){0,2}(?:street|road|avenue|boulevard|thoroughfare|voie|rue|strada|via|calle|avenida|bulevar|paseo|rua|gasse)(?![\p{L}])|^\S*(?:straße|strasse|gasse)(?![\p{L}])/iu;
 // Streets are walked along, not stopped at (their stories come up as you walk them).
 const STREET_TITLE_RE =
   /^(?:rue|avenue|boulevard|calle|carrer|avinguda|avenida|paseo|passeig|via|viale|corso|rua)\s|(?:straße|strasse|gasse|street|road|lane)(?:\s*\(.*\))?$/iu;
@@ -106,14 +110,16 @@ export function isPlaceToSee(poi) {
   const description = poi.description ?? '';
   const title = poi.title ?? '';
   if (AREA_RE.test(description) || NOT_A_PLACE_RE.test(description) || NOT_A_PLACE_INTL_RE.test(description) || NOT_A_PLACE_START_RE.test(description)) return false;
-  if (IN_A_COLLECTION_RE.test(description) || GONE_RE.test(description) || EVENT_DESCRIPTION_RE.test(description) || NOT_A_PLACE_DE_RE.test(description)) return false;
+  if (IN_A_COLLECTION_RE.test(description) || GONE_RE.test(description) || NOT_A_PLACE_DE_RE.test(description)) return false;
+  // "2019 structural fire in Paris" is an event; "1973 Thames road bridge" is London Bridge.
+  if (EVENT_DESCRIPTION_RE.test(description) && !HISTORIC_RE.test(description) && !MUSEUM_RE.test(description)) return false;
   if (INSTITUTION_TITLE_RE.test(title) || EVENT_TITLE_RE.test(title)) return false;
   // "Museum of the Second World War", "University Church": the title names a place to see.
   const namesAPlace = MUSEUM_RE.test(title) || HISTORIC_RE.test(title);
   if (!namesAPlace && (ORGANISATION_TITLE_RE.test(title) || EVENT_TITLE_END_RE.test(title))) return false;
-  // A street, unless it's an address ("10 Downing Street") or the description says what stands
-  // there ("Rua Augusta Arch": triumphal arch in Lisbon).
-  if (STREET_TITLE_RE.test(title) && !/^\d/.test(title) && !HISTORIC_RE.test(description) && !MUSEUM_RE.test(description)) return false;
+  // Named like a street and nothing says otherwise: a street. Not an address ("10 Downing
+  // Street"), an arch ("Rua Augusta Arch": triumphal arch) or a stadium ("Loftus Road").
+  if (STREET_TITLE_RE.test(title) && !/^\d/.test(title) && (!description || STREETISH_RE.test(description))) return false;
   if (GONE_TITLE_RE.test(title) || NOT_A_STOP_TYPES.has(poi.coordType)) return false;
   // A railway station counts only when it's a landmark in its own right (Grand Central, St Pancras).
   if (poi.coordType === 'railwaystation' && (poi.langs ?? 0) < 40) return false;
