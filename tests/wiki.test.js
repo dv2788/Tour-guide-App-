@@ -186,3 +186,24 @@ test('no more precision than needed is sent: ~11 m for nearby places', async () 
   await createWikiService({ fetchImpl }).nearby(48.858370123456, 2.294481987654, 500);
   assert.match(seen[0], /ggscoord=48\.8584%7C2\.2945&/);
 });
+
+test('an error inside a normal answer ("Search is currently too busy") is retried, never read as "no places"', async () => {
+  const tooBusy = { error: { code: 'cirrussearch-too-busy-error', info: 'Search is currently too busy. Please try again later.' } };
+  const pages = { query: { pages: [{ pageid: 1, title: 'Stephansdom', length: 60000, langlinkscount: 70, description: 'Kathedrale in Wien', coordinates: [{ lat: 48.2085, lon: 16.3731 }] }] } };
+  let calls = 0;
+  const flaky = async (url) => {
+    if (url.includes('wikidata')) return { ok: true, status: 200, json: async () => ({ query: { search: [] } }) };
+    calls++;
+    return { ok: true, status: 200, json: async () => (calls <= 2 ? tooBusy : pages) };
+  };
+  const pois = await createWikiService({ fetchImpl: flaky, retryDelayMs: 1 }).exploreArea(48.2084, 16.3725, 6000);
+  assert.deepEqual(pois.map((p) => p.title), ['Stephansdom'], 'asked again until it answered');
+  // Still too busy after the retries: say so (the app then asks to try again), don't answer "nothing here".
+  const alwaysBusy = async (url) => ({ ok: true, status: 200, json: async () => (url.includes('wikidata') ? { query: { search: [] } } : tooBusy) });
+  await assert.rejects(createWikiService({ fetchImpl: alwaysBusy, retryDelayMs: 1 }).exploreArea(48.2084, 16.3725, 6000), WikipediaBusyError);
+  // Other errors aren't retried.
+  let asked = 0;
+  const bad = async () => (asked++, { ok: true, status: 200, json: async () => ({ error: { code: 'badvalue' } }) });
+  await assert.rejects(createWikiService({ fetchImpl: bad, retryDelayMs: 1 }).nearby(48.2, 16.37, 500), /badvalue/);
+  assert.equal(asked, 1);
+});

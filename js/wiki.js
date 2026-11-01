@@ -34,6 +34,8 @@ function inTurn(task) {
 }
 
 export class WikipediaBusyError extends Error {}
+// Error codes that mean "too busy right now, ask again in a moment".
+const BUSY_CODE_RE = /^(?:cirrussearch-too-busy-error|cirrussearch-backend-error|ratelimited|maxlag|readonly|internal_api_error)/;
 
 /**
  * The page of a Wikipedia photo, which names its author and licence (credit for showing it):
@@ -62,7 +64,20 @@ export function createWikiService({ lang = 'en', fetchImpl = defaultFetch, retry
         await sleep(retryDelayMs * 2 ** attempt);
         continue;
       }
-      if (res.ok) return res.json();
+      if (res.ok) {
+        const data = await res.json();
+        // Some refusals arrive as a normal answer (HTTP 200) with an error inside:
+        // {"error": {"code": "cirrussearch-too-busy-error"}}. Read as "no places", they told
+        // people there was nothing to see in central Vienna.
+        const code = data?.error?.code;
+        if (!code) return data;
+        const busyCode = BUSY_CODE_RE.test(code);
+        if (!busyCode || attempt >= retries) {
+          throw busyCode ? new WikipediaBusyError(`Wikipedia is busy (${code})`) : new Error(`Wikipedia request failed (${code})`);
+        }
+        await sleep(retryDelayMs * 2 ** attempt);
+        continue;
+      }
       const busy = res.status === 429 || res.status === 503;
       if (!busy || attempt >= retries) {
         throw busy ? new WikipediaBusyError(`Wikipedia is busy (HTTP ${res.status})`) : new Error(`Wikipedia request failed (HTTP ${res.status})`);
