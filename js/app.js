@@ -583,14 +583,15 @@ async function planRoute() {
     }
     const startedAt = new Date();
     const schedule = breakSchedule(startedAt, minutes);
-    const route = suggestRoute({
-      start: origin,
-      candidates,
-      modeId,
-      minutes,
-      loop,
-      reservedMinutes: schedule.reduce((n, b) => n + b.minutes, 0),
-    });
+    const pickStops = () =>
+      suggestRoute({ start: origin, candidates, modeId, minutes, loop, reservedMinutes: schedule.reduce((n, b) => n + b.minutes, 0) });
+    let route = pickStops();
+    // Last check on the stops chosen: demolished, says Wikipedia? Then choose again without them.
+    // (At most 6 s: without an answer, the route stands.)
+    const chosen = route.stops.map((s) => candidates.find((c) => c.id === s.id)).filter(Boolean);
+    const check = createWikiService({ lang }).markDemolished(chosen).catch(() => null);
+    await Promise.race([check, new Promise((resolve) => setTimeout(resolve, 6000))]);
+    if (chosen.some((c) => c.gone)) route = pickStops();
     if (!route.stops.length) {
       explainEmptyPlan({ origin, candidates, modeId, minutes, loop, radius: lookWithin });
       return;
@@ -1166,6 +1167,7 @@ const lensWiki = {
   nearby: (...args) => createWikiService({ lang: $('lang').value }).nearby(...args),
   summary: (title) => createWikiService({ lang: $('lang').value }).summary(title),
   resolveArticle: (...args) => createWikiService({ lang: $('lang').value }).resolveArticle(...args),
+  markDemolished: (places) => createWikiService({ lang: $('lang').value }).markDemolished(places),
 };
 let lensNarrator = null;
 const lens = createLens({

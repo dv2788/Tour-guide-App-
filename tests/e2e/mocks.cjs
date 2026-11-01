@@ -180,6 +180,9 @@ async function mockNetwork(context, { routeCacheName = 'smoke' } = {}) {
         .sort((a, b) => articleLength(b.page.title) - articleLength(a.page.title))
         .slice(0, Number(p.get('gsrlimit')));
       json(route, { query: { pages: found.map(({ page }, i) => ({ ...withDetails(page), index: i + 1 })) } });
+    } else if (p.get('prop') === 'categories') {
+      // Is it demolished? None of the recorded places is.
+      json(route, { query: { pages: (p.get('titles') ?? '').split('|').map((title) => ({ title, categories: [{ title: 'Category:Buildings and structures in Barcelona' }] })) } });
     } else if (p.get('generator') === 'search') {
       // Suggestions for "which part of town": the recorded places plus a few neighbourhoods.
       const quarters = [

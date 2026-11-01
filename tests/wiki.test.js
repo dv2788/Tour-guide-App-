@@ -253,3 +253,23 @@ test('nearby can say which buildings are gone (for the camera), and works withou
   const plain = await createWikiService({ fetchImpl: noWikidata.fetchImpl, retries: 0 }).nearby(48.8531, 2.3488, 400, 50, { markGone: true });
   assert.equal(plain.length, 2);
 });
+
+test('markDemolished reads Wikipedia categories (where Wikidata says nothing), in any language, and keeps rebuilt ones', async () => {
+  const cats = {
+    'Church of Saint-Pierre-aux-Bœufs, Paris': ['Category:Buildings and structures demolished in 1812', 'Category:Former Roman Catholic church buildings in France'],
+    'Église Saint-Barthélemy': ['Catégorie:Église détruite à Paris'],
+    'Frauenkirche, Dresden': ['Category:Churches destroyed during World War II', 'Category:Rebuilt buildings and structures in Germany'],
+    'Notre-Dame de Paris': ['Category:Cathedrals in Paris'],
+  };
+  const { fetchImpl, seen } = mockFetch([['prop=categories', { query: { pages: Object.entries(cats).map(([title, c]) => ({ title, categories: c.map((t) => ({ title: t })) })) } }]]);
+  const places = Object.keys(cats).map((title) => ({ title }));
+  await createWikiService({ fetchImpl }).markDemolished(places);
+  assert.deepEqual(places.filter((p) => p.gone).map((p) => p.title), ['Church of Saint-Pierre-aux-Bœufs, Paris', 'Église Saint-Barthélemy']);
+  assert.equal(seen.length, 1, 'one request for up to 20 places');
+  assert.match(seen[0], /clshow=!hidden|clshow=%21hidden/);
+  // Wikipedia busy: nothing marked, nothing thrown.
+  const down = mockFetch([]);
+  const same = [{ title: 'Notre-Dame de Paris' }];
+  await createWikiService({ fetchImpl: down.fetchImpl, retries: 0 }).markDemolished(same);
+  assert.equal(same[0].gone, undefined);
+});

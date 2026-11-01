@@ -98,3 +98,14 @@ test('no labels for buildings that are gone or for metro stations', () => {
   ];
   assert.deepEqual(placesInView(BATLLO, 0, around).map((p) => p.title), ['Grand Central Terminal']);
 });
+
+test('on a square, the building you point at wins over "You’re here"; with nothing in view, you’re on the square', () => {
+  const square = { title: 'Grand-Place', description: 'Square and UNESCO World Heritage Site in Brussels, Belgium', ...from(BATLLO, 90, 8), langs: 60 };
+  const townHall = { title: 'Brussels Town Hall', description: 'City hall in Brussels', ...from(BATLLO, 235, 45), langs: 40 };
+  const facing = placesInView(BATLLO, 235, [square, townHall]);
+  assert.equal(facing[0].title, 'Brussels Town Hall');
+  assert.ok(!facing.some((p) => p.title === 'Grand-Place'));
+  const nothingElse = placesInView(BATLLO, 0, [square, townHall]);
+  assert.equal(nothingElse[0].title, 'Grand-Place');
+  assert.equal(whereItIs(nothingElse[0]), "You're here");
+});

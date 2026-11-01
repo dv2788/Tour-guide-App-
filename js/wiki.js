@@ -43,6 +43,13 @@ const BUSY_CODE_RE = /^(?:cirrussearch-too-busy-error|cirrussearch-backend-error
 // to be left out of routes.
 const GONE_STATEMENTS = 'P31=Q19860854|P31=Q57644089';
 
+// Wikipedia's categories say it where Wikidata doesn't ("Buildings and structures demolished in
+// 1747", "Destroyed churches in France", "Bâtiment détruit à Paris", "Abgegangenes Bauwerk",
+// "Edificios demolidos", "Architetture scomparse"), unless it was rebuilt (Dresden's Frauenkirche).
+const DEMOLISHED_CATEGORY_RE =
+  /(?:^|[^\p{L}])(?:demolished|destroyed|détruite?s?|démolie?s?|disparue?s?|abgegangene\w*|abgerissene\w*|zerstörte\w*|demolid[oa]s?|destruid[oa]s?|desaparecid[oa]s?|demolit[eoia]|distrutt[eoia]|scompars[eoia])(?![\p{L}])/iu;
+const REBUILT_CATEGORY_RE = /rebuilt|reconstructed|reconstruit|wiederaufgebaut|rekonstruiert|reconstruid|ricostruit/iu;
+
 /** The promise's answer, or `fallback` if it takes longer than `ms`. */
 function atMost(ms, promise, fallback) {
   let timer;
@@ -283,6 +290,35 @@ export function createWikiService({ lang = 'en', fetchImpl = defaultFetch, retry
     return [...byId.values()].filter((p) => distanceMeters({ lat, lon }, p) <= meters * 1.05);
   }
 
+  /**
+   * Mark the places whose Wikipedia categories say they were demolished or destroyed (`gone`),
+   * for the few that matter: the stops of a route, the places in front of the camera. One
+   * request per 20 places; any that can't be checked are left as they are.
+   */
+  async function markDemolished(places) {
+    const todo = places.filter((p) => p?.title && !p.gone);
+    for (let i = 0; i < todo.length; i += 20) {
+      const batch = todo.slice(i, i + 20);
+      const params = new URLSearchParams({
+        action: 'query',
+        format: 'json',
+        formatversion: '2',
+        origin: '*',
+        prop: 'categories',
+        clshow: '!hidden',
+        cllimit: 'max',
+        titles: batch.map((p) => p.title).join('|'),
+      });
+      const data = await getJson(`${host}/w/api.php?${params}`).catch(() => null);
+      const byTitle = new Map((data?.query?.pages ?? []).map((pg) => [pg.title, (pg.categories ?? []).map((c) => c.title)]));
+      for (const p of batch) {
+        const cats = byTitle.get(p.title) ?? [];
+        if (cats.some((c) => DEMOLISHED_CATEGORY_RE.test(c)) && !cats.some((c) => REBUILT_CATEGORY_RE.test(c))) p.gone = true;
+      }
+    }
+    return places;
+  }
+
   /** Wikidata ids of the buildings within `meters` that no longer stand (one search, ~15 KB in central Paris). */
   async function goneAround(lat, lon, meters) {
     const params = new URLSearchParams({
@@ -327,5 +363,5 @@ export function createWikiService({ lang = 'en', fetchImpl = defaultFetch, retry
       .slice(0, limit);
   }
 
-  return { lang, nearby, summary, titleFromWikidata, resolveArticle, exploreArea, neighbourhoods };
+  return { lang, nearby, summary, titleFromWikidata, resolveArticle, exploreArea, neighbourhoods, markDemolished };
 }

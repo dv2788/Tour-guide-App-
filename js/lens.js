@@ -9,6 +9,12 @@ const DEG = Math.PI / 180;
 // Something you can point at: not a district or a whole city ("You're here: London"), an
 // organisation ("Archdiocese of Paris") or an event ("Notre-Dame fire"). Same test as routes.
 const pointable = (p) => p.lat != null && isPlaceToSee(p);
+// Squares are where you stand, like streets: on the Grand-Place, pointing at the Town Hall,
+// the Town Hall is what you're looking at.
+const SQUARE_RE =
+  /^(?:place|plaza|piazza|plaça|praça|piazzale|platz|plein)\s|(?:square|platz|plein|markt|grand-place|grote markt)(?:,.*|\s*\(.*\))?$|^grand-place/iu;
+const SQUARE_DESCRIPTION_RE = /^(?:[\p{L}'’-]+\s+){0,2}(?:square|plaza|piazza|place|platz|plein|praça|plaça|market square)(?![\p{L}])/iu;
+const isSquare = (p) => SQUARE_RE.test(p.title ?? '') || SQUARE_DESCRIPTION_RE.test(p.description ?? '');
 
 /**
  * Which way the back camera points (degrees clockwise from north), from a device orientation
@@ -60,7 +66,7 @@ export function placesInView(position, heading, places, { fov = 60, maxDistance 
     const bearingOff = angleDiff(heading, bearingDegrees(position, p));
     // Standing at a place with your back to it, you're pointing at something else (on a square,
     // with GPS 10–20 m off, the building beside you mustn't hide the belfry in front).
-    const behind = here && Math.abs(bearingOff) > 100;
+    const behind = here && (Math.abs(bearingOff) > 100 || isSquare(p));
     const off = here ? 0 : bearingOff;
     const size = Math.atan2(15, Math.max(distance, 1)) / DEG; // a building is ~30 m wide
     if (!here && Math.abs(off) > half + Math.min(size, 15)) continue;

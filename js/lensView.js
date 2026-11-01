@@ -129,6 +129,9 @@ export function createLens({ wiki, streetName, narrator }) {
           s.retries = 0;
           if (!places.length) status('No landmarks known within 400 m. Try walking a little further.');
           draw();
+          // Then the closest ones' categories: some demolished buildings are only marked there.
+          const close = places.filter((p) => p.category !== 'skip' && !p.gone && distanceMeters(position, p) <= 300).slice(0, 40);
+          wiki.markDemolished?.(close).then(() => !s.closed && draw(), () => {});
         })
         .catch(() => {
           if (s.closed) return;
