@@ -37,21 +37,54 @@ const MUSEUM_RE = /(?:^|[^\p{L}])(?:museum|musée|musee|museo|museu|gallery|gale
 // Matched against what a place *is* (the start of its description: "river in France",
 // "arrondissement of Paris"), not words further on ("bridge over the river").
 const AREA_RE =
-  /^(?:[\p{L}'’-]+\s+){0,2}(?:arrondissement|district|neighbou?rhood|suburb|area|space|point|junction|intersection|settlement|ville|cité|région|región|regione|provincia|département|departamento|bundesland|ciudad|stadt|città|comune|gemeinde|île|isla|insel|isola|barrio|bairro|stadtteil|quartiere|rione|quarter|quartier|borough|ward|commune|municipality|city|town|village|capital|river|fleuve|rivière|río|fluss|fiume|lake|region|province|department|département|metropolitan|island|street|avenue|boulevard|rue|calle|straße|strasse|metro line|railway line)(?![\p{L}])/iu;
+  /^(?:[\p{L}'’-]+\s+){0,2}(?:arrondissement|district|neighbou?rhood|suburb|area|space|point|junction|intersection|settlement|ville|cité|région|región|regione|provincia|département|departamento|bundesland|ciudad|stadt|città|comune|gemeinde|île|isla|insel|isola|barrio|bairro|stadtteil|quartiere|rione|quarter|quartier|borough|ward|commune|municipality|city|town|village|capital|river|fleuve|rivière|río|fluss|fiume|lake|region|province|department|département|metropolitan|island|street|avenue|boulevard|rue|calle|straße|strasse|metro line|railway line|prefecture|canton|strait|estuary|bay|lagoon|gulf|canal|former name)(?![\p{L}])/iu;
 
 // Wikipedia also places organisations, events and works at an address: not places to walk to.
 // (Matched on the short description: "British intelligence agency", "Satirical magazine", "Fire in 1666".)
 const NOT_A_PLACE_RE =
-  /(?:^|[^\p{L}])(?:agency|company|corporation|government|body|conglomerate|firm|manufacturer|magazine|newspaper|tabloid|broadcaster|publisher|record label|band|political party|parliament|legislat|senate|ministry|government department|central bank|stock exchange|university|college|school|religious order|higher education|research institution|educational institution|école|ecole|lycée|escuela|schule|scuola|society|association|organi[sz]ation|charity|foundation|club|team|brand|fashion house|retailer|airline|television|radio|channel|film|novel|album|song|video game|battle|siege|attack|assault|incident|affair|arson|explosion|bombing|storming|uprising|insurrection|rebellion|revolt|coup|protest|riot|election|treaty|festival|event|olympics|games|championship|tournament|competition|conflagration|massacre|scandal|police|intelligence|embassy|consulate|series|former (?:country|state)|historical (?:country|state))(?![\p{L}])/iu;
+  /(?:^|[^\p{L}])(?:agency|company|corporation|government|body|conglomerate|firm|manufacturer|magazine|newspaper|tabloid|broadcaster|publisher|record label|band|political party|parliament|legislat|senate|ministry|government department|central bank|stock exchange|securities exchange|university|college|school|religious order|higher education|research institution|educational institution|école|ecole|lycée|escuela|schule|scuola|society|association|organi[sz]ation|charity|foundation|club|team|brand|fashion house|retailer|airline|television|radio|channel|film|novel|album|song|video game|battle|siege|attack|assault|incident|affair|arson|explosion|bombing|storming|uprising|insurrection|rebellion|revolt|coup|protest|riot|election|treaty|festival|event|olympics|games|championship|tournament|competition|conflagration|massacre|scandal|police|intelligence|embassy|consulate|series|former (?:country|state)|historical (?:country|state))(?![\p{L}])/iu;
 // The same in French, Spanish, German and Italian (descriptions come in the reader's language).
 const NOT_A_PLACE_INTL_RE =
   /(?:^|[^\p{L}])(?:épisode|événement|evento|acontecimiento|ereignis|agence|agencia|agentur|agenzia|académies?|academias?|akademien?|accademi[ae]|entreprise|société|journal|quotidien|parti politique|ministère|gouvernement|université|banque|association|fondation|attentat|bataille|incendie|siège|émeute|traité|conférence|élection|jeux olympiques|libération|manifestation|empresa|periódico|partido político|ministerio|gobierno|universidad|banco|fundación|asociación|atentado|batalla|incendio|asedio|motín|tratado|conferencia|elecciones|juegos olímpicos|unternehmen|zeitung|partei|ministerium|regierung|universität|verein|stiftung|anschlag|schlacht|belagerung|aufstand|vertrag|konferenz|olympische|azienda|società|giornale|partito|ministero|governo|università|banca|fondazione|associazione|attentato|battaglia|assedio|rivolta|trattato|conferenza|elezioni|olimpiadi|giochi olimpici)(?![\p{L}])/iu;
-// Institutions named after what they are, with no description to go on.
-const INSTITUTION_TITLE_RE = /^(?:parliament|government|ministry|house of (?:lords|commons|representatives)|senate|congress|principality|kingdom|duchy|county|republic|empire|province|diocese|archdiocese) of\b/i;
+// What a place *is* (the first words of its description) when that's an institution or a group,
+// not a building: "British think tank", "Scotland's national academy of science", "réseau
+// d'universités européennes", "national church of Scotland", "cámara baja de las Cortes".
+// (Anchored: "cathedral of the Diocese of Bruges" is still a cathedral.)
+const NOT_A_PLACE_START_RE =
+  /^(?:[\p{L}'’-]+\s+){0,3}(?:think tank|academy|national church|denomination|(?:arch)?diocese|(?:archi)?diocèse|(?:arqui|archi)?diócesis|(?:arci)?diocesi|(?:erz)?bistum|(?:erz)?diözese|network|réseau|red de|netzwerk|rete di|parlement|parlamento|parlament|lower house|upper house|chambre basse|chambre haute|cámara baja|cámara alta|camera bassa|camera alta|unterhaus|oberhaus|juridiction|tribunal)(?![\p{L}])/iu;
+// Institutions named after what they are, with no description to go on (many articles have none).
+const INSTITUTION_TITLE_RE = new RegExp(
+  [
+    '^(?:parliament|government|ministry|house of (?:lords|commons|representatives)|senate|congress|principality|kingdom|duchy|county|republic|empire|province|diocese|archdiocese) of\\b',
+    // National churches and dioceses, in the five languages.
+    "^(?:roman )?catholic church in\\b|^church of (?:england|scotland|ireland|wales|sweden|norway|denmark|finland|greece)\\b|^(?:römisch-)?katholische kirche in\\b|^evangelische kirche in\\b|^église catholique (?:en|au|aux|de)\\b|^iglesia católica en\\b|^chiesa cattolica in\\b",
+    "^(?:archi)?diocèse d|^(?:arqui|archi)?diócesis d|^(?:arci)?diocesi d|^(?:erz)?bistum |^(?:erz)?diözese ",
+    // Assemblies and courts (their buildings have their own articles: Palais Bourbon, Reichstag).
+    "^chambre des (?:représentants|députés)|^chamber of (?:representatives|deputies)|^cámara de (?:diputados|representantes)|^camera dei deputati|^cour d'(?:assises|appel)|^tribunal (?:de grande instance|judiciaire|administratif|de commerce)",
+  ].join('|'),
+  'iu',
+);
+// Events named after what happened: "Battle of Waterloo", "Bataille d'Argentovaria", "Great Fire of
+// London", and years: "1973 UCI Cyclo-cross World Championships", "2019 fire at Notre-Dame".
+const EVENT_TITLE_RE =
+  /^(?:\d{4}\s|(?:battle|siege|sack|great fire|fire|massacre|bombing|treaty|peace|council|liberation) of\b|(?:bataille|siège|sac|incendie|massacre|bombardement|traité|paix|libération|concile) d(?:e|u|es|’|')|(?:batalla|sitio|asedio|saqueo|incendio|masacre|bombardeo|tratado|paz) de\b|(?:schlacht|belagerung|frieden|vertrag) (?:von|bei|um)\b|(?:battaglia|assedio|sacco|incendio|strage|trattato|pace) d)/iu;
+const EVENT_DESCRIPTION_RE = /^\d{3,4}\s/; // "2019 structural fire in Paris" (not "1920s building")
+// …or by their last word: "Hōgen rebellion", "Great Kantō earthquake", "2015 Paris attacks".
+const EVENT_TITLE_END_RE = /(?:^|\s)(?:rebellion|uprising|revolt|riots?|massacre|disaster|earthquake|bombings?|attacks?|incident|affair|crisis|protests?|war|siege|shooting|hostage crisis)(?:\s*\(.*\))?$/iu;
+// Organisations by their first word: "Asociación del Fútbol Argentino", "Fédération française…".
+const ORGANISATION_TITLE_RE = /^(?:association|asociación|associazione|fédération|federación|federazione|confederación|verband|bund deutscher|organisation|organization|organización|organizzazione)(?![\p{L}])|(?:^|[^\p{L}])(?:university|université|universidad|università|universität|universitat)(?![\p{L}])/iu;
+// German packs it into one word: "Tageszeitung", "Maschinenbauunternehmen", "Musikfestival".
+const NOT_A_PLACE_DE_RE = /\p{L}(?:unternehmen|zeitung|partei|verein|stiftung|verband|konzern|hersteller|festival)(?![\p{L}])/iu;
+// Dates in the title: "World Trade Center (1973–2001)" is the one that stood there then.
+const GONE_TITLE_RE = /\(\s*\d{3,4}\s*[–-]\s*\d{3,4}\s*\)\s*$/;
+// Streets are walked along, not stopped at (their stories come up as you walk them).
+const STREET_TITLE_RE =
+  /^(?:rue|avenue|boulevard|calle|carrer|avinguda|avenida|paseo|passeig|via|viale|corso|rua)\s|(?:straße|strasse|gasse|street|road|lane)(?:\s*\(.*\))?$/iu;
 // Places that are gone: "Royal palace in Paris (1564–1883)", "Government of France from 1792 to 1804".
 const GONE_RE = /\(\s*\d{3,4}\s*[–-]\s*\d{3,4}\s*\)|\bfrom \d{3,4} to \d{3,4}\b|(?:^|[^\p{L}])(?:demolished|destroyed|détruit|démoli|disparu|destruido|demolido|zerstört|abgerissen|distrutto|demolito)/iu;
 // Objects inside a collection ("Ancient Greek sculptures held in London"): the museum is the stop.
-const IN_A_COLLECTION_RE = /(?:^(?:painting|portrait|fresco|manuscript|tapestry|artwork)\b)|\b(?:held|housed|kept|displayed|exhibited) (?:in|at|by)\b/i;
+const IN_A_COLLECTION_RE =
+  /^(?:painting|portrait|manuscript|tapestry|artwork|tableau|peinture|retable|manuscrit|tapisserie|cuadro|pintura|retablo|manuscrito|tapiz|gemälde|handschrift|dipinto|manoscritto|arazzo)(?![\p{L}])|\b(?:held|housed|kept|displayed|exhibited) (?:in|at|by)\b/iu;
 // Coordinate kinds (from Wikipedia's {{coord}}) that are never a stop on a walk.
 const NOT_A_STOP_TYPES = new Set(['country', 'state', 'adm1st', 'adm2nd', 'adm3rd', 'city', 'event', 'edu', 'airport', 'waterbody', 'river', 'mountain', 'satellite', 'glacier', 'pass', 'forest']);
 
@@ -64,18 +97,34 @@ export function placeKind(poi) {
 }
 
 /**
+ * Whether an article is about something you can go and see, whatever its fame: not an area or
+ * street, an organisation, an event, an artwork inside a collection, or a building that's gone.
+ * (Also used by "Point your camera", so it labels what's in front of you, not "Notre-Dame fire".)
+ */
+export function isPlaceToSee(poi) {
+  if (poi.category === 'skip' || poi.disambiguation || poi.gone) return false;
+  const description = poi.description ?? '';
+  const title = poi.title ?? '';
+  if (AREA_RE.test(description) || NOT_A_PLACE_RE.test(description) || NOT_A_PLACE_INTL_RE.test(description) || NOT_A_PLACE_START_RE.test(description)) return false;
+  if (IN_A_COLLECTION_RE.test(description) || GONE_RE.test(description) || EVENT_DESCRIPTION_RE.test(description) || NOT_A_PLACE_DE_RE.test(description)) return false;
+  if (INSTITUTION_TITLE_RE.test(title) || ORGANISATION_TITLE_RE.test(title) || EVENT_TITLE_RE.test(title) || EVENT_TITLE_END_RE.test(title)) return false;
+  // A street, unless it's an address ("10 Downing Street") or the description says what stands
+  // there ("Rua Augusta Arch": triumphal arch in Lisbon).
+  if (STREET_TITLE_RE.test(title) && !/^\d/.test(title) && !HISTORIC_RE.test(description) && !MUSEUM_RE.test(description)) return false;
+  if (GONE_TITLE_RE.test(title) || NOT_A_STOP_TYPES.has(poi.coordType)) return false;
+  // A railway station counts only when it's a landmark in its own right (Grand Central, St Pancras).
+  if (poi.coordType === 'railwaystation' && (poi.langs ?? 0) < 40) return false;
+  return true;
+}
+
+/**
  * How worth visiting a place is. Fame first: how many Wikipedia languages have an article
  * about it (the Sagrada Família ~95, a neighbourhood church ~5). Then how much there is to
  * tell (article length), and a nudge for historic places and museums. Areas, streets,
  * organisations, events, buildings that are gone and filler are excluded.
  */
 export function interestScore(poi) {
-  if (poi.category === 'skip' || poi.disambiguation || poi.gone) return -Infinity;
-  const description = poi.description ?? '';
-  if (AREA_RE.test(description) || NOT_A_PLACE_RE.test(description) || NOT_A_PLACE_INTL_RE.test(description) || IN_A_COLLECTION_RE.test(description) || GONE_RE.test(description)) return -Infinity;
-  if (INSTITUTION_TITLE_RE.test(poi.title ?? '') || NOT_A_STOP_TYPES.has(poi.coordType)) return -Infinity;
-  // A railway station is a stop only when it's a landmark in its own right (Grand Central, St Pancras).
-  if (poi.coordType === 'railwaystation' && (poi.langs ?? 0) < 40) return -Infinity;
+  if (!isPlaceToSee(poi)) return -Infinity;
   if ((poi.length ?? 3000) < 2500) return -Infinity; // a stub: too little to tell
   const story = Math.log10(Math.max(1000, poi.length ?? 3000)); // ~3.4 (short) to ~5.3 (major landmark)
   // Without the language count (older data), the article length stands in for fame.

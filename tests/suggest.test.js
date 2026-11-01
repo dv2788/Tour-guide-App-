@@ -12,6 +12,7 @@ import {
   timeline,
   searchRadiusFor,
   museumVisits,
+  isPlaceToSee,
   findFoodNear,
 } from '../js/suggest.js';
 import { distanceMeters } from '../js/geo.js';
@@ -222,6 +223,40 @@ test('organisations, events, places that are gone and objects in a collection ar
   assert.ok(!ok('Railway station in Paris', { coordType: 'railwaystation', langs: 10 }), 'an ordinary station');
   assert.ok(ok('Railway terminal in Manhattan, New York', { coordType: 'railwaystation', langs: 50 }), 'a landmark station');
   assert.ok(ok('State opera house in Vienna') && ok('War memorial in London') && ok('Office skyscraper in Manhattan'), 'real places stay');
+});
+
+test('found in real cities: groups, assemblies, events, paintings and streets are not stops, in five languages', () => {
+  const ok = (title, description = '', extra = {}) => isPlaceToSee({ title, description, ...extra });
+  // Each of these was suggested as a stop before (London, Edinburgh, Brussels, Vienna, Annecy, Colmar, Paris).
+  assert.ok(!ok('Chatham House', 'British think tank'), 'a think tank');
+  assert.ok(!ok('Royal Society of Edinburgh', "Scotland's national academy of science and letters"), 'an academy');
+  assert.ok(!ok('Church of Scotland', 'national church of Scotland'), 'a national church');
+  assert.ok(!ok('Groupe de Coimbra', "réseau d'universités européennes"), 'a network');
+  assert.ok(!ok('Katholische Kirche in Österreich') && !ok('Diocèse d’Annecy'.replace('’', "'")) && !ok('Archdiocese of Paris'), 'churches as organisations');
+  assert.ok(!ok('Chambre des représentants (Belgique)') && !ok("Cour d'assises du Haut-Rhin"), 'an assembly, a court');
+  assert.ok(!ok("Bataille d'Argentovaria") && !ok('Battle of Waterloo') && !ok('Notre-Dame fire', '2019 structural fire in Paris, France') && !ok('1973 UCI Cyclo-cross World Championships'), 'events');
+  assert.ok(!ok('La Vierge au buisson de roses (Schongauer)', 'tableau de Martin Schongauer') && !ok('Die Nachtwache', 'Gemälde von Rembrandt'), 'paintings');
+  assert.ok(!ok('Rue du Rempart (Colmar)') && !ok('Kärntner Straße', 'Einkaufsstraße in Wien'), 'streets');
+  // (Kyoto, Tokyo, New York, Heidelberg, Lucerne, Buenos Aires, Mexico City.)
+  assert.ok(!ok('Hōgen rebellion', 'civil war in Japan') && !ok('Lucerne Festival', 'Musikfestival in Luzern') && !ok('Lindt Cafe siege', 'hostage crisis in Sydney, 2014'), 'more events');
+  assert.ok(!ok('Australian Securities Exchange', 'Australian securities exchange'), 'a stock market');
+  assert.ok(!ok("Organisation de l'aviation civile internationale") && !ok('Archidiocèse de Montréal') && !ok('2008 Singapore Grand Prix'), 'Montreal, Singapore');
+  assert.ok(!ok('Marina Bay, Singapore', 'bay in Singapore') && !ok('Grand Union Canal', 'canal in England'), 'a bay, a canal');
+  assert.ok(!ok('Kyoto Prefecture', 'prefecture of Japan') && !ok('Edo', 'former name of Tokyo') && !ok('East River', 'tidal strait in New York City'), 'a region, an old name, a strait');
+  assert.ok(!ok('World Trade Center (1973–2001)', 'former complex in Manhattan'), 'the one that stood there then');
+  assert.ok(!ok('Rhein-Neckar-Zeitung', 'Tageszeitung in Heidelberg') && !ok('Heidelberger Druckmaschinen', 'Maschinenbauunternehmen'), 'German compounds: a newspaper, a company');
+  assert.ok(!ok('Asociación del Fútbol Argentino', 'ente rector del fútbol') && !ok('Ruprecht-Karls-Universität Heidelberg') && !ok('Senado de México', 'cámara alta del Congreso de la Unión'), 'an association, a university, a senate');
+  // …while real places stay, including ones whose description mentions such words further on.
+  assert.ok(ok("St. Salvator's Cathedral", 'Roman Catholic cathedral of the Diocese of Bruges'), 'a cathedral of a diocese');
+  assert.ok(ok('Grand-Place de Bruxelles', 'place de Bruxelles') && ok('Piazza del Campo', 'piazza di Siena') && ok('Royal Mile', 'succession of streets in Edinburgh'), 'squares');
+  assert.ok(ok('Palais Bourbon', "palais abritant l'Assemblée nationale") && ok('Palais de justice de Bruxelles', 'palais de justice'), 'the buildings of assemblies and courts');
+  assert.ok(ok('Royal Academy of Arts', 'art institution in London') && ok("Galleria dell'Accademia", 'museo di Firenze'), 'galleries');
+  assert.ok(ok('1 World Trade Center', 'skyscraper in New York') && ok('Peace Palace', 'international law administrative building in The Hague'), 'numbers and peace in names');
+  assert.ok(ok('Fresque des Wallons', 'fresque murale à Namur'), 'an outdoor mural');
+  assert.ok(ok('10 Downing Street', 'official residence of the Prime Minister') && ok('40 Wall Street', 'skyscraper in Manhattan'), 'buildings at an address');
+  assert.ok(ok('Rua Augusta Arch', 'triumphal arch in Lisbon') && ok('Hôtel de préfecture de la Haute-Savoie', 'préfecture de la Haute-Savoie'), 'what stands in a street; a prefecture building');
+  assert.ok(ok('Union Station (Washington, D.C.)', 'train station') && ok('Universitätskirche Leipzig', 'Kirche') && ok('Imperial War Museum', 'museum in London'), 'words inside names');
+  assert.ok(ok('Verkehrshaus der Schweiz', 'Verkehrsmuseum in Luzern') && ok('Kunsthaus Zürich', 'Kunstmuseum'), 'German museums');
 });
 
 test('a must-see a little further away beats a cluster of minor places, and the walk still fills up', () => {
