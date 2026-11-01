@@ -242,6 +242,7 @@ test('found in real cities: groups, assemblies, events, paintings and streets ar
   assert.ok(!ok('Australian Securities Exchange', 'Australian securities exchange'), 'a stock market');
   assert.ok(!ok("Organisation de l'aviation civile internationale") && !ok('Archidiocèse de Montréal') && !ok('2008 Singapore Grand Prix'), 'Montreal, Singapore');
   assert.ok(!ok('Marina Bay, Singapore', 'bay in Singapore') && !ok('Grand Union Canal', 'canal in England'), 'a bay, a canal');
+  assert.ok(!ok('Czechoslovakia', '1918–1992 country in Central Europe') && !ok('Portugal', 'country in southwestern Europe'), 'countries, then and now');
   assert.ok(!ok('Strand, London', 'Major thoroughfare in the City of Westminster, London, England') && !ok('Ost-Berlin', 'ehemaliger sowjetischer Sektor von Berlin und Hauptstadt der DDR'), 'a thoroughfare, a sector');
   assert.ok(!ok('Kyoto Prefecture', 'prefecture of Japan') && !ok('Edo', 'former name of Tokyo') && !ok('East River', 'tidal strait in New York City'), 'a region, an old name, a strait');
   assert.ok(!ok('World Trade Center (1973–2001)', 'former complex in Manhattan'), 'the one that stood there then');

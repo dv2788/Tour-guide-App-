@@ -37,7 +37,7 @@ const MUSEUM_RE = /(?:^|[^\p{L}])(?:museum|musée|musee|museo|museu|gallery|gale
 // Matched against what a place *is* (the start of its description: "river in France",
 // "arrondissement of Paris"), not words further on ("bridge over the river").
 const AREA_RE =
-  /^(?:[\p{L}'’-]+\s+){0,2}(?:arrondissement|district|neighbou?rhood|suburb|area|space|point|junction|intersection|settlement|ville|cité|région|región|regione|provincia|département|departamento|bundesland|ciudad|stadt|città|comune|gemeinde|île|isla|insel|isola|barrio|bairro|stadtteil|quartiere|rione|quarter|quartier|borough|ward|commune|municipality|city|town|village|capital|river|fleuve|rivière|río|fluss|fiume|lake|region|province|department|département|metropolitan|island|street|avenue|boulevard|rue|calle|straße|strasse|metro line|railway line|prefecture|canton|strait|estuary|bay|lagoon|gulf|canal|former name|thoroughfare|sektor|sector|secteur)(?![\p{L}])/iu;
+  /^(?:[\p{L}'’-]+\s+){0,2}(?:arrondissement|district|neighbou?rhood|suburb|area|space|point|junction|intersection|settlement|ville|cité|région|región|regione|provincia|département|departamento|bundesland|ciudad|stadt|città|comune|gemeinde|île|isla|insel|isola|barrio|bairro|stadtteil|quartiere|rione|quarter|quartier|borough|ward|commune|municipality|city|town|village|capital|river|fleuve|rivière|río|fluss|fiume|lake|region|province|department|département|metropolitan|island|street|avenue|boulevard|rue|calle|straße|strasse|metro line|railway line|prefecture|canton|strait|estuary|bay|lagoon|gulf|canal|former name|thoroughfare|sektor|sector|secteur|country|sovereign state)(?![\p{L}])/iu;
 
 // Wikipedia also places organisations, events and works at an address: not places to walk to.
 // (Matched on the short description: "British intelligence agency", "Satirical magazine", "Fire in 1666".)
@@ -84,8 +84,9 @@ const STREETISH_RE =
 // Streets are walked along, not stopped at (their stories come up as you walk them).
 const STREET_TITLE_RE =
   /^(?:rue|avenue|boulevard|calle|carrer|avinguda|avenida|paseo|passeig|via|viale|corso|rua)\s|(?:straße|strasse|gasse|street|road|lane)(?:\s*\(.*\))?$/iu;
-// Places that are gone: "Royal palace in Paris (1564–1883)", "Government of France from 1792 to 1804".
-const GONE_RE = /\(\s*\d{3,4}\s*[–-]\s*\d{3,4}\s*\)|\bfrom \d{3,4} to \d{3,4}\b|(?:^|[^\p{L}])(?:demolished|destroyed|détruit|démoli|disparu|destruido|demolido|zerstört|abgerissen|distrutto|demolito)/iu;
+// Places that are gone: "Royal palace in Paris (1564–1883)", "Government of France from 1792 to 1804",
+// "1918–1992 country in Central Europe".
+const GONE_RE = /\(\s*\d{3,4}\s*[–-]\s*\d{3,4}\s*\)|^\d{3,4}\s*[–-]\s*\d{3,4}\s|\bfrom \d{3,4} to \d{3,4}\b|(?:^|[^\p{L}])(?:demolished|destroyed|détruit|démoli|disparu|destruido|demolido|zerstört|abgerissen|distrutto|demolito)/iu;
 // Objects inside a collection ("Ancient Greek sculptures held in London"): the museum is the stop.
 const IN_A_COLLECTION_RE =
   /^(?:painting|portrait|manuscript|tapestry|artwork|tableau|peinture|retable|manuscrit|tapisserie|cuadro|pintura|retablo|manuscrito|tapiz|gemälde|handschrift|dipinto|manoscritto|arazzo)(?![\p{L}])|\b(?:held|housed|kept|displayed|exhibited) (?:in|at|by)\b/iu;
