@@ -95,9 +95,9 @@ test('exploreArea adds the most notable places in the whole radius to the neares
   ]);
   const wiki = createWikiService({ lang: 'en', fetchImpl });
   const pois = await wiki.exploreArea(48.86, 2.33, 3000);
-  assert.equal(seen.length, 2, 'two requests, so Wikipedia never refuses for too many at once');
+  assert.equal(seen.filter((u) => u.includes('wikipedia.org')).length, 2, 'two requests, so Wikipedia never refuses for too many at once');
   assert.ok(seen.some((u) => /gsrsearch=nearcoord%3A3000m%2C48\.8600%2C2\.3300/.test(u)), 'notable places in the radius (whole meters: Wikipedia ignores "3.0km")');
-  assert.ok(seen.every((u) => /prop=[^&]*langlinkscount/.test(u) && /coprop=type/.test(u)), 'with how many languages cover each, and what its coordinates mark');
+  assert.ok(seen.filter((u) => u.includes('wikipedia.org')).every((u) => /prop=[^&]*langlinkscount/.test(u) && /coprop=type/.test(u)), 'with how many languages cover each, and what its coordinates mark');
   const byTitle = Object.fromEntries(pois.map((p) => [p.title, p]));
   assert.deepEqual(Object.keys(byTitle).sort(), ['Corner Church', 'Famous Cathedral'], 'the far tower (10 km) is outside the radius');
   assert.equal(byTitle['Famous Cathedral'].langs, 95);
@@ -185,6 +185,30 @@ test('no more precision than needed is sent: ~11 m for nearby places', async () 
   const { fetchImpl, seen } = mockFetch([['generator=geosearch', { query: { pages: [] } }]]);
   await createWikiService({ fetchImpl }).nearby(48.858370123456, 2.294481987654, 500);
   assert.match(seen[0], /ggscoord=48\.8584%7C2\.2945&/);
+});
+
+test('exploreArea marks the buildings Wikidata says no longer stand, and plans anyway without Wikidata', async () => {
+  const pages = [
+    { pageid: 1, title: 'Tuileries Palace', length: 70000, langlinkscount: 55, description: 'former royal palace in Paris', pageprops: { wikibase_item: 'Q234364' }, coordinates: [{ lat: 48.8625, lon: 2.3311 }] },
+    { pageid: 2, title: 'Louvre', length: 90000, langlinkscount: 150, description: 'art museum in Paris', pageprops: { wikibase_item: 'Q19675' }, coordinates: [{ lat: 48.8611, lon: 2.3358 }] },
+  ];
+  const { fetchImpl, seen } = mockFetch([
+    ['www.wikidata.org', { query: { search: [{ title: 'Q234364' }, { title: 'Q1865480' }] } }],
+    ['generator=', { query: { pages } }],
+  ]);
+  const pois = await createWikiService({ fetchImpl }).exploreArea(48.86, 2.33, 3000);
+  const byTitle = Object.fromEntries(pois.map((p) => [p.title, p]));
+  assert.equal(byTitle['Tuileries Palace'].gone, true, 'demolished in 1883');
+  assert.equal(byTitle.Louvre.gone, false);
+  const wd = seen.find((u) => u.includes('www.wikidata.org'));
+  assert.equal(new URL(wd).searchParams.get('srsearch'), 'haswbstatement:P31=Q19860854|P31=Q57644089 nearcoord:3000m,48.8600,2.3300', 'one search for destroyed buildings in the same radius');
+  assert.ok(seen.every((u) => !u.includes('generator=') || /ppprop=disambiguation%7Cwikibase_item/.test(u)), 'each page comes with its Wikidata id');
+
+  // Wikidata busy or down: the places are all there, none marked.
+  const noWikidata = mockFetch([['generator=', { query: { pages } }]]);
+  const plain = await createWikiService({ fetchImpl: noWikidata.fetchImpl, retries: 0 }).exploreArea(48.86, 2.33, 3000);
+  assert.equal(plain.length, 2);
+  assert.ok(plain.every((p) => p.gone === false));
 });
 
 test('an error inside a normal answer ("Search is currently too busy") is retried, never read as "no places"', async () => {

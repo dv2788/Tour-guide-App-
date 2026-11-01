@@ -67,10 +67,10 @@ export function placeKind(poi) {
  * How worth visiting a place is. Fame first: how many Wikipedia languages have an article
  * about it (the Sagrada Família ~95, a neighbourhood church ~5). Then how much there is to
  * tell (article length), and a nudge for historic places and museums. Areas, streets,
- * organisations, events and filler are excluded.
+ * organisations, events, buildings that are gone and filler are excluded.
  */
 export function interestScore(poi) {
-  if (poi.category === 'skip' || poi.disambiguation) return -Infinity;
+  if (poi.category === 'skip' || poi.disambiguation || poi.gone) return -Infinity;
   const description = poi.description ?? '';
   if (AREA_RE.test(description) || NOT_A_PLACE_RE.test(description) || NOT_A_PLACE_INTL_RE.test(description) || IN_A_COLLECTION_RE.test(description) || GONE_RE.test(description)) return -Infinity;
   if (INSTITUTION_TITLE_RE.test(poi.title ?? '') || NOT_A_STOP_TYPES.has(poi.coordType)) return -Infinity;

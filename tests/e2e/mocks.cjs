@@ -224,6 +224,8 @@ async function mockNetwork(context, { routeCacheName = 'smoke' } = {}) {
     s ? json(route, s) : json(route, { type: 'https://mediawiki.org/wiki/HyperSwitch/errors/not_found' }, 404);
   });
   await context.route('https://www.wikidata.org/**', (route) => {
+    // Buildings that no longer stand: none in the recorded places.
+    if (new URL(route.request().url()).searchParams.get('list') === 'search') return json(route, { query: { search: [] } });
     const qid = new URL(route.request().url()).searchParams.get('ids');
     const s = Object.values(fixtures.summaries).find((x) => x.wikibase_item === qid);
     json(route, { entities: { [qid]: { sitelinks: s ? { enwiki: { title: s.title } } : {} } } });

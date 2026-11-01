@@ -197,6 +197,7 @@ test('organisations, events, places that are gone and objects in a collection ar
   assert.ok(!ok('région fédérale de Belgique incluant la ville de Bruxelles'), 'a region');
   assert.ok(ok('cathédrale gothique à Paris') && ok('museo de arte en Madrid') && ok('Kirche in Berlin') && ok('basilica di Roma'), 'real places in other languages stay');
   assert.ok(!ok('Royal and imperial palace in Paris (1564–1883)'), 'demolished');
+  assert.ok(!ok('Roman Catholic cathedral in Bruges, Belgium', { gone: true }), 'demolished, as Wikidata says, though the description doesn\'t');
   assert.ok(!ok('Government of France from 1792 to 1804'), 'a former government');
   assert.ok(!ok('Ancient Greek sculptures held in London'), 'inside a museum');
   assert.ok(!ok('Capital of England and the United Kingdom'), 'a whole city');

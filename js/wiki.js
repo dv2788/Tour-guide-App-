@@ -37,6 +37,21 @@ export class WikipediaBusyError extends Error {}
 // Error codes that mean "too busy right now, ask again in a moment".
 const BUSY_CODE_RE = /^(?:cirrussearch-too-busy-error|cirrussearch-backend-error|ratelimited|maxlag|readonly|internal_api_error)/;
 
+// Wikidata marks the buildings that no longer stand ("destroyed building or structure",
+// "destroyed church"): Paris's Tuileries Palace, Bruges's St Donatian's Cathedral. Their
+// articles keep coordinates and often read as if the place were there, so they're looked up
+// to be left out of routes.
+const GONE_STATEMENTS = 'P31=Q19860854|P31=Q57644089';
+
+/** The promise's answer, or `fallback` if it takes longer than `ms`. */
+function atMost(ms, promise, fallback) {
+  let timer;
+  const late = new Promise((resolve) => {
+    timer = setTimeout(() => resolve(fallback), ms);
+  });
+  return Promise.race([promise.finally(() => clearTimeout(timer)), late]);
+}
+
 /**
  * The page of a Wikipedia photo, which names its author and licence (credit for showing it):
  * ".../wikipedia/commons/thumb/a/ab/Casa_Batlló.jpg/320px-Casa_Batlló.jpg" ->
@@ -213,22 +228,27 @@ export function createWikiService({ lang = 'en', fetchImpl = defaultFetch, retry
    * most notable ones anywhere in the radius (in a dense centre the nearest few hundred only
    * reach a few streets; Wikipedia's search ranks by how linked and read a page is). Each
    * place comes with what it takes to judge it: article length, description, how many
-   * languages have an article about it, and what kind of place its coordinates mark.
-   * Throws only if both requests fail.
+   * languages have an article about it, and what kind of place its coordinates mark, and
+   * whether it's still standing (one more, small request to Wikidata: `gone`).
+   * Throws only if both Wikipedia requests fail.
    */
   async function exploreArea(lat, lon, radius = 2000, limit = 200, notable = 200) {
     // The nearest-articles search stops at 10 km; the notable-places search goes further (driving).
     const meters = Math.min(50000, Math.max(10, Math.round(radius)));
-    const details = { prop: 'info|description|pageprops|langlinkscount|coordinates', ppprop: 'disambiguation', coprop: 'type', colimit: 'max' };
+    const details = { prop: 'info|description|pageprops|langlinkscount|coordinates', ppprop: 'disambiguation|wikibase_item', coprop: 'type', colimit: 'max' };
     const query = (params) =>
       getJson(`${host}/w/api.php?${new URLSearchParams({ action: 'query', format: 'json', formatversion: '2', origin: '*', ...details, ...params })}`);
-    const answers = await Promise.allSettled([
+    const [nearest, notables, goneAnswer] = await Promise.allSettled([
       query({ generator: 'geosearch', ggscoord: `${lat.toFixed(4)}|${lon.toFixed(4)}`, ggsradius: String(Math.min(10000, meters)), ggslimit: String(Math.min(500, limit)) }),
       notable > 0
         ? query({ generator: 'search', gsrsearch: `nearcoord:${meters}m,${lat.toFixed(4)},${lon.toFixed(4)}`, gsrnamespace: '0', gsrlimit: String(Math.min(500, notable)) }) // whole meters: "3.0km" isn't understood
         : Promise.resolve(null),
+      // Optional: without an answer in time, plan anyway.
+      atMost(8000, goneAround(lat, lon, meters).catch(() => new Set()), new Set()),
     ]);
+    const answers = [nearest, notables];
     if (answers.every((a) => a.status === 'rejected')) throw answers[0].reason;
+    const gone = goneAnswer.value ?? new Set();
     const byId = new Map();
     for (const answer of answers) {
       for (const p of answer.value?.query?.pages ?? []) {
@@ -245,6 +265,7 @@ export function createWikiService({ lang = 'en', fetchImpl = defaultFetch, retry
           thumbnail: null,
           disambiguation: !!p.pageprops && 'disambiguation' in p.pageprops,
           langs: p.langlinkscount ?? 0, // left out when there are none
+          gone: gone.has(p.pageprops?.wikibase_item), // demolished: not a stop
         };
         poi.category = classifyPlace(poi);
         byId.set(p.pageid, poi);
@@ -252,6 +273,23 @@ export function createWikiService({ lang = 'en', fetchImpl = defaultFetch, retry
     }
     // Search finds pages by any coordinate; keep the ones whose main location is in the radius.
     return [...byId.values()].filter((p) => distanceMeters({ lat, lon }, p) <= meters * 1.05);
+  }
+
+  /** Wikidata ids of the buildings within `meters` that no longer stand (one search, ~15 KB in central Paris). */
+  async function goneAround(lat, lon, meters) {
+    const params = new URLSearchParams({
+      action: 'query',
+      format: 'json',
+      formatversion: '2',
+      origin: '*',
+      list: 'search',
+      srsearch: `haswbstatement:${GONE_STATEMENTS} nearcoord:${meters}m,${lat.toFixed(4)},${lon.toFixed(4)}`,
+      srnamespace: '0',
+      srlimit: '500',
+      srprop: '',
+    });
+    const data = await getJson(`https://www.wikidata.org/w/api.php?${params}`);
+    return new Set((data?.query?.search ?? []).map((hit) => hit.title));
   }
 
   /**
