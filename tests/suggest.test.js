@@ -257,6 +257,7 @@ test('found in real cities: groups, assemblies, events, paintings and streets ar
   assert.ok(ok('Rua Augusta Arch', 'triumphal arch in Lisbon') && ok('Hôtel de préfecture de la Haute-Savoie', 'préfecture de la Haute-Savoie'), 'what stands in a street; a prefecture building');
   assert.ok(ok('Union Station (Washington, D.C.)', 'train station') && ok('Universitätskirche Leipzig', 'Kirche') && ok('Imperial War Museum', 'museum in London'), 'words inside names');
   assert.ok(ok('Verkehrshaus der Schweiz', 'Verkehrsmuseum in Luzern') && ok('Kunsthaus Zürich', 'Kunstmuseum'), 'German museums');
+  assert.ok(ok('Museum of the Second World War', 'museum in Gdańsk') && ok('University Church of St Mary the Virgin', 'church in Oxford') && ok('Oxford University Museum of Natural History', 'museum in Oxford'), 'titles that name a museum or a church');
 });
 
 test('a must-see a little further away beats a cluster of minor places, and the walk still fills up', () => {

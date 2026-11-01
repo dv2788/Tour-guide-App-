@@ -107,7 +107,10 @@ export function isPlaceToSee(poi) {
   const title = poi.title ?? '';
   if (AREA_RE.test(description) || NOT_A_PLACE_RE.test(description) || NOT_A_PLACE_INTL_RE.test(description) || NOT_A_PLACE_START_RE.test(description)) return false;
   if (IN_A_COLLECTION_RE.test(description) || GONE_RE.test(description) || EVENT_DESCRIPTION_RE.test(description) || NOT_A_PLACE_DE_RE.test(description)) return false;
-  if (INSTITUTION_TITLE_RE.test(title) || ORGANISATION_TITLE_RE.test(title) || EVENT_TITLE_RE.test(title) || EVENT_TITLE_END_RE.test(title)) return false;
+  if (INSTITUTION_TITLE_RE.test(title) || EVENT_TITLE_RE.test(title)) return false;
+  // "Museum of the Second World War", "University Church": the title names a place to see.
+  const namesAPlace = MUSEUM_RE.test(title) || HISTORIC_RE.test(title);
+  if (!namesAPlace && (ORGANISATION_TITLE_RE.test(title) || EVENT_TITLE_END_RE.test(title))) return false;
   // A street, unless it's an address ("10 Downing Street") or the description says what stands
   // there ("Rua Augusta Arch": triumphal arch in Lisbon).
   if (STREET_TITLE_RE.test(title) && !/^\d/.test(title) && !HISTORIC_RE.test(description) && !MUSEUM_RE.test(description)) return false;
