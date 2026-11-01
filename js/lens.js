@@ -5,6 +5,9 @@
 import { distanceMeters, bearingDegrees, angleDiff } from './geo.js';
 
 const DEG = Math.PI / 180;
+// Whole districts, towns and the like aren't something you point at ("District of Barcelona").
+const AREA_RE =
+  /^(?:[\p{L}'’-]+\s+){0,2}(?:district|neighbou?rhood|quarter|borough|arrondissement|ward|area|city|town|village|municipality|region|province|barrio|quartier|bairro|stadtteil|quartiere|ville|ciudad|stadt|città)(?![\p{L}])/iu;
 
 /**
  * Which way the back camera points (degrees clockwise from north), from a device orientation
@@ -49,7 +52,7 @@ export function placesInView(position, heading, places, { fov = 60, maxDistance 
   const half = fov / 2;
   const seen = [];
   for (const p of places) {
-    if (p.lat == null || p.category === 'skip') continue;
+    if (p.lat == null || p.category === 'skip' || AREA_RE.test(p.description ?? '')) continue;
     const distance = distanceMeters(position, p);
     if (distance > maxDistance) continue;
     const here = distance <= hereWithin;
@@ -69,7 +72,7 @@ export function placesInView(position, heading, places, { fov = 60, maxDistance 
 export function placesAround(position, places, { maxDistance = 300 } = {}) {
   if (!position) return [];
   return places
-    .filter((p) => p.lat != null && p.category !== 'skip')
+    .filter((p) => p.lat != null && p.category !== 'skip' && !AREA_RE.test(p.description ?? ''))
     .map((p) => ({ ...p, distance: distanceMeters(position, p), off: null, x: null }))
     .filter((p) => p.distance <= maxDistance)
     .sort((a, b) => a.distance - b.distance);

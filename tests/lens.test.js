@@ -15,6 +15,7 @@ const places = [
   { title: 'Casa Amatller', ...from(BATLLO, 135, 12), langs: 25 },
   { title: 'Casa Lleó Morera', ...from(BATLLO, 135, 60), langs: 20 },
   { title: 'Passeig de Gràcia station', ...from(BATLLO, 45, 50), langs: 10, category: 'skip' },
+  { title: 'Eixample', description: 'District of Barcelona, Spain', ...from(BATLLO, 225, 30), langs: 30 },
 ];
 // Across the avenue from Casa Batlló (north-east of it), facing it: south-west.
 const across = from(BATLLO, 45, 40);
@@ -41,6 +42,7 @@ test('pointing at Casa Batlló picks Casa Batlló; turning to the house next doo
   assert.equal(aimed[0].title, 'Casa Batlló');
   assert.ok(aimed.some((p) => p.title === 'Casa Amatller'), 'the neighbour is offered too, in case');
   assert.ok(!aimed.some((p) => p.title === 'Passeig de Gràcia station'), 'metro stations are not sights');
+  assert.ok(!aimed.some((p) => p.title === 'Eixample'), 'a whole district is not something you point at');
   assert.ok(aimed[0].x > 0.4 && aimed[0].x < 0.6, 'drawn in the middle of the view');
   const next = placesInView(across, 208, places);
   assert.equal(next[0].title, 'Casa Amatller');
