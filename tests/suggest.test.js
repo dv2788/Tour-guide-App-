@@ -99,6 +99,21 @@ test('museum visits come first and win over a lesser neighbour with the same nam
   assert.ok(!titles.includes('Louvre Pyramid'), 'the museum, not its courtyard');
 });
 
+test('the museum visit is one within reach, so a half day still has time for everything else', () => {
+  // Lisbon: the famous museum 2.5 km away, a cluster of sights around you, a nearer museum.
+  const sights = ['Cathedral', 'Castle', 'Old Convent', 'Triumphal Arch', 'Royal Square', 'Opera House'].map((name, i) =>
+    place(name, 'historic church and monument', 60000, (i % 3) * 300 - 300, Math.floor(i / 3) * 300 - 150, { langs: 50 }),
+  );
+  const far = place('Great Museum of Ancient Art', 'art museum', 90000, -2500, 0, { langs: 60 });
+  const near = place('City Museum', 'history museum', 30000, 400, 300, { langs: 15 });
+  const r = suggestRoute({ start, candidates: [...sights, far, near], modeId: 'walk', minutes: 240, reservedMinutes: 80 });
+  const titles = r.stops.map((s) => s.title);
+  assert.ok(!titles.includes(far.title) || r.stops.find((s) => s.title === far.title).visitMinutes == null, 'no hour inside the far museum');
+  assert.equal(r.stops.find((s) => s.title === 'City Museum')?.visitMinutes, 60, 'the museum within reach is the visit');
+  const hour = suggestRoute({ start, candidates: [...sights, far, near], modeId: 'walk', minutes: 60 });
+  assert.ok(r.stops.length >= hour.stops.length, `a half day (${titles.join(', ')}) has at least the stops of an hour (${hour.stops.map((s) => s.title).join(', ')})`);
+});
+
 test('breaks follow the clock: coffee, lunch, a drink, dinner', () => {
   const d = (h, m = 0) => new Date(2026, 9, 31, h, m);
   assert.equal(mealAt(d(10)), 'coffee');

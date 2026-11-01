@@ -329,19 +329,21 @@ export function suggestRoute({ start, candidates, modeId = 'walk', minutes = 60,
   // One at a time, add the place worth the most for the minutes it adds (getting there and
   // time spent), while any fits. Worth grows steeply with fame, so a must-see a little further
   // away still beats a cluster of minor places, but the walk isn't spent crossing town.
-  const addBest = (eligible, visitMinutes = null) => {
+  const addBest = (eligible, visitMinutes = null, maxExtra = Infinity) => {
     let best = null;
     for (const c of pool) {
       if (!eligible(c)) continue;
       const cost = insertionCost(c, visitMinutes);
-      if (!cost) continue;
+      if (!cost || cost.extra > maxExtra) continue;
       const ratio = Math.max(0.05, c.score - SCORE_FLOOR) ** 3 / (cost.extra + (visitMinutes ?? pace.dwell));
       if (!best || ratio > best.ratio) best = { c, ratio };
     }
     return Boolean(best) && tryAdd(best.c, visitMinutes);
   };
-  // 1. On longer outings, museum visits go on the route first.
-  for (let museums = 0; museums < visits.count && addBest((c) => c.kind === 'museum', visits.minutes); museums++);
+  // 1. On longer outings, museum visits go on the route first: one within reach, so getting
+  // there and back doesn't take the time for everything else (Lisbon: the famous museum 2.5 km
+  // away left a half day with 3 stops, fewer than an hour's walk).
+  for (let museums = 0; museums < visits.count && addBest((c) => c.kind === 'museum', visits.minutes, budget / 3); museums++);
   // 2. Then everything else worth seeing.
   while (addBest(() => true));
 
