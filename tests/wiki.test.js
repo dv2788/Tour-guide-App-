@@ -231,3 +231,25 @@ test('an error inside a normal answer ("Search is currently too busy") is retrie
   await assert.rejects(createWikiService({ fetchImpl: bad, retryDelayMs: 1 }).nearby(48.2, 16.37, 500), /badvalue/);
   assert.equal(asked, 1);
 });
+
+test('nearby can say which buildings are gone (for the camera), and works without Wikidata', async () => {
+  const pages = [
+    { pageid: 1, title: 'Notre-Dame de Paris', description: 'cathedral', langlinkscount: 90, pageprops: { wikibase_item: 'Q2981' }, coordinates: [{ lat: 48.853, lon: 2.3499, type: 'landmark' }] },
+    { pageid: 2, title: 'Archbishop’s Palace of Paris', description: 'former palace', langlinkscount: 12, pageprops: { wikibase_item: 'Q2860541' }, coordinates: [{ lat: 48.8527, lon: 2.3503 }] },
+  ];
+  const { fetchImpl, seen } = mockFetch([
+    ['www.wikidata.org', { query: { search: [{ title: 'Q2860541' }] } }],
+    ['generator=geosearch', { query: { pages } }],
+  ]);
+  const wiki = createWikiService({ fetchImpl });
+  const marked = await wiki.nearby(48.8531, 2.3488, 400, 50, { markGone: true });
+  assert.deepEqual(marked.map((p) => [p.title, p.gone]), [['Notre-Dame de Paris', false], ['Archbishop’s Palace of Paris', true]]);
+  assert.equal(marked[0].coordType, 'landmark', 'what the point marks');
+  assert.match(new URL(seen.find((u) => u.includes('wikidata'))).searchParams.get('srsearch'), /nearcoord:400m,48\.8531,2\.3488$/);
+  const before = seen.length;
+  await wiki.nearby(48.8531, 2.3488, 400);
+  assert.equal(seen.length, before + 1, 'without markGone, one request as before');
+  const noWikidata = mockFetch([['generator=geosearch', { query: { pages } }]]);
+  const plain = await createWikiService({ fetchImpl: noWikidata.fetchImpl, retries: 0 }).nearby(48.8531, 2.3488, 400, 50, { markGone: true });
+  assert.equal(plain.length, 2);
+});

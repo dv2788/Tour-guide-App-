@@ -24,6 +24,9 @@ test('chunkForSpeech keeps chunks short without losing words', () => {
 
 test('classifyPlace skips metro stations and lists, demotes streets', () => {
   assert.equal(classifyPlace({ title: 'Bir-Hakeim', description: 'Paris Métro station' }), 'skip');
+  assert.equal(classifyPlace({ title: 'Venezia (Rome Metro)', description: '' }), 'skip', 'named after its line, no description');
+  assert.equal(classifyPlace({ title: 'Opéra (Paris Métro)' }), 'skip');
+  assert.equal(classifyPlace({ title: 'Palais Garnier', description: 'opera house in Paris' }), null);
   assert.equal(classifyPlace({ title: 'Trocadéro', description: 'metro station in Paris, France' }), 'skip');
   assert.equal(classifyPlace({ title: 'List of bridges in Paris' }), 'skip');
   assert.equal(classifyPlace({ title: 'Mercury', disambiguation: true }), 'skip');

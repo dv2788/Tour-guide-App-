@@ -77,13 +77,16 @@ export function chunkForSpeech(text, maxLen = 220, lang = 'en') {
 const SKIP_RE =
   /\b(m[ée]tro station|subway station|underground station|tram stop|bus stop|bus station|station de m[ée]tro|arr[êe]t de bus|estaci[óo]n de metro|parada de autob[úu]s|u-bahnhof|haltestelle|stazione della metropolitana|fermata|wikimedia|electoral (district|ward)|constituency)\b/i;
 
+// "Venezia (Rome Metro)", "Opéra (Paris Métro)", "Sol (Madrid Metro)".
+const METRO_TITLE_RE = /\((?:[^)]*\s)?(?:m[ée]tro|metro station|subway|underground|u-bahn|metropolitana)\)$/i;
+
 // Places that can be interesting but usually aren't: mention only if nothing better is around.
 const MINOR_RE =
   /\b(street|road|lane|avenue|boulevard|highway|motorway|station|school|company|corporation|office building|hotel|restaurant|rue|calle|stra(ss|ß)e|via|gare|[ée]cole|escuela|schule|scuola)\b/i;
 
 /** Classify a place as 'skip', 'minor', or null (interesting). */
 export function classifyPlace({ title = '', description = '', disambiguation = false } = {}) {
-  if (disambiguation || /^list of\b/i.test(title) || SKIP_RE.test(description)) return 'skip';
+  if (disambiguation || /^list of\b/i.test(title) || SKIP_RE.test(description) || METRO_TITLE_RE.test(title)) return 'skip';
   if (MINOR_RE.test(description) || /\b(station|gare|bahnhof)\b/i.test(title)) return 'minor';
   return null;
 }

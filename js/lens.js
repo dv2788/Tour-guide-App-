@@ -3,11 +3,12 @@
 // no image recognition and no account. Pure functions, so they can be tested.
 
 import { distanceMeters, bearingDegrees, angleDiff } from './geo.js';
+import { isPlaceToSee } from './suggest.js';
 
 const DEG = Math.PI / 180;
-// Whole districts, towns and the like aren't something you point at ("District of Barcelona").
-const AREA_RE =
-  /^(?:[\p{L}'’-]+\s+){0,2}(?:district|neighbou?rhood|quarter|borough|arrondissement|ward|area|city|town|village|municipality|region|province|barrio|quartier|bairro|stadtteil|quartiere|ville|ciudad|stadt|città)(?![\p{L}])/iu;
+// Something you can point at: not a district or a whole city ("You're here: London"), an
+// organisation ("Archdiocese of Paris") or an event ("Notre-Dame fire"). Same test as routes.
+const pointable = (p) => p.lat != null && isPlaceToSee(p);
 
 /**
  * Which way the back camera points (degrees clockwise from north), from a device orientation
@@ -41,7 +42,7 @@ export function smoothHeading(previous, next, factor = 0.25) {
 /**
  * The places in front of the camera, best first. `off` is how far from the centre of the view
  * (degrees, negative = left), `x` where to draw its label (0 = left edge, 1 = right edge).
- * Places you're standing at come first whichever way you point ("here").
+ * Places you're standing at come first ("here"), unless they're behind you and something else is in view.
  *
  * A place counts as in view if it's within the camera's field of view, widened a little for
  * big buildings close by and for compass error. The best is the one nearest the centre, nearer
@@ -52,27 +53,32 @@ export function placesInView(position, heading, places, { fov = 60, maxDistance 
   const half = fov / 2;
   const seen = [];
   for (const p of places) {
-    if (p.lat == null || p.category === 'skip' || AREA_RE.test(p.description ?? '')) continue;
+    if (!pointable(p)) continue;
     const distance = distanceMeters(position, p);
     if (distance > maxDistance) continue;
     const here = distance <= hereWithin;
-    const off = here ? 0 : angleDiff(heading, bearingDegrees(position, p));
+    const bearingOff = angleDiff(heading, bearingDegrees(position, p));
+    // Standing at a place with your back to it, you're pointing at something else (on a square,
+    // with GPS 10–20 m off, the building beside you mustn't hide the belfry in front).
+    const behind = here && Math.abs(bearingOff) > 100;
+    const off = here ? 0 : bearingOff;
     const size = Math.atan2(15, Math.max(distance, 1)) / DEG; // a building is ~30 m wide
     if (!here && Math.abs(off) > half + Math.min(size, 15)) continue;
     // Closest to the middle first, but within compass error (~5°) it's a tie: then the better
     // known, then the nearer (Wikipedia puts a building's point anywhere inside it).
     const fame = Math.log10(1 + (p.langs ?? 0)) + (p.category === 'minor' ? -1 : 0);
     const cost = here ? -1000 : Math.max(0, Math.abs(off) - 5) + distance / 25 - fame * 4;
-    seen.push({ ...p, distance, off, here, x: Math.min(1, Math.max(0, 0.5 + off / fov)), cost });
+    seen.push({ ...p, distance, off, here, behind, x: Math.min(1, Math.max(0, 0.5 + off / fov)), cost });
   }
-  return seen.sort((a, b) => a.cost - b.cost);
+  const ahead = seen.filter((p) => !p.behind);
+  return (ahead.length ? ahead : seen).sort((a, b) => a.cost - b.cost).map(({ behind, ...p }) => p);
 }
 
 /** Nearby places with no compass to go by: nearest first ("what's around you"). */
 export function placesAround(position, places, { maxDistance = 300 } = {}) {
   if (!position) return [];
   return places
-    .filter((p) => p.lat != null && p.category !== 'skip' && !AREA_RE.test(p.description ?? ''))
+    .filter(pointable)
     .map((p) => ({ ...p, distance: distanceMeters(position, p), off: null, x: null }))
     .filter((p) => p.distance <= maxDistance)
     .sort((a, b) => a.distance - b.distance);

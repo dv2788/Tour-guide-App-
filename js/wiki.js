@@ -104,8 +104,12 @@ export function createWikiService({ lang = 'en', fetchImpl = defaultFetch, retry
     }
   }
 
-  /** Articles with coordinates within `radius` meters, nearest first. */
-  async function nearby(lat, lon, radius = 1000, limit = 50) {
+  /**
+   * Articles with coordinates within `radius` meters, nearest first. With `markGone`, each says
+   * whether the building still stands (one more small request, to Wikidata).
+   */
+  async function nearby(lat, lon, radius = 1000, limit = 50, { markGone = false } = {}) {
+    const goneSoon = markGone ? atMost(8000, goneAround(lat, lon, Math.round(radius)).catch(() => new Set()), new Set()) : null;
     const params = new URLSearchParams({
       action: 'query',
       format: 'json',
@@ -117,13 +121,15 @@ export function createWikiService({ lang = 'en', fetchImpl = defaultFetch, retry
       ggslimit: String(Math.min(50, Math.max(1, limit))),
       prop: 'coordinates|description|pageimages|pageprops|langlinkscount',
       colimit: 'max',
+      coprop: 'type', // what the point marks: a city's centre isn't a landmark you're standing at
       piprop: 'thumbnail',
       pithumbsize: '240',
       pilimit: 'max',
-      ppprop: 'disambiguation',
+      ppprop: 'disambiguation|wikibase_item',
     });
     const data = await getJson(`${host}/w/api.php?${params}`);
     const pages = data?.query?.pages ?? [];
+    const gone = (await goneSoon) ?? new Set();
     return pages
       .map((p) => {
         const c = p.coordinates?.[0];
@@ -137,6 +143,8 @@ export function createWikiService({ lang = 'en', fetchImpl = defaultFetch, retry
           thumbnail: p.thumbnail?.source ?? null,
           disambiguation: !!p.pageprops && 'disambiguation' in p.pageprops,
           langs: p.langlinkscount ?? 0, // how well known (left out when there are none)
+          coordType: c.type ?? null,
+          gone: gone.has(p.pageprops?.wikibase_item),
         };
         poi.category = classifyPlace(poi);
         return poi;

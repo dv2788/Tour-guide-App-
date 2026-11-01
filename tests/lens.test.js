@@ -64,3 +64,37 @@ test('without a compass, what’s around you, nearest first, and how far', () =>
   assert.equal(whereItIs({ distance: 42, off: -20 }), '40 m, a little to the left');
   assert.equal(whereItIs({ distance: 133, off: 2 }), '130 m, ahead');
 });
+
+test('standing beside one building with your back to it, the one in front is what you point at', () => {
+  // On a square: the Belfry 40 m in front (south-west), a lesser building 15 m behind you.
+  const belfry = { title: 'Belfry of Bruges', ...from(BATLLO, 225, 40), langs: 50 };
+  const beside = { title: 'Provinciaal Hof', ...from(BATLLO, 45, 15), langs: 10 };
+  const facing = placesInView(BATLLO, 225, [belfry, beside]);
+  assert.equal(facing[0].title, 'Belfry of Bruges');
+  assert.ok(!facing.some((p) => p.title === 'Provinciaal Hof'), 'not "You\'re here" for the building behind you');
+  // Facing it, or with nothing else in view, you're at it.
+  assert.equal(placesInView(BATLLO, 45, [belfry, beside])[0].here, true);
+  assert.equal(placesInView(BATLLO, 135, [beside])[0].title, 'Provinciaal Hof');
+});
+
+test('no labels for a whole city, an organisation or an event, even when Wikipedia puts them here', () => {
+  const around = [
+    { title: 'London', description: 'Capital of England and the United Kingdom', coordType: 'city', ...from(BATLLO, 0, 10), langs: 250 },
+    { title: 'Archdiocese of Paris', description: '', ...from(BATLLO, 0, 30), langs: 30 },
+    { title: 'Notre-Dame fire', description: '2019 structural fire in Paris, France', ...from(BATLLO, 0, 40), langs: 40 },
+    { title: '1973 UCI Cyclo-cross World Championships', description: '', ...from(BATLLO, 0, 50), langs: 10 },
+    { title: 'Nelson’s Column', description: 'Monument in Trafalgar Square, London', ...from(BATLLO, 0, 60), langs: 40 },
+  ];
+  assert.deepEqual(placesInView(BATLLO, 0, around).map((p) => p.title), ['Nelson’s Column']);
+  assert.deepEqual(placesAround(BATLLO, around).map((p) => p.title), ['Nelson’s Column']);
+});
+
+test('no labels for buildings that are gone or for metro stations', () => {
+  const around = [
+    { title: 'Archbishop’s Palace of Paris', description: 'former palace', gone: true, ...from(BATLLO, 0, 30), langs: 12 },
+    { title: 'Venezia (Rome Metro)', description: '', category: 'skip', ...from(BATLLO, 0, 40), langs: 8 },
+    { title: 'Termini', description: 'railway station in Rome', coordType: 'railwaystation', ...from(BATLLO, 0, 50), langs: 20 },
+    { title: 'Grand Central Terminal', description: 'railway terminal in Manhattan', coordType: 'railwaystation', ...from(BATLLO, 0, 60), langs: 60 },
+  ];
+  assert.deepEqual(placesInView(BATLLO, 0, around).map((p) => p.title), ['Grand Central Terminal']);
+});

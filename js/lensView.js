@@ -49,6 +49,7 @@ export function createLens({ wiki, streetName, narrator }) {
     window.removeEventListener('deviceorientationabsolute', state.onOrient);
     window.removeEventListener('deviceorientation', state.onOrient);
     clearTimeout(state.compassTimer);
+    clearTimeout(state.retryTimer);
     $('lens-video').srcObject = null;
     $('lens').hidden = true;
     document.body.classList.remove('lens-open');
@@ -116,18 +117,31 @@ export function createLens({ wiki, streetName, narrator }) {
     if (s.closed) return;
     const first = !s.position;
     s.position = position;
-    if (first || distanceMeters(s.fetchedAt, position) > REFETCH_AFTER_M) {
+    if (first || !s.fetchedAt || distanceMeters(s.fetchedAt, position) > REFETCH_AFTER_M) {
       s.fetchedAt = position;
+      clearTimeout(s.retryTimer);
       status(s.target ? `Looking for ${s.target.name}…` : 'Looking for landmarks around you…');
       wiki
-        .nearby(position.lat, position.lon, 400, 50)
+        .nearby(position.lat, position.lon, 400, 50, { markGone: true })
         .then((places) => {
           if (s.closed) return;
           s.places = places;
+          s.retries = 0;
           if (!places.length) status('No landmarks known within 400 m. Try walking a little further.');
           draw();
         })
-        .catch(() => !s.closed && status("Wikipedia didn't answer just now. I'll try again as you move.", 'warn'));
+        .catch(() => {
+          if (s.closed) return;
+          // Ask again in a moment, even if you stand still (5 s, 10 s, 20 s, then every 30 s).
+          const wait = Math.min(30000, 5000 * 2 ** (s.retries ?? 0));
+          s.retries = (s.retries ?? 0) + 1;
+          status(`Wikipedia didn't answer just now. Trying again in ${Math.round(wait / 1000)} seconds…`, 'warn');
+          s.retryTimer = setTimeout(() => {
+            if (s.closed) return;
+            s.fetchedAt = null;
+            moved(s, s.position);
+          }, wait);
+        });
       showStreet(s, position);
     }
     draw();
