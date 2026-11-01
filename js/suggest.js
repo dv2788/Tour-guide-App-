@@ -37,7 +37,7 @@ const MUSEUM_RE = /(?:^|[^\p{L}])(?:museum|musée|musee|museo|museu|gallery|gale
 // Matched against what a place *is* (the start of its description: "river in France",
 // "arrondissement of Paris"), not words further on ("bridge over the river").
 const AREA_RE =
-  /^(?:[\p{L}'’-]+\s+){0,2}(?:arrondissement|district|neighbou?rhood|suburb|area|space|point|junction|intersection|settlement|ville|cité|région|región|regione|provincia|département|departamento|bundesland|ciudad|stadt|città|comune|gemeinde|île|isla|insel|isola|barrio|bairro|stadtteil|quartiere|rione|quarter|quartier|borough|ward|commune|municipality|municipio|municipalité|city|town|village|capital|river|fleuve|rivière|río|fluss|fiume|lake|region|province|department|département|metropolitan|island|street|avenue|boulevard|rue|calle|straße|strasse|metro line|railway line|prefecture|canton|strait|estuary|bay|lagoon|gulf|canal|former name|thoroughfare|sektor|sector|secteur|country|sovereign state|civil parish|business district)(?![\p{L}])/iu;
+  /^(?:[\p{L}'’-]+\s+){0,2}(?:arrondissement|district|neighbou?rhood|suburb|area|space|point|junction|intersection|settlement|ville|cité|région|región|regione|provincia|département|departamento|bundesland|ciudad|stadt|città|comune|gemeinde|île|isla|insel|isola|barrio|bairro|stadtteil|quartiere|rione|quarter|quartier|borough|ward|commune|municipality|municipio|municipalité|city|town|village|capital|river|fleuve|rivière|río|fluss|fiume|lake|region|province|department|département|metropolitan|island|street|avenue|boulevard|rue|calle|straße|strasse|metro line|railway line|prefecture|canton|strait|estuary|bay|lagoon|gulf|canal|former name|historical name|old name|(?<!united\s)states|thoroughfare|sektor|sector|secteur|country|sovereign state|civil parish|business district)(?![\p{L}])/iu;
 // "Innermost part of London", "Southern part of Manhattan" (but "Scottish National Gallery: Part of
 // National Galleries Scotland" is a gallery).
 const PART_OF_RE = /^(?:[\p{L}'’-]+\s+){0,2}part(?![\p{L}])/iu;
@@ -59,7 +59,10 @@ const NOT_A_PLACE_INTL_RE =
 // d'universités européennes", "national church of Scotland", "cámara baja de las Cortes".
 // (Anchored: "cathedral of the Diocese of Bruges" is still a cathedral.)
 const NOT_A_PLACE_START_RE =
-  /^(?:[\p{L}'’-]+\s+){0,3}(?:think tank|academy|national church|denomination|(?:arch)?diocese|(?:archi)?diocèse|(?:arqui|archi)?diócesis|(?:arci)?diocesi|(?:erz)?bistum|(?:erz)?diözese|network|réseau|red de|netzwerk|rete di|parlement|parlamento|parlament|lower house|upper house|chambre basse|chambre haute|cámara baja|cámara alta|camera bassa|camera alta|unterhaus|oberhaus|juridiction|tribunal)(?![\p{L}])/iu;
+  /^(?:[\p{L}'’-]+\s+){0,3}(?:think tank|academy|national church|denomination|(?:arch)?diocese|(?:archi)?diocèse|(?:arqui|archi)?diócesis|(?:arci)?diocesi|(?:erz)?bistum|(?:erz)?diözese|network|réseau|red de|netzwerk|rete di|parlement|parlamento|parlament|lower house|upper house|chambre basse|chambre haute|cámara baja|cámara alta|camera bassa|camera alta|unterhaus|oberhaus|juridiction|tribunal|famine|epidemic|pandemic|hambruna|hungersnot|carestia|épidémie|epidemia|entity|entité|entidad|ente|producer|producteur|productor|produttore|distributeur|operator|opérateur|operador|hersteller|konzern|hypothèse|strategic plan|military plan)(?![\p{L}])/iu;
+// Assemblies, by their first words only: "unicameral legislature", "órgano legislativo" (but
+// "building housing the legislative assembly" is a building).
+const LEGISLATURE_RE = /^(?:[\p{L}'’-]+\s+){0,2}(?:legislat|législat)\p{L}*/iu;
 // Institutions named after what they are, with no description to go on (many articles have none).
 const INSTITUTION_TITLE_RE = new RegExp(
   [
@@ -80,11 +83,11 @@ const EVENT_DESCRIPTION_RE = /^\d{3,4}\s/; // "2019 structural fire in Paris" (n
 // A title that starts with a year: "2020 Summer Olympics opening ceremony" (but "1000 De La
 // Gauchetière" is a skyscraper at that address: see STRUCTURE_RE).
 const YEAR_TITLE_RE = /^\d{4}\s/;
-const STRUCTURE_RE = /skyscraper|gratte-ciel|rascacielos|grattacielo|hochhaus|wolkenkratzer|building|bâtiment|immeuble|edificio|gebäude|tower|tour|torre|turm/iu;
+const STRUCTURE_RE = /skyscraper|gratte-ciel|rascacielos|grattacielo|hochhaus|wolkenkratzer|building|bâtiment|édifice|immeuble|edificio|gebäude|tower|tour|torre|turm/iu;
 // …or by their last word: "Hōgen rebellion", "Great Kantō earthquake", "2015 Paris attacks".
-const EVENT_TITLE_END_RE = /(?:^|\s)(?:rebellion|uprising|revolt|riots?|massacre|disaster|earthquake|bombings?|attacks?|incident|affair|crisis|protests?|war|siege|shooting|hostage crisis)(?:\s*\(.*\))?$/iu;
+const EVENT_TITLE_END_RE = /(?:^|\s)(?:rebellion|uprising|revolt|riots?|massacre|disaster|earthquake|bombings?|attacks?|incident|affair|crisis|protests?|war|siege|shooting|hostage crisis|famine|plague|epidemic|pandemic|flood)(?:\s*\(.*\))?$/iu;
 // Organisations by their first word: "Asociación del Fútbol Argentino", "Fédération française…".
-const ORGANISATION_TITLE_RE = /^(?:association|asociación|associazione|fédération|federación|federazione|confederación|verband|bund deutscher|organisation|organization|organización|organizzazione)(?![\p{L}])|(?:^|[^\p{L}])(?:university|université|universidad|università|universität|universitat)(?![\p{L}])/iu;
+const ORGANISATION_TITLE_RE = /^(?:association|asociación|associazione|fédération|federación|federazione|confederación|verband|bund deutscher|organisation|organization|organización|organizzazione|comité|committee|comitato|komitee)(?![\p{L}])|(?:^|[^\p{L}])(?:university|université|universidad|università|universität|universitat)(?![\p{L}])/iu;
 // German packs it into one word: "Tageszeitung", "Maschinenbauunternehmen", "Musikfestival".
 const NOT_A_PLACE_DE_RE = /\p{L}(?:unternehmen|zeitung|partei|verein|stiftung|verband|konzern|hersteller|festival)(?![\p{L}])/iu;
 // Dates in the title: "World Trade Center (1973–2001)" is the one that stood there then.
@@ -123,6 +126,8 @@ export function isPlaceToSee(poi) {
   const description = poi.description ?? '';
   const title = poi.title ?? '';
   if ((AREA_RE.test(description) && !TOWN_BUILDING_RE.test(description)) || NOT_A_PLACE_RE.test(description) || NOT_A_PLACE_INTL_RE.test(description) || NOT_A_PLACE_START_RE.test(description)) return false;
+  // An assembly, unless it's its building ("edificio legislativo": Argentina's Palace of Congress).
+  if (LEGISLATURE_RE.test(description) && !STRUCTURE_RE.test(description) && !HISTORIC_RE.test(title)) return false;
   if (IN_A_COLLECTION_RE.test(description) || GONE_RE.test(description) || NOT_A_PLACE_DE_RE.test(description)) return false;
   // "2019 structural fire in Paris" is an event; "1973 Thames road bridge" is London Bridge.
   if (EVENT_DESCRIPTION_RE.test(description) && !HISTORIC_RE.test(description) && !MUSEUM_RE.test(description)) return false;
