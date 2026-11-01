@@ -37,7 +37,12 @@ const MUSEUM_RE = /(?:^|[^\p{L}])(?:museum|musée|musee|museo|museu|gallery|gale
 // Matched against what a place *is* (the start of its description: "river in France",
 // "arrondissement of Paris"), not words further on ("bridge over the river").
 const AREA_RE =
-  /^(?:[\p{L}'’-]+\s+){0,2}(?:arrondissement|district|neighbou?rhood|suburb|area|space|point|junction|intersection|settlement|ville|cité|région|región|regione|provincia|département|departamento|bundesland|ciudad|stadt|città|comune|gemeinde|île|isla|insel|isola|barrio|bairro|stadtteil|quartiere|rione|quarter|quartier|borough|ward|commune|municipality|city|town|village|capital|river|fleuve|rivière|río|fluss|fiume|lake|region|province|department|département|metropolitan|island|street|avenue|boulevard|rue|calle|straße|strasse|metro line|railway line|prefecture|canton|strait|estuary|bay|lagoon|gulf|canal|former name|thoroughfare|sektor|sector|secteur|country|sovereign state)(?![\p{L}])/iu;
+  /^(?:[\p{L}'’-]+\s+){0,2}(?:arrondissement|district|neighbou?rhood|suburb|area|space|point|junction|intersection|settlement|ville|cité|région|región|regione|provincia|département|departamento|bundesland|ciudad|stadt|città|comune|gemeinde|île|isla|insel|isola|barrio|bairro|stadtteil|quartiere|rione|quarter|quartier|borough|ward|commune|municipality|municipio|municipalité|city|town|village|capital|river|fleuve|rivière|río|fluss|fiume|lake|region|province|department|département|metropolitan|island|street|avenue|boulevard|rue|calle|straße|strasse|metro line|railway line|prefecture|canton|strait|estuary|bay|lagoon|gulf|canal|former name|thoroughfare|sektor|sector|secteur|country|sovereign state)(?![\p{L}])/iu;
+
+// …but a town's buildings are places: "City hall in Bruges", "hôtel de ville à Bruxelles",
+// "City walls in Edinburgh", "ehemaliges Wiener Stadttor".
+const TOWN_BUILDING_RE =
+  /^(?:[\p{L}'’-]+\s+){0,3}(?:town hall|city hall|hôtel de ville|casa consistorial|ayuntamiento|rathaus|stadhuis|palazzo (?:comunale|civico)|(?:city|town) (?:gate|walls?)|stadtmauer|stadttor|porte de ville|puerta de la ciudad|porta della città)(?![\p{L}])/iu;
 
 // Wikipedia also places organisations, events and works at an address: not places to walk to.
 // (Matched on the short description: "British intelligence agency", "Satirical magazine", "Fire in 1666".)
@@ -110,7 +115,7 @@ export function isPlaceToSee(poi) {
   if (poi.category === 'skip' || poi.disambiguation || poi.gone) return false;
   const description = poi.description ?? '';
   const title = poi.title ?? '';
-  if (AREA_RE.test(description) || NOT_A_PLACE_RE.test(description) || NOT_A_PLACE_INTL_RE.test(description) || NOT_A_PLACE_START_RE.test(description)) return false;
+  if ((AREA_RE.test(description) && !TOWN_BUILDING_RE.test(description)) || NOT_A_PLACE_RE.test(description) || NOT_A_PLACE_INTL_RE.test(description) || NOT_A_PLACE_START_RE.test(description)) return false;
   if (IN_A_COLLECTION_RE.test(description) || GONE_RE.test(description) || NOT_A_PLACE_DE_RE.test(description)) return false;
   // "2019 structural fire in Paris" is an event; "1973 Thames road bridge" is London Bridge.
   if (EVENT_DESCRIPTION_RE.test(description) && !HISTORIC_RE.test(description) && !MUSEUM_RE.test(description)) return false;

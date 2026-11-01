@@ -259,6 +259,9 @@ test('found in real cities: groups, assemblies, events, paintings and streets ar
   assert.ok(ok('Rua Augusta Arch', 'triumphal arch in Lisbon') && ok('Hôtel de préfecture de la Haute-Savoie', 'préfecture de la Haute-Savoie'), 'what stands in a street; a prefecture building');
   assert.ok(ok('Union Station (Washington, D.C.)', 'train station') && ok('Universitätskirche Leipzig', 'Kirche') && ok('Imperial War Museum', 'museum in London'), 'words inside names');
   assert.ok(ok('Verkehrshaus der Schweiz', 'Verkehrsmuseum in Luzern') && ok('Kunsthaus Zürich', 'Kunstmuseum'), 'German museums');
+  assert.ok(ok('Bruges City Hall', 'City hall in Bruges, Belgium') && ok('Hôtel de ville de Bruxelles', 'hôtel de ville à Bruxelles, Belgique') && ok('Ghent City Hall', 'Town hall in Ghent, Belgium'), 'town halls are not towns');
+  assert.ok(ok('Edinburgh town walls', 'City walls in City of Edinburgh, Scotland') && ok('Stopera', 'Complex with city hall and opera in Amsterdam'), 'city walls, a city hall complex');
+  assert.ok(!ok('Vallecas', 'antiguo municipio de la provincia de Madrid, España') && !ok('Brussels', 'city in Belgium'), 'towns are still towns');
   assert.ok(ok('London Bridge', '1973 Thames road bridge in London') && ok('Loftus Road', "Stadium in Shepherd's Bush, London, England"), 'a bridge described by its year, a stadium named like a road');
   assert.ok(!ok('Wheatfield with Crows', '1890 painting by Vincent van Gogh') && !ok('Expo \'98', "1998 World's Fair in Lisbon, Portugal") && !ok('Via del Corso (Roma)', 'strada di Roma') && !ok('Rue Saint-Honoré', 'voie parisienne'), 'a painting and a fair by their year; streets by their description');
   assert.ok(ok('Museum of the Second World War', 'museum in Gdańsk') && ok('University Church of St Mary the Virgin', 'church in Oxford') && ok('Oxford University Museum of Natural History', 'museum in Oxford'), 'titles that name a museum or a church');
