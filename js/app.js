@@ -6,6 +6,7 @@ import { LANGUAGES, speechLocale } from './i18n.js';
 import { createWikiService } from './wiki.js';
 import { createGeocoder, fetchRoute, fetchDirections, fetchStreetName } from './geocode.js';
 import { Navigator, mapsLink, routeMapsLinks } from './navigation.js';
+import { createLens } from './lensView.js';
 import { Narrator } from './narrator.js';
 import { GpsSource, SimulatedSource } from './location.js';
 import { TourEngine } from './tourEngine.js';
@@ -1158,7 +1159,35 @@ function drawNavRoute(route) {
 
 const isApple = /iPhone|iPad|iPod|Macintosh/.test(navigator.userAgent) && 'ontouchend' in document;
 
+// ---------- Point your camera ----------
+
+// Wikipedia in the language chosen now (it can change between two openings).
+const lensWiki = {
+  nearby: (...args) => createWikiService({ lang: $('lang').value }).nearby(...args),
+  summary: (title) => createWikiService({ lang: $('lang').value }).summary(title),
+  resolveArticle: (...args) => createWikiService({ lang: $('lang').value }).resolveArticle(...args),
+};
+let lensNarrator = null;
+const lens = createLens({
+  wiki: lensWiki,
+  streetName: (point) => fetchStreetName(point),
+  // During a tour, the tour's guide tells the story; otherwise the phone's chosen voice.
+  narrator: () => {
+    if (session && !session.ended) return session.narrator;
+    const key = parseVoiceKey(selectedVoiceKey());
+    if (!lensNarrator || lensNarrator.lang !== $('lang').value) {
+      lensNarrator = new Narrator({ lang: $('lang').value, rate: Number(readForm().rate), systemVoiceName: key?.kind === 'system' ? key.name : null });
+    }
+    return lensNarrator;
+  },
+});
+let navTarget = null; // the stop the directions lead to: what the camera looks for from the tour
+$('lens-open').addEventListener('click', () => lens.open());
+$('nav-lens').addEventListener('click', () => lens.open({ target: navTarget }));
+$('lens-close').addEventListener('click', () => lens.close());
+
 function showDirections(state, modeId) {
+  navTarget = state.target ?? null;
   const card = $('next-stop');
   if (!state.target) {
     card.hidden = true;

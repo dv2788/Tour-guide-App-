@@ -137,7 +137,7 @@ async function mockNetwork(context, { routeCacheName = 'smoke' } = {}) {
   // Article sizes aren't in the recorded summaries: derive a stable stand-in from the intro.
   const articleLength = (title) => (fixtures.summaries[title]?.extract?.length ?? 300) * 40;
   // A recorded page with what the place search asks for: length, languages (a stand-in), position.
-  const withDetails = (page) => ({ ...page, length: articleLength(page.title), langlinkscount: Math.round(articleLength(page.title) / 1500) });
+  const withDetails = (page) => ({ ...page, length: articleLength(page.title), langlinkscount: page.langlinkscount ?? Math.round(articleLength(page.title) / 1500) });
   await context.route('https://*.wikipedia.org/w/api.php?**', (route) => {
     const p = new URL(route.request().url()).searchParams;
     const near = (lat, lon, radius, limit) =>

@@ -61,5 +61,13 @@ const geosearch = Object.values(summaries)
     thumbnail: s.thumbnail ? { source: s.thumbnail.source, width: s.thumbnail.width, height: s.thumbnail.height } : undefined,
   }));
 
+// How many languages have an article about each place (how well known it is).
+for (let i = 0; i < geosearch.length; i += 50) {
+  const ids = geosearch.slice(i, i + 50).map((p) => p.pageid).join('|');
+  const data = await json(`https://en.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&prop=langlinkscount&pageids=${ids}`);
+  for (const page of data.query.pages) geosearch.find((p) => p.pageid === page.pageid).langlinkscount = page.langlinkscount ?? 0;
+  await sleep(1200);
+}
+
 await writeFile(new URL('./fixtures.json', import.meta.url), JSON.stringify({ city: CITY, stops: STOPS, linkStops: LINK_STOPS, nominatim, summaries, geosearch }, null, 1));
 console.log(`saved ${Object.keys(nominatim).length} places, ${Object.keys(summaries).length} summaries, ${geosearch.length} nearby articles`);

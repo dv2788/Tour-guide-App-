@@ -1300,9 +1300,9 @@ select:focus {
   right: 12px;
   z-index: 500;
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: auto 1fr auto auto;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   padding: 12px 12px 12px 14px;
   border: 1px solid var(--hairline-strong);
   border-radius: var(--radius-lg);
@@ -1359,9 +1359,12 @@ select:focus {
   place-items: center;
   width: 42px;
   height: 42px;
+  padding: 0;
   border-radius: 50%;
   border: 1px solid var(--hairline-strong);
+  background: transparent;
   color: var(--gold);
+  cursor: pointer;
 }
 
 /* Keep the map's credits and buttons clear of the card that overlaps the map's bottom edge. */
@@ -1710,4 +1713,282 @@ select:focus {
   .hero h1 {
     font-size: 3.4rem;
   }
+}
+
+/* ---------- Point your camera ---------- */
+
+.lens-entry {
+  width: 100%;
+  margin: 0 0 18px;
+}
+
+body.lens-open {
+  overflow: hidden;
+}
+
+.lens {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: #05070c;
+  color: #fffdf8;
+  overflow: hidden;
+}
+
+.lens video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.lens-shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgb(5 7 12 / 55%), transparent 22%, transparent 62%, rgb(5 7 12 / 70%));
+  pointer-events: none;
+}
+
+.lens-reticle {
+  position: absolute;
+  left: 50%;
+  top: 46%;
+  width: 72px;
+  height: 72px;
+  margin: -36px 0 0 -36px;
+  border: 1.5px solid rgb(255 253 248 / 75%);
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgb(5 7 12 / 30%);
+  pointer-events: none;
+}
+
+.lens-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: calc(12px + env(safe-area-inset-top)) 16px 0;
+}
+
+.lens-close {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgb(255 253 248 / 40%);
+  border-radius: 50%;
+  background: rgb(5 7 12 / 45%);
+  color: #fffdf8;
+  cursor: pointer;
+}
+
+.lens-status {
+  margin: 8px 0 0;
+  font-size: 0.85rem;
+  text-shadow: 0 1px 3px rgb(0 0 0 / 70%);
+}
+
+.lens-status[data-tone='warn'] {
+  color: #f3e3b5;
+}
+
+.lens-labels {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.lens-label {
+  position: absolute;
+  transform: translateX(-50%);
+  display: grid;
+  gap: 1px;
+  max-width: 46%;
+  padding: 6px 10px;
+  border: 1px solid rgb(255 253 248 / 35%);
+  border-radius: 10px;
+  background: rgb(5 7 12 / 55%);
+  color: #fffdf8;
+  font: inherit;
+  font-size: 0.78rem;
+  line-height: 1.25;
+  text-align: center;
+  pointer-events: auto;
+  cursor: pointer;
+  transition: left 0.15s linear;
+}
+
+.lens-label strong {
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lens-label span {
+  font-size: 0.68rem;
+  opacity: 0.8;
+}
+
+.lens-label.best {
+  border-color: #e7cf8f;
+}
+
+.lens-label.target {
+  border-color: #e7cf8f;
+  background: rgb(201 165 92 / 55%);
+}
+
+.lens-guide {
+  position: absolute;
+  top: calc(70px + env(safe-area-inset-top));
+  left: 50%;
+  transform: translateX(-50%);
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  width: min(86%, 360px);
+  padding: 10px 14px 12px;
+  border: 1px solid rgb(231 207 143 / 60%);
+  border-radius: 16px;
+  background: rgb(5 7 12 / 60%);
+  text-align: center;
+}
+
+.lens-guide.found {
+  border-color: #e7cf8f;
+  background: rgb(201 165 92 / 45%);
+}
+
+.lens-looking {
+  margin: 0;
+  font-size: 0.8rem;
+}
+
+.lens-looking strong {
+  display: block;
+  font: 500 1.25rem/1.2 var(--serif);
+}
+
+.lens-arrow {
+  width: 44px;
+  height: 44px;
+  fill: #e7cf8f;
+  transition: transform 0.15s linear;
+}
+
+.lens-where {
+  margin: 0;
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+}
+
+.lens-street {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: calc(136px + env(safe-area-inset-bottom));
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  gap: 10px;
+  font-size: 0.82rem;
+  text-shadow: 0 1px 3px rgb(0 0 0 / 70%);
+}
+
+.lens-street .text-btn {
+  color: #e7cf8f;
+}
+
+.lens-card {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: calc(12px + env(safe-area-inset-bottom));
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: 0 10px 30px rgb(0 0 0 / 35%);
+}
+
+.lens-card-text {
+  display: grid;
+  gap: 2px;
+}
+
+.lens-card-text strong {
+  font: 500 1.3rem/1.2 var(--serif);
+}
+
+.lens-card-text span {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.lens-card-actions,
+.lens-popup-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.lens-popup {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: calc(12px + env(safe-area-inset-bottom));
+  z-index: 1;
+  max-height: 72%;
+  overflow: auto;
+  padding: 0 16px 16px;
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: 0 14px 40px rgb(0 0 0 / 45%);
+  animation: lens-pop 0.25s var(--ease);
+}
+
+@keyframes lens-pop {
+  from {
+    transform: translateY(16px);
+    opacity: 0;
+  }
+}
+
+.lens-popup-img {
+  display: block;
+  width: calc(100% + 32px);
+  max-height: 180px;
+  margin: 0 -16px 12px;
+  object-fit: cover;
+}
+
+.lens-popup h3 {
+  margin: 14px 0 2px;
+  font: 500 1.5rem/1.15 var(--serif);
+}
+
+.lens-popup-img + h3 {
+  margin-top: 0;
+}
+
+.lens-popup-desc {
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.lens-popup-text {
+  margin: 0 0 14px;
+  font-size: 0.92rem;
+  line-height: 1.55;
 }

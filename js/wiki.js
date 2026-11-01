@@ -73,7 +73,7 @@ export function createWikiService({ lang = 'en', fetchImpl = defaultFetch, retry
       ggscoord: `${lat}|${lon}`,
       ggsradius: String(Math.min(10000, Math.max(10, Math.round(radius)))),
       ggslimit: String(Math.min(50, Math.max(1, limit))),
-      prop: 'coordinates|description|pageimages|pageprops',
+      prop: 'coordinates|description|pageimages|pageprops|langlinkscount',
       colimit: 'max',
       piprop: 'thumbnail',
       pithumbsize: '240',
@@ -94,6 +94,7 @@ export function createWikiService({ lang = 'en', fetchImpl = defaultFetch, retry
           description: p.description ?? '',
           thumbnail: p.thumbnail?.source ?? null,
           disambiguation: !!p.pageprops && 'disambiguation' in p.pageprops,
+          langs: p.langlinkscount ?? 0, // how well known (left out when there are none)
         };
         poi.category = classifyPlace(poi);
         return poi;

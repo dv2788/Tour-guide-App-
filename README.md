@@ -121,6 +121,26 @@ Nominatim). Wikipedia allows a web page at most 3 requests at a time, so the app
 queue in `js/wiki.js`), finds places in two requests, waits and retries when Wikipedia asks it to, and says
 "Wikipedia didn't answer" rather than "nothing nearby" when it can't get through. The planning logic is in `js/suggest.js` (pure functions, unit-tested).
 
+## Point your camera
+
+Tap **Point your camera at a building** (on the start screen), or the camera button on the directions card
+during a tour. The camera becomes a viewfinder:
+
+- the landmarks, monuments and museums in front of you are **labelled where they stand**, and the one in the
+  middle of the view is named at the bottom, with **Read more** (a little window with its photo and story,
+  **Hear its story** and a link to the full article) and **Guide me there**;
+- the **street you're in** is named too, with its story when it has one ("You're on Passeig de Gràcia");
+- **looking for a place** (a tour's next stop, or one you asked to be guided to): a banner shows what it's
+  looking for, an arrow which way to turn and how far, and when it's in front of you its story pops up.
+
+What you're looking at is worked out from where you stand (GPS) and which way the phone points (the
+compass), not from the picture, so it needs no account and costs nothing. In a row of famous houses, the one
+you aim at wins; when two are almost in line, the better known one wins and the other is labelled beside it.
+On a phone without a compass it lists what's around you, nearest first. The logic is in `js/lens.js`
+(unit-tested), the view in `js/lensView.js`; `npm run e2e:lens` checks it with a fake camera and compass.
+Recognising buildings from the picture itself (an AI vision model) would need an account with an AI service
+and a small server to keep its key: a possible next step.
+
 ## Finding your way to the next stop
 
 During the tour Roamie shows and tells you how to reach the next stop:
