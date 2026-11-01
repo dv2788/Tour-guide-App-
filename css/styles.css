@@ -1469,9 +1469,44 @@ select:focus {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  /* The phone asked for less motion: no animations, instant transitions and scrolling. */
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
   .waves {
     animation: none;
   }
+}
+
+/* For keyboard and screen-reader users: straight to the form (shown when focused). */
+.skip-link {
+  position: absolute;
+  left: 12px;
+  top: -100px;
+  z-index: 3000;
+  padding: 10px 16px;
+  border-radius: var(--radius);
+  background: var(--ink);
+  color: var(--bg);
+  text-decoration: none;
+}
+
+.skip-link:focus {
+  top: calc(12px + env(safe-area-inset-top));
+}
+
+.noscript {
+  margin: 0;
+  padding: 14px 20px;
+  background: var(--ink);
+  color: var(--bg);
+  text-align: center;
 }
 
 .now-main {

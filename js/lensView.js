@@ -250,7 +250,7 @@ export function createLens({ wiki, streetName, narrator }) {
     box.dataset.name = name;
     const text = summary?.extract ? firstSentences(summary.extract, 5) : summary === null ? 'Looking it up…' : '';
     box.replaceChildren(
-      ...(summary?.thumbnail ? [el('img', { src: summary.thumbnail, alt: '', className: 'lens-popup-img' })] : []),
+      ...(summary?.thumbnail ? [el('img', { src: summary.thumbnail, alt: '', className: 'lens-popup-img', loading: 'lazy', decoding: 'async' })] : []),
       el('h3', { textContent: summary?.title ?? name }),
       ...(summary?.description ? [el('p', { className: 'lens-popup-desc', textContent: summary.description })] : []),
       el('p', { className: 'lens-popup-text', id: 'lens-text', textContent: text || "Wikipedia has nothing about this place yet." }),

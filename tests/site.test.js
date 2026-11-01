@@ -33,3 +33,18 @@ test('the home page tells search engines what Roamie is', () => {
   assert.match(index, /<link rel="canonical" href="https:\/\/[^"]+\/" \/>/);
   assert.match(index, /<meta name="description" content="[^"]{80,}"/);
 });
+
+test('robots.txt points to the sitemap; a missing page gets a Roamie page that leads back', () => {
+  const site = read('index.html').match(/<link rel="canonical" href="([^"]+)"/)[1];
+  assert.match(read('robots.txt'), new RegExp(`^Sitemap: ${site.replace(/[.?]/g, '\\$&')}sitemap\\.xml$`, 'm'));
+  const notFound = read('404.html');
+  assert.match(notFound, /<meta name="robots" content="noindex"/, 'not indexed');
+  assert.ok(notFound.includes(`href="${site}"`), 'a way back to the app');
+  for (const sample of SAMPLES) assert.ok(notFound.includes(`${site}tours/${sample.id}/`), `links ${sample.id}`);
+});
+
+test('keyboard users can skip straight to the form; no JavaScript is explained', () => {
+  const index = read('index.html');
+  assert.match(index, /<body>\s*<a class="skip-link" href="#setup-form">/);
+  assert.match(index, /<noscript>/);
+});

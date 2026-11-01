@@ -235,6 +235,48 @@ await writeFile(
   `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map((u) => `  <url><loc>${u}</loc><lastmod>${TODAY}</lastmod></url>`).join('\n')}\n</urlset>\n`,
 );
 
+// ---------- robots.txt and "page not found" ----------
+// (Search engines read robots.txt at the root of a domain: it counts once the site has its own.)
+
+await writeFile(new URL('robots.txt', ROOT), `User-agent: *\nAllow: /\n\nSitemap: ${SITE}sitemap.xml\n`);
+await writeFile(
+  new URL('404.html', ROOT),
+  `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex" />
+<title>Page not found · Roamie</title>
+<link rel="icon" href="${SITE}icons/icon.svg" type="image/svg+xml" />
+<style>
+  :root { color-scheme: light dark; --bg: #f6f1e8; --ink: #16181e; --muted: #6b6a66; --gold: #9a7a3d; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #0b0f18; --ink: #f2ede3; --muted: #a7a399; --gold: #d8b873; } }
+  body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: var(--bg); color: var(--ink); font: 300 17px/1.6 'Jost', system-ui, sans-serif; text-align: center; padding: 24px; box-sizing: border-box; }
+  main { max-width: 30rem; }
+  img { width: 64px; height: 64px; }
+  .word { letter-spacing: 0.32em; text-transform: uppercase; font: 500 1.1rem/1 Georgia, serif; margin: 14px 0 28px; }
+  h1 { font: 400 2.2rem/1.15 Georgia, serif; margin: 0 0 10px; }
+  p { color: var(--muted); margin: 0 0 24px; }
+  a { color: var(--gold); }
+  .go { display: inline-block; padding: 14px 22px; border: 1px solid var(--gold); border-radius: 12px; text-decoration: none; letter-spacing: 0.14em; text-transform: uppercase; font-size: 0.75rem; }
+  nav { margin-top: 28px; font-size: 0.9rem; }
+</style>
+</head>
+<body>
+<main>
+  <img src="${SITE}icons/icon.svg" alt="" />
+  <div class="word">Roamie</div>
+  <h1>This street isn't on the map.</h1>
+  <p>The page you were looking for doesn't exist, or has moved. The city is still out there.</p>
+  <a class="go" href="${SITE}">Plan a tour</a>
+  <nav>Or try a sample tour: ${SAMPLES.map((s) => `<a href="${SITE}tours/${s.id}/">${esc(s.label)}</a>`).join(' · ')}</nav>
+</main>
+</body>
+</html>
+`,
+);
+
 // ---------- Tour links in the home page footer ----------
 
 const indexFile = new URL('index.html', ROOT);
@@ -244,4 +286,4 @@ const updated = index.replace(/(<!-- tours:start -->)[\s\S]*?(<!-- tours:end -->
 if (updated === index && !index.includes('<!-- tours:start -->')) throw new Error('index.html has no <!-- tours:start --> marker');
 await writeFile(indexFile, updated);
 
-console.log(`Built ${SAMPLES.length} tour pages and a sitemap of ${urls.length} pages for ${SITE}`);
+console.log(`Built ${SAMPLES.length} tour pages, a sitemap of ${urls.length} pages, robots.txt and 404.html for ${SITE}`);

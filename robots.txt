@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://dv2788.github.io/Tour-guide-App-/sitemap.xml
