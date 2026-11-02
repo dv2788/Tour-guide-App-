@@ -15,6 +15,8 @@ import { Narrator } from './narrator.js';
 import { GpsSource, SimulatedSource } from './location.js';
 import { TourEngine } from './tourEngine.js';
 import { StreetView } from './streetView.js';
+import { PhotoView } from './photoView.js';
+import { STREET_VIEW_CONFIG } from './streetview-config.js';
 import { distanceMeters } from './geo.js';
 import { sharesNameToken } from './text.js';
 import { parseItinerary, parseTextList, SOURCE_LABELS } from './itineraryImport.js';
@@ -1388,9 +1390,11 @@ const stopMarkers = new Map();
 // ---------- First person ----------
 // The same tour, seen from the street: what the top map draws, the first-person view gets too
 // (kept here, so it can be switched on mid-tour). Drawn only while it's showing.
-let street = null;
+let street = null; // the 3D map
+let photo = null; // real street photos (Google Street View), where there are any and a key is set
 let streetData = null;
 let streetOpening = null;
+const photosShowing = () => $('street').classList.contains('photos');
 const VIEW_KEY = 'roamie:view';
 const savedView = () => {
   try {
@@ -1404,11 +1408,46 @@ const savedView = () => {
 function resetStreet() {
   street?.destroy();
   street = null;
+  closePhotos();
   streetOpening = null;
   streetData = { route: null, leg: null, stops: [], places: [], pos: null, reached: new Set(), modeId: 'walk' };
   $('street').hidden = true;
   $('map').closest('.map-wrap').classList.remove('first-person');
   setViewButton(false);
+}
+
+// Street View runs in its own page, in a frame over the 3D map; it says when Google has a photo
+// here, and the photo then covers the 3D map (which stops redrawing underneath). One viewer per
+// tour, kept while the tour runs even when you switch back to the map: that's what Google counts.
+function openPhotos() {
+  if (photo || !STREET_VIEW_CONFIG.apiKey) return;
+  const box = el('div', { className: 'street-photo' });
+  $('street').prepend(box);
+  photo = new PhotoView({
+    container: box,
+    modeId: streetData.modeId,
+    onCoverage: (here) => {
+      $('street').classList.toggle('photos', here);
+      if (!here && streetData.pos) street?.move(streetData.pos); // the 3D map catches up
+    },
+    onFailed: (reason) => {
+      closePhotos();
+      if (reason !== 'no key') setStatus("Street View isn't available just now, so here's the 3D street view.", 'warn');
+    },
+  });
+  if (streetData.route) photo.setRoute(streetData.route);
+  if (streetData.leg) photo.setLeg(streetData.leg);
+  photo.setStops(streetData.stops);
+  photo.addPlaces(streetData.places);
+  for (const i of streetData.reached) photo.markReached(i);
+  if (streetData.pos) photo.move(streetData.pos);
+}
+
+function closePhotos() {
+  photo?.destroy();
+  photo = null;
+  $('street').classList.remove('photos');
+  $('street').querySelector('.street-photo')?.remove();
 }
 
 function setViewButton(on) {
@@ -1432,11 +1471,12 @@ async function showStreet(on) {
     }, 0);
     return;
   }
-  if (street || streetOpening) return;
   $('street').hidden = false;
   $('map').closest('.map-wrap').classList.add('first-person');
   $('recenter').hidden = true; // it always follows you
   setViewButton(true);
+  openPhotos();
+  if (street || streetOpening) return;
   const dark = window.matchMedia?.('(prefers-color-scheme: dark)').matches;
   const opening = (streetOpening = quietStyle(VECTOR_STYLES[dark ? 'dark' : 'light']));
   try {
@@ -1525,6 +1565,7 @@ function drawStops(stops) {
   if (!map) return;
   streetData.stops = stops;
   street?.setStops(stops);
+  photo?.setStops(stops);
   for (const [i, stop] of stops.entries()) {
     const icon = window.L.divIcon({ className: 'stop-pin', html: `<span>${i + 1}</span>`, iconSize: [30, 30] });
     const marker = window.L.marker([stop.lat, stop.lon], { icon, title: stop.name }).addTo(layers.stops);
@@ -1559,6 +1600,7 @@ function drawNavRoute(route) {
   navRouteDrawn = route;
   streetData.leg = route?.points ?? null;
   street?.setLeg(streetData.leg);
+  photo?.setLeg(streetData.leg);
   layers.nav.clearLayers();
   layers.route.eachLayer((l) => l.setStyle?.({ opacity: route ? 0.35 : 0.9 }));
   if (!route) return;
@@ -1622,6 +1664,7 @@ function drawRoute(points, { routed = true } = {}) {
   if (!map) return;
   streetData.route = points;
   street?.setRoute(points);
+  photo?.setRoute(points);
   // A real route follows the streets. Without one, a faint dotted line just joins the stops,
   // so it never looks like a path through buildings.
   window.L.polyline(
@@ -1634,6 +1677,7 @@ function drawPois(pois) {
   if (!map) return;
   streetData.places.push(...pois);
   street?.addPlaces(pois);
+  photo?.addPlaces(pois);
   for (const poi of pois) {
     if (poi.category === 'skip' || poiMarkers.has(poi.id)) continue;
     const marker = window.L.circleMarker([poi.lat, poi.lon], {
@@ -1653,14 +1697,19 @@ function markPoiHeard(id) {
   poiMarkers.get(id)?.setStyle({ color: '#8a8578', fillColor: '#bdb6a6', fillOpacity: 0.5 });
   // In first person, the place being told about lights up for a while.
   street?.highlight(id);
+  photo?.highlight(id);
   clearTimeout(highlightTimer);
-  highlightTimer = setTimeout(() => street?.highlight(null), 30000);
+  highlightTimer = setTimeout(() => {
+    street?.highlight(null);
+    photo?.highlight(null);
+  }, 30000);
 }
 
 function moveUser({ lat, lon, accuracy, heading }) {
   if (!map) return;
   streetData.pos = { lat, lon };
-  street?.move({ lat, lon }, { heading });
+  photo?.move({ lat, lon }, { heading });
+  if (!photosShowing()) street?.move({ lat, lon }, { heading }); // under a photo, the 3D map rests
   const L = window.L;
   if (!userMarker) {
     accuracyCircle = L.circle([lat, lon], { radius: accuracy ?? 0, stroke: false, fillColor: '#c9a55c', fillOpacity: 0.12 }).addTo(layers.user);
@@ -2009,6 +2058,7 @@ form.addEventListener('submit', async (event) => {
           stopMarkers.get(data.stop.index)?.getElement()?.classList.add('reached');
           streetData.reached.add(data.stop.index);
           street?.markReached(data.stop.index);
+          photo?.markReached(data.stop.index);
           if (data.stop.index === stops.length - 1) {
             // Last stop: guide back to the start of a round trip, or stop guiding.
             const home = plan?.loop && plan.start ? { name: 'your starting point', lat: plan.start.lat, lon: plan.start.lon } : null;

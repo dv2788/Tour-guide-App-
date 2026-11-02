@@ -190,6 +190,16 @@ person; **Map** switches back, and the choice is remembered. It uses the same fr
 (OpenFreeMap, from OpenStreetMap: building heights where mapped), so there's no account or key, and it's only
 drawn while it's on screen. The logic is in `js/streetView.js`.
 
+**Real street photos.** With a Google Maps Platform key set in `js/streetview-config.js`, first person shows
+Google Street View instead: the real street, with the same signposts standing on the photo, facing the way
+the street goes (look around by hand, and it leaves you be for a few seconds). Where Google has no photo, the
+3D map takes over. It's off without a key (nothing is sent to Google then). One viewer per tour, which is what
+Google bills: 5,000 a month free, then $14 per 1,000. Google's rules are followed: while a photo shows,
+Roamie's own maps are hidden (no non-Google map on the same screen), its credits stay uncovered, and nothing
+of Google's is cached. Google's script runs in its own page (`streetview.html`) with its own security policy,
+shown in a frame; the app and that page talk with checked messages (`js/photoView.js`). Setup, costs and
+rules: `docs/street-view.md`.
+
 ## Finding your way to the next stop
 
 During the tour Roamie shows and tells you how to reach the next stop:
@@ -336,6 +346,8 @@ js/suggest.js         suggested routes: interest scoring, museum visits, meal br
 js/openingHours.js    reading OpenStreetMap opening hours
 js/navigation.js      directions to the next stop: route, next turn, spoken prompts, re-routing
 js/streetView.js      first person: the 3D street view, its camera and signposts
+js/photoView.js       first person with Google Street View photos: the frame and its messages
+js/streetview-frame.js  the Street View page itself (streetview.html), driven by those messages
 js/wiki.js            Wikipedia: nearby places, stories, matching a stop to its article
 js/geocode.js         OpenStreetMap: finding places, routes
 js/location.js        GPS and the trip simulator
@@ -359,6 +371,7 @@ npm run e2e          # browser runs on a phone-sized screen: the Barcelona walk,
 npm run e2e:voice    # the AI voice for real: download, preview, and a tour read by it (needs internet)
 npm run e2e:outings  # interests, outing types and the itineraries to choose from
 npm run e2e:firstperson  # a tour in first person: the 3D street view, signposts, switching to the map and back
+npm run e2e:streetview   # first person with Street View photos (a stand-in for Google's script)
 ```
 
 The browser test answers place searches and Wikipedia from `tests/e2e/fixtures.json` (real data recorded by

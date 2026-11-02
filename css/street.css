@@ -1,0 +1,111 @@
+/* First person, the parts shared by the app's page and the Street View page (streetview.html):
+   the signposts that stand where the stops and places are, in the 3D map and on the photos. */
+
+/* Signposts: a stop's number and name on a pole where it stands; places the guide mentions,
+   smaller; the one being told about, gold. Nearer ones bigger. */
+.fp-sign {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+}
+
+.fp-sign[hidden] {
+  display: none;
+}
+
+/* On the photos, placed by hand at the spot's pixel: stands on it. */
+.fp-anchor {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  z-index: 2;
+}
+
+.fp-sign-inner {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  max-width: 190px;
+  padding: 5px 10px 5px 5px;
+  border: 1.5px solid #c9a55c;
+  border-radius: 999px;
+  background: #0b0f17;
+  color: #f6f1e8;
+  font-family: var(--sans, 'Jost', system-ui, sans-serif);
+  font-size: 0.82rem;
+  line-height: 1.2;
+  box-shadow: 0 4px 14px rgb(0 0 0 / 35%);
+  transform-origin: bottom center;
+  transition: transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.fp-num {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #c9a55c;
+  color: #0b0f17;
+  font-family: var(--serif, 'Cormorant Garamond', Garamond, serif);
+  font-weight: 700;
+}
+
+.fp-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fp-pole {
+  width: 2px;
+  height: 26px;
+  background: linear-gradient(#c9a55c, rgb(201 165 92 / 0%));
+}
+
+.fp-place .fp-sign-inner {
+  padding: 4px 10px;
+  border-color: rgb(255 253 248 / 70%);
+  background: rgb(22 24 30 / 72%);
+  font-size: 0.74rem;
+}
+
+.fp-place.now .fp-sign-inner {
+  border-color: #c9a55c;
+  background: #c9a55c;
+  color: #0b0f17;
+}
+
+.fp-stop.reached .fp-sign-inner {
+  opacity: 0.6;
+}
+
+/* ---------- The Street View page itself ---------- */
+.street-page {
+  margin: 0;
+  background: #0b0f17;
+  font-family: 'Jost', system-ui, sans-serif;
+}
+
+/* The whole frame (Google's viewer sets the box's own position: give it a size, not an inset). */
+.street-page #pano {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.street-page #note {
+  position: fixed;
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
+  margin: 0;
+  color: #f6f1e8;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.street-page #note[hidden] {
+  display: none;
+}

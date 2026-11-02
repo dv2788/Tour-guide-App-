@@ -13,6 +13,7 @@
     "e2e:plus": "node tests/e2e/plus.cjs",
     "e2e:outings": "node tests/e2e/outings.cjs",
     "e2e:firstperson": "node tests/e2e/firstperson.cjs",
+    "e2e:streetview": "node tests/e2e/streetview.cjs",
     "build:site": "node scripts/build-site.mjs",
     "indexnow": "node scripts/indexnow.mjs",
     "check:events": "node scripts/check-events.mjs",

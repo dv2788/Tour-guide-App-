@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <!-- Google's Street View script needs inline styles and its own hosts, which the app's page refuses: this page
+         has its own policy, and the app shows it inside a frame (js/photoView.js). Nothing else runs here. -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' https://maps.googleapis.com https://maps.gstatic.com https://*.googleapis.com https://*.gstatic.com https://*.google.com https://*.ggpht.com blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' https://*.googleapis.com https://*.gstatic.com https://*.google.com https://*.googleusercontent.com https://*.ggpht.com data: blob:; connect-src 'self' https://*.googleapis.com https://*.google.com https://*.gstatic.com data: blob:; font-src 'self' https://fonts.gstatic.com; frame-src https://*.google.com; worker-src blob:; base-uri 'none'; form-action 'none'" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Street View · Roamie</title>
+    <link rel="stylesheet" href="css/fonts.css" />
+    <link rel="stylesheet" href="css/street.css" />
+  </head>
+  <body class="street-page">
+    <div id="pano"></div>
+    <p id="note" hidden></p>
+    <script type="module" src="js/streetview-frame.js"></script>
+  </body>
+</html>
