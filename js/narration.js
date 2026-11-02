@@ -29,12 +29,21 @@ export function buildPoiNarration({ lang, mode, title, summary, direction, dista
   return [intro, story(summary, mode.sentences, lang)].filter(Boolean).join(' ');
 }
 
-export function buildWelcomeNarration({ lang, cityName, citySummary, hasStops, style }) {
+export function buildWelcomeNarration({ lang, cityName, citySummary, hasStops, style, happening = null }) {
   const parts = [cityName ? t(lang, 'welcome', { city: cityName }, style) : t(lang, 'started', {}, style)];
   const s = story(citySummary, 2, lang);
   if (s) parts.push(s);
+  // What's on in the city ("Coming up: Bonfire Night, on 5 November."). English only for now:
+  // the events' names and notes are written in English.
+  if (happening && lang === 'en') parts.push(happeningSentence(happening));
   if (!hasStops) parts.push(t(lang, 'freeRoam', {}, style));
   return parts.join(' ');
+}
+
+/** { name, on, start, end } (days as "5 November") -> one short sentence, whatever the name. */
+export function happeningSentence({ name, on, start, end }) {
+  if (on) return start === end ? `Happening today: ${name}.` : `Happening now: ${name}, until ${end}.`;
+  return start === end ? `Coming up: ${name}, on ${start}.` : `Coming up: ${name}, from ${start}.`;
 }
 
 export function buildFirstStopNarration({ lang, stopName, distance, style }) {

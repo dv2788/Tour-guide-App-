@@ -129,7 +129,9 @@ export const EVENTS = [
   // United States
   { name: "Macy's Thanksgiving Day Parade", places: ['new york', 'new york city', 'manhattan'], window: weekday(11, 4, 4), usually: 'the fourth Thursday of November', note: 'Giant balloons down Central Park West and Sixth Avenue in the morning; arrive early for a spot.' },
   { name: 'San Francisco Pride', places: ['san francisco'], window: weekday(6, 0, -1, 2, -1), usually: 'the last weekend of June', note: 'The parade goes down Market Street on Sunday, with a celebration around Civic Center.' },
+  { name: 'Art Basel Miami Beach', places: ['miami beach', 'miami'], window: fixed(12, 1, 10), usually: 'early December', note: 'The art fair takes over the Convention Center, with shows and parties all over town; hotels fill up.' },
   // Latin America
+  { name: 'Tango Buenos Aires Festival', wiki: 'Tango Buenos Aires Festival y Mundial', places: ['buenos aires'], window: fixed(8, 10, 22), usually: 'two weeks in August', note: 'Free concerts, dance classes and the Tango World Championship, with milongas all over the city.' },
   { name: 'Rio Carnival', wiki: 'Rio de Janeiro Carnival', places: ['rio de janeiro', 'rio'], window: fromEaster(-51, -46), usually: 'the days before Ash Wednesday', note: 'Samba school parades in the Sambadrome and street parties (blocos) all over the city. Book well ahead.' },
   { name: "New Year's Eve on Copacabana", wiki: 'Réveillon', places: ['rio de janeiro', 'rio'], window: fixed(12, 31), usually: '31 December', note: 'Millions gather on the beach, many dressed in white, for the fireworks at midnight.' },
   { name: 'Inti Raymi', places: ['cusco', 'cuzco'], window: fixed(6, 24), usually: '24 June', note: 'The Inca festival of the sun, staged at Qorikancha, the Plaza de Armas and Sacsayhuamán. June is festival month in Cusco.' },

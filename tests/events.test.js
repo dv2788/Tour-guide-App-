@@ -46,3 +46,12 @@ test('every event has what the app shows: places, a rule that works, words and a
   assert.equal(formatDays(new Date('2026-12-30T00:00:00Z'), new Date('2027-01-01T00:00:00Z')), '30 December – 1 January');
   assert.equal(formatDays(new Date('2026-07-14T00:00:00Z'), new Date('2026-07-14T00:00:00Z')), '14 July');
 });
+
+test('the guide mentions what is on when the tour starts (English tours), in words that suit any name', async () => {
+  const { buildWelcomeNarration, happeningSentence } = await import('../js/narration.js');
+  const soon = { name: 'Bonfire Night', on: false, start: '5 November', end: '5 November' };
+  assert.equal(buildWelcomeNarration({ lang: 'en', cityName: 'London', citySummary: null, hasStops: true, happening: soon }), 'Welcome to London. Coming up: Bonfire Night, on 5 November.');
+  assert.equal(happeningSentence({ name: 'Christmas markets', on: true, start: '22 November', end: '23 December' }), 'Happening now: Christmas markets, until 23 December.');
+  assert.equal(happeningSentence({ name: 'Bastille Day', on: true, start: '14 July', end: '14 July' }), 'Happening today: Bastille Day.');
+  assert.equal(buildWelcomeNarration({ lang: 'fr', cityName: 'Lyon', citySummary: null, hasStops: true, happening: soon }), 'Bienvenue à Lyon.', 'not in French yet: the names and notes are English');
+});

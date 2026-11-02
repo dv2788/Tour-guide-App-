@@ -54,7 +54,8 @@ export function pickNextPoi({ pois, position, heading, narrated, mode, allowMino
 }
 
 export class TourEngine {
-  constructor({ mode, lang, wiki, narrator, city = null, stops = [], style = 'standard', onEvent = () => {}, now = () => Date.now() }) {
+  constructor({ mode, lang, wiki, narrator, city = null, stops = [], style = 'standard', happening = null, onEvent = () => {}, now = () => Date.now() }) {
+    this.happening = happening; // an event on in the city, mentioned in the welcome
     this.mode = mode;
     this.lang = lang;
     this.style = style; // how the guide phrases things ('documentary' for narrator voices)
@@ -104,6 +105,7 @@ export class TourEngine {
       cityName: this.city?.name,
       citySummary,
       hasStops: this.stops.length > 0,
+      happening: this.happening,
     });
     this.#say(text, {
       kind: 'city',

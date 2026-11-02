@@ -11,6 +11,7 @@
     "e2e:voice": "node tests/e2e/voice.cjs",
     "e2e:lens": "node tests/e2e/lens.cjs",
     "build:site": "node scripts/build-site.mjs",
-    "indexnow": "node scripts/indexnow.mjs"
+    "indexnow": "node scripts/indexnow.mjs",
+    "check:events": "node scripts/check-events.mjs"
   }
 }

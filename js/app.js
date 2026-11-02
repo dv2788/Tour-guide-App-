@@ -1564,6 +1564,9 @@ form.addEventListener('submit', async (event) => {
     }
 
     const wiki = createWikiService({ lang: cfg.lang });
+    // What's on in the city this week, for the guide to mention when the tour starts.
+    const soon = eventsFor(city?.name ?? cfg.city ?? '', new Date(), { ahead: 7 })[0];
+    const day = (d) => formatDays(d, d);
     const engine = new TourEngine({
       mode,
       lang: cfg.lang,
@@ -1572,6 +1575,7 @@ form.addEventListener('submit', async (event) => {
       narrator,
       city,
       stops,
+      happening: soon ? { name: soon.event.name, on: soon.on, start: day(soon.start), end: day(soon.end) } : null,
       onEvent: (type, data) => {
         if (!alive()) return;
         if (type === 'position') moveUser(current.navigator?.snap(data) ?? data);

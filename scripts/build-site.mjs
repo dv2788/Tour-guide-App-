@@ -5,6 +5,7 @@
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { SAMPLES } from '../js/samples.js';
+import { EVENTS, cityKeys, eventLink } from '../js/events.js';
 
 const ROOT = new URL('../', import.meta.url);
 const SITE = (process.env.SITE_URL ?? 'https://dv2788.github.io/Tour-guide-App-/').replace(/\/?$/, '/');
@@ -38,6 +39,13 @@ const ARTICLES = {
 const OWN_WORDS = {
   'Española Way': 'A pedestrian street of 1920s Mediterranean Revival buildings in the heart of South Beach, lined with cafés and restaurants.',
 };
+
+/** The article for a stop: "<tour id>:<stop>" first (two cities have a "Plaza de Armas"), then the stop. */
+function articleFor(sample, stop) {
+  const key = `${sample.id}:${stop}`;
+  if (key in ARTICLES) return ARTICLES[key];
+  return stop in ARTICLES ? ARTICLES[stop] : stop;
+}
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 async function summary(title) {
@@ -78,7 +86,7 @@ const cacheFile = new URL('tours/wiki-cache.json', ROOT);
 const cache = existsSync(cacheFile) ? JSON.parse(await readFile(cacheFile, 'utf8')) : {};
 for (const sample of SAMPLES) {
   for (const stop of sample.stops) {
-    const title = stop in ARTICLES ? ARTICLES[stop] : stop;
+    const title = articleFor(sample, stop);
     if (!title || cache[title]) continue;
     const s = await summary(title);
     if (!s) throw new Error(`No Wikipedia article "${title}" for ${stop}: add it to ARTICLES or OWN_WORDS`);
@@ -127,10 +135,23 @@ const STYLE = `
   footer { margin-top: 56px; padding-top: 16px; border-top: 1px solid var(--hairline); font-size: 0.82rem; color: var(--muted); }
 `;
 
+/** "Festivals and holidays": the city's recurring events, to plan when to go (none: nothing). */
+function festivals(sample) {
+  const keys = new Set(cityKeys(sample.city));
+  const list = EVENTS.filter((e) => e.places.some((p) => keys.has(p)));
+  if (!list.length) return '';
+  return `
+    <h2>Festivals and holidays</h2>
+    <ul class="how">
+${list.map((e) => `      <li><b>${esc(e.name)}</b>, ${esc(e.usually)}. ${esc(e.note)} <a href="${esc(eventLink(e))}" rel="noopener">Check the dates</a></li>`).join('\n')}
+    </ul>
+`;
+}
+
 function tourPage(sample) {
   const kind = sample.mode === 'drive' ? 'driving' : 'walking';
   const stops = sample.stops.map((name) => {
-    const title = name in ARTICLES ? ARTICLES[name] : name;
+    const title = articleFor(sample, name);
     const w = title ? cache[title] : null;
     return { name, description: w?.description ?? '', text: w ? intro(w.extract) : OWN_WORDS[name], url: w?.url ?? null };
   });
@@ -201,6 +222,7 @@ ${stops
   .join('\n')}
     </ol>
 
+${festivals(sample)}
     <h2>How it works</h2>
     <ul class="how">
       <li>Open the tour on your phone and tap <b>Begin the tour</b>. Allow location so Roamie knows where you are.</li>
