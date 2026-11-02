@@ -50,13 +50,15 @@ const LANDSCAPE_RE = words([
   // Spanish
   'parque', 'jardín', 'jardines', 'mirador', 'cerro', 'colina', 'montaña', 'monte', 'cumbre', 'volcán', 'lago', 'laguna', 'playas?', 'bahía',
   'cala', 'cascada', 'garganta', 'cañón', 'acantilados?', 'cabo', 'isla', 'bosque', 'reserva natural', 'cuevas?', 'valle', 'manantial', 'malecón',
-  // German
-  'garten', 'gärten', 'aussichtspunkt', 'berg', 'hügel', 'gipfel', 'vulkan', 'see', 'strand', 'bucht', 'wasserfall', 'schlucht', 'klippen?',
-  'kap', 'insel', 'wald', 'naturschutzgebiet', 'nationalpark', 'höhle', 'tal', 'küste',
+  // German (the nouns that are also English words, "See", "Strand", "Tal", "Kap", are matched by their capital below)
+  'garten', 'gärten', 'aussichtspunkt', 'berg', 'hügel', 'gipfel', 'vulkan', 'bucht', 'wasserfall', 'schlucht', 'klippen?',
+  'insel', 'wald', 'naturschutzgebiet', 'nationalpark', 'höhle', 'küste',
   // Italian
   'parco', 'giardin[oi]', 'collina', 'montagna', 'vetta', 'vulcano', 'spiaggia', 'baia', 'cascata', 'gola', 'scogliera', 'capo', 'isola',
   'foresta', 'riserva naturale', 'grotta', 'lungomare',
 ]);
+// German nouns are capitalised: "See" is a lake, "see" is not; "the Strand" is a London street.
+const LANDSCAPE_DE_RE = /(?:^|[^\p{L}])(?<!\bthe\s)(?:See|Strand|Tal|Kap)(?![\p{L}])/u;
 // Parks and the like that aren't landscapes.
 const NOT_LANDSCAPE_RE =
   /(?:car|business|industrial|science|technology|office|retail|theme|amusement|water|trailer|skate|holiday|caravan)\s+park|parking|parkhaus|parkplatz|stadium|arena|estadio|stade|stadion|hotel|shopping|station|airport|cemetery|cimetière|cementerio|friedhof|cimitero/iu;
@@ -72,6 +74,10 @@ const FOOD_RE = words([
   'bäckerei', 'brauerei', 'weingut', 'mercato', 'caffè', 'pasticceria', 'birrificio', 'enoteca', 'gelateria', 'osteria', 'trattoria',
 ]);
 
+// A café that's a nightclub, a restaurant that's a chain or a music venue: not a taste of the place.
+const NOT_FOOD_RE =
+  /(?:^|[^\p{L}])(?:nightclub|night club|music venue|concert venue|discoth|casino|strip club|chain of|restaurant chain|fast food|supermarket|hypermarket|defunct|boîte de nuit|discothèque|chaîne de|supermarché|discoteca|cadena de|supermercado|nachtclub|diskothek|kette|supermarkt|catena di)(?![\p{L}])/iu;
+
 /** What you'd do the outing for, in the order offered: 'history' | 'culture' | 'landscape' | 'food'. */
 export const INTERESTS = ['history', 'culture', 'landscape', 'food'];
 
@@ -81,8 +87,10 @@ export function placeThemes(poi) {
   const themes = new Set();
   if (HISTORIC_RE.test(text)) themes.add('history');
   if (MUSEUM_RE.test(text) || CULTURE_RE.test(text)) themes.add('culture');
-  if (LANDSCAPE_RE.test(text) && !NOT_LANDSCAPE_RE.test(text)) themes.add('landscape');
-  if (FOOD_RE.test(text)) themes.add('food');
+  // (The German nouns only for German descriptions, or when the language isn't known.)
+  const german = poi.lang == null || poi.lang === 'de';
+  if ((LANDSCAPE_RE.test(text) || (german && LANDSCAPE_DE_RE.test(text))) && !NOT_LANDSCAPE_RE.test(text)) themes.add('landscape');
+  if (FOOD_RE.test(text) && !NOT_FOOD_RE.test(text)) themes.add('food');
   return themes;
 }
 // Long articles about whole areas, rivers or streets aren't places you stop at.
@@ -154,6 +162,10 @@ const STREET_TITLE_RE =
 // Places that are gone: "Royal palace in Paris (1564–1883)", "Government of France from 1792 to 1804",
 // "1918–1992 country in Central Europe".
 const GONE_RE = /\(\s*\d{3,4}\s*[–-]\s*\d{3,4}\s*\)|^\d{3,4}\s*[–-]\s*\d{3,4}\s|\bfrom \d{3,4} to \d{3,4}\b|(?:^|[^\p{L}])(?:demolished|destroyed|détruit|démoli|disparu|destruido|demolido|zerstört|abgerissen|distrutto|demolito)/iu;
+// "Former mansion on the Strand", "Defunct chain of restaurants": what it was, not what's there.
+// (A former abbey or palace may still stand as something else: only houses and businesses.)
+const FORMER_RE =
+  /^(?:former|defunct|ancien(?:ne)?|antigu[oa]|ehemalige[rs]?|ex)\s+(?:mansion|house|home|café|cafe|coffee ?house|restaurant|market|pub|inn|tavern|hotel|shop|store|chain|cinema|theatre|theater|music hall|nightclub|bar|brewery|stadium|arena|hôtel particulier|café|restaurant|marché|boutique|magasin|mansión|casa|café|mercado|tienda|villa|gasthaus|gaststätte|geschäft|markt|kaufhaus|caffè|ristorante|mercato|negozio)(?![\p{L}])/iu;
 // Objects inside a collection ("Ancient Greek sculptures held in London"): the museum is the stop.
 const IN_A_COLLECTION_RE =
   /^(?:painting|portrait|manuscript|tapestry|artwork|tableau|peinture|retable|manuscrit|tapisserie|cuadro|pintura|retablo|manuscrito|tapiz|gemälde|handschrift|dipinto|manoscritto|arazzo)(?![\p{L}])|\b(?:held|housed|kept|displayed|exhibited) (?:in|at|by)\b/iu;
@@ -168,6 +180,11 @@ const ROTUNDA_RE = /(?:^|[^\p{L}])(?:rotunda|rotonde|rotonda|panorama|cyclorama)
 const NOT_A_STOP_TYPES = new Set(['country', 'state', 'adm1st', 'adm2nd', 'adm3rd', 'city', 'event', 'edu', 'airport', 'waterbody', 'river', 'mountain', 'satellite', 'glacier', 'pass', 'forest']);
 // …except, on an outing for landscapes, these.
 const NATURE_TYPES = new Set(['waterbody', 'mountain', 'glacier', 'pass', 'forest']);
+// What a place *is* when it's a natural feature (the first words of its description): a lake, a
+// bay, a hill, a forest, a beach, an island, a valley. On a landscapes outing these are places
+// to go although they're areas; a district with a garden in it, or a street, still isn't.
+const NATURAL_HEAD_RE =
+  /^(?:[\p{L}'’-]+\s+){0,2}(?:lake|loch|lough|tarn|reservoir|pond|lagoon|bay|cove|beach|coast|coastline|cliffs?|cape|headland|islands?|islet|hills?|mountains?|mount|peaks?|summit|ridge|volcano|crater|valley|glen|gorge|canyon|waterfalls?|falls|cascade|forest|woods?|woodland|heath|moor|marsh|wetland|dunes?|caves?|springs?|glacier|fjord|lac|lagune|baie|crique|plage|côte|falaises?|cap|île|colline|montagne|mont|sommet|crête|volcan|vallée|gorges?|cascade|chutes?|forêt|bois|lande|marais|dunes?|grotte|glacier|lago|laguna|bahía|cala|playa|costa|acantilados?|cabo|isla|cerro|colina|montaña|monte|cumbre|sierra|volcán|valle|cañón|garganta|cascada|bosque|selva|marisma|dunas?|cueva|see|bucht|strand|küste|klippen?|kap|insel|hügel|berg|gipfel|vulkan|tal|schlucht|wasserfall|wald|forst|heide|moor|düne|höhle|gletscher|baia|spiaggia|scogliera|capo|isola|collina|vetta|vulcano|gola|cascata|foresta|bosco|palude|duna|grotta|ghiacciaio)(?![\p{L}])/iu;
 
 /** 'museum' | 'historic' | 'sight' */
 export function placeKind(poi) {
@@ -187,13 +204,13 @@ export function isPlaceToSee(poi, { nature = false } = {}) {
   const description = poi.description ?? '';
   const title = poi.title ?? '';
   // On an outing for landscapes, a lake, a bay, a hill or a forest is a place to go.
-  const natural = nature && placeThemes(poi).has('landscape');
+  const natural = nature && NATURAL_HEAD_RE.test(description);
   const memorial = MEMORIAL_START_RE.test(description);
   if ((!natural && AREA_RE.test(description) && !TOWN_BUILDING_RE.test(description)) || NOT_A_PLACE_START_RE.test(description)) return false;
   if (!memorial && (NOT_A_PLACE_RE.test(description) || NOT_A_PLACE_INTL_RE.test(description))) return false;
   // An assembly, unless it's its building ("edificio legislativo": Argentina's Palace of Congress).
   if (LEGISLATURE_RE.test(description) && !STRUCTURE_RE.test(description) && !HISTORIC_RE.test(title)) return false;
-  if ((IN_A_COLLECTION_RE.test(description) && !ROTUNDA_RE.test(`${title} ${description}`)) || GONE_RE.test(description) || NOT_A_PLACE_DE_RE.test(description)) return false;
+  if ((IN_A_COLLECTION_RE.test(description) && !ROTUNDA_RE.test(`${title} ${description}`)) || GONE_RE.test(description) || FORMER_RE.test(description) || NOT_A_PLACE_DE_RE.test(description)) return false;
   // "2019 structural fire in Paris" is an event; "1973 Thames road bridge" is London Bridge.
   if (EVENT_DESCRIPTION_RE.test(description) && !HISTORIC_RE.test(description) && !MUSEUM_RE.test(description)) return false;
   if (INSTITUTION_TITLE_RE.test(title) || EVENT_TITLE_RE.test(title)) return false;
@@ -233,9 +250,12 @@ export function interestScore(poi, { interests = null } = {}) {
   if (poi.category === 'minor') score -= 1.5;
   // What you came for first: a place that answers one of your interests rises, one that answers
   // none sinks (a world-famous landmark on the way can still make it).
+  // Markets, cafés, parks and viewpoints are local by nature (few languages write about them):
+  // on their outings they get a bigger lift, so a food walk isn't famous landmarks with one market.
   if (interests?.length) {
-    const hits = interests.filter((i) => themes.has(i)).length;
-    score += hits ? 0.9 + 0.3 * (hits - 1) : -2.5;
+    const hit = interests.filter((i) => themes.has(i));
+    const lift = Math.max(0, ...hit.map((i) => ({ food: 1.4, landscape: 1.1 })[i] ?? 0.9));
+    score += hit.length ? lift + 0.3 * (hit.length - 1) : -2.5;
   }
   return score;
 }

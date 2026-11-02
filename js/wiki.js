@@ -185,6 +185,7 @@ export function createWikiService({ lang = 'en', fetchImpl = defaultFetch, retry
           thumbnail: p.thumbnail?.source ?? null,
           disambiguation: !!p.pageprops && 'disambiguation' in p.pageprops,
           langs: p.langlinkscount ?? 0, // how well known (left out when there are none)
+          lang, // the language of its description (word lists are per language)
           coordType: c.type ?? null,
           dim: c.dim ?? null, // metres across (a default by kind when the article gives none)
           gone: gone.has(p.pageprops?.wikibase_item),
@@ -324,6 +325,7 @@ export function createWikiService({ lang = 'en', fetchImpl = defaultFetch, retry
           thumbnail: null,
           disambiguation: !!p.pageprops && 'disambiguation' in p.pageprops,
           langs: p.langlinkscount ?? 0, // left out when there are none
+          lang,
           gone: gone.has(p.pageprops?.wikibase_item), // demolished: not a stop
         };
         poi.category = classifyPlace(poi);

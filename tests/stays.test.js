@@ -1,7 +1,7 @@
 // Time at each stop: what the place deserves, and the time you have.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { placeSize, stayFor, visitFor, suggestRoute, spreadSpareTime, timeline, isPlaceToSee, interestScore } from '../js/suggest.js';
+import { placeSize, stayFor, visitFor, suggestRoute, spreadSpareTime, timeline, isPlaceToSee, interestScore, placeThemes } from '../js/suggest.js';
 
 const LAT = 50.68;
 const LON = 4.4;
@@ -112,4 +112,26 @@ test('Waterloo: memorials of the battle and the Panorama are places to see (the 
   // Not stops: an embassy, an institution.
   assert.ok(!isPlaceToSee({ title: 'Embassy of Ukraine, Brussels', description: 'Diplomatic mission of Ukraine in Brussels, Belgium' }));
   assert.ok(!isPlaceToSee({ title: 'European Committee of the Regions', description: 'Institution of the European Union' }));
+});
+
+test('night in 34 cities: what slipped through, and no longer does', () => {
+  // London, landscapes: a district with a garden in it, a street named Strand, a demolished mansion.
+  assert.ok(!isPlaceToSee({ title: 'Covent Garden', description: 'District in London, England' }, { nature: true }), 'a district is not a landscape');
+  assert.ok(!isPlaceToSee({ title: 'Strand, London', description: 'street in London' }, { nature: true }), 'a street is not a landscape');
+  assert.ok(!isPlaceToSee({ title: 'York House, Strand', description: 'Former mansion on the Strand in London, England' }), 'a former mansion is gone');
+  assert.ok(!isPlaceToSee({ title: "St James's Theatre", description: 'Former theatre in City of Westminster, London, England' }), 'a former theatre is gone');
+  assert.ok(isPlaceToSee({ title: 'Groenendael Priory', description: 'Former abbey in Hoeilaart, Belgium' }), 'a former abbey may still stand');
+  assert.ok(isPlaceToSee({ title: 'Loch Ness', description: 'Lake in Scotland', coordType: 'waterbody' }, { nature: true }), 'a lake is, on a landscapes outing');
+  assert.ok(isPlaceToSee({ title: 'Hyde Park', description: 'Royal park in London' }, { nature: true }));
+  // German nouns that are English words: "See" counts in German, "see" never; "the Strand" is a street.
+  assert.ok(placeThemes({ title: 'Bodensee', description: 'See in Mitteleuropa', lang: 'de' }).has('landscape'));
+  assert.ok(!placeThemes({ title: 'Somerset House', description: 'Building on the Strand, London', lang: 'en' }).has('landscape'));
+  assert.ok(!placeThemes({ title: 'Viewing House', description: 'A place to see the match', lang: 'en' }).has('landscape'));
+  // A café that's a nightclub, a chain, a supermarket: no taste of the place.
+  assert.ok(!placeThemes({ title: 'Café de Paris, London', description: 'Nightclub in the West End of London' }).has('food'));
+  assert.ok(!placeThemes({ title: 'Dishoom', description: 'British chain of Indian restaurants' }).has('food'));
+  assert.ok(placeThemes({ title: 'Borough Market', description: 'Food market in Southwark' }).has('food'));
+  // Local places get a bigger lift on their outing than famous ones elsewhere.
+  const market = { title: 'Mercato Metropolitano', description: 'Food hall in London', langs: 0, length: 5900, thumbnail: 'x' };
+  assert.ok(interestScore(market, { interests: ['food'] }) - interestScore(market) > 1.3, 'a food hall rises on a food outing');
 });

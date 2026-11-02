@@ -78,7 +78,8 @@ export function signpost(eye, heading, place, maxDistance) {
 // The map's look in first person: the day or night style, buildings in 3D, a sky.
 const LOOK = {
   light: { walls: '#efe5d3', sky: '#b9d6ea', horizon: '#f6f1e8', fog: '#efe7da', route: '#c9a55c', edge: '#7f5f25' },
-  dark: { walls: '#2c3547', sky: '#0b0f17', horizon: '#1d2636', fog: '#151b26', route: '#e3c98b', edge: '#0b0f17' },
+  // Night: walls and a horizon glow light enough to tell the street from the buildings.
+  dark: { walls: '#3d4a66', sky: '#0b0f17', horizon: '#2b3650', fog: '#1b2333', route: '#e3c98b', edge: '#0b0f17' },
 };
 
 /** The style with buildings standing up, the route layers and a sky. */
@@ -123,7 +124,7 @@ export function firstPersonStyle(style, { dark = false } = {}) {
     sources: { ...style.sources, 'fp-route': { type: 'geojson', data: { type: 'FeatureCollection', features: [] } } },
     layers: [...layers.slice(0, at), ...ours, ...layers.slice(at)],
     // Sunlight from the side, so the street's two walls aren't the same flat colour.
-    light: { anchor: 'viewport', color: '#ffffff', intensity: dark ? 0.25 : 0.4, position: [1.4, 100, 50] },
+    light: { anchor: 'viewport', color: '#ffffff', intensity: dark ? 0.5 : 0.4, position: [1.4, 100, 50] },
     sky: {
       'sky-color': look.sky,
       'horizon-color': look.horizon,
@@ -174,6 +175,9 @@ export class StreetView {
       maxZoom: 22,
       pitch: PITCH,
       fadeDuration: 0,
+      // Drawn at one pixel per CSS pixel, not the phone's two or three: a street scene doesn't
+      // need a sharp map's detail, and it's a quarter of the work for the battery.
+      pixelRatio: 1,
     });
     this.maplibregl = maplibregl;
     // A wide view (the map has no option for it in this version: its camera's own setting).

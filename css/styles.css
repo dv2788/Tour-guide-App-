@@ -2226,6 +2226,28 @@ body.lens-open {
   font-size: 0.8rem;
 }
 
+.beta-line {
+  margin: 10px 0 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.beta-line a {
+  color: var(--gold);
+}
+
+.beta-tag {
+  display: inline-block;
+  margin-right: 2px;
+  padding: 1px 8px;
+  border: 1px solid var(--hairline-strong);
+  border-radius: 999px;
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
 .legal-links a {
   color: var(--muted);
 }
