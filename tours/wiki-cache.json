@@ -358,5 +358,77 @@
   "description": "Building in Cairo, Egypt",
   "extract": "Bayt al-Suhaymi is a traditional Egyptian Islamic themed house and museum in Cairo, Egypt.",
   "url": "https://en.wikipedia.org/wiki/Bayt_al-Suhaymi"
+ },
+ "Bab al-Futuh": {
+  "title": "Bab al-Futuh",
+  "description": "Gate in the Old City of Cairo, Egypt",
+  "extract": "Bab al-Futuh is one of three remaining gates in the city wall of the old city of Cairo, Egypt. It is located at the northern end of al-Mu'izz Street. The other two remaining gates are Bab al-Nasr in the north and Bab Zuwayla in the south. The gate was built during the Fatimid period, originally in the 10th century, then rebuilt in its current form in the late 11th century.",
+  "url": "https://en.wikipedia.org/wiki/Bab_al-Futuh"
+ },
+ "Puerta del Reloj": {
+  "title": "Puerta del Reloj",
+  "description": "City gate in Cartagena, Colombia",
+  "extract": "The Puerta del Reloj, Torre del Reloj or Boca del Puente is the main city gate of the historic center of Cartagena de Indias, in Colombia and the original entrance of the fortified city. It is located between the squares Plaza de Independencia and Plaza de los Coches. The name \"Puerta del Reloj\" responds to the clock with which it was crowned at the beginning of the 18th century. While the name of Boca del Puente is due to the fact that during the colonial period, a drawbridge was raised at the foot of the channel of San Anastasio, which linked the walled city to the legendary Getsemaní neighborhood. In addition the bridge served like defense of the city, since in case of enemy attack, this one was raised to prevent the access of buccaneers and pirates.",
+  "url": "https://en.wikipedia.org/wiki/Puerta_del_Reloj"
+ },
+ "Iglesia de San Pedro Claver, Cartagena": {
+  "title": "Iglesia de San Pedro Claver, Cartagena",
+  "description": "Church in Cartagena, Colombia",
+  "extract": "The Iglesia de San Pedro Claver is a church located in Cartagena de Indias, in Colombia.",
+  "url": "https://en.wikipedia.org/wiki/Iglesia_de_San_Pedro_Claver%2C_Cartagena"
+ },
+ "Palace of the Inquisition (Cartagena, Colombia)": {
+  "title": "Palace of the Inquisition (Cartagena, Colombia)",
+  "description": "Building in Cartagena, Colombia",
+  "extract": "The Palace of the Inquisition, also known as the Inquisition Palace, is an eighteenth-century seat of the Holy Office of the Inquisition in Cartagena, now in modern Colombia. Completed in 1770, the building now houses the Museo Histórico de Cartagena, which presents exhibits on the city’s colonial and republican past and on the operation of the Holy Office in Cartagena. Alongside information on trials, imprisonment and autos-da-fé, the museum shows alleged Inquisition torture devices; however, many of these items appear to be modern replicas or generic “medieval” reconstructions, and there is little evidence that they were actually used by the tribunal in Cartagena.",
+  "url": "https://en.wikipedia.org/wiki/Palace_of_the_Inquisition_(Cartagena%2C_Colombia)"
+ },
+ "Cartagena Cathedral, Colombia": {
+  "title": "Cartagena Cathedral, Colombia",
+  "description": "Church in Cartagena, Colombia",
+  "extract": "The Cathedral of Cartagena de Indias in Colombia, officially the Metropolitan Cathedral Basilica of Saint Catherine of Alexandria is located in the historic centre of Cartagena. It is the episcopal see of the Archbishop of Cartagena de Indias, one of the oldest episcopal sees in the Americas. The cathedral is dedicated to Saint Catherine of Alexandria.",
+  "url": "https://en.wikipedia.org/wiki/Cartagena_Cathedral%2C_Colombia"
+ },
+ "Las Bóvedas": {
+  "title": "Las Bóvedas",
+  "description": "Structure in Cartagena, Colombia",
+  "extract": "Las Bóvedas are a structure in the Old City of Cartagena in Colombia, attached to the walls. The Caribbean Sea is visible from the top of the structure. They were built as dungeons. They are located between the forts of Santa Clara and Santa Catalina.",
+  "url": "https://en.wikipedia.org/wiki/Las_B%C3%B3vedas"
+ },
+ "Coricancha": {
+  "title": "Coricancha",
+  "description": "Archaeological site in Peru",
+  "extract": "The Coricancha was the most important temple in the Inca Empire, and was described by early Spanish colonialists. It is located in Cusco, Peru, which was the capital of the empire.",
+  "url": "https://en.wikipedia.org/wiki/Coricancha"
+ },
+ "Plaza de Armas (Cusco)": {
+  "title": "Plaza de Armas (Cusco)",
+  "description": "Square in Cusco, Peru",
+  "extract": "The Plaza de Armas of Cusco is located in the city of Cusco, Peru. Located in the historic center of the city is the main public space of the town since before its Spanish foundation in 1534.",
+  "url": "https://en.wikipedia.org/wiki/Plaza_de_Armas_(Cusco)"
+ },
+ "Cusco Cathedral": {
+  "title": "Cusco Cathedral",
+  "description": "Cathedral in Peru",
+  "extract": "The Cathedral of Cusco or Cathedral Basilica of the Virgin of the Assumption is the main temple of the city of Cusco, in Peru and houses the headquarters of the Archdiocese of Cusco. The Cathedral Basilica of Cusco, together with the Triunfo temple make up the Cathedral Complex, it is located in the northeast sector of the current Plaza de Armas of Cusco. In the place that, during the Inca period, was occupied by both the Suntor Wassi and the Kiswarkancha or Palace of the eighth Inca Viracocha. The complex occupies an area of 3,920 square meters and is the most important religious monument in the Historic Center of Cusco.",
+  "url": "https://en.wikipedia.org/wiki/Cusco_Cathedral"
+ },
+ "Iglesia de la Compañía de Jesús, Cusco": {
+  "title": "Iglesia de la Compañía de Jesús, Cusco",
+  "description": "Church in Cusco, Peru",
+  "extract": "The Iglesia de la Compañía de Jesús is a historic Jesuit church in Cusco, the ancient capital of the Inca Empire, in Cusco Region, Peru. It is situated in the Plaza de Armas de Cusco, the city center. It is built on an Inca palace. It is one of the best examples of Spanish Baroque architecture in Peru. The architecture of this building exerted a great influence on the development of many Baroque architecture in the South Andes. Its construction began in 1576, but it was badly damaged in an earthquake in 1650. The rebuilt church was completed in 1673.",
+  "url": "https://en.wikipedia.org/wiki/Iglesia_de_la_Compa%C3%B1%C3%ADa_de_Jes%C3%BAs%2C_Cusco"
+ },
+ "Twelve-angled stone": {
+  "title": "Twelve-angled stone",
+  "description": "Incan archaeological artifact in Peru",
+  "extract": "The twelve-angled stone is an archeological artifact in Cusco, Peru. It was part of a stone wall of an Inca palace, and is considered to be a national heritage object. The stone is currently part of a wall in the palace of the Archbishop of Cusco.",
+  "url": "https://en.wikipedia.org/wiki/Twelve-angled_stone"
+ },
+ "Théodore Monod African Art Museum": {
+  "title": "Théodore Monod African Art Museum",
+  "description": "Art museum in Dakar, Senegal",
+  "extract": "The Théodore Monod African Art Museum in Dakar, Senegal is one of the oldest art museums in West Africa. It was promoted by Léopold Senghor, the country's first President.",
+  "url": "https://en.wikipedia.org/wiki/Th%C3%A9odore_Monod_African_Art_Museum"
  }
 }

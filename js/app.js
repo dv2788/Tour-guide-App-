@@ -2,6 +2,7 @@
 
 import { getMode, MODES } from './modes.js';
 import { SAMPLES, DEFAULT_SAMPLE, REGIONS, sampleById } from './samples.js';
+import { storedPlaces } from './sample-places.js';
 import { LANGUAGES, speechLocale } from './i18n.js';
 import { createWikiService, photoPage } from './wiki.js';
 import { createGeocoder, fetchRoute, fetchDirections, fetchStreetName } from './geocode.js';
@@ -1537,10 +1538,13 @@ form.addEventListener('submit', async (event) => {
 
   try {
     const geocoder = createGeocoder({ lang: cfg.lang });
+    // A sample tour's city and stops are stored in the app: no need to ask the map search, which
+    // allows one request a second for everyone using Roamie.
+    const stored = storedPlaces(cfg.city);
     let city = null;
     if (cfg.city) {
       setStatus(`Finding ${cfg.city}…`);
-      city = await geocoder.findCity(cfg.city);
+      city = stored?.city ?? (await geocoder.findCity(cfg.city));
       if (!alive()) return;
       if (city) fitTo([city]);
     }
@@ -1559,6 +1563,8 @@ form.addEventListener('submit', async (event) => {
       } else if (entry.lat != null) {
         // From a map link or typed coordinates: we know where it is; learn the rest.
         place = await geocoder.findPlaceNear(entry.query ?? entry.name, entry, entry.name).catch(() => ({ ...entry }));
+      } else if (stored?.stop(entry.name) && (entry.query ?? entry.name) === entry.name) {
+        place = stored.stop(entry.name);
       } else {
         place = await geocoder.findPlace(entry.query ?? entry.name, city, entry.name).catch(() => null);
       }
