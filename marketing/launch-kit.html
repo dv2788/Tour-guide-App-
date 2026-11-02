@@ -96,37 +96,203 @@
     .facts dt { border-bottom: 0; padding-bottom: 0; }
   }
   @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+  /* Added for the reworked plan */
+  .decide { display: grid; gap: 12px; padding: 20px 22px; background: var(--surface); border: 1px solid var(--gold-bright); border-radius: 14px; }
+  .decide ol { margin: 0; padding-left: 1.2em; display: grid; gap: 8px; }
+  .decide b, .why b { font-weight: 500; }
+  .why { display: grid; gap: 10px; padding: 0; margin: 0; list-style: none; }
+  .why li { padding: 12px 16px; border-left: 3px solid var(--hairline); }
+  .tag { display: inline-block; font-size: 0.68rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; padding: 2px 8px; border-radius: 999px; background: var(--chip); color: var(--gold); white-space: nowrap; }
+  .tag.off { color: var(--muted); background: transparent; border: 1px solid var(--hairline); }
+  td b { font-weight: 500; }
+  .sources { font-size: 0.82rem; color: var(--muted); display: grid; gap: 4px; padding-left: 1.2em; margin: 0; }
+  .sources a { word-break: break-word; }
 </style>
 
 <div class="wrap">
   <header class="top">
     <div class="brand"><img src="icon.svg" alt=""><span>ROAMIE</span></div>
-    <h1>Launch kit for <em>the city, narrated.</em></h1>
-    <p class="lede">The ad, the visuals, the words and the plan to launch Roamie 1.0, the free voice guide that curates a route, shows the way and tells the story of the places you pass.</p>
+    <h1>Launch kit, <em>reworked.</em></h1>
+    <p class="lede">How we advertise Roamie and where the ads run: catch people when they are about to walk a city we cover, in that city’s season, and pay only for what brings people to a tour. Updated 2 November 2026.</p>
     <div class="chips">
-      <span class="chip"><i></i>App ready · version 1.0</span>
-      <span class="chip todo"><i></i>Website: one setting to switch on</span>
-      <span class="chip"><i></i>32-second ad · 4 visuals</span>
-      <span class="chip"><i></i>Sample tours in 9 cities</span>
+      <span class="chip"><i></i>Live: dv2788.github.io/Tour-guide-App-</span>
+      <span class="chip"><i></i>21 sample cities on 4 continents</span>
+      <span class="chip"><i></i>Point your camera · festivals · 5 languages</span>
+      <span class="chip todo"><i></i>4 decisions from you</span>
     </div>
   </header>
 
   <nav class="bar" aria-label="Sections">
     <ul>
-      <li><a href="#ad">The ad</a></li>
-      <li><a href="#visuals">Visuals</a></li>
-      <li><a href="#positioning">Positioning</a></li>
+      <li><a href="#strategy">Strategy</a></li>
+      <li><a href="#where">Where</a></li>
+      <li><a href="#channels">Channels</a></li>
+      <li><a href="#calendar">Calendar</a></li>
+      <li><a href="#budget">Budget</a></li>
+      <li><a href="#creative">Ads</a></li>
       <li><a href="#copy">Copy</a></li>
-      <li><a href="#plan">Launch plan</a></li>
       <li><a href="#checks">Before you spend</a></li>
     </ul>
   </nav>
 
-  <section id="ad">
+  <section id="decide">
+    <div class="decide">
+      <p class="label">What I need from you</p>
+      <ol>
+        <li><b>Budget.</b> A first paid test of about <b>€300 over four weeks</b> (1–28 December), and up to €350 more in January only if the test passes its targets. Yes, or another amount?</li>
+        <li><b>Counting.</b> To know which ads bring people to a tour, Roamie has to count visits and tours started. I suggest <b>GoatCounter</b>: free for small projects, no cookies, no personal data. It changes one line of the privacy page (“no analytics”). Yes or no?</li>
+        <li><b>Launch day.</b> <b>Tuesday 1 December</b>: after US Thanksgiving week and before the Christmas-market and southern-summer peak. OK?</li>
+        <li><b>Accounts.</b> The ad accounts must be yours (they take your card): Google Ads first, then Meta (needs a Facebook Page) and Reddit. Which can you open this month?</li>
+      </ol>
+      <p class="muted" style="font-size:0.9rem">Still open from before: the trademark check of the name “Roamie”, which should happen before any money is spent.</p>
+    </div>
+  </section>
+
+  <section id="strategy">
     <div class="section-head">
-      <p class="label">The ad</p>
-      <h2>“And here, on your left… Casa Batlló.”</h2>
-      <p class="muted">A vertical film for Reels, TikTok and Shorts. Barcelona at night, the walk drawing itself in gold, then the real app. Every screen shown is the real product. Two voices to choose from, both warm and natural, made with Kokoro, an open-source voice model that is free for commercial use.</p>
+      <p class="label">Strategy</p>
+      <h2>Be there when someone is about to walk the city</h2>
+      <p class="muted">Roamie is free, opens in a browser and covers 21 cities with ready-made walks. The cheapest person to win is the one already searching for a walking tour of one of those cities, or already standing in its old town.</p>
+    </div>
+    <div class="cols">
+      <div class="pillar"><p class="label">1 · Intent</p><h3>Search first</h3><p>Google Search ads on “walking tour Marrakesh”, “self-guided tour Buenos Aires”, “Barcelona audio guide”, landing on that city’s free tour page. People who search for a tour want a tour.</p></div>
+      <div class="pillar"><p class="label">2 · Season</p><h3>Follow the sun and the festivals</h3><p>Paid ads run only in a city’s high season or festival weeks. This winter that means winter sun: Marrakesh and Cairo, and southern summer in Cape Town, Buenos Aires and Rio.</p></div>
+      <div class="pillar"><p class="label">3 · Organic reach</p><h3>Pay to boost what works</h3><p>Launch day, short city clips, creators and riad/hostel cards bring reach for free. Money goes to the ads and posts that already bring people to a tour.</p></div>
+    </div>
+    <div class="section-head" style="margin-top:8px">
+      <h3>What changed since the first kit (31 October)</h3>
+    </div>
+    <ul class="why">
+      <li><b>Meta can no longer show ads only to visitors.</b> The “people travelling in this location” option is gone; only “living in or recently in” remains, so an ad in Barcelona also reaches people who live there. Instagram moves from main channel to a small, tightly placed test, and Google Search takes the lead.</li>
+      <li><b>21 cities instead of 9</b>, and half of the new ones are in season right now: the plan is built around them.</li>
+      <li><b>The free map search has a hard cap:</b> one request a second for the whole app, all users together. Before paid traffic, the sample tours must stop using it (see <a href="#checks">Before you spend</a>).</li>
+      <li><b>“Point your camera” is the most visual thing Roamie does.</b> It gets its own ad.</li>
+    </ul>
+    <dl class="facts">
+      <dt>For</dt><dd>Independent travellers on city breaks (25–45, couples and solo) who skip group tours but want the stories. This winter: Europeans and North Americans on winter-sun trips, and visitors in southern summer.</dd>
+      <dt>The promise</dt><dd>Tell Roamie where you are and how long you have. It curates the route, shows you the way and tells the story of the places you pass. Point your camera at a building and it tells you what it is. It also tells you what’s on in town: Carnival, Christmas markets, New Year.</dd>
+      <dt>Versus paid apps</dt><dd>VoiceMap sells single tours for about $4–20 each; GPSmyCity charges for its voice directions and per-city guides ($4.99 for Barcelona). Roamie is free, needs no install and plans a walk in any city, not only the ones with a written tour.</dd>
+      <dt>Price</dt><dd>Free. No account, no ads in the app, nothing to install.</dd>
+      <dt>Avoid saying</dt><dd>“AI-written stories” (they come from Wikipedia), “works offline”, “nothing leaves your phone”, “the best tour guide app”, and “no tracking” once visits are counted (say “no cookies, no account” instead). In Muslim cities during Ramadan, keep the copy factual, not festive.</dd>
+    </dl>
+  </section>
+
+  <section id="where">
+    <div class="section-head">
+      <p class="label">Where the ads run</p>
+      <h2>Four cities first, then the festival cities</h2>
+      <p class="muted">Paid ads go to cities in their high season, where visitors use one of Roamie’s five languages (English, French, Spanish, German, Italian) and the tour has been checked end to end. The other cities get free content only, until their season comes.</p>
+    </div>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>City</th><th>Why now</th><th>Ads</th><th>When</th></tr></thead>
+        <tbody>
+          <tr><td><b>Barcelona</b></td><td>Busiest city on the list all year; our flagship walk, the most tested.</td><td><span class="tag">Search</span> <span class="tag">Instagram test</span></td><td class="t">1–28 Dec</td></tr>
+          <tr><td><b>Marrakesh</b></td><td>Mild winter, Europe’s winter-sun city break; visitors speak all five of our languages.</td><td><span class="tag">Search</span> <span class="tag">Instagram test</span></td><td class="t">1–28 Dec</td></tr>
+          <tr><td><b>Cape Town</b></td><td>Southern summer peak (Dec–Feb), English-speaking; Minstrel Carnival on 2 January.</td><td><span class="tag">Search</span></td><td class="t">1 Dec → 14 Feb</td></tr>
+          <tr><td><b>Buenos Aires</b></td><td>Southern summer, Spanish- and English-speaking visitors; a strong 7-stop walk.</td><td><span class="tag">Search</span></td><td class="t">1 Dec → 14 Feb</td></tr>
+          <tr><td><b>Rio de Janeiro</b></td><td>Carnival: street parties (blocos) from 16 January, Sambadrome parades 7–9 February 2027.</td><td><span class="tag">Search</span> <span class="tag">Carnival ad</span></td><td class="t">11 Jan → 10 Feb</td></tr>
+          <tr><td><b>Cartagena</b></td><td>Dry season (Dec–Apr); a short walk inside the walls.</td><td><span class="tag">Search</span></td><td class="t">11 Jan → 14 Feb</td></tr>
+          <tr><td>Cairo, Fez, Tunis</td><td>Cool season, but Ramadan starts around 8 February: free content only.</td><td><span class="tag off">Free content</span></td><td class="t">—</td></tr>
+          <tr><td>Paris, Brussels</td><td>Christmas markets, but clicks there are expensive and crowded by tour companies.</td><td><span class="tag off">Free content</span></td><td class="t">—</td></tr>
+          <tr><td>Tokyo · Cusco, Lima · Zanzibar</td><td>Their seasons come later: cherry blossom (late March), Andean dry season (May–Sep), Zanzibar dry season (Jun–Oct).</td><td><span class="tag off">Spring wave</span></td><td class="t">Mar →</td></tr>
+          <tr><td>Kinshasa, Dakar, Santiago, Shenzhen, Miami Beach, San Francisco</td><td>Free content only: one clip each, timed with their festivals (Chinese New Year on 6 Feb, Art Basel in early December).</td><td><span class="tag off">Free content</span></td><td class="t">—</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <dl class="facts">
+      <dt>Google Search</dt><dd>Location: the city, with “people in, regularly in, or interested in” it, so we reach both those planning the trip and those already there. Languages: English, plus French and Spanish where visitors speak them. The ad leads to the city’s tour page (“Free audio walking tour of Marrakesh”), which opens the walk in one tap.</dd>
+      <dt>Instagram test</dt><dd>A pin on the old town (about 2 km around Jemaa el-Fnaa; the Gothic Quarter), ages 21–55, Reels and Stories only. Locals will see it too; that is the price of Meta’s change, so the test stays small.</dd>
+      <dt>Link</dt><dd>Every ad link carries its source (<code>?tour=marrakesh&amp;utm_source=google</code>), so we know which ad brought which tours.</dd>
+    </dl>
+  </section>
+
+  <section id="channels">
+    <div class="section-head">
+      <p class="label">Channels</p>
+      <h2>Where we advertise, and what each one is for</h2>
+    </div>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Channel</th><th>Role</th><th>How</th><th>Cost</th></tr></thead>
+        <tbody>
+          <tr><td><b>Google Search ads</b></td><td>Main paid channel: people searching for a tour</td><td>One campaign per city; keywords like “[city] walking tour”, “self-guided walking tour [city]”, “[city] audio guide”, “[landmark] audio guide”; leads to the tour page</td><td>Travel clicks average about $2 in the US; we cap ours at €0.80 and stay on long, specific searches</td></tr>
+          <tr><td><b>Tour pages on Google</b> (free)</td><td>Permanent free traffic</td><td>One page per walk (“Free audio walking tour of Buenos Aires”), with a sitemap. Register the site in Google Search Console and submit the sitemap</td><td>Free</td></tr>
+          <tr><td><b>Instagram Reels</b></td><td>Small test: does the camera ad make people try it?</td><td>Pin on the old town, Reels and Stories; two ads (camera, city cut)</td><td>€5 a day, two weeks</td></tr>
+          <tr><td><b>TikTok</b></td><td>Free reach first</td><td>POV clips from the sample tours, three a week. Boost a post only once it does well on its own</td><td>Ads need about $50 a day per campaign: not yet</td></tr>
+          <tr><td><b>Reddit</b></td><td>Travellers who plan in detail</td><td>Free: r/SideProject and r/openstreetmap (makers welcome). Paid: a promoted post in r/solotravel, r/backpacking and the wave cities’ subreddits</td><td>From $5 a day; one week</td></tr>
+          <tr><td><b>Product Hunt, Show HN</b></td><td>Launch-day spike and early feedback</td><td>Launch day, with the ads and visuals</td><td>Free</td></tr>
+          <tr><td><b>Creators</b></td><td>Trust, for free</td><td>Ten small travel creators who post about the wave cities; offer: a sample walk of a city they choose</td><td>Free (no paid deals yet)</td></tr>
+          <tr><td><b>Riad and hostel cards</b></td><td>Visitors on the spot, without ads</td><td>A small card with a QR code (“A free audio walk through the medina”) for reception desks: start wherever you or friends travel</td><td>About €20 for 100 cards</td></tr>
+          <tr><td>Not now</td><td colspan="3">App store ads (Roamie is a web app), Google display ads (low intent), Pinterest (later, for trip planners), paid influencer deals.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="calendar">
+    <div class="section-head">
+      <p class="label">Calendar</p>
+      <h2>November to February</h2>
+      <p class="muted">Free content runs throughout: three short clips a week, one per city in the current wave, plus one for each festival.</p>
+    </div>
+    <div class="timeline">
+      <div class="phase"><div><p class="label">2–29 Nov</p><h3>Get ready</h3></div><ul>
+        <li><span class="who">You</span><span>Trademark check of “Roamie”; the four decisions above; open Google Ads (and Meta, Reddit if you can); register the site in Google Search Console.</span></li>
+        <li><span class="who">You</span><span>Film 10 seconds of “Point your camera” on a landmark near you (a screen recording of the app), for the camera ad.</span></li>
+        <li><span class="who">Claude</span><span>Sample tours without the free map search (stop positions stored in the app), the counter if you say yes, the camera ad and four city ads, the last tour pages.</span></li>
+      </ul></div>
+      <div class="phase"><div><p class="label">Tue 1 Dec</p><h3>Launch day</h3></div><ul>
+        <li><span class="who">You</span><span>00:01 Pacific: Product Hunt. Morning in Europe: Reel and TikTok. US morning: Show HN; answer every comment within the hour.</span></li>
+        <li><span class="who">You</span><span>Switch on the four Search campaigns (Barcelona, Marrakesh, Cape Town, Buenos Aires). Send the link to 20 friends who travel.</span></li>
+      </ul></div>
+      <div class="phase"><div><p class="label">1–28 Dec</p><h3>Wave 1 · paid test</h3></div><ul>
+        <li><span class="who">You</span><span>8–21 Dec: Instagram test in Barcelona and Marrakesh. One week of Reddit. Cards to riads or hostels if anyone travels.</span></li>
+        <li><span class="who">Claude</span><span>A weekly look at the numbers: which searches, which cities, how many tours started and finished; fixes from feedback.</span></li>
+      </ul></div>
+      <div class="phase"><div><p class="label">29 Dec</p><h3>Decide</h3></div><ul>
+        <li><span class="who">Both</span><span>Keep, change or stop each channel by the rules in <a href="#budget">Budget</a>. Clips for New Year’s Eve on Copacabana and Cape Town’s Minstrel Carnival (2 Jan).</span></li>
+      </ul></div>
+      <div class="phase"><div><p class="label">11 Jan – 14 Feb</p><h3>Wave 2 · festivals</h3></div><ul>
+        <li><span class="who">You</span><span>If wave 1 passed: Search in Rio (Carnival) and Cartagena; Cape Town and Buenos Aires carry on; the best Instagram ad gets a second round.</span></li>
+        <li><span class="who">You</span><span>Clips: Rio’s blocos (from 16 Jan), Chinese New Year in Shenzhen (6 Feb), the Sambadrome parades (7–9 Feb).</span></li>
+      </ul></div>
+      <div class="phase"><div><p class="label">March</p><h3>Plan the spring wave</h3></div><ul>
+        <li><span class="who">Both</span><span>Tokyo for the cherry blossom, Paris and Barcelona for Easter, Cusco and Lima for the dry season: the same recipe, in the cities that worked.</span></li>
+      </ul></div>
+    </div>
+  </section>
+
+  <section id="budget">
+    <div class="section-head">
+      <p class="label">Budget</p>
+      <h2>€300 to learn, more only if it works</h2>
+    </div>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Wave 1 · 1–28 December</th><th>Per day</th><th>Total</th></tr></thead>
+        <tbody>
+          <tr><td>Google Search: Barcelona €2, Marrakesh €1.50, Cape Town €1.50, Buenos Aires €1</td><td class="t">€6</td><td class="t">€168</td></tr>
+          <tr><td>Instagram test: Barcelona and Marrakesh, 8–21 Dec</td><td class="t">€5</td><td class="t">€70</td></tr>
+          <tr><td>Reddit promoted post, one week</td><td class="t">$5</td><td class="t">about €35</td></tr>
+          <tr><td>Riad and hostel cards (100)</td><td class="t">—</td><td class="t">about €20</td></tr>
+          <tr><td><b>Total</b></td><td></td><td class="t"><b>about €293</b></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <ul class="checks">
+      <li><b>Keep a channel</b> if a started tour costs it €0.60 or less.</li>
+      <li><b>Spend more</b> (wave 2, up to €350) only if at least a quarter of started tours reach their third stop: the walk itself has to work.</li>
+      <li><b>Stop an ad</b> that has had 1,000 views without a single tour started. Set a daily cap on every account, and no automatic top-ups.</li>
+    </ul>
+    <p class="muted" style="font-size:0.9rem">These rules need counting (decision 2). Without it, we would only know clicks, not tours.</p>
+  </section>
+
+  <section id="creative">
+    <div class="section-head">
+      <p class="label">The ads</p>
+      <h2>One film we have, three we make</h2>
+      <p class="muted">The 32-second Barcelona film stays for launch day and organic posts. Paid ads need shorter, city-specific cuts (10–15 seconds, words on screen, sound optional).</p>
     </div>
     <div class="ad">
       <div style="display:grid;gap:12px;justify-items:start;min-width:0">
@@ -135,148 +301,144 @@
           <button type="button" class="voice-btn" data-src="roamie-ad.mp4" aria-pressed="true">Heart · American, warm</button>
           <button type="button" class="voice-btn" data-src="roamie-ad-george.mp4" aria-pressed="false">George · British, calm</button>
         </div>
+        <p class="muted" style="font-size:0.84rem">Launch film · 32 s · Barcelona</p>
       </div>
       <div style="display:grid;gap:18px;min-width:0">
-        <div class="scroll">
-          <table>
-            <thead><tr><th>Time</th><th>Narrator</th><th>On screen</th></tr></thead>
-            <tbody>
-              <tr><td class="t">0:00</td><td class="vo">You arrive in a new city.</td><td>Barcelona at night; the route starts drawing</td></tr>
-              <tr><td class="t">0:03</td><td class="vo">A thousand stories… and no idea where to begin.</td><td>The gold walk reaches the Gothic Quarter</td></tr>
-              <tr><td class="t">0:08</td><td class="vo">Meet Roamie. Your private guide.</td><td>Logo · “Your private city guide”</td></tr>
-              <tr><td class="t">0:12</td><td class="vo">Tell it where you are, and it curates the route.</td><td>Home screen, sample tours, Barcelona picked</td></tr>
-              <tr><td class="t">0:16</td><td class="vo">It shows you the way…</td><td>“In 300 meters, turn right onto Plaça de Sant Josep”</td></tr>
-              <tr><td class="t">0:19</td><td class="vo">and as you walk, it tells you the stories of the places you pass.</td><td>“You have arrived at Casa Batlló”</td></tr>
-              <tr><td class="t">0:24</td><td class="vo">And here, on your left… Casa Batlló.</td><td>The quote, with a sound wave</td></tr>
-              <tr><td class="t">0:28</td><td class="vo">Roamie. The city, narrated.</td><td>End card · Free · Nothing to install · the 9 cities</td></tr>
-            </tbody>
-          </table>
+        <div class="pillar">
+          <p class="label">A · New · 15 s · Instagram, TikTok</p>
+          <h3>“What’s that building?”</h3>
+          <p>Your own screen recording: the camera raised to a landmark, the label slides in (“Casa Batlló · 40 m, ahead”), the guide reads its first line. <em>Point your camera. Roamie tells you.</em> End card: free in your browser, 21 cities.</p>
         </div>
-        <div class="specs">
-          <span class="chip">1080 × 1920 · 9:16</span><span class="chip">32 s · 30 fps</span><span class="chip">H.264 + AAC</span><span class="chip">Loudness −16 LUFS</span><span class="chip">Words on screen for silent viewing</span>
+        <div class="pillar">
+          <p class="label">B · New · 12 s × 4 · Instagram, Search page</p>
+          <h3>City cuts</h3>
+          <p>The night map draws the walk in gold, the stops appear one by one. <em>“A free audio walk through Marrakesh: six stops, from the Ben Youssef Madrasa to the Bahia Palace. Roamie shows the way and tells the stories.”</em> Barcelona, Marrakesh, Cape Town, Buenos Aires.</p>
         </div>
-        <p class="muted" style="font-size:0.9rem">The music is a light arpeggio bed written for this film, so there are no licensing questions; it dips under the voice. Wikipedia photos were left out of the screens on purpose (their licences require credits). Files: <code>roamie-ad.mp4</code> (Heart) and <code>roamie-ad-george.mp4</code>.</p>
+        <div class="pillar">
+          <p class="label">C · New · 12 s · wave 2</p>
+          <h3>Carnival in Rio</h3>
+          <p><em>“In Rio for Carnival? Between two blocos, walk Old Rio: Candelária to the Selarón Steps, narrated.”</em> The same recipe as B, with the festival line from Roamie’s own calendar.</p>
+        </div>
+        <p class="muted" style="font-size:0.9rem">I can make B and C with the tools that made the launch film (real app screens, the same voices, no licensing questions). A is best filmed by you: a real camera on a real building, which no simulation can match.</p>
       </div>
-    </div>
-  </section>
-
-  <section id="visuals">
-    <div class="section-head">
-      <p class="label">Visuals</p>
-      <h2>Four formats, one look</h2>
-      <p class="muted">Midnight and champagne gold, the same night map of Barcelona, and real app screens. The link preview is already wired into the app: anyone sharing the link sees it.</p>
     </div>
     <div class="visuals">
-      <figure><img src="roamie-feed.jpg" alt="Feed ad: It shows you the way. It tells you the stories."><figcaption><b>Feed · 1080 × 1350</b>Instagram, Facebook, LinkedIn posts</figcaption></figure>
-      <figure><img src="roamie-story.jpg" alt="Story ad: Your city, narrated."><figcaption><b>Story · 1080 × 1920</b>Stories, Status, TikTok cover</figcaption></figure>
-      <figure><img src="roamie-square.jpg" alt="Square: Roamie, the city narrated, with the 9 cities"><figcaption><b>Square · 1080 × 1080</b>Profile posts, Product Hunt gallery</figcaption></figure>
+      <figure><img src="roamie-feed.jpg" alt="Feed ad: It shows you the way. It tells you the stories."><figcaption><b>Feed · 1080 × 1350</b>Instagram, Facebook, LinkedIn</figcaption></figure>
+      <figure><img src="roamie-story.jpg" alt="Story ad: Your city, narrated."><figcaption><b>Story · 1080 × 1920</b>Stories, TikTok cover</figcaption></figure>
+      <figure><img src="roamie-square.jpg" alt="Square: Roamie, the city narrated"><figcaption><b>Square · 1080 × 1080</b>Profile, Product Hunt gallery</figcaption></figure>
       <figure><img src="roamie-og.jpg" alt="Link preview: The city, narrated"><figcaption><b>Link preview · 1200 × 630</b>WhatsApp, iMessage, X, Slack</figcaption></figure>
     </div>
-  </section>
-
-  <section id="positioning">
-    <div class="section-head">
-      <p class="label">Positioning</p>
-      <h2>A private guide for anyone who explores a city on their own</h2>
-    </div>
-    <dl class="facts">
-      <dt>For</dt><dd>Independent travellers on city breaks (25–45, couples and solo) who skip group tours but want the stories. Then road-trippers (drive mode) and locals rediscovering their own city.</dd>
-      <dt>Their problem</dt><dd>A new city has a thousand stories, and finding them means juggling a map, a guidebook and a dozen browser tabs while walking.</dd>
-      <dt>The promise</dt><dd>Tell Roamie where you are and how long you have. It curates the route (museums and meal breaks included), shows you the way and narrates what you pass.</dd>
-      <dt>Why believe it</dt><dd>Real routes from OpenStreetMap, stories from Wikipedia, natural voices that run on the phone in five languages, including a documentary narrator. Sample tours in Barcelona, Brussels, Cape Town, Kinshasa, Miami Beach, Paris, San Francisco, Shenzhen and Tokyo.</dd>
-      <dt>Price</dt><dd>Free. Nothing to install: it opens in the phone’s browser. No account, no ads, no tracking.</dd>
-      <dt>Tone</dt><dd>Calm, warm, a little cinematic. A concierge, not a gadget. Short sentences.</dd>
-      <dt>Avoid saying</dt><dd>“AI-written stories” (they come from Wikipedia), “works offline” (it needs data), “nothing leaves your phone” (routes and maps come from online services; only the voice is on the device), “the best tour guide app” (no proof yet).</dd>
-    </dl>
-    <div class="cols">
-      <div class="pillar"><p class="label">1 · Curated</p><h3>It plans the walk</h3><p>Ask for an hour or a whole day. Roamie picks the places with the most history, puts museums on the way and books in lunch or a drink at the right time.</p></div>
-      <div class="pillar"><p class="label">2 · Guided</p><h3>It shows the way</h3><p>A gold line on a sharp map, the next turn on screen and a short spoken direction before each turn, with real street names.</p></div>
-      <div class="pillar"><p class="label">3 · Narrated</p><h3>It tells the stories</h3><p>As you walk, the guide tells you about the places you pass, in a calm voice or as a documentary narrator.</p></div>
-    </div>
-    <div class="cols" style="grid-template-columns:minmax(0,1fr)">
-      <div class="pillar">
-        <p class="label">Taglines</p>
-        <p><em>The city, narrated.</em> (main) · Your private city guide. · Every street has a story. Now you’ll hear it. · Walk. Listen. Discover.</p>
-      </div>
-    </div>
+    <p class="muted" style="font-size:0.9rem">The four visuals still show the first nine cities; they get a 21-city version with the city cuts.</p>
   </section>
 
   <section id="copy">
     <div class="section-head">
       <p class="label">Copy</p>
       <h2>Ready to paste</h2>
-      <p class="muted">Replace <b>[link]</b> with the app address once the website is switched on: https://dv2788.github.io/Tour-guide-App-/</p>
+      <p class="muted">Links: the app is <code>https://dv2788.github.io/Tour-guide-App-/</code>; a city’s page is <code>…/tours/marrakesh/</code>. Add <code>?utm_source=</code> with the channel’s name to every paid link.</p>
     </div>
     <div class="copy">
-      <article class="card"><header><h3>Instagram · Reel caption</h3><button class="copy-btn" type="button">Copy</button></header><pre>Every street has a story. Now you’ll hear it.
+      <article class="card wide"><header><h3>Google Search ad · Marrakesh (template for every city)</h3><button class="copy-btn" type="button">Copy</button></header><pre>Headlines (30 characters at most):
+Free Marrakesh Walking Tour
+Audio Guide in Your Browser
+Jemaa el-Fnaa to Bahia Palace
+Free · No App · No Account
+Narrated as You Walk
+6 Stops · 4.2 km · Self-Guided
+Start Whenever You Like
 
-Roamie is your private city guide: tell it where you are, and it curates the route, shows you the way and tells you the story of the places you pass.
+Descriptions (90 characters at most):
+A guide on your phone: it shows the way and tells the story of every place you pass.
+Ben Youssef Madrasa, the Koutoubia, the Saadian Tombs and the Bahia Palace, narrated.
+Opens in your browser. Five languages, a calm guide or a documentary narrator.
 
-Free, nothing to install, it opens in your browser. Try a sample tour of Barcelona from your sofa (link in bio).
+Final URL: https://dv2788.github.io/Tour-guide-App-/tours/marrakesh/?utm_source=google
 
-#travel #citybreak #barcelona #walkingtour #travelapp #solotravel #gaudi #architecture</pre></article>
-      <article class="card"><header><h3>TikTok · caption</h3><button class="copy-btn" type="button">Copy</button></header><pre>POV: your phone becomes a private tour guide 🎧 Barcelona, narrated. Free in your browser, link in bio.
+Keywords (phrase match): "marrakesh walking tour", "self guided walking tour marrakesh", "marrakesh audio guide", "medina walking tour", "jemaa el fna audio guide", "marrakech walking tour"
+Negative keywords: jobs, hiring, course, "tour guide license", hotel, flights, desert, "day trip", quad, camel</pre></article>
+      <article class="card"><header><h3>Instagram · city cut</h3><button class="copy-btn" type="button">Copy</button></header><pre>A free audio walk through Marrakesh 🎧
 
-#traveltok #barcelona #citybreak #walkingtour #travelhacks</pre></article>
-      <article class="card"><header><h3>X · post</h3><button class="copy-btn" type="button">Copy</button></header><pre>You arrive in a new city. A thousand stories, no idea where to begin.
+Six stops, from the Ben Youssef Madrasa to the Bahia Palace. Roamie shows the way and tells you the story of each place you pass.
 
-Roamie curates the route, shows you the way and tells you the story of the places you pass. Free, in your browser.
+Nothing to install, it opens in your browser. Link in bio.
 
-Try Barcelona from your sofa: [link]</pre></article>
-      <article class="card"><header><h3>LinkedIn · launch post</h3><button class="copy-btn" type="button">Copy</button></header><pre>The idea came to me in the car, on the way to a party: why do we still need a guidebook, a tour group or a dozen tabs to discover a city?
+#marrakech #marrakesh #morocco #medina #walkingtour #travelmorocco #citybreak #wintersun</pre></article>
+      <article class="card"><header><h3>Instagram · camera ad</h3><button class="copy-btn" type="button">Copy</button></header><pre>What’s that building? Point your camera, and Roamie tells you 📍
 
-Today I’m launching Roamie, a free voice guide for cities. Tell it where you are and how long you have. It curates a route (museums and meal breaks included), shows you the way turn by turn, and tells you the story of the places you pass, on foot, by bike or by car.
+A free voice guide for 21 cities (and any other): it plans the walk, shows the way and tells you the story of what you see.
 
-It runs in the phone’s browser, with natural voices that run on the device, in five languages. There are sample tours in Barcelona, Brussels, Cape Town, Kinshasa, Miami Beach, Paris, San Francisco, Shenzhen and Tokyo, and it works in your city too.
+Free in your browser, link in bio.
 
-I’d love your feedback: [link]</pre></article>
+#travel #citybreak #architecture #walkingtour #travelapp #solotravel</pre></article>
+      <article class="card"><header><h3>TikTok · caption</h3><button class="copy-btn" type="button">Copy</button></header><pre>POV: you point your phone at a building and it tells you its story 🎧 Free in your browser, 21 cities, link in bio.
+
+#traveltok #citybreak #walkingtour #travelhacks #marrakech</pre></article>
+      <article class="card"><header><h3>Reddit · promoted post</h3><button class="copy-btn" type="button">Copy</button></header><pre>Free self-guided walking tours, narrated as you walk
+
+Roamie is a free voice guide in your browser: pick a city (Barcelona, Marrakesh, Cape Town, Buenos Aires, Rio and 16 more) or let it plan a walk where you are. It shows the way and tells you the story of each place you pass. No account, nothing to install.</pre></article>
+      <article class="card"><header><h3>Riad / hostel card</h3><button class="copy-btn" type="button">Copy</button></header><pre>Front:
+A free audio walk through the medina
+Scan, put your earphones in, and walk.
+
+Back:
+Roamie · a guide on your phone
+It shows the way and tells the story of each place you pass.
+Free · nothing to install · no account
+[QR code to …/tours/marrakesh/?utm_source=card]</pre></article>
       <article class="card wide"><header><h3>Product Hunt</h3><button class="copy-btn" type="button">Copy</button></header><pre>Name: Roamie
-Tagline: A voice guide that tells you the story of every street
-Description: Roamie turns any walk into a guided tour. Tell it where you are and how long you have: it curates a route with museums and meal breaks, shows you the way turn by turn, and narrates the places you pass. Free, in your browser, no account.
+Tagline: A free voice guide that tells you the story of every street
+Description: Roamie turns any walk into a guided tour. Tell it where you are and how long you have: it curates a route, shows you the way turn by turn and narrates the places you pass. Point your camera at a building to hear what it is. Free, in your browser, no account.
 
 First comment (maker):
 Hi Product Hunt! Roamie started as an idea in the car on the way to a party: what if your phone could be the tour guide, wherever you are?
 
 What it does:
 • Curates a walk for the time you have (1 hour to a full day), with museums on the way and lunch or a drink at the right time
-• Shows the way on a sharp map with spoken turns and real street names
+• Shows the way on a sharp map, with spoken turns and real street names
 • Tells the story of each place you pass, with a calm guide or a documentary narrator
-• Five languages; voices run on your phone
+• Point your camera at a building: it tells you what it is, and can guide you there
+• Knows what’s on: Carnival in Rio, Christmas markets in Brussels, New Year in Tokyo
+• Five languages; the voices run on your phone
 
-Try a sample tour from your sofa (Barcelona, Cape Town, Tokyo, Kinshasa…) or use it on your next walk. What city should we add next?</pre></article>
+Try a sample walk from your sofa: 21 cities, from Buenos Aires to Zanzibar. What city should we add next?</pre></article>
       <article class="card"><header><h3>Hacker News · Show HN</h3><button class="copy-btn" type="button">Copy</button></header><pre>Show HN: Roamie – a free voice tour guide in the browser (OSM, Wikipedia, on-device TTS)
 
-Roamie narrates the city as you walk: it plans a route around the places with the most history, gives turn-by-turn directions and reads you the Wikipedia story of what you pass.
+Roamie narrates the city as you walk: it plans a route around the places with the most history, gives turn-by-turn directions and reads you the Wikipedia story of what you pass. Point the camera at a building and it works out which one it is from your position, the compass (corrected for magnetic declination) and the camera’s field of view.
 
-How it’s built: a no-build web app; routes from OSRM (routing.openstreetmap.de), with OSM’s pavement-and-crossing zig-zags merged into human directions and unnamed sidewalks named after the street they follow; vector maps from OpenFreeMap; Piper neural voices running in the browser on ONNX Runtime. The directions are tested on real routes in 8 cities.
+Built as a no-build web app: routes from OSRM, with OSM’s sidewalk-and-crossing zig-zags merged into human directions; vector maps from OpenFreeMap; Piper voices running in the browser on ONNX Runtime. Route planning was tested in about 30 cities.
 
-Limits: the screen has to stay on (it’s a web app), and it uses free public services, so be gentle. Code and tests: https://github.com/dv2788/Tour-guide-App-</pre></article>
-      <article class="card"><header><h3>Reddit · r/openstreetmap</h3><button class="copy-btn" type="button">Copy</button></header><pre>I built a free voice city guide on top of OSM, and the hardest part was the sidewalks
+Limits: the screen has to stay on, and it relies on free community services, so be gentle. Code and tests: https://github.com/dv2788/Tour-guide-App-</pre></article>
+      <article class="card"><header><h3>LinkedIn · launch post</h3><button class="copy-btn" type="button">Copy</button></header><pre>The idea came to me in the car, on the way to a party: why do we still need a guidebook, a tour group or a dozen tabs to discover a city?
 
-Separately mapped sidewalks and crossings turn walking routes into “turn left, 5 m, turn right” orders, and most sidewalks have no name. Roamie merges those zig-zags into the turns a person would describe and names each sidewalk after the nearest named road. Maps are OpenFreeMap vector tiles; routes come from OSRM.
+Today I’m launching Roamie, a free voice guide for cities. Tell it where you are and how long you have: it curates a route, shows you the way turn by turn and tells you the story of the places you pass. Point your camera at a building and it tells you what it is.
 
-Feedback from mappers very welcome, especially on cities where the directions sound wrong: [link]
+It runs in the phone’s browser, with voices that run on the device, in five languages. There are ready-made walks in 21 cities on four continents, from Buenos Aires to Zanzibar, and it works in your city too.
 
-(Check each subreddit’s self-promotion rules before posting.)</pre></article>
-      <article class="card"><header><h3>Email · travel creators</h3><button class="copy-btn" type="button">Copy</button></header><pre>Subject: A private voice guide for your next city walk
+I’d love your feedback: [link]</pre></article>
+      <article class="card"><header><h3>Email · travel creators</h3><button class="copy-btn" type="button">Copy</button></header><pre>Subject: A free voice guide for your next city walk
 
 Hi [name],
 
-I loved your [post/video] about [city]. I’ve just launched Roamie, a free voice guide that plans a walk, shows the way and tells the story of each place you pass. It opens in the browser, nothing to install.
+I loved your [post/video] about [city]. I’ve just launched Roamie, a free voice guide that plans a walk, shows the way and tells the story of each place you pass. Point your camera at a building and it tells you what it is. It opens in the browser, nothing to install.
 
-Would you try it on your next walk? If you tell me your favourite city, I’ll add a sample tour of it for your audience.
+Would you try it on your next walk? Tell me your favourite city and I’ll make a ready-made walk of it for your audience.
 
 Try it: [link]
 
 Thanks,
 [your name]</pre></article>
+      <article class="card"><header><h3>X · post</h3><button class="copy-btn" type="button">Copy</button></header><pre>You arrive in a new city. A thousand stories, no idea where to begin.
+
+Roamie plans the walk, shows the way and tells you the story of the places you pass. Point your camera at a building and it tells you what it is. Free, in your browser, 21 cities.
+
+[link]</pre></article>
       <article class="card wide"><header><h3>Press release · short</h3><button class="copy-btn" type="button">Copy</button></header><pre>Roamie launches a free voice guide that narrates any city as you walk
 
 A private tour guide in the phone’s browser: it curates the route, shows the way and tells the story of the places you pass.
 
-[City], [date]. Roamie, a new web app, turns a phone into a personal city guide. Travellers tell it where they are and how much time they have; Roamie curates a route around the places with the most history, adds museums and meal breaks at the right time, and guides them turn by turn while a natural voice tells the story of each place they pass. It works on foot, by bike and by car.
+[City], [date]. Roamie, a new web app, turns a phone into a personal city guide. Travellers tell it where they are and how much time they have; Roamie curates a route around the places with the most history, adds museums and meal breaks at the right time, and guides them turn by turn while a natural voice tells the story of each place they pass. Pointing the camera at a building tells them what it is, and Roamie mentions the festivals and holidays happening in town.
 
-Roamie is free, needs no account and opens in any phone browser. Its voices run on the phone itself, in English, French, Spanish, German and Italian, including a documentary-style narrator. Sample tours cover Barcelona, Brussels, Cape Town, Kinshasa, Miami Beach, Paris, San Francisco, Shenzhen and Tokyo, and travellers can build their own in any city.
+Roamie is free, needs no account and opens in any phone browser. Its voices run on the phone itself, in English, French, Spanish, German and Italian, including a documentary-style narrator. Ready-made walks cover 21 cities on four continents, from Buenos Aires, Rio de Janeiro and Cusco to Marrakesh, Cairo and Zanzibar, and travellers can build their own in any city.
 
 “[Quote from you about why you built it],” said [your name], creator of Roamie.
 
@@ -286,59 +448,35 @@ Contact: [your email]</pre></article>
     </div>
   </section>
 
-  <section id="plan">
-    <div class="section-head">
-      <p class="label">Launch plan</p>
-      <h2>Two weeks, mostly free</h2>
-      <p class="muted">Organic first. Spend only once people who try it finish tours.</p>
-    </div>
-    <div class="timeline">
-      <div class="phase"><div><p class="label">This week</p><h3>Get ready</h3></div><ul>
-        <li><span class="who">You</span><span>Switch on the website: Settings → Pages → Deploy from a branch → <code>claude/city-tour-guide-app-nrb6vy</code>, <code>/ (root)</code> → Save.</span></li>
-        <li><span class="who">You</span><span>Walk one tour with your phone outside (a sample or your own city) and send me what felt wrong. I fix it before launch day.</span></li>
-        <li><span class="who">You</span><span>Check the name: trademark search (EUIPO, USPTO), App Store and Google Play, and the Instagram/TikTok handles you want.</span></li>
-        <li><span class="who">You</span><span>Create the Instagram and TikTok accounts; post the square visual first, with the tagline.</span></li>
-        <li><span class="who">Claude</span><span>Add privacy-friendly visit counts once you choose a tool (see goals), and any fixes from your test walk.</span></li>
-      </ul></div>
-      <div class="phase"><div><p class="label">Launch day</p><h3>A Tuesday</h3></div><ul>
-        <li><span class="who">You</span><span>00:01 Pacific: Product Hunt goes live (gallery: square, feed, story, link preview; video: the ad).</span></li>
-        <li><span class="who">You</span><span>Morning in Europe: post the ad as a Reel and on TikTok, then X and LinkedIn.</span></li>
-        <li><span class="who">You</span><span>US morning: post the Show HN. Answer every comment within the hour.</span></li>
-        <li><span class="who">You</span><span>Send the link to 20 friends who travel, with one ask: try a sample tour and reply with one thing to fix.</span></li>
-      </ul></div>
-      <div class="phase"><div><p class="label">Weeks 1–2</p><h3>Keep it moving</h3></div><ul>
-        <li><span class="who">You</span><span>One short city clip every two days (Cape Town, Tokyo, Kinshasa, Shenzhen…), recorded from the sample tours.</span></li>
-        <li><span class="who">You</span><span>Post in r/openstreetmap and r/SideProject (after reading their rules); email 10 travel creators.</span></li>
-        <li><span class="who">Claude</span><span>Ship the top three fixes from feedback; add the sample city people ask for most.</span></li>
-        <li><span class="who">You</span><span>If tours get finished: a €300 test on Instagram and TikTok, shown to people currently visiting the nine sample cities.</span></li>
-      </ul></div>
-    </div>
-    <div class="scroll">
-      <table>
-        <thead><tr><th>Goal after two weeks</th><th>Target</th><th>Why it matters</th></tr></thead>
-        <tbody>
-          <tr><td>Visits</td><td class="t">2,000</td><td>Reach of the launch</td></tr>
-          <tr><td>Tours started</td><td class="t">400</td><td>People get past the home screen</td></tr>
-          <tr><td>Tours finished</td><td class="t">25% of started</td><td>The product actually works for them</td></tr>
-          <tr><td>Product Hunt upvotes</td><td class="t">150</td><td>Social proof for the next launch</td></tr>
-          <tr><td>Feedback messages</td><td class="t">50</td><td>What to build next</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <p class="muted" style="font-size:0.9rem">Roamie counts nothing today. To measure these, pick a privacy-friendly counter without cookies: GoatCounter (free for personal and small projects) or Plausible (paid). Tell me which and I’ll add it.</p>
-  </section>
-
   <section id="checks">
     <div class="section-head">
       <p class="label">Before you spend money</p>
-      <h2>Five checks</h2>
+      <h2>Six checks</h2>
     </div>
     <ul class="checks">
-      <li><b>The name.</b> “Roamie” hasn’t been checked against trademarks or existing apps. Do it before buying ads or a domain.</li>
-      <li><b>A real walk.</b> Everything was tested in simulation with real routes, never on a phone outside. One walk will tell you more than any test.</li>
-      <li><b>Free services have limits.</b> Map search, routing and vector maps are free community services meant for moderate use. Fine for a launch; if traffic takes off, budget for paid or self-hosted ones.</li>
-      <li><b>Credits stay visible.</b> OpenStreetMap, OpenFreeMap and Wikipedia credits are on the map and in the ad’s end card. Keep them in any new material.</li>
-      <li><b>Mainland China.</b> Stories come from Wikipedia, which Chinese networks block. Visitors on a foreign SIM, roaming eSIM or VPN get the full tour.</li>
+      <li><b>The name.</b> “Roamie” still hasn’t been checked against trademarks (EUIPO, USPTO) and existing apps. Do it before the first paid ad, and before buying a domain.</li>
+      <li><b>The free map services.</b> OpenStreetMap’s place search allows one request a second for the whole app, all users together, and can be switched off for heavy users; the free routing server is meant for reasonable, non-commercial use. A sample tour looks up every stop today, so I’ll store the stop positions in the app first: ad traffic then barely touches these services. Until we move to a paid search service, keep paid traffic under about 1,000 visits a day.</li>
+      <li><b>Counting.</b> Without it, the rules in Budget can’t be applied (decision 2).</li>
+      <li><b>A real walk.</b> Walk one tour outside with your phone before launch day, and try the camera on a real building. Simulations can’t replace it.</li>
+      <li><b>A domain (optional).</b> Ads can point to the github.io address. A short domain looks more trustworthy and keeps the links if we ever change hosts; buy it after the name check.</li>
+      <li><b>Credits stay visible.</b> OpenStreetMap, OpenFreeMap and Wikipedia credits stay on the map, the tour pages and the ads’ end cards. Mainland China: Wikipedia is blocked there, so no ads for Shenzhen.</li>
+    </ul>
+  </section>
+
+  <section id="sources">
+    <div class="section-head">
+      <p class="label">Sources</p>
+      <h2>Where the numbers come from</h2>
+      <p class="muted">Prices are third-party benchmarks; check the live figures in each ad account before spending.</p>
+    </div>
+    <ul class="sources">
+      <li>Meta location targeting change: <a href="https://www.jonloomer.com/big-change-to-meta-ads-location-targeting/">Jon Loomer</a>, <a href="https://searchengineland.com/new-update-to-meta-ads-location-targeting-404124">Search Engine Land</a>, <a href="https://www.bigeyeagency.com/insights/geographic-targeting-for-meta-ads-guide-2026">Bigeye (2026)</a></li>
+      <li>Google Ads location options: <a href="https://support.google.com/google-ads/answer/1722038">Google Ads Help</a>; travel cost per click (WordStream/LocaliQ 2026): <a href="https://digitalapplied.com/google-ads-benchmarks-2026/">Digital Applied</a></li>
+      <li>Instagram costs in Europe: <a href="https://adligator.com/blog/meta-ads-cpm-by-country-benchmarks">Adligator</a>, <a href="https://searchlab.nl/kosten/wat-kost-instagram-adverteren">Searchlab</a></li>
+      <li>TikTok minimum budgets: <a href="https://tlinky.com/tiktok-ads-minimum-budget/">tlinky</a>, <a href="https://darkroomagency.com/observatory/how-much-does-tiktok-advertising-cost-in-2026">Darkroom</a>; Reddit: <a href="https://stackmatix.com/blog/reddit-ads-cost-guide-2026">Stackmatix</a></li>
+      <li>Map services: <a href="https://operations.osmfoundation.org/policies/nominatim/">Nominatim usage policy</a>, <a href="https://github.com/Project-OSRM/osrm-backend/wiki/Api-usage-policy">OSRM usage policy</a></li>
+      <li>Rio Carnival 2027: <a href="https://riocarnaval.org/carnival-date/date">RioCarnaval.org</a>, <a href="https://diariodorio.com/carnaval/2026/08/567060-carnaval-2027-riotur-abre-inscricoes-para-blocos-de-rua-nesta-segunda-feira.html">Diário do Rio</a></li>
+      <li>Paid apps: <a href="https://apps.apple.com/us/app/-/id852027939">VoiceMap</a>, <a href="https://apps.apple.com/US/app/id417207307">GPSmyCity</a> (App Store listings)</li>
     </ul>
   </section>
 

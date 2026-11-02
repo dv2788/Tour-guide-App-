@@ -73,6 +73,14 @@ const lunar = (calendar, month, day, days) => (y) => {
   const start = fromCalendar(y, calendar, month, day);
   return start ? [start, addDays(start, days - 1)] : null;
 };
+// Chinese New Year as China announces it. Browsers' Chinese calendar is a day off in some years
+// (7 February 2027 instead of the 6th; 2 February 2030 instead of the 3rd): the table wins.
+const SPRING_FESTIVAL = { 2025: [1, 29], 2026: [2, 17], 2027: [2, 6], 2028: [1, 26], 2029: [2, 13], 2030: [2, 3], 2031: [1, 23], 2032: [2, 11], 2033: [1, 31], 2034: [2, 19], 2035: [2, 8] };
+const chineseNewYear = (days) => (y) => {
+  const known = SPRING_FESTIVAL[y];
+  const start = known ? utc(y, known[0], known[1]) : fromCalendar(y, 'chinese', 1, 1);
+  return start ? [start, addDays(start, days - 1)] : null;
+};
 const evenYears = (rule) => (y) => (y % 2 === 0 ? rule(y) : null);
 
 // Who keeps which events (city names as people type them, without accents).
@@ -154,7 +162,7 @@ export const EVENTS = [
   { name: 'Japanese New Year', places: JAPAN, window: fixed(1, 1, 3), usually: '1 to 3 January', note: 'Shrines and temples are packed for the first visit of the year; many shops and museums close.' },
   { name: 'Sumidagawa Fireworks Festival', places: ['tokyo'], window: weekday(7, 6, -1), usually: 'the last Saturday of July', note: 'Twenty thousand fireworks over the Sumida River near Asakusa; the area is packed from the afternoon.' },
   { name: 'Gion Matsuri', places: ['kyoto'], window: fixed(7, 14, 11), usually: 'July, with float parades on 17 and 24 July', note: 'The giant floats are on show in the streets in the evenings before each parade.' },
-  { name: 'Chinese New Year', places: ['shenzhen', 'guangzhou', 'beijing', 'shanghai', 'hong kong'], window: lunar('chinese', 1, 1, 7), usually: 'late January or February (the dates follow the moon)', note: 'Families travel home: many shops and restaurants close for several days, and trains are full.' },
+  { name: 'Chinese New Year', places: ['shenzhen', 'guangzhou', 'beijing', 'shanghai', 'hong kong'], window: chineseNewYear(7), usually: 'late January or February (the dates follow the moon)', note: 'Families travel home: many shops and restaurants close for several days, and trains are full.' },
   { name: 'National Day Golden Week', wiki: 'Golden Week (China)', places: ['shenzhen', 'guangzhou', 'beijing', 'shanghai'], window: fixed(10, 1, 7), usually: '1 to 7 October', note: 'A week of holidays: sights are crowded and trains and flights are full.' },
 ];
 

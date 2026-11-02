@@ -2,7 +2,7 @@
 
 Open [`launch-kit.html`](launch-kit.html) (or, once the website is on,
 https://dv2788.github.io/Tour-guide-App-/marketing/launch-kit.html): the ad, the visuals, the positioning,
-ready-to-paste copy for each channel and a two-week launch plan.
+ready-to-paste copy for each channel, and the advertising plan: which channels, which cities, when and for how much.
 
 | File | What | Use |
 | --- | --- | --- |

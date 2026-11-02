@@ -55,3 +55,13 @@ test('the guide mentions what is on when the tour starts (English tours), in wor
   assert.equal(happeningSentence({ name: 'Bastille Day', on: true, start: '14 July', end: '14 July' }), 'Happening today: Bastille Day.');
   assert.equal(buildWelcomeNarration({ lang: 'fr', cityName: 'Lyon', citySummary: null, hasStops: true, happening: soon }), 'Bienvenue à Lyon.', 'not in French yet: the names and notes are English');
 });
+
+test('Chinese New Year goes by the official dates, not the browser’s calendar (a day off in 2027)', () => {
+  const cny = EVENTS.find((e) => e.name === 'Chinese New Year');
+  assert.equal(cny.window(2027)[0].toISOString().slice(0, 10), '2027-02-06');
+  assert.equal(cny.window(2030)[0].toISOString().slice(0, 10), '2030-02-03');
+  assert.equal(cny.window(2026)[0].toISOString().slice(0, 10), '2026-02-17');
+  assert.ok(cny.window(2040), 'beyond the table, the browser’s calendar still gives a date');
+  const shenzhen = eventsFor('Shenzhen', new Date('2027-02-06T09:00Z'), { ahead: 0 });
+  assert.ok(shenzhen.some((e) => e.event.name === 'Chinese New Year'), 'on the day itself');
+});
