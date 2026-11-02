@@ -1,7 +1,7 @@
 // Keeps the app itself available with a weak connection. Map tiles and Wikipedia
 // always come from the network (they're live data), so they're not cached here.
 // The AI voice files are cached separately by js/neuralVoice.js.
-const CACHE = 'roamie-v37';
+const CACHE = 'roamie-v38';
 const SHELL = [
   './',
   './index.html',
@@ -45,7 +45,9 @@ self.addEventListener('install', (event) => {
 
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((keys) => Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k)))),
+    // Only Roamie's old offline copies ("roamie-v36", and "tour-guide-v4" from before the name):
+    // the downloaded voices, and anything else on this github.io address, are not ours to delete.
+    caches.keys().then((keys) => Promise.all(keys.filter((k) => /^(roamie|tour-guide)-v\d+$/.test(k) && k !== CACHE).map((k) => caches.delete(k)))),
   );
   self.clients.claim();
 });
@@ -53,7 +55,11 @@ self.addEventListener('activate', (event) => {
 // Network first (so updates show up immediately), falling back to the cached copy offline.
 self.addEventListener('fetch', (event) => {
   const { request } = event;
-  if (request.method !== 'GET' || new URL(request.url).origin !== self.location.origin) return;
+  const url = new URL(request.url);
+  if (request.method !== 'GET' || url.origin !== self.location.origin) return;
+  // Answers about your links (/api/) are never kept; pages are kept once, whatever follows "?".
+  if (url.pathname.includes('/api/')) return;
+  const key = request.mode === 'navigate' ? url.pathname : request.url;
   event.respondWith(
     // "no-cache": ask the server whether there's a newer version (not the browser's 10-minute copy).
     // By address: a page navigation can't be re-sent with options.
@@ -61,10 +67,13 @@ self.addEventListener('fetch', (event) => {
       .then((response) => {
         if (response.ok) {
           const copy = response.clone();
-          caches.open(CACHE).then((cache) => cache.put(request, copy));
+          caches.open(CACHE).then((cache) => cache.put(key, copy));
         }
         return response;
       })
-      .catch(() => caches.match(request).then((hit) => hit ?? caches.match('./index.html'))),
+      .catch(async () => {
+        const cache = await caches.open(CACHE); // our own copy only
+        return (await cache.match(key)) ?? (await cache.match('./index.html'));
+      }),
   );
 });

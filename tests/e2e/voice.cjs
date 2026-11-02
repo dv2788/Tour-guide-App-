@@ -5,7 +5,7 @@
 
 const path = require('node:path');
 const { chromium } = require('playwright');
-const { serve, mockNetwork, saveRouteCaches } = require('./mocks.cjs');
+const { serve, mockNetwork, saveRouteCaches, cspBlocked } = require('./mocks.cjs');
 
 (async () => {
   const server = await serve();
@@ -73,6 +73,8 @@ const { serve, mockNetwork, saveRouteCaches } = require('./mocks.cjs');
   expect(!voiceLine, `no fallback to the phone's voice (${voiceLine})`);
   await page.screenshot({ path: path.join(__dirname, 'screenshots', '5-ai-voice-tour.png') });
   expect(errors.length === 0, `no page errors (${errors.join(' | ')})`);
+  const blocked = await cspBlocked(page);
+  expect(blocked.length === 0, `the content security policy blocked nothing (got ${blocked.join(' | ')})`);
 
   await browser.close();
   saveRouteCaches();

@@ -216,7 +216,7 @@ function tourPage(sample) {
   const stops = sample.stops.map((name) => {
     const title = articleFor(sample, name);
     const w = title ? cache[title] : null;
-    return { name, description: w?.description ?? '', text: w ? intro(w.extract) : OWN_WORDS[name], url: w?.url ?? null };
+    return { name, description: w?.description ?? '', text: w ? intro(w.extract) : OWN_WORDS[name], url: /^https:\/\/[^\s"'<>]+$/.test(w?.url ?? '') ? w.url : null };
   });
   const pageUrl = `${SITE}tours/${sample.id}/`;
   const title = `Free audio ${kind} tour of ${sample.label}: ${sample.blurb.replace(/^California: /, '')} · Roamie`;

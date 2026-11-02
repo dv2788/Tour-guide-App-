@@ -123,3 +123,24 @@ test('a tour waiting for its page is a real sample, and nothing links to a page 
   }
   assert.ok(PAGES.length >= 9, 'the tours that had pages keep them');
 });
+
+test('the app page has a content security policy that covers every service it uses, and nothing loose', async () => {
+  const { readdirSync } = await import('node:fs');
+  const index = read('index.html');
+  const csp = index.match(/http-equiv="Content-Security-Policy" content="([^"]+)"/)?.[1];
+  assert.ok(csp, 'index.html has a Content-Security-Policy');
+  const directives = Object.fromEntries(csp.split(';').map((d) => d.trim().split(/\s+/)).map(([name, ...values]) => [name, values]));
+  const allows = (directive, host) => (directives[directive] ?? []).some((v) => v === `https://${host}` || (v.startsWith('https://*.') && host.endsWith(v.slice('https://*'.length))));
+  // Every host the code fetches from (the same scan as the privacy-page test, plus the language-dependent Wikipedia).
+  const code = readdirSync(new URL('../js/', import.meta.url)).map((f) => read(`js/${f}`)).join('\n');
+  const contacted = new Set([...code.matchAll(/fetch[A-Za-z]*\(\s*`https:\/\/([a-z0-9.-]+)/g)].map((m) => m[1]));
+  for (const host of [...contacted, 'en.wikipedia.org', 'www.wikidata.org', 'tiles.openfreemap.org', 'huggingface.co']) assert.ok(allows('connect-src', host), `connect-src allows ${host}`);
+  // Every outside script the page loads.
+  for (const m of index.matchAll(/<script[^>]*src="https:\/\/([^/"]+)/g)) assert.ok(allows('script-src', m[1]), `script-src allows ${m[1]}`);
+  for (const [directive, values] of Object.entries(directives)) {
+    assert.ok(!values.includes("'unsafe-eval'") && !values.includes('*') && !values.includes('https:'), `${directive} has nothing loose`);
+  }
+  assert.deepEqual(directives['object-src'], ["'none'"]);
+  assert.deepEqual(directives['base-uri'], ["'self'"]);
+  assert.ok(!directives['script-src'].includes("'unsafe-inline'"), 'no inline scripts can run');
+});

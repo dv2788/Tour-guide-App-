@@ -23,9 +23,27 @@ test('refuses anything that is not a map link (no open proxy)', async () => {
   assert.ok(!isAllowed('https://evil.example/x'));
   assert.ok(!isAllowed('http://maps.app.goo.gl/x'), 'https only');
   assert.ok(!isAllowed('https://maps.app.goo.gl.evil.example/x'));
+  // Domains that only start like Google's.
+  for (const host of ['google.evil.com', 'google.com.evil.net', 'maps.google.co.evil.io', 'www.google.evil', 'google.']) {
+    assert.ok(!isAllowed(`https://${host}/maps`), host);
+  }
+  for (const host of ['www.google.com', 'google.de', 'www.google.co.uk', 'maps.google.com.br', 'consent.google.com']) {
+    assert.ok(isAllowed(`https://${host}/maps`), host);
+  }
   const res = await onRequestGet({ request: new Request('https://app.example/api/resolve-link?url=https%3A%2F%2Fevil.example%2F') });
   assert.equal(res.status, 400);
   // A redirect to a non-map host is not followed.
   const stop = await resolve('https://maps.app.goo.gl/AbC123', async () => ({ status: 302, headers: new Headers({ Location: 'https://evil.example/' }) }));
   assert.equal(stop, 'https://evil.example/');
+});
+
+test('a failure is not remembered for a day, and each step has a time limit', async () => {
+  const res = await onRequestGet({ request: new Request('https://app.example/api/resolve-link?url=https%3A%2F%2Fevil.example%2F') });
+  assert.equal(res.headers.get('Cache-Control'), 'no-store');
+  let signal = null;
+  await resolve('https://maps.app.goo.gl/AbC123', async (url, opts) => {
+    signal = opts.signal;
+    return { status: 200, headers: new Headers() };
+  });
+  assert.ok(signal instanceof AbortSignal, 'every request can be cut off');
 });

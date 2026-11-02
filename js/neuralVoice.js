@@ -11,6 +11,31 @@ const PHONEMIZER_SCRIPT = { src: `${PHONEMIZER_BASE}.js`, integrity: 'sha384-PMu
 // Voice models, pinned to one revision of the official collection so files never change under us.
 const VOICES_BASE = 'https://huggingface.co/rhasspy/piper-voices/resolve/b4e358ffcb232591bf73a540e70f7de528e4174a/';
 const CACHE_NAME = 'tour-guide-voices-v1';
+// Fingerprints of the WebAssembly code we run (checked against a second download source):
+// like the scripts' integrity attributes, a changed file on a CDN is refused, not run.
+const PHONEMIZER_WASM = { url: `${PHONEMIZER_BASE}.wasm`, integrity: 'sha384-p7p53pHMdJ/Czq5r8i0cXWVgLA+CeXEeki1NGyNN0BKfNFLIdxeg0R0+5SzNSop3' };
+const ORT_WASM = {
+  'ort-wasm-simd.wasm': 'sha384-fRaLGPIzvF2phGW4iOtonTas/h/+gi5pnuRbYIFDHMAY6wl8PjBiOd42lVUpDaNd',
+  'ort-wasm.wasm': 'sha384-knZ5sDiuTisFgxBlwY3twQEH8QlgshupTIFY2Ssx2fz41zpiv8Z4aKFrd93WosAw',
+};
+// The test ONNX Runtime 1.18 runs to choose its SIMD build: we pick (and check) the same file.
+const SIMD_TEST = [0, 97, 115, 109, 1, 0, 0, 0, 1, 4, 1, 96, 0, 0, 3, 2, 1, 0, 10, 30, 1, 28, 0, 65, 0, 253, 15, 253, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 253, 186, 1, 26, 11];
+export function ortWasmFile() {
+  try {
+    return WebAssembly.validate(new Uint8Array(SIMD_TEST)) ? 'ort-wasm-simd.wasm' : 'ort-wasm.wasm';
+  } catch {
+    return 'ort-wasm.wasm';
+  }
+}
+
+/** Does this file match its fingerprint ("sha384-…")? */
+export async function matchesIntegrity(buf, integrity) {
+  const [algo, expected] = integrity.split('-');
+  const digest = new Uint8Array(await crypto.subtle.digest(algo.replace('sha', 'SHA-'), buf));
+  let binary = '';
+  for (const b of digest) binary += String.fromCharCode(b);
+  return btoa(binary) === expected;
+}
 
 const scripts = new Map();
 function loadScript({ src, integrity }) {
@@ -42,14 +67,20 @@ async function openCache() {
   }
 }
 
-/** Download a file once and keep it on the device. Reports progress in bytes. */
-async function fetchCached(url, onBytes = () => {}) {
+/**
+ * Download a file once and keep it on the device. Reports progress in bytes. With an
+ * integrity fingerprint, a file that doesn't match (downloaded or kept) is thrown away.
+ */
+async function fetchCached(url, onBytes = () => {}, integrity = null) {
   const cache = await openCache();
   const hit = await cache?.match(url);
   if (hit) {
     const buf = await hit.arrayBuffer();
-    onBytes(buf.byteLength, buf.byteLength);
-    return buf;
+    if (!integrity || (await matchesIntegrity(buf, integrity))) {
+      onBytes(buf.byteLength, buf.byteLength);
+      return buf;
+    }
+    await cache.delete(url).catch(() => {});
   }
   const res = await fetch(url);
   if (!res.ok) throw new Error(`Download failed (HTTP ${res.status})`);
@@ -77,6 +108,7 @@ async function fetchCached(url, onBytes = () => {}) {
     buf = await res.arrayBuffer();
     onBytes(buf.byteLength, buf.byteLength);
   }
+  if (integrity && !(await matchesIntegrity(buf, integrity))) throw new Error(`${url} did not match its fingerprint: not used`);
   try {
     await cache?.put(url, new Response(buf.slice(0)));
   } catch {
@@ -130,8 +162,9 @@ export class PiperVoice {
   async #load(onProgress) {
     const files = voiceFiles(this.voiceId);
     // Rough sizes, only used to weight the progress bar before servers tell us exact ones.
-    const sizes = { model: 63e6, data: 18.1e6, wasm: 0.64e6 };
-    const loaded = { model: 0, data: 0, wasm: 0 };
+    const ortFile = ortWasmFile();
+    const sizes = { model: 63e6, data: 18.1e6, wasm: 0.64e6, ort: ortFile === 'ort-wasm.wasm' ? 9.8e6 : 10.6e6 };
+    const loaded = { model: 0, data: 0, wasm: 0, ort: 0 };
     const report = (key) => (bytes, total) => {
       if (total) sizes[key] = total;
       loaded[key] = bytes;
@@ -139,13 +172,14 @@ export class PiperVoice {
       onProgress(Math.min(1, Object.values(loaded).reduce((a, b) => a + b, 0) / all));
     };
 
-    const [, , configBuf, modelBuf, wasm, data] = await Promise.all([
+    const [, , configBuf, modelBuf, wasm, data, ortWasm] = await Promise.all([
       loadScript(ORT_SCRIPT),
       loadScript(PHONEMIZER_SCRIPT),
       fetchCached(files.config),
       fetchCached(files.model, report('model')),
-      fetchCached(`${PHONEMIZER_BASE}.wasm`, report('wasm')),
+      fetchCached(PHONEMIZER_WASM.url, report('wasm'), PHONEMIZER_WASM.integrity),
       fetchCached(`${PHONEMIZER_BASE}.data`, report('data')),
+      fetchCached(`${ORT_BASE}${ortFile}`, report('ort'), ORT_WASM[ortFile]),
     ]);
     this.config = JSON.parse(new TextDecoder().decode(configBuf));
     this.sampleRate = this.config.audio.sample_rate;
@@ -153,8 +187,10 @@ export class PiperVoice {
     this.phonemizerData = data;
 
     const ort = window.ort;
-    ort.env.wasm.wasmPaths = ORT_BASE;
-    ort.env.wasm.numThreads = self.crossOriginIsolated ? Math.min(4, navigator.hardwareConcurrency || 1) : 1;
+    // Run the copy we checked (and keep on the device), not a fresh unchecked download. One thread:
+    // threads need cross-origin isolation, which GitHub Pages can't give.
+    ort.env.wasm.numThreads = 1;
+    ort.env.wasm.wasmPaths = { [ortFile]: URL.createObjectURL(new Blob([ortWasm], { type: 'application/wasm' })) };
     this.ort = ort;
     this.session = await ort.InferenceSession.create(modelBuf, { executionProviders: ['wasm'] });
     onProgress(1);

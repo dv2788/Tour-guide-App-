@@ -4,7 +4,7 @@
 // Run: node tests/e2e/lens.cjs   (OFFLINE=1 replays recorded routes)
 const path = require('node:path');
 const { chromium } = require('playwright');
-const { serve, mockNetwork, saveRouteCaches } = require('./mocks.cjs');
+const { serve, mockNetwork, saveRouteCaches, cspBlocked } = require('./mocks.cjs');
 const fixtures = require('./fixtures.json');
 
 const SHOTS = path.join(__dirname, 'screenshots');
@@ -126,6 +126,8 @@ const at = (title) => fixtures.geosearch.find((p) => p.title === title).coordina
   console.log(`From the tour: next stop "${nextStop}", camera looking for "${fromTour}"`);
   expect(fromTour && fromTour === nextStop, `the camera looks for the tour's next stop (${fromTour} / ${nextStop})`);
   expect(errors.length === 0, `no page errors (${errors.join(' | ')})`);
+  const blocked = await cspBlocked(page);
+  expect(blocked.length === 0, `the content security policy blocked nothing (got ${blocked.join(' | ')})`);
 
   await browser.close();
   server.close();

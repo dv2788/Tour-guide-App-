@@ -119,6 +119,14 @@ function saveRouteCaches() {
 }
 
 async function mockNetwork(context, { routeCacheName = 'smoke' } = {}) {
+  // Anything the page's content security policy blocks is recorded: the tests fail on it.
+  // (The console catches what happens before a reload; the event gives the details.)
+  context.cspConsole = [];
+  context.on('console', (msg) => /Content Security Policy/i.test(msg.text()) && context.cspConsole.push(msg.text().slice(0, 200)));
+  await context.addInitScript(() => {
+    window.__cspBlocked = [];
+    document.addEventListener('securitypolicyviolation', (e) => window.__cspBlocked.push(`${e.effectiveDirective || e.violatedDirective} ${e.blockedURI}`));
+  });
   const json = (route, body, status = 200) =>
     route.fulfill({ status, contentType: 'application/json', headers: { 'Access-Control-Allow-Origin': '*' }, body: JSON.stringify(body) });
 
@@ -235,4 +243,7 @@ async function mockNetwork(context, { routeCacheName = 'smoke' } = {}) {
   });
 }
 
-module.exports = { serve, mockNetwork, saveRouteCaches, fixtures, ROOT };
+/** What the content security policy blocked on this page (should be nothing). */
+const cspBlocked = async (page) => [...(await page.evaluate(() => window.__cspBlocked ?? []).catch(() => [])), ...(page.context().cspConsole ?? [])];
+
+module.exports = { serve, mockNetwork, saveRouteCaches, fixtures, ROOT, cspBlocked };

@@ -106,9 +106,15 @@ function loadSaved() {
   }
 }
 
+// Where you start is kept to about 10 m (four decimals), never as the exact GPS fix.
+const roughly = (p) => (p && Number.isFinite(p.lat) && Number.isFinite(p.lon) ? { ...p, lat: Math.round(p.lat * 1e4) / 1e4, lon: Math.round(p.lon * 1e4) / 1e4 } : p);
+function forStorage(values) {
+  return { ...values, start: roughly(values.start), areaPoint: roughly(values.areaPoint), plan: values.plan ? { ...values.plan, start: roughly(values.plan.start) } : values.plan };
+}
+
 function save(values) {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(values));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(forStorage(values)));
   } catch {
     // private mode or storage blocked: not essential
   }

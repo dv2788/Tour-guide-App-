@@ -8,7 +8,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { chromium } = require('playwright');
-const { serve, mockNetwork, saveRouteCaches, fixtures } = require('./mocks.cjs');
+const { serve, mockNetwork, saveRouteCaches, fixtures, cspBlocked } = require('./mocks.cjs');
 
 const SHOTS = path.join(__dirname, 'screenshots');
 const LIVE = process.env.LIVE === '1';
@@ -344,6 +344,8 @@ const LIVE = process.env.LIVE === '1';
   const credit = await page3.$eval('#now-credit', (el) => ({ shown: !el.hidden, text: el.textContent, link: el.querySelector('a')?.href ?? '' }));
   expect(credit.shown && /From Wikipedia · CC BY-SA 4\.0/.test(credit.text) && /wikipedia\.org\/wiki\//.test(credit.link), `the story card credits Wikipedia (${credit.text} ${credit.link})`);
   expect(errors.length === 0, `no page errors (got ${errors.join(' | ')})`);
+  const blocked = await cspBlocked(page);
+  expect(blocked.length === 0, `the content security policy blocked nothing (got ${blocked.join(' | ')})`);
 
   await browser.close();
   server.close();

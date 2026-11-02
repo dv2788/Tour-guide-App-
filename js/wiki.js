@@ -64,6 +64,11 @@ function atMost(ms, promise, fallback) {
  * ".../wikipedia/commons/thumb/a/ab/Casa_Batlló.jpg/320px-Casa_Batlló.jpg" ->
  * "https://commons.wikimedia.org/wiki/File:Casa_Batlló.jpg". Null if it isn't one.
  */
+/** A link or picture address from an answer, only if it's a plain https:// one (never javascript: or data:). */
+export function httpsOnly(url) {
+  return typeof url === 'string' && /^https:\/\/[^\s"'<>]+$/i.test(url) ? url : null;
+}
+
 export function photoPage(imageUrl) {
   const m = /upload\.wikimedia\.org\/wikipedia\/([a-z-]+)\/(?:thumb\/)?[0-9a-f]\/[0-9a-f]{2}\/([^/]+)/.exec(imageUrl ?? '');
   if (!m) return null;
@@ -171,10 +176,10 @@ export function createWikiService({ lang = 'en', fetchImpl = defaultFetch, retry
       type: d.type,
       extract: d.extract ?? '',
       description: d.description ?? '',
-      thumbnail: d.thumbnail?.source ?? null,
+      thumbnail: httpsOnly(d.thumbnail?.source),
       lat: d.coordinates?.lat ?? null,
       lon: d.coordinates?.lon ?? null,
-      url: d.content_urls?.mobile?.page ?? d.content_urls?.desktop?.page ?? `${host}/wiki/${path}`,
+      url: httpsOnly(d.content_urls?.mobile?.page) ?? httpsOnly(d.content_urls?.desktop?.page) ?? `${host}/wiki/${path}`,
     }));
     summaries.set(title, promise);
     promise.catch(() => summaries.delete(title));

@@ -13,7 +13,7 @@
     <header><a href="./"><img src="icons/icon.svg" alt="" />Roamie</a></header>
     <main>
       <h1>Privacy</h1>
-      <p class="updated">Last updated 1 November 2026</p>
+      <p class="updated">Last updated 2 November 2026</p>
 
       <div class="box">
         <strong>In short:</strong> Roamie has no account, no cookies, no analytics and no ads, and no server of its own
@@ -27,7 +27,8 @@
           range, your last suggested route. Kept in your browser's storage so they're there next time.</li>
         <li><strong>The app itself and any voice you download,</strong> so they work with a weak connection.</li>
         <li><strong>Your location</strong> is used on the phone to guide you and to tell you about places you pass. Roamie
-          keeps no history of where you've been.</li>
+          keeps no history of where you've been: only the starting point of your last plan, rounded to about 10 metres,
+          so the plan is still there next time. "Forget everything" below removes it.</li>
         <li><strong>The camera</strong> (in "Point your camera") shows the picture on your screen only. It is not recorded,
           stored or sent anywhere: what you're looking at is worked out from your position and compass.</li>
       </ul>
@@ -92,20 +93,19 @@
     <footer><a href="./">Roamie</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="credits.html">Credits</a></footer>
     <script>
       // Clear what Roamie keeps on this phone: settings, the offline copy, downloaded voices.
+      // Only Roamie's own: other sites on this github.io address keep theirs.
       document.getElementById('forget').addEventListener('click', async () => {
         const done = document.getElementById('forgot');
         try {
-          localStorage.clear();
-          sessionStorage.clear();
+          for (const key of Object.keys(localStorage)) if (/^(roamie|tour-guide)[:-]/.test(key)) localStorage.removeItem(key);
+          for (const key of Object.keys(sessionStorage)) if (/^(roamie|tour-guide)[:-]/.test(key)) sessionStorage.removeItem(key);
         } catch {}
         try {
-          for (const key of await caches.keys()) await caches.delete(key);
+          for (const key of await caches.keys()) if (/^(roamie|tour-guide)-/.test(key)) await caches.delete(key);
         } catch {}
         try {
-          for (const reg of (await navigator.serviceWorker?.getRegistrations()) ?? []) await reg.unregister();
-        } catch {}
-        try {
-          for (const db of (await indexedDB.databases?.()) ?? []) indexedDB.deleteDatabase(db.name);
+          const here = new URL('./', location.href).href;
+          for (const reg of (await navigator.serviceWorker?.getRegistrations()) ?? []) if (reg.scope === here) await reg.unregister();
         } catch {}
         done.hidden = false;
         done.textContent = 'Done: Roamie has forgotten everything on this phone.';

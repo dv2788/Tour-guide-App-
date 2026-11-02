@@ -273,3 +273,11 @@ test('markDemolished reads Wikipedia categories (where Wikidata says nothing), i
   await createWikiService({ fetchImpl: down.fetchImpl, retries: 0 }).markDemolished(same);
   assert.equal(same[0].gone, undefined);
 });
+
+test('links and pictures from Wikipedia answers are used only if they are plain https:// addresses', async () => {
+  const { httpsOnly } = await import('../js/wiki.js');
+  assert.equal(httpsOnly('https://en.m.wikipedia.org/wiki/Casa_Batll%C3%B3'), 'https://en.m.wikipedia.org/wiki/Casa_Batll%C3%B3');
+  for (const bad of ['javascript:alert(1)', 'data:text/html,<b>x</b>', 'http://en.wikipedia.org/wiki/X', 'https://x.org/"onmouseover=', null, undefined, 42]) {
+    assert.equal(httpsOnly(bad), null, String(bad));
+  }
+});

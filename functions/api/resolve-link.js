@@ -13,12 +13,14 @@ const ALLOWED = [
   /^g\.co$/,
   /^maps\.apple$/,
   /^share\.here\.com$/,
-  /^(www\.)?google\.[a-z.]+$/,
-  /^maps\.google\.[a-z.]+$/,
+  // Google's own country domains only (google.com, google.de, google.co.uk, google.com.br):
+  // "google." followed by anything would let google.evil.example in.
+  /^(www\.|maps\.)?google\.(com|[a-z]{2}|co\.[a-z]{2}|com\.[a-z]{2})$/,
   /^consent\.google\.com$/,
   /^maps\.apple\.com$/,
 ];
 const MAX_HOPS = 6;
+const HOP_TIMEOUT_MS = 4000; // a slow server can't hold the function open
 
 export function isAllowed(url) {
   try {
@@ -34,8 +36,14 @@ export async function resolve(url, fetchImpl = fetch) {
   let current = url;
   for (let hop = 0; hop < MAX_HOPS; hop++) {
     if (!isAllowed(current)) break;
-    const res = await fetchImpl(current, { method: 'GET', redirect: 'manual', headers: { 'User-Agent': 'Mozilla/5.0 TourGuide link resolver' } });
+    const res = await fetchImpl(current, {
+      method: 'GET',
+      redirect: 'manual',
+      headers: { 'User-Agent': 'Mozilla/5.0 TourGuide link resolver' },
+      signal: AbortSignal.timeout(HOP_TIMEOUT_MS),
+    });
     const location = res.headers.get('Location');
+    res.body?.cancel?.().catch?.(() => {}); // only the redirect matters, never the page
     if (res.status < 300 || res.status >= 400 || !location) break;
     current = new URL(location, current).toString();
   }
@@ -44,8 +52,12 @@ export async function resolve(url, fetchImpl = fetch) {
 
 export async function onRequestGet({ request }) {
   const target = new URL(request.url).searchParams.get('url') ?? '';
+  // A good answer can be remembered for a day; a failure shouldn't be.
   const json = (body, status = 200) =>
-    new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=86400' } });
+    new Response(JSON.stringify(body), {
+      status,
+      headers: { 'Content-Type': 'application/json', 'Cache-Control': status === 200 ? 'public, max-age=86400' : 'no-store', 'X-Content-Type-Options': 'nosniff' },
+    });
   if (!isAllowed(target)) return json({ error: 'Not a supported map link' }, 400);
   try {
     return json({ url: await resolve(target) });
