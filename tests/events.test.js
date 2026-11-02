@@ -65,3 +65,12 @@ test('Chinese New Year goes by the official dates, not the browser’s calendar 
   const shenzhen = eventsFor('Shenzhen', new Date('2027-02-06T09:00Z'), { ahead: 0 });
   assert.ok(shenzhen.some((e) => e.event.name === 'Chinese New Year'), 'on the day itself');
 });
+
+test('a strange city name (very long, odd spacing) is handled at once', async () => {
+  const { cityKeys, eventsFor } = await import('../js/events.js');
+  const t0 = performance.now();
+  eventsFor(`${' '.repeat(100000)}x`, new Date(Date.UTC(2026, 10, 2)));
+  cityKeys(`Rio${' '.repeat(50000)}-${' '.repeat(50000)}de Janeiro`);
+  assert.ok(performance.now() - t0 < 200, `took ${Math.round(performance.now() - t0)} ms`);
+  assert.deepEqual(cityKeys('Rio  de   Janeiro'), ['rio de janeiro']);
+});

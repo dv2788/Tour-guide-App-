@@ -2,6 +2,8 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; connect-src https://api.polar.sh; img-src 'self'; style-src 'self'; font-src 'self'; base-uri 'none'; form-action 'none'" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Privacy · Roamie</title>
     <meta name="description" content="What Roamie does with your location, camera and searches: no account, no cookies, no tracking." />
@@ -33,7 +35,7 @@
           stored or sent anywhere: what you're looking at is worked out from your position and compass.</li>
       </ul>
       <div class="box">
-        <p style="margin-top: 0">Delete everything Roamie keeps on this phone (settings, plans, downloaded voices, the
+        <p class="flush">Delete everything Roamie keeps on this phone (settings, plans, downloaded voices, the
           offline copy of the app):</p>
         <button type="button" id="forget">Forget everything on this phone</button>
         <p id="forgot" class="muted" role="status" hidden></p>
@@ -59,7 +61,7 @@
           <tr><td>cdnjs (Cloudflare) and jsDelivr</td><td>Requests for the map and voice software</td><td>To deliver the software the app runs on</td></tr>
           <tr><td>Hugging Face</td><td>Requests for a voice's files</td><td>Only if you download an AI voice</td></tr>
           <tr><td><a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement">GitHub Pages</a> (GitHub, USA)</td><td>Requests for Roamie's pages</td><td>Hosting the app</td></tr>
-          <tr><td>Google Maps or Apple Maps</td><td>Your route or next stop</td><td>Only when you tap to open it there; their privacy policy applies</td></tr>
+          <tr><td>Google Maps or Apple Maps</td><td>Your route or next stop (where you started, to about 10 m)</td><td>Only when you tap to open it there; their privacy policy applies</td></tr>
         </tbody>
       </table>
       <p>Roamie's fonts are served from Roamie itself, not from Google Fonts. Some of these services are outside the
@@ -91,25 +93,6 @@
       <p class="muted">If this policy changes, the new version will be published here with a new date.</p>
     </main>
     <footer><a href="./">Roamie</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="credits.html">Credits</a></footer>
-    <script>
-      // Clear what Roamie keeps on this phone: settings, the offline copy, downloaded voices.
-      // Only Roamie's own: other sites on this github.io address keep theirs.
-      document.getElementById('forget').addEventListener('click', async () => {
-        const done = document.getElementById('forgot');
-        try {
-          for (const key of Object.keys(localStorage)) if (/^(roamie|tour-guide)[:-]/.test(key)) localStorage.removeItem(key);
-          for (const key of Object.keys(sessionStorage)) if (/^(roamie|tour-guide)[:-]/.test(key)) sessionStorage.removeItem(key);
-        } catch {}
-        try {
-          for (const key of await caches.keys()) if (/^(roamie|tour-guide)-/.test(key)) await caches.delete(key);
-        } catch {}
-        try {
-          const here = new URL('./', location.href).href;
-          for (const reg of (await navigator.serviceWorker?.getRegistrations()) ?? []) if (reg.scope === here) await reg.unregister();
-        } catch {}
-        done.hidden = false;
-        done.textContent = 'Done: Roamie has forgotten everything on this phone.';
-      });
-    </script>
+    <script type="module" src="js/forget.js"></script>
   </body>
 </html>

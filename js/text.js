@@ -6,16 +6,39 @@
  */
 export function cleanForSpeech(text) {
   if (!text) return '';
-  let s = String(text);
-  let prev;
-  do {
-    prev = s;
-    s = s.replace(/\s*\([^()]*\)/g, '');
-  } while (s !== prev);
-  s = s.replace(/\s*\[[^[\]]*\]/g, '');
+  // Whitespace runs first: every step below then works in a single pass, whatever the text
+  // (Wikipedia text is written by anyone: a run of 100,000 spaces must not freeze the phone).
+  let s = String(text).replace(/\s{2,}/g, ' ');
+  s = dropAsides(s);
   s = s.replace(/\s+([,.;:!?])/g, '$1');
   s = s.replace(/\s{2,}/g, ' ');
   return s.trim();
+}
+
+/**
+ * Remove "(…)" and "[…]" asides, nested or not, with the space before each; a bracket that is
+ * never closed stays. One pass over the text, however deep the nesting.
+ */
+function dropAsides(s) {
+  const marks = new Int32Array(s.length + 1); // +1 where a removed stretch starts, -1 after it ends
+  const open = { '(': [], '[': [] };
+  for (let i = 0; i < s.length; i++) {
+    const c = s[i];
+    if (c === '(' || c === '[') open[c].push(i);
+    else if ((c === ')' && open['('].length) || (c === ']' && open['['].length)) {
+      let start = open[c === ')' ? '(' : '['].pop();
+      if (start > 0 && /\s/.test(s[start - 1])) start--;
+      marks[start]++;
+      marks[i + 1]--;
+    }
+  }
+  const kept = [];
+  let inside = 0;
+  for (let i = 0; i < s.length; i++) {
+    inside += marks[i];
+    if (inside === 0) kept.push(s[i]);
+  }
+  return kept.join('');
 }
 
 /** Split text into sentences, using the platform's sentence segmenter when available. */
@@ -25,7 +48,17 @@ export function splitSentences(text, lang = 'en') {
     const seg = new Intl.Segmenter(lang, { granularity: 'sentence' });
     return Array.from(seg.segment(text), (s) => s.segment.trim()).filter(Boolean);
   }
-  return (text.match(/[^.!?]+[.!?]+(?=\s|$)|[^.!?]+$/g) ?? []).map((s) => s.trim()).filter(Boolean);
+  // Older browsers: cut after . ! or ? followed by a space or the end (one pass, no regex backtracking).
+  const out = [];
+  let start = 0;
+  for (let i = 0; i < text.length; i++) {
+    if ('.!?'.includes(text[i]) && (i + 1 === text.length || /\s/.test(text[i + 1])) && !'.!?'.includes(text[i + 1] ?? '')) {
+      out.push(text.slice(start, i + 1));
+      start = i + 1;
+    }
+  }
+  out.push(text.slice(start));
+  return out.map((s) => s.trim()).filter(Boolean);
 }
 
 /** The first `count` sentences of a text. */
@@ -85,7 +118,11 @@ const MINOR_RE =
   /\b(street|road|lane|avenue|boulevard|highway|motorway|station|school|company|corporation|office building|hotel|restaurant|rue|calle|stra(ss|ß)e|via|gare|[ée]cole|escuela|schule|scuola)\b/i;
 
 /** Classify a place as 'skip', 'minor', or null (interesting). */
-export function classifyPlace({ title = '', description = '', disambiguation = false } = {}) {
+export function classifyPlace({ title: rawTitle = '', description: rawDescription = '', disambiguation = false } = {}) {
+  // Wikipedia titles are at most 255 bytes and short descriptions a line: longer is vandalism,
+  // and only the start is needed to tell what a place is.
+  const title = String(rawTitle ?? '').slice(0, 300);
+  const description = String(rawDescription ?? '').slice(0, 500);
   if (disambiguation || /^list of\b/i.test(title) || SKIP_RE.test(description) || METRO_TITLE_RE.test(title)) return 'skip';
   if (MINOR_RE.test(description) || /\b(station|gare|bahnhof)\b/i.test(title)) return 'minor';
   return null;

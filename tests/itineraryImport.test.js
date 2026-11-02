@@ -156,3 +156,18 @@ test('real places that start like a driving instruction are kept', () => {
     'Take Five Jazz Club',
   ]);
 });
+
+test('pasted text with hidden runs of spaces or tabs, or a broken link, is read at once', async () => {
+  const { parseItinerary, parseTextList } = await import('../js/itineraryImport.js');
+  const t0 = performance.now();
+  parseTextList(`from${' '.repeat(2500)}!`);
+  parseTextList(`de${' '.repeat(20000)}x`);
+  parseItinerary(`https://example.com/x\nfrom${'\t'.repeat(20000)}.`);
+  parseTextList(`from ${'x '.repeat(1000)}`);
+  parseTextList(`from ${'a '.repeat(1000)}to b`);
+  assert.ok(performance.now() - t0 < 300, `took ${Math.round(performance.now() - t0)} ms`);
+  assert.deepEqual(parseTextList('Directions from   Louvre\t\tto  Eiffel Tower').stops.map((s) => s.name), ['Louvre', 'Eiffel Tower']);
+  // A Google link with a broken %-code in its data part: no crash, the stops are still read.
+  const broken = parseItinerary('https://www.google.com/maps/dir/Louvre/Eiffel+Tower/data=%E0%A4%A');
+  assert.deepEqual(broken.stops.map((s) => s.name), ['Louvre', 'Eiffel Tower']);
+});

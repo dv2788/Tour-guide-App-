@@ -77,7 +77,7 @@ function modeFromWord(word) {
 function parseGoogle(u) {
   const p = u.searchParams;
   const parts = u.pathname.split('/').filter(Boolean);
-  const data = decodeURIComponent(u.pathname.match(/\/data=([^/?]*)/)?.[1] ?? '');
+  const data = decodePathSegment(u.pathname.match(/\/data=([^/?]*)/)?.[1] ?? ''); // a broken %-code mustn't throw
   const result = { source: 'google', values: [], coords: [], mode: null };
 
   // Travel mode: official URLs, data blob (!3e0 drive, !3e1 bike, !3e2 walk, !3e3 transit), legacy.
@@ -336,7 +336,9 @@ const DIRECTIONS_TO = /^(?:directions|route|itin[ée]raire|ruta|percorso|indicaz
 export function parseTextList(text) {
   const values = [];
   for (const rawLine of text.replace(URL_RE, '\n').split(/\r?\n|;|\s\|\s/)) {
-    const line = rawLine.replace(LEADING_MARKER, '').trim();
+    // One space between words and a sane length first: pasted text can hide long runs of tabs or
+    // no-break spaces, which would make the patterns below crawl (and freeze the phone).
+    const line = rawLine.replace(/\s+/g, ' ').slice(0, 2000).replace(LEADING_MARKER, '').trim();
     if (!line || (INSTRUCTION.test(line) && DIRECTION_WORD.test(line)) || DURATION.test(line) || /^via\b/i.test(line)) continue;
     const fromTo = line.match(DIRECTIONS_FROM_TO);
     const to = line.match(DIRECTIONS_TO);

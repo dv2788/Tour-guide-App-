@@ -166,3 +166,7 @@ footer a {
     font-weight: 500;
   }
 }
+
+.flush {
+  margin-top: 0;
+}

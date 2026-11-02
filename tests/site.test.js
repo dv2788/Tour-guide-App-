@@ -130,13 +130,30 @@ test('the app page has a content security policy that covers every service it us
   const csp = index.match(/http-equiv="Content-Security-Policy" content="([^"]+)"/)?.[1];
   assert.ok(csp, 'index.html has a Content-Security-Policy');
   const directives = Object.fromEntries(csp.split(';').map((d) => d.trim().split(/\s+/)).map(([name, ...values]) => [name, values]));
-  const allows = (directive, host) => (directives[directive] ?? []).some((v) => v === `https://${host}` || (v.startsWith('https://*.') && host.endsWith(v.slice('https://*'.length))));
+  // A whole host ("https://x"), a subdomain wildcard ("https://*.x") or a folder ("https://x/some/path/").
+  const allows = (directive, target) => {
+    const u = new URL(target.includes('://') ? target : `https://${target}/`);
+    return (directives[directive] ?? []).some(
+      (v) => v === `https://${u.host}` || (v.startsWith('https://*.') && u.host.endsWith(v.slice('https://*'.length))) || (v.endsWith('/') && u.href.startsWith(v)),
+    );
+  };
   // Every host the code fetches from (the same scan as the privacy-page test, plus the language-dependent Wikipedia).
   const code = readdirSync(new URL('../js/', import.meta.url)).map((f) => read(`js/${f}`)).join('\n');
   const contacted = new Set([...code.matchAll(/fetch[A-Za-z]*\(\s*`https:\/\/([a-z0-9.-]+)/g)].map((m) => m[1]));
   for (const host of [...contacted, 'en.wikipedia.org', 'www.wikidata.org', 'tiles.openfreemap.org', 'huggingface.co']) assert.ok(allows('connect-src', host), `connect-src allows ${host}`);
   // Every outside script the page loads.
-  for (const m of index.matchAll(/<script[^>]*src="https:\/\/([^/"]+)/g)) assert.ok(allows('script-src', m[1]), `script-src allows ${m[1]}`);
+  for (const m of index.matchAll(/<script[^>]*src="(https:\/\/[^"]+)"/g)) assert.ok(allows('script-src', m[1]), `script-src allows ${m[1]}`);
+  // The voice engine's scripts and files (loaded by js/neuralVoice.js).
+  const voice = read('js/neuralVoice.js');
+  const ortBase = voice.match(/ORT_BASE = '([^']+)'/)[1];
+  const piperBase = voice.match(/PHONEMIZER_BASE = '([^']+)'/)[1];
+  for (const url of [`${ortBase}ort.wasm.min.js`, `${piperBase}.js`]) assert.ok(allows('script-src', url), `script-src allows ${url}`);
+  for (const url of [`${ortBase}ort-wasm-simd.wasm`, `${piperBase}.wasm`, `${piperBase}.data`]) assert.ok(allows('connect-src', url), `connect-src allows ${url}`);
+  // Only the exact library folders on the shared CDNs, not everything they serve.
+  for (const directive of ['script-src', 'style-src', 'connect-src', 'img-src']) {
+    for (const cdn of ['https://cdnjs.cloudflare.com', 'https://cdn.jsdelivr.net']) assert.ok(!directives[directive]?.includes(cdn), `${directive}: not all of ${cdn}`);
+  }
+  assert.ok(!directives['style-src'].includes("'unsafe-inline'"), 'no inline styles either');
   for (const [directive, values] of Object.entries(directives)) {
     assert.ok(!values.includes("'unsafe-eval'") && !values.includes('*') && !values.includes('https:'), `${directive} has nothing loose`);
   }

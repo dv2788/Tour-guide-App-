@@ -1,5 +1,7 @@
 // Screen wiring: the setup form, the map, the "now playing" card and the controls.
 
+import './frame-guard.js'; // first: never run inside another site's frame
+
 import { getMode, MODES } from './modes.js';
 import { SAMPLES, DEFAULT_SAMPLE, REGIONS, sampleById } from './samples.js';
 import { storedPlaces } from './sample-places.js';
@@ -17,6 +19,7 @@ import { parseItinerary, parseTextList, SOURCE_LABELS } from './itineraryImport.
 import { NEURAL_VOICES, neuralVoiceKey, parseVoiceKey, rankSystemVoices, PREVIEW_TEXT, PREVIEW_TEXT_DOCUMENTARY, voiceProfile } from './voices.js';
 import { isVoiceDownloaded, neuralVoicesSupported } from './neuralVoice.js';
 import { createPlus, freeVoice, isFreeVoice } from './plus.js';
+import { cleanSaved } from './saved.js';
 import { formatClock } from './openingHours.js';
 import { eventsFor, formatDays, eventLink } from './events.js';
 import {
@@ -101,9 +104,18 @@ function syncFormHints() {
   $('sim-speed-row').hidden = source !== 'sim';
 }
 
+// The choices the form offers: a saved value outside them is ignored.
+const FORM_CHOICES = {
+  lang: LANGUAGES.map((l) => l.code),
+  mode: Object.keys(MODES),
+  source: ['gps', 'sim'],
+  rate: ['0.9', '1', '1.15'],
+  simSpeed: ['1', '4', '8', '16'],
+};
+
 function loadSaved() {
   try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY) ?? localStorage.getItem(OLD_STORAGE_KEY) ?? 'null');
+    return cleanSaved(JSON.parse(localStorage.getItem(STORAGE_KEY) ?? localStorage.getItem(OLD_STORAGE_KEY) ?? 'null'), FORM_CHOICES);
   } catch {
     return null;
   }
@@ -202,7 +214,8 @@ async function expandShortLink(url) {
   try {
     const res = await fetch(`api/resolve-link?url=${encodeURIComponent(url)}`, { headers: { Accept: 'application/json' } });
     if (!res.ok || !(res.headers.get('Content-Type') ?? '').includes('json')) return null;
-    return (await res.json()).url ?? null;
+    const { url: full } = await res.json();
+    return typeof full === 'string' && /^https:\/\//.test(full) ? full : null;
   } catch {
     return null;
   }
@@ -745,7 +758,9 @@ $('suggest-go').addEventListener('click', planRoute);
 function planMapsLinks() {
   if (!plan?.items?.length) return [];
   const stops = plan.items.filter((it) => it.lat != null);
-  return routeMapsLinks(plan.loop && plan.start ? [...stops, plan.start] : stops, { modeId: readForm().mode, origin: plan.start ?? null });
+  // Where you started (often where you're staying) goes to Google to about 10 m, not as the GPS fix.
+  const home = roughly(plan.start) ?? null;
+  return routeMapsLinks(plan.loop && home ? [...stops, home] : stops, { modeId: readForm().mode, origin: home });
 }
 
 function renderPlan() {
@@ -1272,7 +1287,9 @@ function addBaseMap(target) {
   const dark = window.matchMedia?.('(prefers-color-scheme: dark)').matches;
   quietStyle(VECTOR_STYLES[dark ? 'dark' : 'light'])
     .then((style) => {
-      const layer = window.L.maplibreGL({ style, attribution: VECTOR_ATTRIBUTION, maxZoom: 22 }).addTo(target);
+      // Our own credit line: left alone, the plugin would copy the tile server's credit text into
+      // the page as HTML (a tile server we don't control could then add links or markup).
+      const layer = window.L.maplibreGL({ style, attributionControl: { customAttribution: VECTOR_ATTRIBUTION }, maxZoom: 22 }).addTo(target);
       const gl = layer.getMaplibreMap?.();
       let loaded = false;
       gl?.on('load', () => (loaded = true));

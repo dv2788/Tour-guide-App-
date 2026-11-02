@@ -168,7 +168,11 @@ export const EVENTS = [
 
 /** "Lyon, France", "Bruxelles - Brussel", "FÈS" -> the names to look up ("lyon", "bruxelles", "brussel", "fes"). */
 export function cityKeys(name) {
+  // A city name is short: anything past 200 characters isn't one (and long runs of spaces would
+  // slow the split below to a crawl).
   const plain = String(name ?? '')
+    .slice(0, 200)
+    .replace(/\s+/g, ' ')
     .normalize('NFD')
     .replace(/[̀-ͯ]/g, '')
     .toLowerCase();

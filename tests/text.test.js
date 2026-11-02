@@ -94,3 +94,30 @@ test('documentary narration phrases, with standard fallbacks', async () => {
   // Italian has no narrator phrasing: standard phrases are used.
   assert.equal(t('it', 'left', {}, 'documentary'), 'Alla tua sinistra');
 });
+
+test('text from anyone can never freeze the phone: cleaning and splitting take one pass', () => {
+  const nasty = [' '.repeat(100000) + 'x', '('.repeat(20000) + 'x' + ')'.repeat(20000), '[('.repeat(20000), `${'a '.repeat(50000)}(`];
+  for (const text of nasty) {
+    const t0 = performance.now();
+    cleanForSpeech(text);
+    assert.ok(performance.now() - t0 < 300, `cleanForSpeech took ${Math.round(performance.now() - t0)} ms`);
+  }
+  // Same results as before on ordinary text.
+  assert.equal(cleanForSpeech('A (b (c) d) e [1] f (unclosed'), 'A e f (unclosed');
+  assert.equal(cleanForSpeech('Hello , world  !'), 'Hello, world!');
+  assert.equal(cleanForSpeech('Mixed ( [ ) ] end'), 'Mixed end');
+});
+
+test('older browsers (no sentence segmenter) split sentences in one pass too', async () => {
+  const saved = Intl.Segmenter;
+  try {
+    delete Intl.Segmenter;
+    const { splitSentences } = await import(`../js/text.js?nosegmenter=${Date.now()}`);
+    assert.deepEqual(splitSentences('It is 3.5 km long. Built in 1889! Who knew?! The end'), ['It is 3.5 km long.', 'Built in 1889!', 'Who knew?!', 'The end']);
+    const t0 = performance.now();
+    splitSentences('word '.repeat(100000));
+    assert.ok(performance.now() - t0 < 300, `splitSentences took ${Math.round(performance.now() - t0)} ms`);
+  } finally {
+    Intl.Segmenter = saved;
+  }
+});

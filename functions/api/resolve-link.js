@@ -25,7 +25,8 @@ const HOP_TIMEOUT_MS = 4000; // a slow server can't hold the function open
 export function isAllowed(url) {
   try {
     const u = new URL(url);
-    return u.protocol === 'https:' && ALLOWED.some((re) => re.test(u.hostname));
+    // No "user:password@", no unusual port: only the plain address of a known map host.
+    return u.protocol === 'https:' && !u.username && !u.password && u.port === '' && ALLOWED.some((re) => re.test(u.hostname));
   } catch {
     return false;
   }
@@ -60,7 +61,10 @@ export async function onRequestGet({ request }) {
     });
   if (!isAllowed(target)) return json({ error: 'Not a supported map link' }, 400);
   try {
-    return json({ url: await resolve(target) });
+    const url = await resolve(target);
+    // Only ever hand back a web address (never "javascript:", "data:" and the like).
+    if (!/^https?:\/\/[^\s"'<>]+$/i.test(url)) return json({ error: 'Not a map link' }, 422);
+    return json({ url });
   } catch {
     return json({ error: 'Could not expand this link' }, 502);
   }

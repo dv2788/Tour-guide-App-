@@ -109,6 +109,9 @@ async function summary(title) {
 }
 
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+// These pages run no script and load only their own files: say so, so a browser refuses anything else
+// (markup slipped into a Wikipedia text could then do nothing at all).
+const PAGE_CSP = "default-src 'none'; img-src 'self' https://dv2788.github.io; style-src 'self' 'unsafe-inline'; font-src 'self'; base-uri 'none'; form-action 'none'";
 const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
 /** The first sentences of an intro, up to about 280 characters. */
 function intro(extract = '') {
@@ -241,6 +244,8 @@ function tourPage(sample) {
 <html lang="en">
 <head>
 <meta charset="utf-8" />
+<meta http-equiv="Content-Security-Policy" content="${PAGE_CSP}" />
+<meta name="referrer" content="strict-origin-when-cross-origin" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(description)}" />
@@ -328,6 +333,8 @@ await writeFile(
 <html lang="en">
 <head>
 <meta charset="utf-8" />
+<meta http-equiv="Content-Security-Policy" content="${PAGE_CSP}" />
+<meta name="referrer" content="strict-origin-when-cross-origin" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="robots" content="noindex" />
 <title>Page not found · Roamie</title>

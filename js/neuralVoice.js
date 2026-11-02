@@ -14,6 +14,8 @@ const CACHE_NAME = 'tour-guide-voices-v1';
 // Fingerprints of the WebAssembly code we run (checked against a second download source):
 // like the scripts' integrity attributes, a changed file on a CDN is refused, not run.
 const PHONEMIZER_WASM = { url: `${PHONEMIZER_BASE}.wasm`, integrity: 'sha384-p7p53pHMdJ/Czq5r8i0cXWVgLA+CeXEeki1NGyNN0BKfNFLIdxeg0R0+5SzNSop3' };
+// Its pronunciation dictionary (data, read by that code): checked against the npm package too.
+const PHONEMIZER_DATA = { url: `${PHONEMIZER_BASE}.data`, integrity: 'sha384-6Xh3BfiH+X7e4My11k66vDp7WUWQmn5Ifmsx4ZB1wg8vA9+lmOUucunqJpNsNUuf' };
 const ORT_WASM = {
   'ort-wasm-simd.wasm': 'sha384-fRaLGPIzvF2phGW4iOtonTas/h/+gi5pnuRbYIFDHMAY6wl8PjBiOd42lVUpDaNd',
   'ort-wasm.wasm': 'sha384-knZ5sDiuTisFgxBlwY3twQEH8QlgshupTIFY2Ssx2fz41zpiv8Z4aKFrd93WosAw',
@@ -178,7 +180,7 @@ export class PiperVoice {
       fetchCached(files.config),
       fetchCached(files.model, report('model')),
       fetchCached(PHONEMIZER_WASM.url, report('wasm'), PHONEMIZER_WASM.integrity),
-      fetchCached(`${PHONEMIZER_BASE}.data`, report('data')),
+      fetchCached(PHONEMIZER_DATA.url, report('data'), PHONEMIZER_DATA.integrity),
       fetchCached(`${ORT_BASE}${ortFile}`, report('ort'), ORT_WASM[ortFile]),
     ]);
     this.config = JSON.parse(new TextDecoder().decode(configBuf));
