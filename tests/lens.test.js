@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { cameraHeading, smoothHeading, placesInView, placesAround, whereItIs } from '../js/lens.js';
+import { cameraHeading, smoothHeading, compassJitter, placesInView, placesAround, whereItIs } from '../js/lens.js';
 
 // The Block of Discord on Passeig de Gràcia (which runs south-east to north-west): three famous
 // houses side by side, Casa Amatller and Casa Lleó Morera further down the avenue.
@@ -108,4 +108,30 @@ test('on a square, the building you point at wins over "You’re here"; with not
   const nothingElse = placesInView(BATLLO, 0, [square, townHall]);
   assert.equal(nothingElse[0].title, 'Grand-Place');
   assert.equal(whereItIs(nothingElse[0]), "You're here");
+});
+
+test('a big place whose size Wikipedia gives counts when you aim anywhere across it', () => {
+  // The Colosseum (~190 m across), 120 m away; a small fountain 25° to the right of its centre.
+  const colosseum = { title: 'Colosseum', description: 'amphitheatre in Rome', ...from(BATLLO, 0, 120), langs: 150, dim: 190 };
+  const fountain = { title: 'Small Fountain', description: 'fountain in Rome', ...from(BATLLO, 25, 110), langs: 3 };
+  assert.equal(placesInView(BATLLO, 20, [colosseum, fountain])[0].title, 'Colosseum', 'aiming at its right-hand side');
+  // A size by default ("landmark" = 1 km) is not a size: back to a building's width.
+  const unknown = { ...colosseum, title: 'Some Landmark', langs: 3, dim: 1000 };
+  assert.equal(placesInView(BATLLO, 25, [unknown, fountain])[0].title, 'Small Fountain');
+});
+
+test('with a poor GPS fix, places just outside the view still count; neighbours stay apart', () => {
+  const edge = { title: 'Edge Tower', description: 'tower', ...from(BATLLO, 50, 60), langs: 20 }; // just outside the 60° view
+  assert.equal(placesInView({ ...BATLLO, accuracy: 5 }, 0, [edge]).length, 0, 'out of view with a good fix');
+  assert.equal(placesInView({ ...BATLLO, accuracy: 60 }, 0, [edge]).length, 1, 'kept with a poor one');
+  // Across from the Block of Discord with a poor fix: aiming at Casa Amatller still picks it.
+  assert.equal(placesInView({ ...across, accuracy: 40 }, 208, places)[0].title, 'Casa Amatller');
+});
+
+test('the compass follows you quickly when you turn, steadily when you hold still', () => {
+  assert.ok(Math.abs(smoothHeading(100, 104) - 101) < 0.01, 'a small wobble moves it a quarter of the way');
+  assert.ok(Math.abs(smoothHeading(100, 160) - 136) < 0.01, 'a real turn moves it most of the way');
+  assert.equal(compassJitter([10, 20, 30, 40, 50]), 0, 'turning steadily is not jitter');
+  assert.ok(compassJitter([10, 40, 5, 45, 0, 50]) > 150, 'swinging back and forth is');
+  assert.equal(compassJitter([350, 355, 0, 5]), 0, 'through north, the short way');
 });

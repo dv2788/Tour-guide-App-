@@ -128,7 +128,7 @@ export function createWikiService({ lang = 'en', fetchImpl = defaultFetch, retry
       ggslimit: String(Math.min(50, Math.max(1, limit))),
       prop: 'coordinates|description|pageimages|pageprops|langlinkscount',
       colimit: 'max',
-      coprop: 'type', // what the point marks: a city's centre isn't a landmark you're standing at
+      coprop: 'type|dim', // what the point marks (a city's centre isn't a landmark) and how big it is
       piprop: 'thumbnail',
       pithumbsize: '240',
       pilimit: 'max',
@@ -151,6 +151,7 @@ export function createWikiService({ lang = 'en', fetchImpl = defaultFetch, retry
           disambiguation: !!p.pageprops && 'disambiguation' in p.pageprops,
           langs: p.langlinkscount ?? 0, // how well known (left out when there are none)
           coordType: c.type ?? null,
+          dim: c.dim ?? null, // metres across (a default by kind when the article gives none)
           gone: gone.has(p.pageprops?.wikibase_item),
         };
         poi.category = classifyPlace(poi);

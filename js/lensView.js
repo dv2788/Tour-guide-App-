@@ -3,7 +3,7 @@
 // place: an arrow shows which way to turn, and when it's in front of you, its story pops up.
 // Where things are comes from GPS and the compass (see js/lens.js), not from the image.
 
-import { cameraHeading, smoothHeading, placesInView, placesAround, whereItIs } from './lens.js';
+import { cameraHeading, smoothHeading, compassJitter, placesInView, placesAround, whereItIs } from './lens.js';
 import { distanceMeters, bearingDegrees, angleDiff } from './geo.js';
 import { firstSentences } from './text.js';
 import { photoPage } from './wiki.js';
@@ -77,6 +77,7 @@ export function createLens({ wiki, streetName, narrator }) {
     setTarget(target);
     status('Starting the camera…');
 
+    s.recent = [];
     s.onOrient = (e) => {
       const h = cameraHeading(e); // relative to magnetic north
       if (h == null || s.closed) return;
@@ -84,6 +85,14 @@ export function createLens({ wiki, streetName, narrator }) {
       s.magnetic = smoothHeading(s.magnetic, h);
       s.heading = trueHeading(s.magnetic, s.declination);
       s.compass = true;
+      // How far to trust it: the iPhone says (degrees, -1 = needs calibrating); otherwise, how
+      // much it has wavered over the last second and a half.
+      const now = performance.now();
+      s.recent.push({ at: now, h });
+      while (s.recent.length && now - s.recent[0].at > 1500) s.recent.shift();
+      const ios = Number.isFinite(e.webkitCompassAccuracy) ? e.webkitCompassAccuracy : null;
+      s.compassError = ios != null && ios >= 0 ? ios : null;
+      s.unsteady = ios === -1 || (ios ?? 0) > 25 || (s.recent.length >= 8 && compassJitter(s.recent.map((r) => r.h)) > 90);
       draw();
     };
     window.addEventListener('deviceorientationabsolute', s.onOrient);
@@ -202,8 +211,16 @@ export function createLens({ wiki, streetName, narrator }) {
   function render(s) {
     if (!s.position) return;
     const compass = s.heading != null;
-    const inView = compass ? placesInView(s.position, s.heading, s.places) : placesAround(s.position, s.places);
-    if (s.places.length && !s.target) status(compass ? '' : "No compass on this phone: here's what's around you, nearest first.");
+    const headingError = Math.min(25, Math.max(5, s.compassError ?? 5));
+    const inView = compass ? placesInView(s.position, s.heading, s.places, { headingError }) : placesAround(s.position, s.places);
+    if (s.places.length && !s.target) {
+      // Say when the labels may be off, and what helps.
+      const hints = [];
+      if (!compass) hints.push("No compass on this phone: here's what's around you, nearest first.");
+      else if (s.unsteady) hints.push('The compass is unsteady: wave your phone in a figure 8 to calibrate it.');
+      if ((s.position.accuracy ?? 0) > 50) hints.push(`Your position is only known to about ${Math.round(s.position.accuracy / 10) * 10} m here, so labels may be off. It gets better in the open.`);
+      status(hints.join(' '), compass && hints.length ? 'warn' : '');
+    }
 
     // Labels on the camera image, where each place stands (nearer ones lower down), below the
     // "Looking for…" banner when there is one.

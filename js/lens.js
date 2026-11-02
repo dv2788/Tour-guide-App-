@@ -38,11 +38,39 @@ export function cameraHeading(event) {
   return (Math.atan2(east, north) / DEG + 360) % 360;
 }
 
-/** Smooth a jittery compass: move part of the way towards the new reading, the short way round. */
-export function smoothHeading(previous, next, factor = 0.25) {
+/**
+ * Smooth a jittery compass: move part of the way towards the new reading, the short way round.
+ * Without a factor, it adapts: steady when you hold the phone still, quick when you turn.
+ */
+export function smoothHeading(previous, next, factor = null) {
   if (previous == null) return next;
   if (next == null) return previous;
-  return (previous + angleDiff(previous, next) * factor + 360) % 360;
+  const diff = angleDiff(previous, next);
+  const f = factor ?? (Math.abs(diff) > 25 ? 0.6 : 0.25);
+  return (previous + diff * f + 360) % 360;
+}
+
+/**
+ * How much a compass wavers, in degrees, from its recent readings (oldest first): the back and
+ * forth beyond the overall turn. Turning steadily scores ~0; an uncalibrated compass, a lot.
+ */
+export function compassJitter(readings) {
+  let travelled = 0;
+  let net = 0;
+  for (let i = 1; i < readings.length; i++) {
+    const d = angleDiff(readings[i - 1], readings[i]);
+    travelled += Math.abs(d);
+    net += d;
+  }
+  return travelled - Math.abs(net);
+}
+
+/** Half the width of a place in metres, and whether we know it (Wikipedia gave its size). */
+function halfWidth(p) {
+  // Without a size of its own, Wikipedia gives a default by kind (about 1 km for a landmark).
+  const dim = Number(p.dim);
+  const known = Number.isFinite(dim) && dim > 0 && dim < 1000;
+  return { half: known ? Math.min(150, Math.max(10, dim / 2)) : 15, known };
 }
 
 /**
@@ -54,26 +82,36 @@ export function smoothHeading(previous, next, factor = 0.25) {
  * big buildings close by and for compass error. The best is the one nearest the centre, nearer
  * places and better-known ones winning ties: in a street of famous houses, the one you aim at.
  */
-export function placesInView(position, heading, places, { fov = 60, maxDistance = 300, hereWithin = 25 } = {}) {
+export function placesInView(position, heading, places, { fov = 60, maxDistance = 300, hereWithin = 25, headingError = 5 } = {}) {
   if (!position || heading == null) return [];
   const half = fov / 2;
+  // GPS error in metres: in a street of tall buildings it can be 30–60 m.
+  const accuracy = Number.isFinite(position.accuracy) ? position.accuracy : 10;
   const seen = [];
   for (const p of places) {
     if (!pointable(p)) continue;
     const distance = distanceMeters(position, p);
     if (distance > maxDistance) continue;
+    // (Not widened by GPS error: a vague position mustn't make "You're here" more likely.)
     const here = distance <= hereWithin;
     const bearingOff = angleDiff(heading, bearingDegrees(position, p));
     // Standing at a place with your back to it, you're pointing at something else (on a square,
     // with GPS 10–20 m off, the building beside you mustn't hide the belfry in front).
     const behind = here && (Math.abs(bearingOff) > 100 || isSquare(p));
     const off = here ? 0 : bearingOff;
-    const size = Math.atan2(15, Math.max(distance, 1)) / DEG; // a building is ~30 m wide
-    if (!here && Math.abs(off) > half + Math.min(size, 15)) continue;
-    // Closest to the middle first, but within compass error (~5°) it's a tie: then the better
-    // known, then the nearer (Wikipedia puts a building's point anywhere inside it).
+    const near = Math.max(distance, 1);
+    const width = halfWidth(p);
+    const size = Math.atan2(width.half, near) / DEG; // how wide it looks from here
+    // In view: within the field of view, widened by its width and by the GPS error seen from here.
+    const gpsAngle = Math.min(15, Math.atan2(accuracy, near) / DEG);
+    if (!here && Math.abs(off) > half + Math.min(size, 45) + gpsAngle) continue;
+    // Closest to the middle first, but within the compass's error it's a tie: then the better
+    // known, then the nearer (Wikipedia puts a building's point anywhere inside it). Aiming
+    // anywhere across a place whose size we know (a 190 m amphitheatre) counts as aiming at it.
+    // (GPS error moves neighbouring buildings together, so it doesn't decide between them.)
+    const aimed = Math.max(headingError, width.known ? Math.min(30, size) : 0);
     const fame = Math.log10(1 + (p.langs ?? 0)) + (p.category === 'minor' ? -1 : 0);
-    const cost = here ? -1000 : Math.max(0, Math.abs(off) - 5) + distance / 25 - fame * 4;
+    const cost = here ? -1000 : Math.max(0, Math.abs(off) - aimed) + distance / 25 - fame * 4;
     seen.push({ ...p, distance, off, here, behind, x: Math.min(1, Math.max(0, 0.5 + off / fov)), cost });
   }
   const ahead = seen.filter((p) => !p.behind);
