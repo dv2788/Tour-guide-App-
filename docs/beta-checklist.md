@@ -6,8 +6,13 @@ What "ready to publish" means, and where each item stands. ✓ done · ◻ needs
 - ✓ Unit tests green (`npm test`).
 - ✓ Browser tests green: the Barcelona walk, a pasted Google Maps route, a suggested half-day,
   the AI voice, the camera, Plus (off), outings and itineraries, first person, Street View (stand-in).
-- ✓ Outings by interest tried in 34 cities in five languages against real Wikipedia, overnight
-  (see the night report); what broke was fixed.
+- ✓ Outings by interest tried in 34 cities in five languages against real Wikipedia, overnight:
+  1,054 outings (7 interest sets × 5 kinds per city). 88% came back with itineraries; the rest
+  are honest "nothing here" answers, almost all food or landscapes in small towns (Chamonix,
+  Dubrovnik, Monterosso, Annecy, Waterloo) or within an hour's walk. Three rounds of fixes
+  (places by what they are, summits and islands off on foot, demolished places out, a refused
+  Wikipedia search asked again); 2,300 flagged problems went down to 159, nearly all of them
+  a famous landmark on the way or a war memorial the checker wrongly suspected.
 - ✓ Stop times checked across those cities: no statue gets an hour, no cathedral gets five minutes.
 - ✓ Live site re-checked after every push.
 

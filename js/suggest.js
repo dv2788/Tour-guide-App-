@@ -38,7 +38,9 @@ const MUSEUM_RE = /(?:^|[^\p{L}])(?:museum|musée|musee|museo|museu|gallery|gale
 // ---------- What a place is about: history, culture, landscapes, food ----------
 // Whole words (and their plurals), in the five supported languages.
 const words = (list) => new RegExp(`(?:^|[^\\p{L}])(?:${list.join('|')})(?![\\p{L}])`, 'iu');
-const LANDSCAPE_RE = words([
+// …and in a description, what a place *is* comes first: "hôpital de l'île de la Cité" is a hospital.
+const heads = (list) => new RegExp(`^(?:[\\p{L}'’-]+\\s+){0,2}(?:${list.join('|')})(?![\\p{L}])`, 'iu');
+const LANDSCAPE_WORDS = [
   // English
   'parks?', 'gardens?', 'viewpoints?', 'lookout', 'overlook', 'belvedere', 'promenade', 'esplanade', 'hills?', 'mountains?', 'mount', 'peaks?',
   'summit', 'volcano', 'lakes?', 'lagoon', 'beach(?:es)?', 'bay', 'cove', 'waterfalls?', 'falls', 'cascades?', 'gorge', 'canyon', 'cliffs?', 'cape',
@@ -57,7 +59,9 @@ const LANDSCAPE_RE = words([
   // Italian
   'parco', 'giardin[oi]', 'collina', 'montagna', 'vetta', 'vulcano', 'spiaggia', 'baia', 'cascata', 'gola', 'scogliera', 'capo', 'isola',
   'foresta', 'riserva naturale', 'grotta', 'lungomare',
-]);
+];
+const LANDSCAPE_RE = words(LANDSCAPE_WORDS);
+const LANDSCAPE_HEAD_RE = heads(LANDSCAPE_WORDS);
 // German nouns are capitalised: "See" is a lake, "see" is not; "the Strand" is a London street.
 const LANDSCAPE_DE_RE = /(?:^|[^\p{L}])(?<!\bthe\s)(?:See|Strand|Tal|Kap)(?![\p{L}])/u;
 // Parks and the like that aren't landscapes.
@@ -68,13 +72,15 @@ const CULTURE_RE = words([
   'cinema', 'conservatory', 'théâtre', 'opéra', 'bibliothèque', 'centre culturel', 'salle de concert', 'teatro', 'ópera', 'biblioteca',
   'centro cultural', 'auditorio', 'theater', 'oper', 'bibliothek', 'kulturzentrum', 'konzerthaus', 'philharmonie', 'centro culturale',
 ]);
-const FOOD_RE = words([
+const FOOD_WORDS = [
   'market(?:s| hall)?', 'food hall', 'food court', 'street food', 'covered market', 'caf[eé]s?', 'coffee ?house', 'restaurants?', 'bakery', 'patisserie',
   'brewery', 'winery', 'vineyards?', 'chocolate', 'tea ?house', 'tea ?rooms?', 'delicatessen', 'deli', 'diner', 'pizzeria', 'bistro', 'taverna?', 'pub',
   'public house', 'ice cream', 'gelato', 'wine bar', 'beer hall', 'marché', 'halles', 'brasserie', 'boulangerie', 'pâtisserie', 'chocolaterie', 'vignoble', 'mercado',
   'confitería', 'pastelería', 'panadería', 'cervecería', 'bodega', 'chocolatería', 'viñedo', 'markt', 'markthalle', 'kaffeehaus', 'konditorei',
   'bäckerei', 'brauerei', 'weingut', 'mercato', 'caffè', 'pasticceria', 'birrificio', 'enoteca', 'gelateria', 'osteria', 'trattoria',
-]);
+];
+const FOOD_RE = words(FOOD_WORDS);
+const FOOD_HEAD_RE = heads(FOOD_WORDS);
 
 // A café that's a nightclub, a restaurant that's a chain or a music venue: not a taste of the place.
 const NOT_FOOD_RE =
@@ -91,7 +97,7 @@ const BUILDING_RE =
 // Kinds of place whose names say nothing about them: "Bank of America Tower" is an office
 // skyscraper, not a castle tower; "Madison Square Garden" an arena, not a garden.
 const NOT_BY_NAME_RE =
-  /(?:^|[^\p{L}])(?:skyscraper|office|offices|residential|apartment|apartments|condominium|arena|stadium|shopping|mall|parking|gratte-ciel|bureaux|résidentiel|rascacielos|oficinas|residencial|estadio|hochhaus|wolkenkratzer|büro|wohn|grattacielo|uffici|residenziale|stadio)(?![\p{L}])/iu;
+  /(?:^|[^\p{L}])(?:skyscraper|office|offices|residential|apartment|apartments|condominium|arena|stadium|shopping|mall|parking|centre commercial|centro comercial|einkaufszentrum|centro commerciale|gratte-ciel|bureaux|résidentiel|rascacielos|oficinas|residencial|estadio|hochhaus|wolkenkratzer|büro|wohn|grattacielo|uffici|residenziale|stadio)(?![\p{L}])/iu;
 
 /** The interests a place answers (a set: a castle on a hill is history and landscape). */
 export function placeThemes(poi) {
@@ -104,12 +110,12 @@ export function placeThemes(poi) {
   // Garden. (The German nouns only for German descriptions, or when the language isn't known.)
   const plain = !NOT_BY_NAME_RE.test(description);
   const byName = plain && !BUILDING_RE.test(description) && !BUILDING_RE.test(title);
-  const named = (re, ok = byName) => re.test(description) || (ok && re.test(title));
-  if (named(HISTORIC_RE, plain)) themes.add('history');
+  const named = (headRe, re, ok = byName) => headRe.test(description) || (ok && re.test(title));
+  if (HISTORIC_RE.test(description) || (plain && HISTORIC_RE.test(title))) themes.add('history');
   if (MUSEUM_RE.test(text) || CULTURE_RE.test(text)) themes.add('culture');
   const german = poi.lang == null || poi.lang === 'de';
-  if ((named(LANDSCAPE_RE) || (german && named(LANDSCAPE_DE_RE))) && !NOT_LANDSCAPE_RE.test(text)) themes.add('landscape');
-  if (named(FOOD_RE) && !NOT_FOOD_RE.test(text)) themes.add('food');
+  if ((named(LANDSCAPE_HEAD_RE, LANDSCAPE_RE) || (german && named(LANDSCAPE_DE_RE, LANDSCAPE_DE_RE))) && !NOT_LANDSCAPE_RE.test(text)) themes.add('landscape');
+  if (named(FOOD_HEAD_RE, FOOD_RE) && !NOT_FOOD_RE.test(text)) themes.add('food');
   return themes;
 }
 // Long articles about whole areas, rivers or streets aren't places you stop at.
