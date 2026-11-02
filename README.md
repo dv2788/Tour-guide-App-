@@ -11,6 +11,10 @@ places you pass. No tour guide or travel agency needed.
 
 ## Try it
 
+**Status: beta** (1.0.0-beta.1). It works end to end and is tested in many cities, but it is young: if something
+is wrong, please [report a problem](https://github.com/dv2788/Tour-guide-App-/issues/new) with the city and what you
+did. Release notes: `docs/release-notes.md`.
+
 It's a web app (works on any phone browser, nothing to install, no account, no API keys).
 
 ```bash

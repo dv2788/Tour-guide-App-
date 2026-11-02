@@ -68,8 +68,9 @@ const CULTURE_RE = words([
   'centro cultural', 'auditorio', 'theater', 'oper', 'bibliothek', 'kulturzentrum', 'konzerthaus', 'philharmonie', 'centro culturale',
 ]);
 const FOOD_RE = words([
-  'market(?:s| hall)?', 'food hall', 'covered market', 'caf[eé]s?', 'coffee ?house', 'restaurants?', 'bakery', 'patisserie', 'brewery', 'winery',
-  'vineyards?', 'chocolate', 'tea ?house', 'marché', 'halles', 'brasserie', 'boulangerie', 'pâtisserie', 'chocolaterie', 'vignoble', 'mercado',
+  'market(?:s| hall)?', 'food hall', 'food court', 'street food', 'covered market', 'caf[eé]s?', 'coffee ?house', 'restaurants?', 'bakery', 'patisserie',
+  'brewery', 'winery', 'vineyards?', 'chocolate', 'tea ?house', 'tea ?rooms?', 'delicatessen', 'deli', 'diner', 'pizzeria', 'bistro', 'taverna?', 'pub',
+  'public house', 'ice cream', 'gelato', 'wine bar', 'beer hall', 'marché', 'halles', 'brasserie', 'boulangerie', 'pâtisserie', 'chocolaterie', 'vignoble', 'mercado',
   'confitería', 'pastelería', 'panadería', 'cervecería', 'bodega', 'chocolatería', 'viñedo', 'markt', 'markthalle', 'kaffeehaus', 'konditorei',
   'bäckerei', 'brauerei', 'weingut', 'mercato', 'caffè', 'pasticceria', 'birrificio', 'enoteca', 'gelateria', 'osteria', 'trattoria',
 ]);
@@ -81,16 +82,33 @@ const NOT_FOOD_RE =
 /** What you'd do the outing for, in the order offered: 'history' | 'culture' | 'landscape' | 'food'. */
 export const INTERESTS = ['history', 'culture', 'landscape', 'food'];
 
+// What a place is when it's a building of some other kind: "432 Park Avenue" is a skyscraper,
+// "Jefferson Market Library" a library, whatever their names say.
+const BUILDING_RE =
+  /(?:^|[^\p{L}])(?:skyscraper|building|tower|office|offices|residential|apartment|condominium|hotel|church|cathedral|chapel|temple|mosque|shrine|synagogue|museum|gallery|theatre|theater|cinema|library|station|school|university|college|hospital|stadium|arena|bridge|commission|authority|agency|company|regulator|bâtiment|immeuble|gratte-ciel|église|musée|théâtre|bibliothèque|gare|edificio|rascacielos|iglesia|museo|teatro|biblioteca|estación|gebäude|hochhaus|kirche|bahnhof|bibliothek|grattacielo|chiesa|stazione)(?![\p{L}])/iu;
+
+// Kinds of place whose names say nothing about them: "Bank of America Tower" is an office
+// skyscraper, not a castle tower; "Madison Square Garden" an arena, not a garden.
+const NOT_BY_NAME_RE =
+  /(?:^|[^\p{L}])(?:skyscraper|office|offices|residential|apartment|apartments|condominium|arena|stadium|shopping|mall|parking|gratte-ciel|bureaux|résidentiel|rascacielos|oficinas|residencial|estadio|hochhaus|wolkenkratzer|büro|wohn|grattacielo|uffici|residenziale|stadio)(?![\p{L}])/iu;
+
 /** The interests a place answers (a set: a castle on a hill is history and landscape). */
 export function placeThemes(poi) {
-  const text = `${poi.title ?? ''} ${poi.description ?? ''}`;
+  const title = poi.title ?? '';
+  const description = poi.description ?? '';
+  const text = `${title} ${description}`;
   const themes = new Set();
-  if (HISTORIC_RE.test(text)) themes.add('history');
+  // By what a place *is* (its description), or by its name when the description doesn't say
+  // it's something else: a skyscraper called Tower, a library called Market, an arena called
+  // Garden. (The German nouns only for German descriptions, or when the language isn't known.)
+  const plain = !NOT_BY_NAME_RE.test(description);
+  const byName = plain && !BUILDING_RE.test(description) && !BUILDING_RE.test(title);
+  const named = (re, ok = byName) => re.test(description) || (ok && re.test(title));
+  if (named(HISTORIC_RE, plain)) themes.add('history');
   if (MUSEUM_RE.test(text) || CULTURE_RE.test(text)) themes.add('culture');
-  // (The German nouns only for German descriptions, or when the language isn't known.)
   const german = poi.lang == null || poi.lang === 'de';
-  if ((LANDSCAPE_RE.test(text) || (german && LANDSCAPE_DE_RE.test(text))) && !NOT_LANDSCAPE_RE.test(text)) themes.add('landscape');
-  if (FOOD_RE.test(text) && !NOT_FOOD_RE.test(text)) themes.add('food');
+  if ((named(LANDSCAPE_RE) || (german && named(LANDSCAPE_DE_RE))) && !NOT_LANDSCAPE_RE.test(text)) themes.add('landscape');
+  if (named(FOOD_RE) && !NOT_FOOD_RE.test(text)) themes.add('food');
   return themes;
 }
 // Long articles about whole areas, rivers or streets aren't places you stop at.
@@ -110,7 +128,7 @@ const TOWN_BUILDING_RE =
 // Wikipedia also places organisations, events and works at an address: not places to walk to.
 // (Matched on the short description: "British intelligence agency", "Satirical magazine", "Fire in 1666".)
 const NOT_A_PLACE_RE =
-  /(?:^|[^\p{L}])(?:agency|company|corporation|government|body|conglomerate|firm|manufacturer|magazine|newspaper|tabloid|broadcaster|publisher|record label|band|political party|parliament|legislat|senate|ministry|government department|central bank|stock exchange|securities exchange|university|college|school|religious order|higher education|research institution|educational institution|école|ecole|lycée|escuela|schule|scuola|society|association|organi[sz]ation|charity|foundation|club|team|brand|fashion house|retailer|airline|television|radio|channel|film|novel|album|song|video game|battle|siege|attack|assault|incident|affair|arson|explosion|bombing|storming|uprising|insurrection|rebellion|revolt|coup|protest|riot|election|treaty|festival|event|olympics|games|championship|tournament|competition|conflagration|massacre|scandal|police|intelligence|embassy|consulate|series|former (?:country|state)|historical (?:country|state)|christmas tree|christmas market)(?![\p{L}])/iu;
+  /(?:^|[^\p{L}])(?:agency|company|corporation|government|body|conglomerate|firm|manufacturer|magazine|newspaper|tabloid|broadcaster|publisher|record label|band|political party|parliament|legislat|senate|ministry|government department|central bank|stock exchange|securities exchange|university|college|school|religious order|higher education|research institution|educational institution|école|ecole|lycée|escuela|schule|scuola|society|association|organi[sz]ation|charity|foundation|club|team|brand|fashion house|retailer|airline|television|radio|channel|film|novel|album|song|video game|battle|siege|attack|assault|incident|affair|arson|explosion|bombing|storming|uprising|insurrection|rebellion|revolt|coup|protest|riot|election|treaty|festival|event|olympics|games|championship|tournament|competition|conflagration|massacre|scandal|police|intelligence|embassy|consulate|regulator|regulatory|authority|commission|series|former (?:country|state)|historical (?:country|state)|christmas tree|christmas market)(?![\p{L}])/iu;
 // The same in French, Spanish, German and Italian (descriptions come in the reader's language).
 const NOT_A_PLACE_INTL_RE =
   /(?:^|[^\p{L}])(?:épisode|événement|evento|acontecimiento|ereignis|agence|agencia|agentur|agenzia|académies?|academias?|akademien?|accademi[ae]|entreprise|société|journal|quotidien|parti politique|ministère|gouvernement|université|banque|association|fondation|attentat|bataille|incendie|siège|émeute|traité|conférence|élection|jeux olympiques|libération|manifestation|empresa|periódico|partido político|ministerio|gobierno|universidad|banco|fundación|asociación|atentado|batalla|incendio|asedio|motín|tratado|conferencia|elecciones|juegos olímpicos|unternehmen|zeitung|partei|ministerium|regierung|universität|verein|stiftung|anschlag|schlacht|belagerung|aufstand|vertrag|konferenz|olympische|azienda|società|giornale|partito|ministero|governo|università|banca|fondazione|associazione|attentato|battaglia|assedio|rivolta|trattato|conferenza|elezioni|olimpiadi|giochi olimpici|sapin de noël|marché de noël|árbol de navidad|mercado navideño|mercadillo navideño|albero di natale|mercatino di natale|weihnachtsbaum|weihnachtsmarkt|christkindlmarkt)(?![\p{L}])/iu;
@@ -147,15 +165,17 @@ const STRUCTURE_RE = /skyscraper|gratte-ciel|rascacielos|grattacielo|hochhaus|wo
 // …or by their last word: "Hōgen rebellion", "Great Kantō earthquake", "2015 Paris attacks".
 const EVENT_TITLE_END_RE = /(?:^|\s)(?:rebellion|uprising|revolt|riots?|massacre|disaster|earthquake|bombings?|attacks?|incident|affair|crisis|protests?|war|siege|shooting|hostage crisis|famine|plague|epidemic|pandemic|flood)(?:\s*\(.*\))?$/iu;
 // Organisations by their first word: "Asociación del Fútbol Argentino", "Fédération française…".
-const ORGANISATION_TITLE_RE = /^(?:association|asociación|associazione|fédération|federación|federazione|confederación|verband|bund deutscher|organisation|organization|organización|organizzazione|comité|committee|comitato|komitee)(?![\p{L}])|(?:^|[^\p{L}])(?:university|université|universidad|università|universität|universitat)(?![\p{L}])/iu;
+const ORGANISATION_TITLE_RE = /^(?:association|asociación|associazione|fédération|federación|federazione|confederación|verband|bund deutscher|organisation|organization|organización|organizzazione|comité|committee|comitato|komitee)(?![\p{L}])|(?:^|[^\p{L}])(?:university|université|universidad|università|universität|universitat|commission|authority|regulator|agency)(?![\p{L}])/iu;
 // German packs it into one word: "Tageszeitung", "Maschinenbauunternehmen", "Musikfestival".
 const NOT_A_PLACE_DE_RE = /\p{L}(?:unternehmen|zeitung|partei|verein|stiftung|verband|konzern|hersteller|festival)(?![\p{L}])/iu;
 // Dates in the title: "World Trade Center (1973–2001)" is the one that stood there then.
-const GONE_TITLE_RE = /\(\s*\d{3,4}\s*[–-]\s*\d{3,4}\s*\)\s*$/;
+const GONE_TITLE_RE = /\([^)]*?\b\d{3,4}\s*[–-]\s*\d{3,4}\s*\)\s*$/;
 // Descriptions of streets in the five languages ("voie parisienne", "strada di Roma",
 // "Einkaufsstraße in Wien", "bulevar y paseo de Madrid").
 const STREETISH_RE =
   /^(?:[\p{L}'’-]+\s+){0,2}(?:street|road|avenue|boulevard|thoroughfare|voie|rue|strada|via|calle|avenida|bulevar|paseo|rua|gasse)(?![\p{L}])|^\S*(?:straße|strasse|gasse)(?![\p{L}])/iu;
+// "Historic site in Bath": says nothing about what it is, so a street named like one stays a street.
+const HISTORIC_SITE_RE = /^(?:[\p{L}'’-]+\s+){0,2}(?:historic|heritage|historical)\s+(?:site|area|place|district|location)|^(?:site|lieu) (?:historique|patrimonial)|^(?:sitio|lugar) histórico|^historische[rs]? (?:ort|stätte)|^sito storico/iu;
 // Streets are walked along, not stopped at (their stories come up as you walk them).
 const STREET_TITLE_RE =
   /^(?:rue|avenue|boulevard|calle|carrer|avinguda|avenida|paseo|passeig|via|viale|corso|rua)\s|(?:straße|strasse|gasse|street|road|lane)(?:\s*\(.*\))?$/iu;
@@ -165,7 +185,7 @@ const GONE_RE = /\(\s*\d{3,4}\s*[–-]\s*\d{3,4}\s*\)|^\d{3,4}\s*[–-]\s*\d{3,4
 // "Former mansion on the Strand", "Defunct chain of restaurants": what it was, not what's there.
 // (A former abbey or palace may still stand as something else: only houses and businesses.)
 const FORMER_RE =
-  /^(?:former|defunct|ancien(?:ne)?|antigu[oa]|ehemalige[rs]?|ex)\s+(?:mansion|house|home|café|cafe|coffee ?house|restaurant|market|pub|inn|tavern|hotel|shop|store|chain|cinema|theatre|theater|music hall|nightclub|bar|brewery|stadium|arena|hôtel particulier|café|restaurant|marché|boutique|magasin|mansión|casa|café|mercado|tienda|villa|gasthaus|gaststätte|geschäft|markt|kaufhaus|caffè|ristorante|mercato|negozio)(?![\p{L}])/iu;
+  /^(?:former|defunct|ancien(?:ne)?|antigu[oa]|ehemalige[rs]?|ex)\s+(?:[\p{L}'’-]+\s+){0,2}(?:mansion|house|home|café|cafe|coffee ?house|restaurant|market|pub|inn|tavern|hotel|shop|store|chain|cinema|theatre|theater|music hall|nightclub|bar|brewery|stadium|arena|hôtel particulier|café|restaurant|marché|boutique|magasin|mansión|casa|café|mercado|tienda|villa|gasthaus|gaststätte|geschäft|markt|kaufhaus|caffè|ristorante|mercato|negozio)(?![\p{L}])/iu;
 // Objects inside a collection ("Ancient Greek sculptures held in London"): the museum is the stop.
 const IN_A_COLLECTION_RE =
   /^(?:painting|portrait|manuscript|tapestry|artwork|tableau|peinture|retable|manuscrit|tapisserie|cuadro|pintura|retablo|manuscrito|tapiz|gemälde|handschrift|dipinto|manoscritto|arazzo)(?![\p{L}])|\b(?:held|housed|kept|displayed|exhibited) (?:in|at|by)\b/iu;
@@ -221,7 +241,7 @@ export function isPlaceToSee(poi, { nature = false } = {}) {
   if (!namesAPlace && (ORGANISATION_TITLE_RE.test(title) || EVENT_TITLE_END_RE.test(title))) return false;
   // Named like a street and nothing says otherwise: a street. Not an address ("10 Downing
   // Street"), an arch ("Rua Augusta Arch": triumphal arch) or a stadium ("Loftus Road").
-  if (STREET_TITLE_RE.test(title) && !/^\d/.test(title) && (!description || STREETISH_RE.test(description))) return false;
+  if (STREET_TITLE_RE.test(title) && !/^\d/.test(title) && (!description || STREETISH_RE.test(description) || HISTORIC_SITE_RE.test(description))) return false;
   if (GONE_TITLE_RE.test(title) || (NOT_A_STOP_TYPES.has(poi.coordType) && !(natural && NATURE_TYPES.has(poi.coordType)))) return false;
   // A railway station counts only when it's a landmark in its own right (Grand Central, St Pancras).
   if (poi.coordType === 'railwaystation' && (poi.langs ?? 0) < 40) return false;
@@ -388,7 +408,10 @@ export function visitFor(poi, minutes) {
   const small = (poi.length ?? 10000) < 5000 && (poi.langs ?? 10) < 5;
   const f = Math.min(1.15, Math.max(0.85, fame(poi))); // the rest comes from spare time, up to max
   const base = Math.min(small ? 45 : 120, Math.max(30, Math.round((minutes * f) / 5) * 5));
-  return { base, max: Math.min(180, Math.round((base * 1.75) / 5) * 5) };
+  // Spare time can stretch a visit, but a whole afternoon only in a great museum (the Louvre,
+  // the Prado), not a regional gallery (Cape Town's got 130 minutes on a quiet full day).
+  const longest = small ? 60 : (poi.langs ?? 0) >= 30 ? 180 : 120;
+  return { base, max: Math.min(longest, Math.round((base * 1.75) / 5) * 5) };
 }
 
 /**
@@ -753,8 +776,11 @@ export function proposeOutings({ start, candidates, modeId = 'walk', minutes = 6
     // Named after an interest, it must mostly be about it: "More flavours" can't be the
     // Sagrada Família alone, however famous (a famous landmark on the way is fine).
     if (ints?.length) {
-      const matching = route.stops.filter((stop) => ints.some((i) => stop.themes?.has(i) ?? placeThemes(stop).has(i))).length;
+      const themesOf = (stop) => stop.themes ?? placeThemes(stop);
+      const matching = route.stops.filter((stop) => ints.some((i) => themesOf(stop).has(i))).length;
       if (!matching || matching * 2 < route.stops.length) return;
+      // …and something for each of them: "History and food" with no food is history.
+      if (ints.some((i) => !route.stops.some((stop) => themesOf(stop).has(i)))) return;
     }
     // By name too: the same park can come back from two searches under two page ids.
     const ids = new Set(route.stops.flatMap((s) => [s.id, s.title]));

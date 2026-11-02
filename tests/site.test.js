@@ -167,8 +167,12 @@ test('the Cloudflare headers give the app page the same policy as its <meta>, pl
   const meta = index.match(/http-equiv="Content-Security-Policy" content="([^"]+)"/)[1];
   const headers = read('_headers');
   const policies = [...headers.matchAll(/^\s+Content-Security-Policy: (.+)$/gm)].map((m) => m[1]);
-  assert.equal(policies.length, 2, 'for / and /index.html');
-  for (const p of policies) assert.equal(p, `${meta}; frame-ancestors 'none'`);
+  assert.equal(policies.length, 3, 'for /, /index.html and /streetview.html');
+  for (const p of policies.slice(0, 2)) assert.equal(p, `${meta}; frame-ancestors 'none'`);
+  // The Street View page: its own policy, framed by the app itself and no one else.
+  const frameMeta = read('streetview.html').match(/http-equiv="Content-Security-Policy" content="([^"]+)"/)[1];
+  assert.equal(policies[2], `${frameMeta}; frame-ancestors 'self'`);
+  assert.match(headers, /\/streetview\.html\n  ! X-Frame-Options\n  X-Frame-Options: SAMEORIGIN/);
   assert.match(headers, /X-Frame-Options: DENY/);
   assert.match(headers, /X-Content-Type-Options: nosniff/);
   assert.match(headers, /Permissions-Policy: geolocation=\(self\), camera=\(self\)/);
