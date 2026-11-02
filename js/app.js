@@ -16,6 +16,7 @@ import { sharesNameToken } from './text.js';
 import { parseItinerary, parseTextList, SOURCE_LABELS } from './itineraryImport.js';
 import { NEURAL_VOICES, neuralVoiceKey, parseVoiceKey, rankSystemVoices, PREVIEW_TEXT, PREVIEW_TEXT_DOCUMENTARY, voiceProfile } from './voices.js';
 import { isVoiceDownloaded, neuralVoicesSupported } from './neuralVoice.js';
+import { createPlus, freeVoice, isFreeVoice } from './plus.js';
 import { formatClock } from './openingHours.js';
 import { eventsFor, formatDays, eventLink } from './events.js';
 import {
@@ -32,6 +33,8 @@ import {
 } from './suggest.js';
 
 const $ = (id) => document.getElementById(id);
+// Roamie Plus (js/plus.js): off, with nothing locked, until it's set up in js/plus-config.js.
+const plus = createPlus();
 const STORAGE_KEY = 'roamie:setup';
 const OLD_STORAGE_KEY = 'tour-guide:setup'; // before the app was called Roamie
 
@@ -320,6 +323,7 @@ $('paste-route').addEventListener('click', async () => {
 // ---------- Where you are, and suggested routes ----------
 
 let startPoint = null; // { lat, lon, name } from "Use my location"
+let lastFix = null; // { lat, lon, at }: where the GPS last said you are, during this visit
 let areaPoint = null; // { lat, lon, name, query, city } for the part of town typed ("El Born", a hotel, a street)
 let plan = null; // the suggested route: { start, loop, minutes, meters, startedAt, items: [...] }
 
@@ -481,6 +485,7 @@ async function locateMe({ silent = false } = {}) {
     .catch(() => null);
   here.name = city?.name ?? null;
   startPoint = here;
+  lastFix = { lat: here.lat, lon: here.lon, at: Date.now() };
   if (here.name && !$('city').value.trim()) $('city').value = here.name;
   describeLocation();
   showPlanMap();
@@ -906,13 +911,14 @@ function el(tag, props = {}, children = []) {
 }
 
 /** One selectable guide card: avatar, name, description, ▶ listen, status line. */
-function guideCard({ value, name, note, avatar, avatarClass, badge }) {
+function guideCard({ value, name, note, avatar, avatarClass, badge, plusOnly = false }) {
   const id = `voice-${value.replace(/[^a-z0-9]+/gi, '-')}`;
   const card = el('div', { className: 'guide' });
   card.dataset.value = value;
   const radio = el('input', { type: 'radio', name: 'voice', value, id });
   const nameEl = el('strong', {}, [name]);
   if (badge) nameEl.append(el('span', { className: 'badge-doc' }, [badge]));
+  if (plusOnly) nameEl.append(el('span', { className: 'badge-plus' }, ['Plus']));
   const label = el('label', { className: 'guide-main', htmlFor: id }, [
     el('span', { className: `avatar ${avatarClass ?? ''}`, ariaHidden: 'true' }, [avatar]),
     el('span', { className: 'guide-text' }, [nameEl, el('small', {}, [note])]),
@@ -941,6 +947,7 @@ function populateGuides(selectedKey) {
           avatar: v.label[0],
           avatarClass: documentary ? 'documentary' : '',
           badge: documentary ? 'Narrator' : null,
+          plusOnly: plus.enabled && !plus.active && !isFreeVoice(lang, neuralVoiceKey(v)),
         }),
       );
     }
@@ -976,7 +983,12 @@ async function refreshGuideStatus() {
     if (card.classList.contains('busy')) continue;
     if (key?.kind === 'neural') {
       const downloaded = await isVoiceDownloaded(key.id);
-      status.textContent = downloaded ? '✓ On your phone, works offline' : 'Free · 80 MB download, once';
+      const withPlus = !plus.voiceAllowed($('lang').value, card.dataset.value);
+      status.textContent = downloaded
+        ? `✓ On your phone, works offline${withPlus ? ' · with Plus' : ''}`
+        : withPlus
+          ? 'With Plus · 80 MB download, once'
+          : 'Free · 80 MB download, once';
       status.classList.toggle('ready', downloaded);
     } else {
       status.textContent = '';
@@ -1023,6 +1035,159 @@ async function previewVoice(card) {
   narrator.on('start', () => listen.classList.add('playing'));
   narrator.on('idle', () => listen.classList.remove('playing'));
   narrator.speak(text ?? PREVIEW_TEXT.en);
+}
+
+// ---------- Roamie Plus ----------
+
+let plusAlt = null; // what the "instead" button under the reason does
+
+function refreshPlus() {
+  $('plus-open').hidden = !plus.enabled || !$('tour').hidden;
+  $('plus-open').classList.toggle('owned', plus.active);
+  $('plus-open').setAttribute('aria-label', plus.active ? 'Roamie Plus is on' : 'Roamie Plus');
+  $('plus-pill-label').textContent = plus.active ? 'Plus ✓' : 'Plus';
+}
+
+function closePlus() {
+  const dialog = $('plus');
+  if (typeof dialog.close === 'function') dialog.close();
+  else dialog.removeAttribute('open');
+}
+
+function setPlusNote(text, tone = '') {
+  $('plus-note').textContent = text;
+  $('plus-note').className = `plus-note ${tone}`;
+}
+
+/** Show the Plus screen: why it opened (reason), and a free alternative ({ label, run }). */
+function openPlus({ reason = '', alt = null, keyOpen = false, note = '', tone = 'ok' } = {}) {
+  if (!plus.enabled) return;
+  const { price, checkoutUrl, portalUrl } = plus.config;
+  $('plus-price').textContent = price;
+  $('plus-buy').href = checkoutUrl;
+  $('plus-portal').hidden = !/^https:\/\//.test(portalUrl ?? '');
+  if (!$('plus-portal').hidden) $('plus-portal').href = portalUrl;
+  $('plus-reason').textContent = reason;
+  $('plus-reason').hidden = !reason || plus.active;
+  plusAlt = plus.active ? null : alt;
+  $('plus-alt').hidden = !plusAlt;
+  $('plus-alt').textContent = plusAlt?.label ?? '';
+  $('plus-offer').hidden = plus.active;
+  $('plus-owned').hidden = !plus.active;
+  $('plus-key-hint').textContent = plus.keyHint;
+  $('plus-key-box').open = keyOpen;
+  setPlusNote(note, note ? tone : '');
+  const dialog = $('plus');
+  if (dialog.open) return;
+  if (typeof dialog.showModal === 'function') dialog.showModal();
+  else dialog.setAttribute('open', ''); // browsers before 2022: shown in place
+}
+
+/** A Plus voice was chosen: offer Plus, or the free voice of that language. */
+function openVoicePlus(lang, key) {
+  const parsed = parseVoiceKey(key);
+  const chosen = parsed?.kind === 'neural' ? neuralVoiceInfo(lang, parsed)?.label : null;
+  const free = freeVoice(lang);
+  openPlus({
+    reason: `${chosen ?? 'This voice'} is one of the Plus voices. ${free.label} reads every tour for free.`,
+    alt: {
+      label: `Use ${free.label} instead`,
+      run: () => {
+        const radio = form.querySelector(`input[name=voice][value="${neuralVoiceKey(free)}"]`);
+        if (radio) radio.checked = true;
+        refreshGuideStatus();
+        save(readForm());
+      },
+    },
+  });
+}
+
+/** A real tour outside your free city: offer Plus, or the same tour from the couch. */
+function openCityPlus(freeCity) {
+  openPlus({
+    reason: freeCity?.name
+      ? `Your free city is ${freeCity.name}: walk there as often as you like. Plus opens every other city, for good.`
+      : 'Your free city is the first one you walked: go back as often as you like. Plus opens every other city, for good.',
+    alt: {
+      label: 'Or hear this tour from the couch, free',
+      run: () => {
+        for (const radio of form.elements.source) radio.checked = radio.value === 'sim';
+        syncFormHints();
+        save(readForm());
+      },
+    },
+  });
+}
+
+/** A short name for where you are: the tour's city or your located place, if they're near. */
+function nameNear(pos, places) {
+  return places.find((p) => p?.name && Number.isFinite(p.lat) && distanceMeters(p, pos) < 50000)?.name ?? null;
+}
+
+const PLUS_ERRORS = {
+  format: "That doesn't look like a key. Copy the whole key from Polar's email or receipt.",
+  invalid: "I don't recognise this key. Check it's copied in full, from the email about Roamie Plus.",
+  limit: 'This key is already on 3 phones. Free one in “Your purchase and phones” (the link is in Polar’s email), then try again.',
+  inactive: "This key no longer works: it was refunded or cancelled. If that's a mistake, reply to Polar's email.",
+  network: "I couldn't reach Polar to check your key. Check your connection and try again.",
+};
+
+$('plus-open').addEventListener('click', () => openPlus());
+$('plus-close').addEventListener('click', () => closePlus());
+// A tap on the dimmed background closes it too.
+$('plus').addEventListener('click', (event) => event.target === $('plus') && closePlus());
+$('plus-alt').addEventListener('click', () => {
+  plusAlt?.run();
+  closePlus();
+});
+$('plus-key-form').addEventListener('submit', async (event) => {
+  event.preventDefault();
+  const button = $('plus-unlock');
+  button.disabled = true;
+  setPlusNote('Checking your key with Polar…');
+  const result = await plus.unlock($('plus-key').value);
+  button.disabled = false;
+  if (!result.ok) {
+    setPlusNote(PLUS_ERRORS[result.error] ?? PLUS_ERRORS.network, 'error');
+    return;
+  }
+  $('plus-key').value = '';
+  refreshPlus();
+  populateGuides(selectedVoiceKey());
+  openPlus({ note: 'Tap “Begin the tour” whenever you’re ready.' });
+});
+$('plus-forget').addEventListener('click', async () => {
+  if (!confirm('Remove Plus from this phone? Your key keeps working: enter it again any time, here or on another phone.')) return;
+  const freed = await plus.forget();
+  refreshPlus();
+  populateGuides(selectedVoiceKey());
+  openPlus({
+    note: freed
+      ? 'Plus is removed from this phone, and its place on your key is free again.'
+      : 'Plus is removed from this phone. I couldn’t reach Polar: free its place in “Your purchase and phones” if you need it.',
+  });
+});
+
+refreshPlus();
+// Back from paying (Polar sends buyers to ?plus=thanks): ask for the key from the email.
+{
+  const params = new URLSearchParams(location.search);
+  if (params.get('plus') === 'thanks') {
+    params.delete('plus');
+    const rest = params.toString();
+    history.replaceState(null, '', `${location.pathname}${rest ? `?${rest}` : ''}${location.hash}`);
+    if (plus.enabled && !plus.active) {
+      openPlus({ keyOpen: true, note: 'Thank you! Polar has emailed you your key (it’s on the receipt page too). Paste it below to switch Plus on.' });
+    }
+  }
+}
+// Now and then, check the key is still good (a refund ends it). Never blocks, never needs a signal.
+if (plus.active && navigator.onLine !== false) {
+  plus.recheck().then((result) => {
+    if (result !== 'revoked') return;
+    refreshPlus();
+    populateGuides(selectedVoiceKey());
+  });
 }
 
 const saved = loadSaved();
@@ -1420,6 +1585,7 @@ function endTour() {
   $('btn-end').hidden = true;
   $('setup').hidden = false;
   window.scrollTo(0, 0);
+  refreshPlus();
 }
 
 $('btn-end').addEventListener('click', endTour);
@@ -1461,6 +1627,21 @@ form.addEventListener('submit', async (event) => {
   if (cfg.source === 'gps' && !('geolocation' in navigator)) {
     error.textContent = "This browser can't share your location. Try the simulation instead.";
     return;
+  }
+  // Roamie Plus: the other voices, and real tours beyond your first city.
+  if (!plus.voiceAllowed(cfg.lang, cfg.voice)) {
+    save(cfg);
+    openVoicePlus(cfg.lang, cfg.voice);
+    return;
+  }
+  // Where you are, if the GPS said so in the last half hour (checked again at the tour's first fix).
+  if (cfg.source === 'gps' && lastFix && Date.now() - lastFix.at < 30 * 60000) {
+    const here = plus.cityStatus(lastFix);
+    if (!here.allowed) {
+      save(cfg);
+      openCityPlus(here.freeCity);
+      return;
+    }
   }
   save(cfg);
 
@@ -1515,6 +1696,7 @@ form.addEventListener('submit', async (event) => {
   $('btn-end').hidden = false;
   window.scrollTo(0, 0);
   $('tour').hidden = false;
+  refreshPlus();
   $('now').hidden = true;
   $('next-stop').hidden = true;
   $('journal').replaceChildren();
@@ -1685,6 +1867,14 @@ form.addEventListener('submit', async (event) => {
         onPosition: (pos) => {
           if (!current.gotFix) {
             current.gotFix = true;
+            // Your first city is free; a real tour anywhere else needs Plus.
+            const here = plus.cityStatus(pos);
+            if (!here.allowed) {
+              endTour();
+              openCityPlus(here.freeCity);
+              return;
+            }
+            plus.recordCity({ lat: pos.lat, lon: pos.lon, name: nameNear(pos, [city, startPoint]) });
             setStatus(`Tour running. Put the phone in your pocket or on the dashboard${missingNote}.${voiceNote}`);
             if (city && distanceMeters(city, pos) > 50000) {
               setStatus(`You seem to be far from ${city.name}. I'll describe what's around you anyway.`, 'warn');

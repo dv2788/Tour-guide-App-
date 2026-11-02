@@ -2146,3 +2146,225 @@ body.lens-open {
 .map-credit a {
   color: inherit;
 }
+
+/* ---------- Roamie Plus ---------- */
+
+.plus-pill {
+  margin-left: auto;
+  margin-right: 8px;
+  border-color: var(--gold-bright);
+  color: var(--gold);
+}
+
+.plus-pill.owned {
+  border-color: var(--hairline-strong);
+  color: var(--muted);
+}
+
+.plus {
+  width: min(440px, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px);
+  padding: 30px 22px 22px;
+  border: 1px solid var(--hairline-strong);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  color: var(--ink);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.plus::backdrop {
+  background: rgb(8 10 16 / 58%);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+
+.plus .kicker {
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.plus-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  background: none;
+  color: var(--muted);
+}
+
+.plus-title {
+  margin: 0 0 16px;
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: 1.9rem;
+  line-height: 1.1;
+  text-align: center;
+}
+
+.plus-reason {
+  margin: 0 0 4px;
+  padding: 12px 14px;
+  border-left: 2px solid var(--gold-bright);
+  background: var(--soft);
+  font-size: 0.95rem;
+}
+
+.plus-alt {
+  display: block;
+  margin: 0 auto 6px;
+}
+
+.plus-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 18px 0 20px;
+  padding: 0;
+  list-style: none;
+}
+
+.plus-list li {
+  display: grid;
+  grid-template-columns: 22px 1fr;
+  gap: 10px;
+  align-items: start;
+}
+
+.plus-list .icon {
+  width: 20px;
+  height: 20px;
+  margin-top: 2px;
+  color: var(--gold);
+}
+
+.plus-list span {
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.plus-list strong {
+  display: block;
+  color: var(--ink);
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.plus-buy {
+  text-decoration: none;
+}
+
+.plus-fine,
+.plus-free {
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+  line-height: 1.45;
+}
+
+.plus-free {
+  padding-top: 12px;
+  border-top: 1px solid var(--hairline);
+}
+
+.plus-key {
+  margin-top: 14px;
+}
+
+.plus-key summary {
+  padding: 10px 0;
+  color: var(--gold);
+  cursor: pointer;
+}
+
+.plus-key-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.plus-key-form label {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.plus-key-form input {
+  min-height: 48px;
+  padding: 0 12px;
+  border: 1px solid var(--hairline-strong);
+  border-radius: var(--radius);
+  background: var(--bg);
+  color: var(--ink);
+  font: 0.95rem/1.2 ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  letter-spacing: 0.02em;
+}
+
+.plus-owned {
+  margin-top: 8px;
+}
+
+.plus-thanks {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin: 0 0 8px;
+  padding: 12px 14px;
+  border-left: 2px solid var(--success);
+  background: var(--success-soft);
+}
+
+.plus-thanks .icon {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  color: var(--success);
+}
+
+.plus-owned-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 16px;
+  margin: 12px 0 0;
+}
+
+.plus-owned-links a {
+  color: var(--gold);
+}
+
+.plus-owned-links .link {
+  padding: 8px 0;
+  font-size: 0.98rem;
+}
+
+.plus-note {
+  margin: 10px 0 0;
+  font-size: 0.9rem;
+}
+
+.plus-note:empty {
+  display: none;
+}
+
+.plus-note.error {
+  color: var(--error);
+}
+
+.plus-note.ok {
+  color: var(--success);
+}
+
+.badge-plus {
+  font-family: var(--sans);
+  text-transform: uppercase;
+  font-size: 0.56rem;
+  padding: 3px 7px;
+  border-radius: 2px;
+  background: var(--gold-grad);
+  color: #14110a;
+  letter-spacing: 0.12em;
+}

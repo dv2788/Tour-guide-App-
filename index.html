@@ -5,7 +5,7 @@
     <!-- What this page may load and talk to: the app's own files and the services named on the privacy
          page, nothing else. If a bug ever let outside text into the page, it couldn't load or send anything. -->
     <meta name="referrer" content="strict-origin-when-cross-origin" />
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'wasm-unsafe-eval'; style-src 'self' https://cdnjs.cloudflare.com 'unsafe-inline'; img-src 'self' data: blob: https://*.wikimedia.org https://*.wikipedia.org https://tiles.openfreemap.org https://tile.openstreetmap.org https://cdnjs.cloudflare.com; font-src 'self'; connect-src 'self' blob: data: https://nominatim.openstreetmap.org https://routing.openstreetmap.de https://overpass-api.de https://*.wikipedia.org https://www.wikidata.org https://tiles.openfreemap.org https://huggingface.co https://*.huggingface.co https://*.hf.co https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; worker-src 'self' blob:; child-src 'self' blob:; media-src 'self' blob: data:; manifest-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'wasm-unsafe-eval'; style-src 'self' https://cdnjs.cloudflare.com 'unsafe-inline'; img-src 'self' data: blob: https://*.wikimedia.org https://*.wikipedia.org https://tiles.openfreemap.org https://tile.openstreetmap.org https://cdnjs.cloudflare.com; font-src 'self'; connect-src 'self' blob: data: https://nominatim.openstreetmap.org https://routing.openstreetmap.de https://overpass-api.de https://*.wikipedia.org https://www.wikidata.org https://tiles.openfreemap.org https://huggingface.co https://*.huggingface.co https://*.hf.co https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://api.polar.sh; worker-src 'self' blob:; child-src 'self' blob:; media-src 'self' blob: data:; manifest-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="theme-color" content="#F6F1E8" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#0B0F17" media="(prefers-color-scheme: dark)" />
@@ -112,6 +112,9 @@
         <img src="icons/icon.svg" alt="" width="34" height="34" />
         <span class="wordmark">Roamie</span>
       </div>
+      <button type="button" id="plus-open" class="appbar-action plus-pill" hidden>
+        <svg class="icon"><use href="#i-stars" /></svg><span id="plus-pill-label">Plus</span>
+      </button>
       <button type="button" id="btn-end" class="appbar-action" hidden>
         <svg class="icon"><use href="#i-close" /></svg>End tour
       </button>
@@ -394,6 +397,49 @@
         <div id="lens-card" class="lens-card" hidden></div>
         <div id="lens-popup" class="lens-popup" role="dialog" aria-label="About this place" hidden></div>
       </section>
+
+      <!-- Roamie Plus: shown only once Plus is set up (js/plus-config.js) -->
+      <dialog id="plus" class="plus" aria-labelledby="plus-title">
+        <button type="button" id="plus-close" class="plus-close" aria-label="Close">
+          <svg class="icon"><use href="#i-close" /></svg>
+        </button>
+        <p class="kicker">Roamie Plus</p>
+        <h2 id="plus-title" class="plus-title">Every city. Every voice.</h2>
+        <p id="plus-reason" class="plus-reason" hidden></p>
+        <button type="button" id="plus-alt" class="link plus-alt" hidden></button>
+
+        <div id="plus-offer">
+          <ul class="plus-list">
+            <li><svg class="icon"><use href="#i-check" /></svg><span><strong>Every city on Earth</strong>Walk with me wherever you travel, not only in your first city.</span></li>
+            <li><svg class="icon"><use href="#i-check" /></svg><span><strong>Every guide</strong>All the voices, including the documentary narrators.</span></li>
+            <li><svg class="icon"><use href="#i-check" /></svg><span><strong>Pay once, keep it</strong>No subscription and no account. Works on up to 3 phones.</span></li>
+          </ul>
+          <a id="plus-buy" class="btn-primary plus-buy" href="#" target="_blank" rel="noopener">Get Plus · <span id="plus-price"></span></a>
+          <p class="plus-fine">
+            Paid securely through Polar, who sell it on Roamie's behalf and send your receipt and your key by email. Price includes
+            VAT. Changed your mind? A full refund within 14 days, just ask.
+          </p>
+          <p class="plus-free">Always free: your first city, every tour from the couch, one AI voice per language and your phone's voices.</p>
+          <details id="plus-key-box" class="plus-key">
+            <summary>Already paid? Enter your key</summary>
+            <form id="plus-key-form" class="plus-key-form" novalidate>
+              <label for="plus-key">Your key, from Polar's email or receipt</label>
+              <input id="plus-key" name="plusKey" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="ROAMIE-…" />
+              <button type="submit" id="plus-unlock" class="btn-soft">Unlock Plus</button>
+            </form>
+          </details>
+        </div>
+
+        <div id="plus-owned" class="plus-owned" hidden>
+          <p class="plus-thanks"><svg class="icon"><use href="#i-check" /></svg>Plus is on for this phone. Thank you for supporting Roamie.</p>
+          <p class="hint">Key <span id="plus-key-hint"></span>. Every city and every voice are yours.</p>
+          <p class="plus-owned-links">
+            <a id="plus-portal" href="#" target="_blank" rel="noopener">Your purchase and phones</a>
+            <button type="button" id="plus-forget" class="link">Remove Plus from this phone</button>
+          </p>
+        </div>
+        <p id="plus-note" class="plus-note" role="status"></p>
+      </dialog>
     </main>
 
     <script
