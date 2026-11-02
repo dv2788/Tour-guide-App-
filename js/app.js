@@ -14,6 +14,7 @@ import { createLens } from './lensView.js';
 import { Narrator } from './narrator.js';
 import { GpsSource, SimulatedSource } from './location.js';
 import { TourEngine } from './tourEngine.js';
+import { StreetView } from './streetView.js';
 import { distanceMeters } from './geo.js';
 import { sharesNameToken } from './text.js';
 import { parseItinerary, parseTextList, SOURCE_LABELS } from './itineraryImport.js';
@@ -1384,6 +1385,99 @@ let follow = true;
 const poiMarkers = new Map();
 const stopMarkers = new Map();
 
+// ---------- First person ----------
+// The same tour, seen from the street: what the top map draws, the first-person view gets too
+// (kept here, so it can be switched on mid-tour). Drawn only while it's showing.
+let street = null;
+let streetData = null;
+let streetOpening = null;
+const VIEW_KEY = 'roamie:view';
+const savedView = () => {
+  try {
+    const v = localStorage.getItem(VIEW_KEY);
+    return v === 'street' || v === 'map' ? v : null;
+  } catch {
+    return null; // storage blocked
+  }
+};
+
+function resetStreet() {
+  street?.destroy();
+  street = null;
+  streetOpening = null;
+  streetData = { route: null, leg: null, stops: [], places: [], pos: null, reached: new Set(), modeId: 'walk' };
+  $('street').hidden = true;
+  $('map').closest('.map-wrap').classList.remove('first-person');
+  setViewButton(false);
+}
+
+function setViewButton(on) {
+  $('view-toggle').setAttribute('aria-pressed', String(on));
+  $('view-label').textContent = on ? 'Map' : 'First person';
+  $('view-icon').setAttribute('href', on ? '#i-map' : '#i-eye');
+}
+
+async function showStreet(on) {
+  if (!on) {
+    street?.destroy();
+    street = null;
+    streetOpening = null;
+    $('street').hidden = true;
+    $('map').closest('.map-wrap').classList.remove('first-person');
+    setViewButton(false);
+    $('recenter').hidden = follow;
+    setTimeout(() => {
+      map?.invalidateSize();
+      if (follow && userMarker) map.panTo(userMarker.getLatLng(), { animate: false });
+    }, 0);
+    return;
+  }
+  if (street || streetOpening) return;
+  $('street').hidden = false;
+  $('map').closest('.map-wrap').classList.add('first-person');
+  $('recenter').hidden = true; // it always follows you
+  setViewButton(true);
+  const dark = window.matchMedia?.('(prefers-color-scheme: dark)').matches;
+  const opening = (streetOpening = quietStyle(VECTOR_STYLES[dark ? 'dark' : 'light']));
+  try {
+    const style = await opening;
+    if (streetOpening !== opening || $('street').hidden) return; // switched back meanwhile
+    // The map draws into a child of the box, so the credit line stays on top.
+    const canvasBox = el('div', { className: 'street-map' });
+    $('street').querySelector('.street-map')?.remove();
+    $('street').prepend(canvasBox);
+    // The direction card covers the top of the view: keep the horizon below it.
+    const coverTop = () => ($('next-stop').hidden ? 0 : $('next-stop').offsetTop + $('next-stop').offsetHeight);
+    street = new StreetView({ container: canvasBox, style, dark, modeId: streetData.modeId, coverTop });
+    if (streetData.route) street.setRoute(streetData.route);
+    if (streetData.leg) street.setLeg(streetData.leg);
+    street.setStops(streetData.stops);
+    street.addPlaces(streetData.places);
+    for (const i of streetData.reached) street.markReached(i);
+    if (streetData.pos) street.move(streetData.pos);
+  } catch {
+    // No 3D map on this phone (or the map service didn't answer): back to the top view.
+    setStatus("The first-person view isn't available just now, so here's the map.", 'warn');
+    streetOpening = null;
+    $('street').hidden = true;
+    $('map').closest('.map-wrap').classList.remove('first-person');
+    setViewButton(false);
+    $('view-toggle').hidden = true;
+  } finally {
+    if (streetOpening === opening) streetOpening = null;
+  }
+}
+
+$('view-toggle').addEventListener('click', () => {
+  const on = $('street').hidden;
+  try {
+    localStorage.setItem(VIEW_KEY, on ? 'street' : 'map');
+  } catch {
+    // storage blocked: remembered for this tour only
+  }
+  showStreet(on);
+});
+
 function initMap() {
   const L = window.L;
   if (!L) {
@@ -1417,6 +1511,7 @@ function initMap() {
   accuracyCircle = null;
   follow = true;
   $('recenter').hidden = true;
+  resetStreet();
   setTimeout(() => map.invalidateSize(), 0);
 }
 
@@ -1428,6 +1523,8 @@ $('recenter').addEventListener('click', () => {
 
 function drawStops(stops) {
   if (!map) return;
+  streetData.stops = stops;
+  street?.setStops(stops);
   for (const [i, stop] of stops.entries()) {
     const icon = window.L.divIcon({ className: 'stop-pin', html: `<span>${i + 1}</span>`, iconSize: [30, 30] });
     const marker = window.L.marker([stop.lat, stop.lon], { icon, title: stop.name }).addTo(layers.stops);
@@ -1460,6 +1557,8 @@ function fitNavRoute(route, target) {
 function drawNavRoute(route) {
   if (!map || route === navRouteDrawn) return;
   navRouteDrawn = route;
+  streetData.leg = route?.points ?? null;
+  street?.setLeg(streetData.leg);
   layers.nav.clearLayers();
   layers.route.eachLayer((l) => l.setStyle?.({ opacity: route ? 0.35 : 0.9 }));
   if (!route) return;
@@ -1521,6 +1620,8 @@ function showDirections(state, modeId) {
 
 function drawRoute(points, { routed = true } = {}) {
   if (!map) return;
+  streetData.route = points;
+  street?.setRoute(points);
   // A real route follows the streets. Without one, a faint dotted line just joins the stops,
   // so it never looks like a path through buildings.
   window.L.polyline(
@@ -1531,6 +1632,8 @@ function drawRoute(points, { routed = true } = {}) {
 
 function drawPois(pois) {
   if (!map) return;
+  streetData.places.push(...pois);
+  street?.addPlaces(pois);
   for (const poi of pois) {
     if (poi.category === 'skip' || poiMarkers.has(poi.id)) continue;
     const marker = window.L.circleMarker([poi.lat, poi.lon], {
@@ -1545,12 +1648,19 @@ function drawPois(pois) {
   }
 }
 
+let highlightTimer = null;
 function markPoiHeard(id) {
   poiMarkers.get(id)?.setStyle({ color: '#8a8578', fillColor: '#bdb6a6', fillOpacity: 0.5 });
+  // In first person, the place being told about lights up for a while.
+  street?.highlight(id);
+  clearTimeout(highlightTimer);
+  highlightTimer = setTimeout(() => street?.highlight(null), 30000);
 }
 
-function moveUser({ lat, lon, accuracy }) {
+function moveUser({ lat, lon, accuracy, heading }) {
   if (!map) return;
+  streetData.pos = { lat, lon };
+  street?.move({ lat, lon }, { heading });
   const L = window.L;
   if (!userMarker) {
     accuracyCircle = L.circle([lat, lon], { radius: accuracy ?? 0, stroke: false, fillColor: '#c9a55c', fillOpacity: 0.12 }).addTo(layers.user);
@@ -1559,7 +1669,8 @@ function moveUser({ lat, lon, accuracy }) {
     userMarker.setLatLng([lat, lon]);
     accuracyCircle.setLatLng([lat, lon]).setRadius(accuracy ?? 0);
   }
-  if (follow) map.panTo([lat, lon], { animate: true, duration: 0.5 });
+  // (Not while in first person: the top map waits underneath, without redrawing.)
+  if (follow && !street) map.panTo([lat, lon], { animate: true, duration: 0.5 });
 }
 
 // ---------- Tour screen ----------
@@ -1671,6 +1782,7 @@ function endTour() {
   session.narrator.stop();
   session.wakeLock?.release?.().catch(() => {});
   session = null;
+  resetStreet();
   $('tour').hidden = true;
   $('btn-end').hidden = true;
   $('setup').hidden = false;
@@ -1793,6 +1905,13 @@ form.addEventListener('submit', async (event) => {
   $('journal-count').textContent = '0';
   setPauseButton(false);
   initMap();
+  // First person or the top map: as you chose last time; at first, first person for a trip
+  // simulated from the sofa (you're not there: travel the streets), the map on the move.
+  if (map && streetData) {
+    streetData.modeId = mode.id;
+    $('view-toggle').hidden = !canDrawVectorMaps();
+    if (!$('view-toggle').hidden && (savedView() ?? (cfg.source === 'sim' ? 'street' : 'map')) === 'street') showStreet(true);
+  }
   requestWakeLock();
 
   narrator.on('start', (item) => {
@@ -1888,6 +2007,8 @@ form.addEventListener('submit', async (event) => {
         else if (type === 'narrated') markPoiHeard(data.poi.id);
         else if (type === 'stop-reached') {
           stopMarkers.get(data.stop.index)?.getElement()?.classList.add('reached');
+          streetData.reached.add(data.stop.index);
+          street?.markReached(data.stop.index);
           if (data.stop.index === stops.length - 1) {
             // Last stop: guide back to the start of a round trip, or stop guiding.
             const home = plan?.loop && plan.start ? { name: 'your starting point', lat: plan.start.lat, lon: plan.start.lon } : null;

@@ -12,6 +12,7 @@
     "e2e:lens": "node tests/e2e/lens.cjs",
     "e2e:plus": "node tests/e2e/plus.cjs",
     "e2e:outings": "node tests/e2e/outings.cjs",
+    "e2e:firstperson": "node tests/e2e/firstperson.cjs",
     "build:site": "node scripts/build-site.mjs",
     "indexnow": "node scripts/indexnow.mjs",
     "check:events": "node scripts/check-events.mjs",

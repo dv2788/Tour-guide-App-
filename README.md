@@ -112,13 +112,20 @@ are, or, if you've typed another city (planning tomorrow's trip from home), that
   Sagrada Família ~95, a neighbourhood church ~5), then how much there is to tell, with a nudge for
   churches, palaces, monuments and museums (recognised in all five languages);
 - **skips what isn't a stop**: streets, districts and whole cities, metro stations, stub articles,
-  organisations and events that Wikipedia places at an address (an intelligence agency, an Olympic Games),
+  organisations, embassies and events that Wikipedia places at an address (an intelligence agency, an Olympic
+  Games; but a memorial *of* a battle, like Waterloo's Lion's Mound, is a place),
   buildings that no longer exist ("palace (1564–1883)"), objects inside a museum (the Elgin Marbles: the
   British Museum is the stop), and near-duplicates;
 - **balances fame against walking**: it adds, one at a time, the place worth the most for the minutes it
   adds, so a must-see a little further away still makes it, but the walk isn't spent crossing town;
 - **puts museums on the route** when there's time to go inside (about an hour each, one for half a day, two
-  for a full day), and stays quiet while you visit;
+  for a full day; longer for a great museum, never the whole morning for a small one), and stays quiet while you visit;
+- **gives each place the time it deserves**: a look at a statue or a fountain, a while at a church, longer at a
+  cathedral, a castle, ruins, a square, a park or a viewpoint, more for world-famous places (by car, parking
+  included and small things seen in passing; on a hike, more time for the views). Short outings keep it quick;
+  from half a day each place gets its full time; and when there's time to spare (a small town, a long day), the
+  best places get longer, up to what each deserves. The plan shows "20 min here" at each stop, and at a long
+  stop the guide says how long and lets you explore in peace;
 - **adds food and drink at the right time**: lunch around 12:30, dinner around 19:45, a coffee or a drink in
   the longest stretches without a break. It reads opening hours and skips places that will be closed, prefers
   independent and notable places (a historic café with its own Wikipedia article) over chains, picks the right
@@ -171,6 +178,17 @@ On a phone without a compass it lists what's around you, nearest first. The logi
 (unit-tested), the view in `js/lensView.js`; `npm run e2e:lens` checks it with a fake camera and compass.
 Recognising buildings from the picture itself (an AI vision model) would need an account with an AI service
 and a small server to keep its key: a possible next step.
+
+## First person: travel through the streets
+
+During a tour, the **First person** button turns the top map into the street seen from just above your head:
+the buildings stand up on either side in 3D, the route lies on the street ahead, and signposts show the next
+stops and the places the guide tells you about (nearer ones bigger; the one being told about turns gold). The
+camera walks with you (or with the simulated traveller), turning with the street rather than with every GPS
+wobble; on a hike it looks out from higher up, for the landscape. A trip simulated from the sofa opens in first
+person; **Map** switches back, and the choice is remembered. It uses the same free map data as the top map
+(OpenFreeMap, from OpenStreetMap: building heights where mapped), so there's no account or key, and it's only
+drawn while it's on screen. The logic is in `js/streetView.js`.
 
 ## Finding your way to the next stop
 
@@ -317,6 +335,7 @@ js/itineraryImport.js reading routes pasted from maps apps and plain lists
 js/suggest.js         suggested routes: interest scoring, museum visits, meal breaks, route order
 js/openingHours.js    reading OpenStreetMap opening hours
 js/navigation.js      directions to the next stop: route, next turn, spoken prompts, re-routing
+js/streetView.js      first person: the 3D street view, its camera and signposts
 js/wiki.js            Wikipedia: nearby places, stories, matching a stop to its article
 js/geocode.js         OpenStreetMap: finding places, routes
 js/location.js        GPS and the trip simulator
@@ -338,6 +357,8 @@ npm test             # unit tests (Node 18+): geo math, text cleanup, the tour e
 npm run e2e          # browser runs on a phone-sized screen: the Barcelona walk, a pasted Google Maps route,
                      # and "use my location" + a suggested half-day route with a museum visit and meals
 npm run e2e:voice    # the AI voice for real: download, preview, and a tour read by it (needs internet)
+npm run e2e:outings  # interests, outing types and the itineraries to choose from
+npm run e2e:firstperson  # a tour in first person: the 3D street view, signposts, switching to the map and back
 ```
 
 The browser test answers place searches and Wikipedia from `tests/e2e/fixtures.json` (real data recorded by

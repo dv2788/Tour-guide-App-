@@ -1493,6 +1493,133 @@ select:focus {
   color: var(--gold);
 }
 
+/* "First person" / "Map": bottom left, clear of "Follow me". */
+.view-btn {
+  right: auto;
+  left: 14px;
+}
+
+/* ---------- First person: through the streets ---------- */
+/* A taller window on the street than the top map needs. */
+.first-person #map {
+  height: 58vh;
+}
+
+.street {
+  position: absolute;
+  inset: 0;
+  z-index: 450; /* over the top map, under its buttons and the direction card */
+  background: linear-gradient(#b9d6ea, #f6f1e8 55%, #e7dccb);
+  overflow: hidden;
+}
+
+.street-map {
+  position: absolute;
+  inset: 0;
+}
+
+.street-credit {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 28px; /* clear of the card that overlaps the map's bottom edge */
+  z-index: 2;
+  margin: 0;
+  padding: 2px 8px;
+  text-align: right;
+  font-size: 0.68rem;
+  color: #3f3a31;
+  background: rgb(255 253 248 / 70%);
+  pointer-events: auto;
+}
+
+.street-credit a {
+  color: inherit;
+}
+
+/* Signposts: a stop's number and name on a pole where it stands; places the guide mentions,
+   smaller; the one being told about, gold. Nearer ones bigger. */
+.fp-sign {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+}
+
+.fp-sign[hidden] {
+  display: none;
+}
+
+.fp-sign-inner {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  max-width: 190px;
+  padding: 5px 10px 5px 5px;
+  border: 1.5px solid #c9a55c;
+  border-radius: 999px;
+  background: #0b0f17;
+  color: #f6f1e8;
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  line-height: 1.2;
+  box-shadow: 0 4px 14px rgb(0 0 0 / 35%);
+  transform-origin: bottom center;
+  transition: transform 0.6s var(--ease);
+}
+
+.fp-num {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #c9a55c;
+  color: #0b0f17;
+  font-family: var(--serif);
+  font-weight: 700;
+}
+
+.fp-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fp-pole {
+  width: 2px;
+  height: 26px;
+  background: linear-gradient(#c9a55c, rgb(201 165 92 / 0%));
+}
+
+.fp-place .fp-sign-inner {
+  padding: 4px 10px;
+  border-color: rgb(255 253 248 / 70%);
+  background: rgb(22 24 30 / 72%);
+  font-size: 0.74rem;
+}
+
+.fp-place.now .fp-sign-inner {
+  border-color: #c9a55c;
+  background: #c9a55c;
+  color: #0b0f17;
+}
+
+.fp-stop.reached .fp-sign-inner {
+  opacity: 0.6;
+}
+
+@media (prefers-color-scheme: dark) {
+  .street {
+    background: linear-gradient(#0b0f17, #1d2636 55%, #2c3547);
+  }
+  .street-credit {
+    color: #d8d2c4;
+    background: rgb(11 15 23 / 70%);
+  }
+}
+
 .sheet {
   position: relative;
   z-index: 600;

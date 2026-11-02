@@ -105,6 +105,7 @@
     <symbol id="i-navigation" viewBox="0 -960 960 960"><path d="M211.92-150 190-171.16l290-659.61 290 659.61L748.08-150 480-270.46 211.92-150Zm53-74.92L480-319.08l215.08 94.16-215.08-494-215.08 494ZM480-319.08Z"/></symbol>
     <symbol id="i-camera" viewBox="0 -960 960 960"><path d="M480-260q75 0 127.5-52.5T660-440q0-75-52.5-127.5T480-620q-75 0-127.5 52.5T300-440q0 75 52.5 127.5T480-260Zm0-80q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29ZM160-120q-33 0-56.5-23.5T80-200v-480q0-33 23.5-56.5T160-760h126l74-80h240l74 80h126q33 0 56.5 23.5T880-680v480q0 33-23.5 56.5T800-120H160Zm0-80h640v-480H638l-73-80H395l-73 80H160v480Z"/></symbol>
     <symbol id="i-arrow-up" viewBox="0 -960 960 960"><path d="M440-160v-487L216-423l-56-57 320-320 320 320-56 57-224-224v487h-80Z"/></symbol>
+    <symbol id="i-eye" viewBox="0 -960 960 960"><path d="M480-320q75 0 127.5-52.5T660-500q0-75-52.5-127.5T480-680q-75 0-127.5 52.5T300-500q0 75 52.5 127.5T480-320Zm0-72q-45 0-76.5-31.5T372-500q0-45 31.5-76.5T480-608q45 0 76.5 31.5T588-500q0 45-31.5 76.5T480-392Zm0 192q-146 0-266-81.5T40-500q54-137 174-218.5T480-800q146 0 266 81.5T920-500q-54 137-174 218.5T480-200Zm0-300Zm0 220q113 0 207.5-59.5T832-500q-50-101-144.5-160.5T480-720q-113 0-207.5 59.5T128-500q50 101 144.5 160.5T480-280Z"/></symbol>
     <symbol id="i-map" viewBox="0 -960 960 960"><path d="m608.92-141.54-256.84-90.69-167.08 66q-15.46 7.84-30.23-1.19Q140-176.46 140-194.54v-523q0-11.84 6.35-21.27 6.34-9.42 17.19-13.65l188.54-66 256.84 89.69L775-794.38q15.46-7.23 30.23.92T820-767.61v531.15q0 10.61-6.92 18.42-6.93 7.81-17.16 11.42l-187 65.08ZM583-198.08v-495l-206-70.23v495l206 70.23Zm45.38 0 146.23-48.15v-502l-146.23 55.15v495Zm-442.99-14.69 146.23-55.54v-495l-146.23 48.93v501.61Zm442.99-480.31v495-495Zm-296.76-70.23v495-495Z"/></symbol>
     </svg>
 
@@ -354,6 +355,14 @@
       <section id="tour" hidden>
         <div class="map-wrap">
           <div id="map" role="img" aria-label="Map of your tour"></div>
+          <!-- First person: through the streets, facing where you're going (js/streetView.js). -->
+          <div id="street" class="street" role="img" aria-label="First-person view of your tour: the streets ahead of you" hidden>
+            <p class="street-credit">
+              <a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a> ©
+              <a href="https://www.openmaptiles.org/" target="_blank" rel="noopener">OpenMapTiles</a> Data from
+              <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>
+            </p>
+          </div>
           <div id="next-stop" class="nav-card" role="status" aria-live="polite" hidden>
             <span class="nav-icon"><svg class="icon"><use id="nav-icon" href="#i-navigation" /></svg></span>
             <div class="nav-body">
@@ -367,6 +376,9 @@
               <svg class="icon"><use href="#i-map" /></svg>
             </a>
           </div>
+          <button type="button" id="view-toggle" class="map-btn view-btn" aria-pressed="false" hidden>
+            <svg class="icon"><use id="view-icon" href="#i-eye" /></svg><span id="view-label">First person</span>
+          </button>
           <button type="button" id="recenter" class="map-btn" hidden>
             <svg class="icon"><use href="#i-locate" /></svg>Follow me
           </button>
