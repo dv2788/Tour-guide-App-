@@ -386,6 +386,46 @@ select:focus {
   font-weight: 400;
 }
 
+/* What's on in the city: festivals and holidays around the visit. */
+.events-note {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.event {
+  padding: 12px 14px;
+  border-left: 2px solid var(--gold-bright);
+  background: var(--soft);
+  font-size: 0.92rem;
+}
+
+.event-when {
+  display: block;
+  font-family: var(--sans);
+  font-size: 0.66rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.event-name {
+  display: block;
+  margin: 2px 0 4px;
+  font-family: var(--serif);
+  font-size: 1.15rem;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.event p {
+  margin: 0;
+}
+
+.event a {
+  color: var(--gold);
+}
+
 .import-note[data-tone='warn'] {
   border-color: var(--warn);
   background: var(--warn-soft);

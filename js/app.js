@@ -16,6 +16,7 @@ import { parseItinerary, parseTextList, SOURCE_LABELS } from './itineraryImport.
 import { NEURAL_VOICES, neuralVoiceKey, parseVoiceKey, rankSystemVoices, PREVIEW_TEXT, PREVIEW_TEXT_DOCUMENTARY, voiceProfile } from './voices.js';
 import { isVoiceDownloaded, neuralVoicesSupported } from './neuralVoice.js';
 import { formatClock } from './openingHours.js';
+import { eventsFor, formatDays, eventLink } from './events.js';
 import {
   suggestRoute,
   searchRadiusFor,
@@ -123,6 +124,7 @@ function loadSample(id, { onSite = false } = {}) {
   showPlanMap();
   // Start from the first stop (not from wherever you are now), simulated from the sofa.
   fillForm({ city: sample.city, area: '', areaPoint: null, stops: sample.stops.join('\n'), mode: sample.mode, source: onSite ? 'gps' : 'sim', simSpeed: '8', start: null, lang: $('lang').value });
+  showEvents();
   for (const el of document.querySelectorAll('.sample')) el.setAttribute('aria-pressed', String(el.dataset.id === sample.id));
   showImportNote(
     onSite
@@ -310,7 +312,30 @@ function otherCityTyped() {
   return startPoint.name && sharesNameToken(typed, startPoint.name) ? null : typed;
 }
 
+/** What's on in the city around now: festivals and holidays worth knowing about. */
+function showEvents() {
+  const name = $('city').value.trim() || startPoint?.name || '';
+  const found = eventsFor(name, new Date()).slice(0, 2);
+  const box = $('events-note');
+  box.hidden = !found.length;
+  const city = name.split(',')[0].trim();
+  box.replaceChildren(
+    ...found.map(({ event, start, end, on }) =>
+      el('div', { className: 'event' }, [
+        el('span', { className: 'event-when', textContent: `${on ? 'On now' : 'Coming up'} in ${city} · ${formatDays(start, end)}` }),
+        el('strong', { className: 'event-name', textContent: event.name }),
+        el('p', {}, [
+          // "Usually …" when it says more than the dates above it.
+          document.createTextNode(`${event.usually === formatDays(start, end) ? '' : `Usually ${event.usually}. `}${event.note} `),
+          el('a', { href: eventLink(event), target: '_blank', rel: 'noopener', textContent: 'Check the dates' }),
+        ]),
+      ]),
+    ),
+  );
+}
+
 function describeLocation() {
+  showEvents();
   if (areaPoint && areaPoint.query === $('area').value.trim()) {
     showLocateNote(`✓ ${areaPoint.label}: I'll start your routes from there.`);
     return;
@@ -979,6 +1004,7 @@ syncFormHints();
 showRange();
 renderPlan();
 if (startPoint || areaPoint) describeLocation();
+else showEvents();
 // A link to a sample tour (?tour=barcelona, from the tour pages) opens with that tour loaded.
 const linkedTour = new URLSearchParams(location.search).get('tour');
 if (linkedTour && SAMPLES.some((s) => s.id === linkedTour)) {
