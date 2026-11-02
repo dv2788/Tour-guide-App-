@@ -161,3 +161,15 @@ test('the app page has a content security policy that covers every service it us
   assert.deepEqual(directives['base-uri'], ["'self'"]);
   assert.ok(!directives['script-src'].includes("'unsafe-inline'"), 'no inline scripts can run');
 });
+
+test('the Cloudflare headers give the app page the same policy as its <meta>, plus no framing', () => {
+  const index = read('index.html');
+  const meta = index.match(/http-equiv="Content-Security-Policy" content="([^"]+)"/)[1];
+  const headers = read('_headers');
+  const policies = [...headers.matchAll(/^\s+Content-Security-Policy: (.+)$/gm)].map((m) => m[1]);
+  assert.equal(policies.length, 2, 'for / and /index.html');
+  for (const p of policies) assert.equal(p, `${meta}; frame-ancestors 'none'`);
+  assert.match(headers, /X-Frame-Options: DENY/);
+  assert.match(headers, /X-Content-Type-Options: nosniff/);
+  assert.match(headers, /Permissions-Policy: geolocation=\(self\), camera=\(self\)/);
+});

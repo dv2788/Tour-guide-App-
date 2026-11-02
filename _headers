@@ -1,0 +1,20 @@
+# Security headers for Cloudflare Pages (heyroamie.com). GitHub Pages ignores this file.
+# The app page's policy is the one in index.html's <meta> plus what only a header can say
+# (frame-ancestors: no other site may frame Roamie). tests/site.test.js keeps the two in step.
+
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(self), camera=(self), accelerometer=(self), gyroscope=(self), magnetometer=(self), screen-wake-lock=(self), microphone=(), payment=(), usb=(), serial=(), bluetooth=()
+  X-Frame-Options: DENY
+  Strict-Transport-Security: max-age=31536000
+  Cross-Origin-Opener-Policy: same-origin
+
+/
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/ https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/4.7.1/ https://cdnjs.cloudflare.com/ajax/libs/onnxruntime-web/1.18.0/ https://cdn.jsdelivr.net/npm/@maplibre/maplibre-gl-leaflet@0.1.3/ https://cdn.jsdelivr.net/npm/@diffusionstudio/piper-wasm@1.0.0/ 'wasm-unsafe-eval'; style-src 'self' https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/ https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/4.7.1/; img-src 'self' data: blob: https://*.wikimedia.org https://*.wikipedia.org https://tiles.openfreemap.org https://tile.openstreetmap.org https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/; font-src 'self'; connect-src 'self' blob: data: https://nominatim.openstreetmap.org https://routing.openstreetmap.de https://overpass-api.de https://*.wikipedia.org https://www.wikidata.org https://tiles.openfreemap.org https://huggingface.co https://*.huggingface.co https://*.hf.co https://cdnjs.cloudflare.com/ajax/libs/onnxruntime-web/1.18.0/ https://cdn.jsdelivr.net/npm/@diffusionstudio/piper-wasm@1.0.0/ https://api.polar.sh; worker-src 'self' blob:; child-src 'self' blob:; media-src 'self' blob: data:; manifest-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'
+
+/index.html
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/ https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/4.7.1/ https://cdnjs.cloudflare.com/ajax/libs/onnxruntime-web/1.18.0/ https://cdn.jsdelivr.net/npm/@maplibre/maplibre-gl-leaflet@0.1.3/ https://cdn.jsdelivr.net/npm/@diffusionstudio/piper-wasm@1.0.0/ 'wasm-unsafe-eval'; style-src 'self' https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/ https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/4.7.1/; img-src 'self' data: blob: https://*.wikimedia.org https://*.wikipedia.org https://tiles.openfreemap.org https://tile.openstreetmap.org https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/; font-src 'self'; connect-src 'self' blob: data: https://nominatim.openstreetmap.org https://routing.openstreetmap.de https://overpass-api.de https://*.wikipedia.org https://www.wikidata.org https://tiles.openfreemap.org https://huggingface.co https://*.huggingface.co https://*.hf.co https://cdnjs.cloudflare.com/ajax/libs/onnxruntime-web/1.18.0/ https://cdn.jsdelivr.net/npm/@diffusionstudio/piper-wasm@1.0.0/ https://api.polar.sh; worker-src 'self' blob:; child-src 'self' blob:; media-src 'self' blob: data:; manifest-src 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'
+
+/sw.js
+  Cache-Control: no-cache

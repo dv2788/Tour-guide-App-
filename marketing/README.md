@@ -1,8 +1,8 @@
 # Roamie launch kit
 
-Open [`launch-kit.html`](launch-kit.html) (or, once the website is on,
-https://dv2788.github.io/Tour-guide-App-/marketing/launch-kit.html): the ad, the visuals, the positioning,
-ready-to-paste copy for each channel, and the advertising plan: which channels, which cities, when and for how much.
+Open [`launch-kit.html`](launch-kit.html) (online: https://dv2788.github.io/Tour-guide-App-/marketing/launch-kit.html):
+what is waiting for your approval, the launch day hour by hour, the ad, the visuals, the positioning,
+ready-to-paste copy for each channel, and the plan: which channels, which cities, when and for how much.
 
 | File | What | Use |
 | --- | --- | --- |
@@ -13,6 +13,7 @@ ready-to-paste copy for each channel, and the advertising plan: which channels, 
 | `roamie-square.jpg` | 1080 × 1080 | Profile posts, Product Hunt gallery |
 | `roamie-og.jpg` | 1200 × 630 | Link previews (also in `icons/og-image.jpg`, used by the app) |
 | `ad-poster.jpg` | A still from the ad | Video cover |
+| `cards.html` | Printable QR cards: ten to an A4 sheet, one sheet per city (made by `scripts/make-cards.py`) | Riad, hostel and hotel reception desks |
 
 The ad's voices are Heart and George from [Kokoro-82M](https://huggingface.co/hexgrad/Kokoro-82M), an
 open-source voice model (Apache 2.0, free for commercial use). The music is a light arpeggio bed written for

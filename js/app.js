@@ -1,6 +1,7 @@
 // Screen wiring: the setup form, the map, the "now playing" card and the controls.
 
-import './frame-guard.js'; // first: never run inside another site's frame
+import './moved.js'; // first: on the old address, go to the new one
+import './frame-guard.js'; // never run inside another site's frame
 
 import { getMode, MODES } from './modes.js';
 import { SAMPLES, DEFAULT_SAMPLE, REGIONS, sampleById } from './samples.js';
