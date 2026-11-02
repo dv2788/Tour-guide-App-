@@ -7,6 +7,7 @@ import { cameraHeading, smoothHeading, placesInView, placesAround, whereItIs } f
 import { distanceMeters, bearingDegrees, angleDiff } from './geo.js';
 import { firstSentences } from './text.js';
 import { photoPage } from './wiki.js';
+import { declination, trueHeading } from './declination.js';
 
 const $ = (id) => document.getElementById(id);
 const REFETCH_AFTER_M = 40; // look for places again after moving this far
@@ -77,10 +78,11 @@ export function createLens({ wiki, streetName, narrator }) {
     status('Starting the camera…');
 
     s.onOrient = (e) => {
-      const h = cameraHeading(e);
+      const h = cameraHeading(e); // relative to magnetic north
       if (h == null || s.closed) return;
-      if (s.heading == null) clearTimeout(s.compassTimer);
-      s.heading = smoothHeading(s.heading, h);
+      if (s.magnetic == null) clearTimeout(s.compassTimer);
+      s.magnetic = smoothHeading(s.magnetic, h);
+      s.heading = trueHeading(s.magnetic, s.declination);
       s.compass = true;
       draw();
     };
@@ -117,6 +119,13 @@ export function createLens({ wiki, streetName, narrator }) {
     if (s.closed) return;
     const first = !s.position;
     s.position = position;
+    // Compasses point to magnetic north, maps to true north: the difference where you are
+    // (1° in Paris, 27° in Cape Town). Once per city is plenty.
+    if (s.declination == null || distanceMeters(s.declinationAt, position) > 50000) {
+      s.declination = declination(position.lat, position.lon);
+      s.declinationAt = position;
+      if (s.magnetic != null) s.heading = trueHeading(s.magnetic, s.declination);
+    }
     if (first || !s.fetchedAt || distanceMeters(s.fetchedAt, position) > REFETCH_AFTER_M) {
       s.fetchedAt = position;
       clearTimeout(s.retryTimer);

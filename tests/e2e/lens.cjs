@@ -14,6 +14,7 @@ const at = (title) => fixtures.geosearch.find((p) => p.title === title).coordina
 
 (async () => {
   const { bearingDegrees } = await import('../../js/geo.js');
+  const { declination } = await import('../../js/declination.js');
   const BATLLO = at('Casa Batlló');
   const MORERA = at('Casa Lleó Morera');
   // Passeig de Gràcia runs south-east to north-west; the three houses stand side by side on its
@@ -44,11 +45,13 @@ const at = (title) => fixtures.geosearch.find((p) => p.title === title).coordina
   const page = await context.newPage();
   const errors = [];
   page.on('pageerror', (e) => errors.push(e.message));
-  // Turn the phone (held upright) to face a compass heading: an Android "absolute" orientation event.
+  // Turn the phone (held upright) to face a heading: an Android "absolute" orientation event,
+  // which, like a real compass, is relative to magnetic north (the app turns it to true north).
+  const DECLINATION = declination(BATLLO.lat, BATLLO.lon);
   const face = (heading) =>
     page.evaluate((alpha) => {
       for (let i = 0; i < 3; i++) window.dispatchEvent(new DeviceOrientationEvent('deviceorientationabsolute', { alpha, beta: 90, gamma: 0, absolute: true }));
-    }, (360 - heading) % 360);
+    }, (((360 - (heading - DECLINATION)) % 360) + 360) % 360);
   const text = (sel) => page.$eval(sel, (el) => el.textContent).catch(() => '');
 
   await page.goto(base);
