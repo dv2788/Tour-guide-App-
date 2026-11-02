@@ -32,7 +32,8 @@ const HISTORIC_WORDS = [
   'ponte', 'piazza', 'mercato',
 ];
 const HISTORIC_RE = new RegExp(`(?:^|[^\\p{L}])(?:${HISTORIC_WORDS.join('|')})`, 'iu');
-const MUSEUM_RE = /(?:^|[^\p{L}])(?:museum|musée|musee|museo|museu|gallery|galerie|galleria|pinacoteca|kunsthalle)/iu;
+// (A panorama is a painting all around you in its own rotunda: you go in, like a museum.)
+const MUSEUM_RE = /(?:^|[^\p{L}])(?:museum|musée|musee|museo|museu|gallery|galerie|galleria|pinacoteca|kunsthalle|(?:panorama|cyclorama)(?![\p{L}]))/iu;
 
 // ---------- What a place is about: history, culture, landscapes, food ----------
 // Whole words (and their plurals), in the five supported languages.
@@ -110,7 +111,7 @@ const NOT_A_PLACE_INTL_RE =
 // d'universités européennes", "national church of Scotland", "cámara baja de las Cortes".
 // (Anchored: "cathedral of the Diocese of Bruges" is still a cathedral.)
 const NOT_A_PLACE_START_RE =
-  /^(?:[\p{L}'’-]+\s+){0,3}(?:think tank|academy|national church|denomination|(?:arch)?diocese|(?:archi)?diocèse|(?:arqui|archi)?diócesis|(?:arci)?diocesi|(?:erz)?bistum|(?:erz)?diözese|network|réseau|red de|netzwerk|rete di|parlement|parlamento|parlament|lower house|upper house|chambre basse|chambre haute|cámara baja|cámara alta|camera bassa|camera alta|unterhaus|oberhaus|juridiction|tribunal|famine|epidemic|pandemic|hambruna|hungersnot|carestia|épidémie|epidemia|entity|entité|entidad|ente|producer|producteur|productor|produttore|distributeur|operator|opérateur|operador|hersteller|konzern|hypothèse|strategic plan|military plan)(?![\p{L}])/iu;
+  /^(?:[\p{L}'’-]+\s+){0,3}(?:think tank|academy|national church|denomination|(?:arch)?diocese|(?:archi)?diocèse|(?:arqui|archi)?diócesis|(?:arci)?diocesi|(?:erz)?bistum|(?:erz)?diözese|network|réseau|red de|netzwerk|rete di|parlement|parlamento|parlament|lower house|upper house|chambre basse|chambre haute|cámara baja|cámara alta|camera bassa|camera alta|unterhaus|oberhaus|juridiction|tribunal|famine|epidemic|pandemic|hambruna|hungersnot|carestia|épidémie|epidemia|entity|entité|entidad|ente|producer|producteur|productor|produttore|distributeur|operator|opérateur|operador|hersteller|konzern|hypothèse|strategic plan|military plan|diplomatic (?:mission|service)|mission diplomatique|misión diplomática|diplomatische vertretung|missione diplomatica|institution of the european union)(?![\p{L}])/iu;
 // Assemblies, by their first words only: "unicameral legislature", "órgano legislativo" (but
 // "building housing the legislative assembly" is a building).
 const LEGISLATURE_RE = /^(?:[\p{L}'’-]+\s+){0,2}(?:legislat|législat)\p{L}*/iu;
@@ -156,6 +157,13 @@ const GONE_RE = /\(\s*\d{3,4}\s*[–-]\s*\d{3,4}\s*\)|^\d{3,4}\s*[–-]\s*\d{3,4
 // Objects inside a collection ("Ancient Greek sculptures held in London"): the museum is the stop.
 const IN_A_COLLECTION_RE =
   /^(?:painting|portrait|manuscript|tapestry|artwork|tableau|peinture|retable|manuscrit|tapisserie|cuadro|pintura|retablo|manuscrito|tapiz|gemälde|handschrift|dipinto|manoscritto|arazzo)(?![\p{L}])|\b(?:held|housed|kept|displayed|exhibited) (?:in|at|by)\b/iu;
+// What a place *is*, when that's a memorial, a monument or a museum: then words further on are
+// what it remembers, not what it is ("War memorial for the Battle of Waterloo", "Memorial of the
+// Battle of Waterloo", "musée de la bataille de Waterloo").
+const MEMORIAL_START_RE =
+  /^(?:[\p{L}'’-]+\s+){0,2}(?:memorial|monument|statue|mound|cenotaph|obelisk|mausoleum|museum|mémorial|musée|butte|monumento|estatua|museo|denkmal|mahnmal|gedenkstätte|statua|sacrario)(?![\p{L}])/iu;
+// A painting you walk into: "Painting by Louis Dumoulin in a rotunda" (the Waterloo Panorama).
+const ROTUNDA_RE = /(?:^|[^\p{L}])(?:rotunda|rotonde|rotonda|panorama|cyclorama)(?![\p{L}])/iu;
 // Coordinate kinds (from Wikipedia's {{coord}}) that are never a stop on a walk.
 const NOT_A_STOP_TYPES = new Set(['country', 'state', 'adm1st', 'adm2nd', 'adm3rd', 'city', 'event', 'edu', 'airport', 'waterbody', 'river', 'mountain', 'satellite', 'glacier', 'pass', 'forest']);
 // …except, on an outing for landscapes, these.
@@ -180,10 +188,12 @@ export function isPlaceToSee(poi, { nature = false } = {}) {
   const title = poi.title ?? '';
   // On an outing for landscapes, a lake, a bay, a hill or a forest is a place to go.
   const natural = nature && placeThemes(poi).has('landscape');
-  if ((!natural && AREA_RE.test(description) && !TOWN_BUILDING_RE.test(description)) || NOT_A_PLACE_RE.test(description) || NOT_A_PLACE_INTL_RE.test(description) || NOT_A_PLACE_START_RE.test(description)) return false;
+  const memorial = MEMORIAL_START_RE.test(description);
+  if ((!natural && AREA_RE.test(description) && !TOWN_BUILDING_RE.test(description)) || NOT_A_PLACE_START_RE.test(description)) return false;
+  if (!memorial && (NOT_A_PLACE_RE.test(description) || NOT_A_PLACE_INTL_RE.test(description))) return false;
   // An assembly, unless it's its building ("edificio legislativo": Argentina's Palace of Congress).
   if (LEGISLATURE_RE.test(description) && !STRUCTURE_RE.test(description) && !HISTORIC_RE.test(title)) return false;
-  if (IN_A_COLLECTION_RE.test(description) || GONE_RE.test(description) || NOT_A_PLACE_DE_RE.test(description)) return false;
+  if ((IN_A_COLLECTION_RE.test(description) && !ROTUNDA_RE.test(`${title} ${description}`)) || GONE_RE.test(description) || NOT_A_PLACE_DE_RE.test(description)) return false;
   // "2019 structural fire in Paris" is an event; "1973 Thames road bridge" is London Bridge.
   if (EVENT_DESCRIPTION_RE.test(description) && !HISTORIC_RE.test(description) && !MUSEUM_RE.test(description)) return false;
   if (INSTITUTION_TITLE_RE.test(title) || EVENT_TITLE_RE.test(title)) return false;
@@ -273,6 +283,127 @@ export function museumVisits(modeId, minutes, interests = null) {
   if (minutes >= 210) return { count: 1, minutes: 60 };
   if (minutes >= 110) return { count: 1, minutes: 45 };
   return { count: 0, minutes: 0 };
+}
+
+// ---------- How long to stay at each place ----------
+// Not the same everywhere: a look at a statue, a while at a church, longer at a cathedral, a
+// castle or a viewpoint, and an hour or more inside a great museum. `base` is what a place gets
+// when time is short; when the outing has time to spare, the best places get more, up to `max`.
+
+// What a place is: its description's first words ("Statue of…", "Cathedral in…"), or its title.
+const headWords = (list) => new RegExp(`^(?:[\\p{L}'’-]+\\s+){0,2}(?:${list.join('|')})(?![\\p{L}])`, 'iu');
+const SMALL_WORDS = [
+  'statues?', 'busts?', 'sculptures?', 'fountains?', 'plaques?', 'obelisks?', 'columns?', 'crosses', 'cross', 'steles?', 'stones?', 'sundial',
+  'murals?', 'wells?', 'trees?', 'elm', 'oak', 'buste', 'fontaines?', 'obélisque', 'colonne', 'croix', 'stèle', 'borne', 'estatua', 'busto',
+  'escultura', 'fuente', 'placa', 'obelisco', 'columna', 'cruz', 'büste', 'skulptur', 'brunnen', 'gedenktafel', 'obelisk', 'säule', 'kreuz',
+  'statua', 'scultura', 'fontana', 'targa', 'colonna', 'croce',
+];
+const BIG_WORDS = [
+  'cathedral', 'basilica', 'minster', 'abbey', 'priory', 'monastery', 'castle', 'palace', 'fortress', 'fort', 'citadel', 'ruins', 'archaeological site',
+  'amphitheat(?:re|er)', 'battlefield', 'mound', 'world heritage site', 'cathédrale', 'basilique', 'abbaye', 'prieuré', 'monastère', 'château',
+  'palais', 'forteresse', 'citadelle', 'ruines', 'site archéologique', 'amphithéâtre', 'butte', 'champ de bataille', 'catedral', 'basílica',
+  'abadía', 'monasterio', 'castillo', 'palacio', 'alcázar', 'fortaleza', 'ciudadela', 'ruinas', 'yacimiento arqueológico', 'anfiteatro', 'dom',
+  'kathedrale', 'münster', 'basilika', 'abtei', 'kloster', 'schloss', 'burg', 'festung', 'zitadelle', 'ruine', 'palast', 'cattedrale', 'duomo',
+  'abbazia', 'monastero', 'castello', 'palazzo reale', 'reggia', 'fortezza', 'cittadella', 'rovine', 'sito archeologico',
+];
+const OPEN_WORDS = [
+  'squares?', 'plaza', 'piazza', 'platz', 'praça', 'markets?', 'marketplace', 'market hall', 'marché', 'halles', 'mercado', 'markt', 'markthalle', 'mercato',
+];
+const SMALL_HEAD_RE = headWords(SMALL_WORDS);
+const BIG_HEAD_RE = headWords(BIG_WORDS);
+const OPEN_HEAD_RE = headWords(OPEN_WORDS);
+const BIG_RE = words(BIG_WORDS);
+
+/** 'small' (a statue, a fountain) | 'building' (a church, a monument) | 'big' (a cathedral, a castle) | 'open' (a square, a park, a viewpoint). */
+export function placeSize(poi) {
+  const title = poi.title ?? '';
+  const description = poi.description ?? '';
+  const what = description || title;
+  if (OPEN_HEAD_RE.test(what) || (placeThemes(poi).has('landscape') && !BIG_HEAD_RE.test(what))) return 'open';
+  if (BIG_HEAD_RE.test(what) || BIG_RE.test(title)) return 'big';
+  if (SMALL_HEAD_RE.test(what)) return 'small';
+  return 'building';
+}
+
+// Minutes on foot: { base, max }.
+const STAY = {
+  small: { base: 5, max: 10 }, // a look and the story
+  building: { base: 7, max: 25 }, // step inside, walk around it
+  big: { base: 12, max: 45 }, // a cathedral, a castle, ruins, a battlefield to climb and look over
+  open: { base: 9, max: 40 }, // a square, a market, a park, a garden, a viewpoint
+};
+// By bike (lock it and go), by car (parking included; small things are seen as you drive past),
+// and on a hike (the view is what you came for).
+const STAY_BY_MODE = {
+  cycle: { small: { base: 3, max: 8 } },
+  drive: { small: { base: 2, max: 5 }, building: { base: 10, max: 30 }, big: { base: 20, max: 60 }, open: { base: 15, max: 45 } },
+  hike: { open: { base: 15, max: 60 } },
+};
+
+// Famous places deserve more of your time: ~0.8 (known locally) to ~1.4 (world-famous).
+const fame = (poi) => (poi.langs == null ? 1 : 0.6 + 0.4 * Math.log10(1 + poi.langs));
+
+/**
+ * How long to stay at a place on this outing: { base, max } minutes. On a short outing every
+ * place gets a quick look (half an hour can't hold a castle visit); from half a day, each its due.
+ */
+export function stayFor(poi, modeId = 'walk', minutes = 120) {
+  const pace = PACE[modeId] ?? PACE.walk;
+  if (modeId === 'run') return { base: pace.dwell, max: pace.dwell }; // a runner doesn't linger
+  const size = placeSize(poi);
+  const stay = STAY_BY_MODE[modeId]?.[size] ?? STAY[size];
+  const quick = STAY_BY_MODE[modeId]?.small ?? STAY.small;
+  // 30 min: a quick look everywhere; half a day and more: each place its full time. In between,
+  // a little of both, so a morning in a dense old town still has its many places.
+  const room = Math.min(1, Math.max(0, (minutes - 30) / 210));
+  const f = fame(poi);
+  // Round numbers from 10 minutes: "about 15 minutes", not 17.
+  const round = (m) => (m >= 10 ? Math.round(m / 5) * 5 : Math.round(m));
+  const base = Math.max(1, round(quick.base + Math.max(0, stay.base * f - quick.base) * room));
+  return { base, max: Math.max(base, round(stay.max * f)) };
+}
+
+/** Time inside a museum: the outing's museum time, more for a great museum, less for a small one. */
+export function visitFor(poi, minutes) {
+  const small = (poi.length ?? 10000) < 5000 && (poi.langs ?? 10) < 5;
+  const f = Math.min(1.15, Math.max(0.85, fame(poi))); // the rest comes from spare time, up to max
+  const base = Math.min(small ? 45 : 120, Math.max(30, Math.round((minutes * f) / 5) * 5));
+  return { base, max: Math.min(180, Math.round((base * 1.75) / 5) * 5) };
+}
+
+/**
+ * Hand spare time to the stops, the best places first, each up to its max: with a few places
+ * and a whole afternoon, you stay longer at the castle rather than come back early. Changes
+ * `stayMinutes` / `visitMinutes` on the stops; returns the minutes it couldn't place.
+ */
+export function spreadSpareTime(stops, spare) {
+  const time = (s) => (s.visitMinutes != null ? 'visitMinutes' : 'stayMinutes');
+  const room = (s) => Math.max(0, (s.visitMinutes != null ? s.visitMax : s.stayMax) - s[time(s)]);
+  // Worth: how much better than filler the place is (the best get most), times what's left to see.
+  const worth = (s) => Math.max(0.3, (s.score ?? SCORE_FLOOR) - SCORE_FLOOR + 0.5) ** 2;
+  const before = new Map(stops.map((st) => [st, st[time(st)]]));
+  let left = Math.max(0, spare);
+  for (let round = 0; round < 6 && left >= 1; round++) {
+    const open = stops.filter((s) => room(s) >= 1);
+    const total = open.reduce((n, s) => n + worth(s), 0);
+    if (!total) break;
+    let given = 0;
+    for (const s of open) {
+      const add = Math.min(room(s), (left * worth(s)) / total);
+      s[time(s)] += add;
+      given += add;
+    }
+    left -= given;
+  }
+  // Round to what you'd tell a friend: "about 20 minutes", never "17". Down, so it still fits.
+  for (const s of stops) {
+    const key = time(s);
+    if (s[key] == null) continue;
+    const v = s[key] + 1e-9;
+    const fives = Math.floor(v / 5) * 5;
+    s[key] = v >= 10 && fives >= before.get(s) ? fives : Math.floor(v);
+  }
+  return left;
 }
 
 // ---------- Food and drink breaks ----------
@@ -387,7 +518,7 @@ function legMinutes(a, b, pace) {
 }
 
 function stopMinutes(stop, pace) {
-  return stop.visitMinutes ?? stop.breakMinutes ?? pace.dwell;
+  return stop.visitMinutes ?? stop.breakMinutes ?? stop.stayMinutes ?? pace.dwell;
 }
 
 /** Arrival/leave times (minutes from the start) along a route, and the total. */
@@ -447,7 +578,7 @@ export function suggestRoute({ start, candidates, modeId = 'walk', minutes = 60,
   const budget = minutes - reservedMinutes;
   const pool = candidates
     .filter((c) => !avoid?.has(c.id) && !avoid?.has(c.title))
-    .map((c) => ({ ...c, kind: placeKind(c), themes: placeThemes(c), score: interestScore(c, { interests }) }))
+    .map((c) => ({ ...c, kind: placeKind(c), themes: placeThemes(c), score: interestScore(c, { interests }), stay: stayFor(c, modeId, minutes), visit: visitFor(c, visits.minutes) }))
     // With interests chosen, only what answers them (or is famous enough to anyway): no filler.
     .filter((c) => Number.isFinite(c.score) && (!interests?.length || c.score >= SCORE_FLOOR))
     .sort((a, b) => b.score - a.score)
@@ -457,12 +588,15 @@ export function suggestRoute({ start, candidates, modeId = 'walk', minutes = 60,
   const chosen = [];
   let used = 0; // minutes so far
 
+  // Time there: inside, for a museum visit; otherwise what the place deserves (a statue, a castle).
+  const dwellAt = (c, visit) => (visit ? c.visit.base : c.stay.base);
+
   /** Where a place would slot in with the least extra travel, if it may and fits the time left. */
-  const insertionCost = (c, visitMinutes = null) => {
+  const insertionCost = (c, visit = false) => {
     if (chosen.length >= maxStops || chosen.includes(c)) return null;
     // Skip near-duplicates: the Louvre Pyramid right next to the Louvre.
     if (chosen.some((s) => distanceMeters(s, c) < 60 || (distanceMeters(s, c) < 400 && sharesNameToken(s.title, c.title)))) return null;
-    const dwell = visitMinutes ?? pace.dwell;
+    const dwell = dwellAt(c, visit);
     let best = null;
     const lastSlot = loop ? points.length - 1 : points.length;
     for (let i = 1; i <= lastSlot; i++) {
@@ -475,11 +609,13 @@ export function suggestRoute({ start, candidates, modeId = 'walk', minutes = 60,
   };
 
   /** Slot a place in where it adds the least travel, if it fits the time left. */
-  const tryAdd = (c, visitMinutes = null) => {
-    const best = insertionCost(c, visitMinutes);
+  const tryAdd = (c, visit = false) => {
+    const best = insertionCost(c, visit);
     if (!best) return false;
-    const dwell = visitMinutes ?? pace.dwell;
-    const stop = { ...c, visitMinutes };
+    const dwell = dwellAt(c, visit);
+    const stop = visit
+      ? { ...c, visitMinutes: c.visit.base, visitMax: c.visit.max, stayMinutes: null }
+      : { ...c, visitMinutes: null, stayMinutes: c.stay.base, stayMax: c.stay.max };
     points.splice(best.i, 0, stop);
     chosen.push(c);
     used += best.extra + dwell;
@@ -489,21 +625,23 @@ export function suggestRoute({ start, candidates, modeId = 'walk', minutes = 60,
   // One at a time, add the place worth the most for the minutes it adds (getting there and
   // time spent), while any fits. Worth grows steeply with fame, so a must-see a little further
   // away still beats a cluster of minor places, but the walk isn't spent crossing town.
-  const addBest = (eligible, visitMinutes = null, maxExtra = Infinity) => {
+  // (Time there counts too, but a place that deserves a long stay also gives more back for it.)
+  const addBest = (eligible, { visit = false, maxExtra = Infinity } = {}) => {
     let best = null;
     for (const c of pool) {
       if (!eligible(c)) continue;
-      const cost = insertionCost(c, visitMinutes);
+      const cost = insertionCost(c, visit);
       if (!cost || cost.extra > maxExtra) continue;
-      const ratio = Math.max(0.05, c.score - SCORE_FLOOR) ** 3 / (cost.extra + (visitMinutes ?? pace.dwell));
+      const dwell = dwellAt(c, visit);
+      const ratio = Math.max(0.05, c.score - SCORE_FLOOR) ** 3 / (cost.extra + pace.dwell + (dwell - pace.dwell) / 2);
       if (!best || ratio > best.ratio) best = { c, ratio };
     }
-    return Boolean(best) && tryAdd(best.c, visitMinutes);
+    return Boolean(best) && tryAdd(best.c, visit);
   };
   // 1. On longer outings, museum visits go on the route first: one within reach, so getting
   // there and back doesn't take the time for everything else (Lisbon: the famous museum 2.5 km
   // away left a half day with 3 stops, fewer than an hour's walk).
-  for (let museums = 0; museums < visits.count && addBest((c) => c.kind === 'museum', visits.minutes, budget / 3); museums++);
+  for (let museums = 0; museums < visits.count && addBest((c) => c.kind === 'museum', { visit: true, maxExtra: budget / 3 }); museums++);
   // 2. Several interests: take turns, the one with the fewest stops so far first, so "history and
   // landscapes" has both (not only the monuments, because they happen to be closer together).
   if (interests?.length > 1) {
@@ -521,9 +659,21 @@ export function suggestRoute({ start, candidates, modeId = 'walk', minutes = 60,
   }
   // 3. Then everything else worth seeing.
   while (addBest(() => true));
+  // 4. A museum that's on the route anyway (too far to aim for at first) becomes the visit, if
+  // one is still due and the time allows: you're at the Waterloo Panorama, so go in.
+  let visitsLeft = visits.count - points.filter((p) => p.visitMinutes != null).length;
+  for (const stop of points.filter((p) => p.kind === 'museum' && p.visitMinutes == null).sort((a, b) => b.score - a.score)) {
+    const more = stop.visit.base - stop.stayMinutes;
+    if (visitsLeft <= 0 || used + more > budget) continue;
+    Object.assign(stop, { visitMinutes: stop.visit.base, visitMax: stop.visit.max, stayMinutes: null });
+    used += more;
+    visitsLeft--;
+  }
 
   untangle(points, pace);
   const stops = points.slice(1, loop ? -1 : undefined);
+  // Time left over (few places around, or the most a day can hold): longer at the best ones.
+  spreadSpareTime(stops, budget - timeline(start, stops, modeId, loop).minutes - 1); // (a minute for rounding)
   const { minutes: total, meters } = timeline(start, stops, modeId, loop);
   return { stops, minutes: total, meters, loop, pathMinutes: Math.round(pathMinutes(points, pace)) };
 }

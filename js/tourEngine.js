@@ -7,6 +7,7 @@ import {
   buildWelcomeNarration,
   buildFirstStopNarration,
   buildArrivalNarration,
+  LINGER_MINUTES,
 } from './narration.js';
 
 const HEADING_MIN_MOVE_M = 10; // ignore GPS jitter when working out direction of travel
@@ -80,7 +81,7 @@ export class TourEngine {
     this.lastIdleAt = 0;
     this.fetching = false;
     this.lastFetch = null; // { position, at, coverage }
-    this.quietAt = null; // a museum visit or meal: no stories until the traveller leaves
+    this.quietAt = null; // a museum visit, a meal or a long stay: no stories until the traveller leaves
     this.retickTimer = null;
     this.readyPromise = new Promise((resolve) => (this.resolveReady = resolve));
 
@@ -254,7 +255,7 @@ export class TourEngine {
     // Stops before it that were never reached stay unreached (skipped).
     stop.reached = true;
     this.nextStopIndex = stop.index + 1;
-    if (stop.kind === 'food' || stop.visitMinutes) this.quietAt = stop;
+    if (stop.kind === 'food' || stop.visitMinutes || stop.stayMinutes >= LINGER_MINUTES) this.quietAt = stop;
     this.announcedFirstStop = true;
     this.pendingArrivals++;
     this.emit('stop-reached', { stop });
@@ -273,6 +274,7 @@ export class TourEngine {
         kind: stop.kind,
         meal: stop.meal,
         visitMinutes: stop.visitMinutes,
+        stayMinutes: stop.stayMinutes,
       });
       const interrupt = this.narrator.current?.meta?.kind === 'poi';
       this.#say(

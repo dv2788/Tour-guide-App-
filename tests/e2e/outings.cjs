@@ -101,6 +101,9 @@ const shots = path.join(__dirname, 'screenshots');
   await page.waitForFunction(() => /✓/.test(document.getElementById('import-note').textContent), null, { timeout: 90000 });
   expect(/picked for parks, views and nature/.test(await note()), `the note names the choice (${await note()})`);
   expect(await page.isHidden('#proposals'), 'the choices close once one is chosen');
+  // Not the same time everywhere: each place shows how long to stay, and the times differ.
+  const stays = await page.$$eval('#plan-list li small', (els) => els.map((e) => e.textContent).filter((t) => / here( ·|$)/.test(t)).map((t) => t.split(' here')[0]));
+  expect(stays.length >= 2 && new Set(stays).size >= 2, `different times at different places (${stays.join(', ')})`);
   const stops = await page.$eval('#stops', (t) => t.value);
   expect(NATURE.some((n) => stops.includes(n.title)), `the itinerary box has the chosen stops (${stops.replace(/\n/g, ' | ')})`);
   expect(!(await page.isHidden('#plan')), 'the plan shows');

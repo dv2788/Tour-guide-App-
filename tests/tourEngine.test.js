@@ -278,6 +278,40 @@ test('museum visits and meals: the guide says so, then stays quiet until you lea
   assert.ok(!/A great museum|garden/i.test(cafe));
 });
 
+test('a long stay (a castle, a viewpoint): the guide says how long, and lets you explore; a short one: on you go', async (t) => {
+  const stops = [
+    { name: 'Old Castle', lat: LAT, lon: east(100), stayMinutes: 30 },
+    { name: 'Small Statue', lat: LAT, lon: east(400), stayMinutes: 5 },
+  ];
+  const nearCastle = { id: 9, title: 'Castle Well', lat: north(30), lon: east(140), thumbnail: null, category: null };
+  let clock = 1_000_000;
+  const narrator = new FakeNarrator();
+  const wiki = fakeWiki({
+    pois: [nearCastle],
+    summaries: { 'Castle Well': { pageid: 9, title: 'Castle Well', extract: 'A well.' } },
+    articles: { 'Old Castle': { pageid: 50, title: 'Old Castle', extract: 'A castle.' }, 'Small Statue': { pageid: 51, title: 'Small Statue', extract: 'A statue.' } },
+  });
+  const engine = new TourEngine({ mode: getMode('walk'), lang: 'en', wiki, narrator, stops, now: () => clock });
+  t.after(() => engine.stop());
+  await engine.start();
+  engine.update({ lat: LAT, lon: east(100) });
+  await flush();
+  await flush();
+  assert.match(narrator.spoken.at(-1).text, /You have arrived at Old Castle\. A castle\. Take your time here: about 30 minutes\./);
+  narrator.finishAll();
+  clock += 60000;
+  engine.update({ lat: LAT, lon: east(105) }); // looking around
+  await flush();
+  await flush();
+  assert.ok(!narrator.spoken.some((s) => s.meta.title === 'Castle Well'), 'quiet while you explore');
+  engine.update({ lat: LAT, lon: east(400) });
+  await flush();
+  await flush();
+  const statue = narrator.spoken.at(-1).text;
+  assert.match(statue, /You have arrived at Small Statue\./);
+  assert.ok(!/Take your time/.test(statue), 'five minutes: nothing to announce');
+});
+
 test('directions to the first stop start at once, even while Wikipedia is slow to answer', async () => {
   const narrator = new FakeNarrator();
   const targets = [];

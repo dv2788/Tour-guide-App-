@@ -18,8 +18,8 @@ const GOOD = {
   simSpeed: '8',
   voice: 'neural:fr_FR-siwis-medium:0',
   imported: [
-    ['Casa Batlló', { query: 'Casa Batlló', lat: 41.3916, lon: 2.1649, kind: 'sight', visitMinutes: null, meal: null, breakMinutes: null, wikipedia: 'en:Casa Batlló', wikidata: 'Q461371' }],
-    ['Typed only', { query: 'Typed only', kind: null, visitMinutes: null, meal: null, breakMinutes: null, wikipedia: null, wikidata: null }],
+    ['Casa Batlló', { query: 'Casa Batlló', lat: 41.3916, lon: 2.1649, kind: 'sight', visitMinutes: null, stayMinutes: 20, meal: null, breakMinutes: null, wikipedia: 'en:Casa Batlló', wikidata: 'Q461371' }],
+    ['Typed only', { query: 'Typed only', kind: null, visitMinutes: null, stayMinutes: null, meal: null, breakMinutes: null, wikipedia: null, wikidata: null }],
   ],
   start: { lat: 41.387, lon: 2.1701, name: 'Barcelona' },
   areaPoint: { lat: 41.3851, lon: 2.1823, name: 'El Born', label: 'El Born, Barcelona', query: 'El Born', city: 'Barcelona' },
@@ -30,9 +30,9 @@ const GOOD = {
     meters: 4200,
     startedAt: '2026-11-02T10:00:00.000Z',
     items: [
-      { name: 'Casa Batlló', kind: 'sight', meal: null, visitMinutes: null, breakMinutes: null, description: 'Building by Gaudí', arrive: 12, lat: 41.3916, lon: 2.1649 },
+      { name: 'Casa Batlló', kind: 'sight', meal: null, visitMinutes: null, stayMinutes: 20, breakMinutes: null, description: 'Building by Gaudí', arrive: 12, lat: 41.3916, lon: 2.1649 },
       {
-        name: 'Café Zurich', kind: 'food', meal: 'coffee', visitMinutes: null, breakMinutes: 20, description: '', arrive: 40, lat: 41.386, lon: 2.17,
+        name: 'Café Zurich', kind: 'food', meal: 'coffee', visitMinutes: null, stayMinutes: null, breakMinutes: 20, description: '', arrive: 40, lat: 41.386, lon: 2.17,
         open: true, closes: 1260, optionIndex: 1,
         options: [
           { name: 'Café Zurich', lat: 41.386, lon: 2.17, amenity: 'cafe', open: true, closes: 1260, wikipedia: null, wikidata: null },

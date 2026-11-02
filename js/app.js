@@ -705,7 +705,12 @@ function showProposals(proposals, context) {
   const cards = proposals.map((proposal) => {
     const { route, schedule } = proposal;
     const total = route.minutes + schedule.reduce((n, b) => n + b.minutes, 0);
-    const names = route.stops.map((stop) => stop.title.replace(/\s+\([^)]*\)$/, ''));
+    // "Lion's Mound (40 min)": how long at each place worth a while, so the cards show the day's shape.
+    const names = route.stops.map((stop) => {
+      const name = stop.title.replace(/\s+\([^)]*\)$/, '');
+      const time = stop.visitMinutes ?? stop.stayMinutes;
+      return time >= 15 ? `${name} (${formatMinutes(time)})` : name;
+    });
     const choose = el('button', { type: 'button', className: 'btn-soft btn-small' }, ['Choose this itinerary']);
     choose.addEventListener('click', async () => {
       for (const b of box.querySelectorAll('button')) b.disabled = true;
@@ -776,12 +781,13 @@ async function finishPlan(proposal, { origin, modeId, loop, lang, startedAt }) {
       lon: stop.lon,
       kind: stop.kind,
       visitMinutes: stop.visitMinutes ?? null,
+      stayMinutes: stop.stayMinutes ?? null,
       meal: stop.meal ?? null,
       breakMinutes: stop.breakMinutes ?? null,
       wikipedia: stop.tags?.wikipedia ?? (stop.kind !== 'food' && stop.id ? `${lang}:${stop.title}` : null), // the very article it was picked from
       wikidata: stop.tags?.wikidata ?? null,
     });
-    const item = { name, kind: stop.kind, meal: stop.meal ?? null, visitMinutes: stop.visitMinutes ?? null, breakMinutes: stop.breakMinutes ?? null, description: stop.description ?? '', arrive: times[i].arrive, lat: stop.lat, lon: stop.lon };
+    const item = { name, kind: stop.kind, meal: stop.meal ?? null, visitMinutes: stop.visitMinutes ?? null, stayMinutes: stop.stayMinutes ?? null, breakMinutes: stop.breakMinutes ?? null, description: stop.description ?? '', arrive: times[i].arrive, lat: stop.lat, lon: stop.lon };
     if (stop.kind === 'food') {
       item.open = stop.open ?? null;
       item.closes = stop.closes ?? null;
@@ -856,7 +862,7 @@ function renderPlan() {
           ? `${MEAL_LABEL[it.meal] ?? 'Break'} · ${formatMinutes(it.breakMinutes)}${hours}`
           : it.visitMinutes
             ? `Museum visit · about ${formatMinutes(it.visitMinutes)} inside`
-            : it.description || (it.kind === 'museum' ? 'Museum' : 'Historic place');
+            : [it.stayMinutes ? `${formatMinutes(it.stayMinutes)} here` : '', it.description || (it.kind === 'museum' ? 'Museum' : 'Historic place')].filter(Boolean).join(' · ');
       const text = el('span', { className: 'plan-text' }, [el('strong', {}, [it.name]), el('small', {}, [sub])]);
       if (it.kind === 'food') text.append(foodActions(it, index));
       return el('li', {}, [
@@ -1843,8 +1849,8 @@ form.addEventListener('submit', async (event) => {
       if (!alive()) return;
       if (place) {
         // Keep what the suggestion knows: museum visits, meal breaks, article links.
-        const { kind, visitMinutes, meal, breakMinutes, wikipedia, wikidata } = entry;
-        stops.push({ ...place, kind, visitMinutes, meal, breakMinutes, wikipedia: place.wikipedia ?? wikipedia, wikidata: place.wikidata ?? wikidata });
+        const { kind, visitMinutes, stayMinutes, meal, breakMinutes, wikipedia, wikidata } = entry;
+        stops.push({ ...place, kind, visitMinutes, stayMinutes, meal, breakMinutes, wikipedia: place.wikipedia ?? wikipedia, wikidata: place.wikidata ?? wikidata });
       } else missing.push(entry.name);
     }
     drawStops(stops);

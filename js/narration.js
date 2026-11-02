@@ -52,7 +52,10 @@ export function buildFirstStopNarration({ lang, stopName, distance, style }) {
 
 const BREAK_KEYS = { coffee: 'breakCoffee', lunch: 'breakLunch', dinner: 'breakDinner', drink: 'breakDrink' };
 
-export function buildArrivalNarration({ lang, mode, stopName, summary, nextStopName, nextDistance, style, kind, meal, visitMinutes }) {
+// From this long at a place, the guide says how long to stay and lets you explore in peace.
+export const LINGER_MINUTES = 20;
+
+export function buildArrivalNarration({ lang, mode, stopName, summary, nextStopName, nextDistance, style, kind, meal, visitMinutes, stayMinutes }) {
   const parts = [];
   if (kind === 'food') {
     // A break: no history lecture (unless the place has its own story), and then quiet.
@@ -65,6 +68,7 @@ export function buildArrivalNarration({ lang, mode, stopName, summary, nextStopN
     const s = story(summary, mode.stopSentences, lang);
     if (s) parts.push(s);
     if (visitMinutes) parts.push(t(lang, 'museumVisit', { n: visitMinutes }, style));
+    else if (stayMinutes >= LINGER_MINUTES) parts.push(t(lang, 'stayHere', { n: stayMinutes }, style));
   }
   if (nextStopName) parts.push(t(lang, 'nextStop', { name: nextStopName, d: formatDistance(lang, nextDistance) }, style));
   else parts.push(t(lang, 'tourDone', {}, style));
