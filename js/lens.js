@@ -65,6 +65,28 @@ export function compassJitter(readings) {
   return travelled - Math.abs(net);
 }
 
+/**
+ * How many degrees across the camera image on screen covers. A phone's main camera sees about
+ * 67° along the long side of its picture (26 mm equivalent, 4:3 sensor; a 16:9 picture is cut
+ * from the short side). The screen shows that picture cropped to fill it (object-fit: cover), so
+ * a tall phone held upright shows only about 35° across, not the 60° labels used to assume.
+ * Null without a picture (camera off): the caller keeps its default.
+ */
+export function screenFov({ videoWidth, videoHeight, width, height, longSideFov = 67 } = {}) {
+  if (!(videoWidth > 0 && videoHeight > 0 && width > 0 && height > 0)) return null;
+  const tanPerPixel = Math.tan((longSideFov / 2) * DEG) / (Math.max(videoWidth, videoHeight) / 2);
+  const scale = Math.max(width / videoWidth, height / videoHeight); // cover: fill, crop the rest
+  const shownHalf = (width / scale / 2) * tanPerPixel;
+  return Math.min(90, Math.max(30, (2 * Math.atan(shownHalf)) / DEG));
+}
+
+/** Where a direction `off` degrees from the middle falls across a view `fov` wide (0 = left edge, 1 = right). */
+export function screenX(off, fov) {
+  const o = Math.max(-80, Math.min(80, off)) * DEG;
+  // A camera projects onto a flat picture: positions go by the tangent, not the angle.
+  return Math.min(1, Math.max(0, 0.5 + Math.tan(o) / (2 * Math.tan((fov / 2) * DEG))));
+}
+
 /** Half the width of a place in metres, and whether we know it (Wikipedia gave its size). */
 function halfWidth(p) {
   // Without a size of its own, Wikipedia gives a default by kind (about 1 km for a landmark).
@@ -112,7 +134,7 @@ export function placesInView(position, heading, places, { fov = 60, maxDistance 
     const aimed = Math.max(headingError, width.known ? Math.min(30, size) : 0);
     const fame = Math.log10(1 + (p.langs ?? 0)) + (p.category === 'minor' ? -1 : 0);
     const cost = here ? -1000 : Math.max(0, Math.abs(off) - aimed) + distance / 25 - fame * 4;
-    seen.push({ ...p, distance, off, here, behind, x: Math.min(1, Math.max(0, 0.5 + off / fov)), cost });
+    seen.push({ ...p, distance, off, here, behind, x: screenX(off, fov), cost });
   }
   const ahead = seen.filter((p) => !p.behind);
   return (ahead.length ? ahead : seen).sort((a, b) => a.cost - b.cost).map(({ behind, ...p }) => p);

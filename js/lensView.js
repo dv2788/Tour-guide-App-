@@ -3,7 +3,7 @@
 // place: an arrow shows which way to turn, and when it's in front of you, its story pops up.
 // Where things are comes from GPS and the compass (see js/lens.js), not from the image.
 
-import { cameraHeading, smoothHeading, compassJitter, placesInView, placesAround, whereItIs } from './lens.js';
+import { cameraHeading, smoothHeading, compassJitter, placesInView, placesAround, whereItIs, screenFov } from './lens.js';
 import { distanceMeters, bearingDegrees, angleDiff } from './geo.js';
 import { firstSentences } from './text.js';
 import { photoPage } from './wiki.js';
@@ -212,7 +212,10 @@ export function createLens({ wiki, streetName, narrator }) {
     if (!s.position) return;
     const compass = s.heading != null;
     const headingError = Math.min(25, Math.max(5, s.compassError ?? 5));
-    const inView = compass ? placesInView(s.position, s.heading, s.places, { headingError }) : placesAround(s.position, s.places);
+    // How wide the picture on screen really is, so labels sit over the place they name.
+    const video = $('lens-video');
+    const fov = screenFov({ videoWidth: video.videoWidth, videoHeight: video.videoHeight, width: video.clientWidth, height: video.clientHeight }) ?? 60;
+    const inView = compass ? placesInView(s.position, s.heading, s.places, { headingError, fov }) : placesAround(s.position, s.places);
     if (s.places.length && !s.target) {
       // Say when the labels may be off, and what helps.
       const hints = [];
@@ -233,7 +236,8 @@ export function createLens({ wiki, streetName, narrator }) {
           {
             type: 'button',
             className: `lens-label${i === 0 ? ' best' : ''}${s.target && sameName(p, s.target) ? ' target' : ''}`,
-            style: compass ? `left:${(p.x * 100).toFixed(1)}%; top:${top + Math.min(4, i) * 8}%` : `left:50%; top:${top + i * 8}%`,
+            // (Anchored by the same fraction of its own width, so a label at the edge stays on screen.)
+            style: compass ? `left:${(p.x * 100).toFixed(1)}%; transform:translateX(-${(p.x * 100).toFixed(1)}%); top:${top + Math.min(4, i) * 8}%` : `left:50%; top:${top + i * 8}%`,
             onclick: () => choose(p),
           },
           [el('strong', { textContent: p.title }), el('span', { textContent: whereItIs(p) })],

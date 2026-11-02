@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { cameraHeading, smoothHeading, compassJitter, placesInView, placesAround, whereItIs } from '../js/lens.js';
+import { cameraHeading, smoothHeading, compassJitter, placesInView, placesAround, whereItIs, screenFov, screenX } from '../js/lens.js';
 
 // The Block of Discord on Passeig de Gràcia (which runs south-east to north-west): three famous
 // houses side by side, Casa Amatller and Casa Lleó Morera further down the avenue.
@@ -134,4 +134,20 @@ test('the compass follows you quickly when you turn, steadily when you hold stil
   assert.equal(compassJitter([10, 20, 30, 40, 50]), 0, 'turning steadily is not jitter');
   assert.ok(compassJitter([10, 40, 5, 45, 0, 50]) > 150, 'swinging back and forth is');
   assert.equal(compassJitter([350, 355, 0, 5]), 0, 'through north, the short way');
+});
+
+test('labels go where the place is on screen: the picture is cropped to fill a tall phone', () => {
+  // A phone held upright: the camera gives 480 × 640, the screen is 390 × 844 points.
+  const upright = screenFov({ videoWidth: 480, videoHeight: 640, width: 390, height: 844 });
+  assert.ok(upright > 31 && upright < 38, `about 34° across, not 60° (${upright.toFixed(1)}°)`);
+  // Held sideways the screen shows the long side of the picture: much wider.
+  const sideways = screenFov({ videoWidth: 640, videoHeight: 480, width: 844, height: 390 });
+  assert.ok(sideways > 60 && sideways < 70, `about 67° (${sideways.toFixed(1)}°)`);
+  assert.equal(screenFov({ videoWidth: 0, videoHeight: 0, width: 390, height: 844 }), null, 'camera off: no picture');
+  // A place 15° right on a 34° view is at the right edge, not three-quarters across.
+  assert.ok(screenX(15, 34) > 0.9 && screenX(15, 34) < 0.95);
+  assert.equal(screenX(0, 34), 0.5);
+  assert.equal(screenX(-60, 34), 0, 'off to the left: pinned to the edge');
+  const across34 = placesInView(across, 225, places, { fov: 34 });
+  assert.equal(across34[0].title, 'Casa Batlló', 'a narrower view still finds what you aim at');
 });

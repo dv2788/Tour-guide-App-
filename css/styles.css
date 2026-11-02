@@ -1935,7 +1935,7 @@ body.lens-open {
   text-align: center;
   pointer-events: auto;
   cursor: pointer;
-  transition: left 0.15s linear;
+  transition: left 0.15s linear, transform 0.15s linear;
 }
 
 .lens-label strong {
