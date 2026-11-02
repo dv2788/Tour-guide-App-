@@ -34,10 +34,56 @@ const ARTICLES = {
   'Washington Square': 'Washington Square (San Francisco)',
   'Shenzhen Civic Center': 'Civic Center (Shenzhen)',
   'Ping An Finance Center': 'Ping An Finance Centre',
+  // South America
+  'Catedral Metropolitana de Buenos Aires': 'Buenos Aires Metropolitan Cathedral',
+  'Cabildo de Buenos Aires': 'Cabildo of Buenos Aires',
+  'cusco:Plaza de Armas': 'Plaza de Armas (Cusco)',
+  'Catedral del Cusco': 'Cusco Cathedral',
+  'Iglesia de la Compañía': 'Iglesia de la Compañía de Jesús, Cusco',
+  'Twelve-angled Stone': 'Twelve-angled stone',
+  'Plaza San Martín': 'Plaza San Martín, Lima',
+  'Plaza de Armas de Lima': 'Plaza Mayor, Lima',
+  'Palacio de Gobierno': 'Government Palace, Peru',
+  'Catedral de Lima': 'Metropolitan Cathedral of Lima',
+  'Palacio Arzobispal': "Archbishop's Palace, Lima",
+  'Convento de San Francisco': 'Basilica and Convent of San Francisco, Lima',
+  'Iglesia de San Pedro Claver': 'Iglesia de San Pedro Claver, Cartagena',
+  'Palacio de la Inquisición': 'Palace of the Inquisition (Cartagena, Colombia)',
+  'Catedral de Cartagena': 'Cartagena Cathedral, Colombia',
+  'Igreja da Candelária': 'Candelária Church',
+  'Theatro Municipal': 'Theatro Municipal (Rio de Janeiro)',
+  'Arcos da Lapa': 'Carioca Aqueduct',
+  'Palacio de La Moneda': 'La Moneda Palace',
+  'Plaza de la Constitución': 'Plaza de la Constitución (Santiago)',
+  'Museo de Arte Precolombino': 'Museo Chileno de Arte Precolombino',
+  'santiago:Plaza de Armas': 'Plaza de Armas (Santiago)',
+  'Catedral Metropolitana de Santiago de Chile': 'Santiago Metropolitan Cathedral',
+  'Mercado Central': 'Mercado Central de Santiago',
+  'Cerro Santa Lucía': 'Santa Lucía Hill',
+  // Africa
+  'Jemaa el-Fna': 'Jemaa el-Fnaa',
+  'Koutoubia Mosque': 'Kutubiyya Mosque',
+  'Bab Zuweila': 'Bab Zuwayla',
+  'Qalawun Complex': 'Qalawun complex',
+  'Zitouna Mosque': 'Al-Zaytuna Mosque',
+  'Kasbah Mosque': 'Kasbah Mosque, Tunis',
+  'Al-Qarawiyyin Mosque': 'University of al-Qarawiyyin',
+  'Christ Church': 'Christ Church Cathedral, Zanzibar',
+  'Old Dispensary': 'Old Dispensary (Zanzibar)',
+  'Palace Museum': "Sultan's Palace, Zanzibar",
+  'Old Fort': 'Old Fort of Zanzibar',
+  'Forodhani Park': 'Forodhani Gardens',
+  "Place de l'Indépendance": null,
+  'Musée Théodore Monod': 'Théodore Monod African Art Museum',
+  'Cathédrale du Souvenir Africain': 'Our Lady of Victories Cathedral, Dakar',
+  'Musée des Civilisations Noires': 'Museum of Black Civilisations',
+  'Grande Mosquée de Dakar': 'Grand Mosque of Dakar',
 };
 // Stops without a usable article: a line of our own.
 const OWN_WORDS = {
   'Española Way': 'A pedestrian street of 1920s Mediterranean Revival buildings in the heart of South Beach, lined with cafés and restaurants.',
+  "Place de l'Indépendance":
+    "Dakar's central square, in the heart of the Plateau. Laid out in colonial times as Place Protet, after the naval officer counted as the city's founder, it took its present name after Senegal's independence; banks, ministries and the Chamber of Commerce stand around it.",
 };
 
 /** The article for a stop: "<tour id>:<stop>" first (two cities have a "Plaza de Armas"), then the stop. */
@@ -48,14 +94,16 @@ function articleFor(sample, stop) {
 }
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+// PATIENT=1 waits as long as it takes (up to ~40 minutes a story) instead of leaving a tour for later.
+const PATIENT = Boolean(process.env.PATIENT);
 async function summary(title) {
-  for (let attempt = 0; attempt < 6; attempt++) {
+  for (let attempt = 0; attempt < (PATIENT ? 12 : 6); attempt++) {
     const res = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title.replace(/ /g, '_'))}`, {
       headers: { 'User-Agent': UA, 'Api-User-Agent': UA, Accept: 'application/json' },
     });
     if (res.ok) return res.json();
     if (res.status === 404) return null;
-    await sleep(3000 * 2 ** attempt);
+    await sleep(PATIENT ? Math.min(300000, 30000 * 2 ** attempt) : 3000 * 2 ** attempt);
   }
   throw new Error(`Wikipedia did not answer for ${title}`);
 }
@@ -84,19 +132,34 @@ function duration(sample) {
 
 const cacheFile = new URL('tours/wiki-cache.json', ROOT);
 const cache = existsSync(cacheFile) ? JSON.parse(await readFile(cacheFile, 'utf8')) : {};
+// When Wikipedia is too busy to answer, a tour whose stories aren't cached yet waits for the next
+// build: no page and no links to it, rather than a page without its stories. (A stop with no
+// article at all still stops the build.)
+const waiting = new Set();
+let busy = false;
 for (const sample of SAMPLES) {
   for (const stop of sample.stops) {
     const title = articleFor(sample, stop);
     if (!title || cache[title]) continue;
-    const s = await summary(title);
+    const s = busy ? undefined : await summary(title).catch(() => ((busy = true), undefined));
+    if (s === undefined) {
+      waiting.add(sample.id);
+      break;
+    }
     if (!s) throw new Error(`No Wikipedia article "${title}" for ${stop}: add it to ARTICLES or OWN_WORDS`);
     cache[title] = { title: s.title, description: s.description ?? '', extract: s.extract ?? '', url: s.content_urls?.desktop?.page ?? `https://en.wikipedia.org/wiki/${encodeURIComponent(s.title)}` };
     console.log('fetched', title);
+    await writeFile(cacheFile, JSON.stringify(cache, null, 1) + '\n'); // kept even if a later one fails
     await sleep(800);
   }
 }
 await mkdir(new URL('tours/', ROOT), { recursive: true });
 await writeFile(cacheFile, JSON.stringify(cache, null, 1) + '\n');
+for (const id of waiting) console.warn(`Wikipedia is busy: the ${id} page waits for the next build`);
+/** The tours that get a page this time. */
+const TOURS = SAMPLES.filter((s) => !waiting.has(s.id));
+// Which ones wait (the tests and the next build go by it): PATIENT=1 npm run build:site fills them in.
+await writeFile(new URL('tours/waiting.json', ROOT), JSON.stringify([...waiting].sort()) + '\n');
 
 // ---------- One page per tour ----------
 
@@ -173,7 +236,7 @@ function tourPage(sample) {
       itemListElement: stops.map((s, i) => ({ '@type': 'ListItem', position: i + 1, item: { '@type': 'TouristAttraction', name: s.name, ...(s.url ? { sameAs: s.url } : {}) } })),
     },
   };
-  const others = SAMPLES.filter((s) => s.id !== sample.id);
+  const others = TOURS.filter((s) => s.id !== sample.id);
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -242,14 +305,14 @@ ${others.map((o) => `      <a href="../${o.id}/">${esc(o.label)}</a>`).join('\n'
 `;
 }
 
-for (const sample of SAMPLES) {
+for (const sample of TOURS) {
   await mkdir(new URL(`tours/${sample.id}/`, ROOT), { recursive: true });
   await writeFile(new URL(`tours/${sample.id}/index.html`, ROOT), tourPage(sample));
 }
 
 // ---------- Sitemap ----------
 
-const urls = [SITE, ...SAMPLES.map((s) => `${SITE}tours/${s.id}/`)];
+const urls = [SITE, ...TOURS.map((s) => `${SITE}tours/${s.id}/`)];
 await writeFile(
   new URL('sitemap.xml', ROOT),
   `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map((u) => `  <url><loc>${u}</loc><lastmod>${TODAY}</lastmod></url>`).join('\n')}\n</urlset>\n`,
@@ -290,7 +353,7 @@ await writeFile(
   <h1>This street isn't on the map.</h1>
   <p>The page you were looking for doesn't exist, or has moved. The city is still out there.</p>
   <a class="go" href="${SITE}">Plan a tour</a>
-  <nav>Or try a sample tour: ${SAMPLES.map((s) => `<a href="${SITE}tours/${s.id}/">${esc(s.label)}</a>`).join(' · ')}</nav>
+  <nav>Or try a sample tour: ${TOURS.map((s) => `<a href="${SITE}tours/${s.id}/">${esc(s.label)}</a>`).join(' · ')}</nav>
 </main>
 </body>
 </html>
@@ -301,9 +364,9 @@ await writeFile(
 
 const indexFile = new URL('index.html', ROOT);
 const index = await readFile(indexFile, 'utf8');
-const links = SAMPLES.map((s) => `<a href="tours/${s.id}/">${esc(s.label)}</a>`).join('\n            ');
+const links = TOURS.map((s) => `<a href="tours/${s.id}/">${esc(s.label)}</a>`).join('\n            ');
 const updated = index.replace(/(<!-- tours:start -->)[\s\S]*?(<!-- tours:end -->)/, `$1\n            ${links}\n            $2`);
 if (updated === index && !index.includes('<!-- tours:start -->')) throw new Error('index.html has no <!-- tours:start --> marker');
 await writeFile(indexFile, updated);
 
-console.log(`Built ${SAMPLES.length} tour pages, a sitemap of ${urls.length} pages, robots.txt and 404.html for ${SITE}`);
+console.log(`Built ${TOURS.length} tour pages, a sitemap of ${urls.length} pages, robots.txt and 404.html for ${SITE}`);

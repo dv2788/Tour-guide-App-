@@ -280,5 +280,83 @@
   "description": "Broadcasting and observation tower in Japan",
   "extract": "Tokyo Skytree , a.k.a Tokyo Sky Tree, is a broadcasting and observation tower, located in Sumida, Tokyo, Japan. It has been the tallest tower in Japan since opening in 2012, and reached its full height of 634 metres in early 2011, making it the tallest tower in the world, displacing the Canton Tower, and the third tallest structure in the world behind Merdeka 118 and Burj Khalifa.",
   "url": "https://en.wikipedia.org/wiki/Tokyo_Skytree"
+ },
+ "Casa Rosada": {
+  "title": "Casa Rosada",
+  "description": "Office building of the President of Argentina in the City of Buenos Aires",
+  "extract": "The Casa Rosada, lit. 'the pink house', is the president of the Argentine Republic's official workplace, located in Buenos Aires. The palatial mansion is known officially as Casa de Gobierno. Normally, the president lives at the Quinta de Olivos, the president of Argentina's official residence, located in Olivos, Greater Buenos Aires. The characteristic color of the Casa Rosada is baby pink, and it is considered one of the most emblematic buildings in Buenos Aires. The building also houses a museum, which contains objects relating to former presidents of Argentina. It has been declared a National Historic Monument of Argentina.",
+  "url": "https://en.wikipedia.org/wiki/Casa_Rosada"
+ },
+ "Buenos Aires Metropolitan Cathedral": {
+  "title": "Buenos Aires Metropolitan Cathedral",
+  "description": "Cathedral in Argentina",
+  "extract": "The Metropolitan Cathedral of the Most Holy Trinity of Buenos Aires is a Roman Catholic cathedral in Buenos Aires, the capital city of Argentina.",
+  "url": "https://en.wikipedia.org/wiki/Buenos_Aires_Metropolitan_Cathedral"
+ },
+ "Plaza de Mayo": {
+  "title": "Plaza de Mayo",
+  "description": "Public square in Buenos Aires, Argentina",
+  "extract": "The Plaza de Mayo is the main city square of Buenos Aires, Argentina. It was formed in 1884 after the demolition of the Recova building, unifying the city's Plaza Mayor and Plaza de Armas, by that time known as Plaza de la Victoria and Plaza 25 de Mayo, respectively. The city centre of Buenos Aires, Plaza de Mayo has been the scene of the most momentous events in Argentine history, as well as the largest popular demonstrations in the country. On the occasion of the first anniversary of the May Revolution in 1811, the Pirámide de Mayo was inaugurated in the square's hub, becoming Buenos Aires' first national monument.",
+  "url": "https://en.wikipedia.org/wiki/Plaza_de_Mayo"
+ },
+ "Cabildo of Buenos Aires": {
+  "title": "Cabildo of Buenos Aires",
+  "description": "Historic museum in Buenos Aires, Argentina",
+  "extract": "The Cabildo of Buenos Aires is the public building in the city of Buenos Aires, Argentina, that was used as a seat of the town council during the colonial era and the government house of the Viceroyalty of the Río de la Plata.",
+  "url": "https://en.wikipedia.org/wiki/Cabildo_of_Buenos_Aires"
+ },
+ "Palacio Barolo": {
+  "title": "Palacio Barolo",
+  "description": "Office building in Buenos Aires, Argentina",
+  "extract": "Palacio Barolo is a landmark office building, located at 1370 Avenida de Mayo, in the neighborhood of Monserrat, Buenos Aires, Argentina. It stood as Buenos Aires' tallest building for more than a decade until the construction of the Kavanagh Building in 1936. Its twin brother, Palacio Salvo, is a building designed and erected in Eclectic style, built by the same architect in Montevideo.",
+  "url": "https://en.wikipedia.org/wiki/Palacio_Barolo"
+ },
+ "Obelisco de Buenos Aires": {
+  "title": "Obelisco de Buenos Aires",
+  "description": "Architectural structure",
+  "extract": "The Obelisco de Buenos Aires is a national historic monument and icon of Buenos Aires. Located in the Plaza de la República in the intersection of avenues Corrientes and 9 de Julio, the reinforced concrete structure was erected in 1936 to commemorate the quadricentennial of the first foundation of the city.",
+  "url": "https://en.wikipedia.org/wiki/Obelisco_de_Buenos_Aires"
+ },
+ "Teatro Colón": {
+  "title": "Teatro Colón",
+  "description": "Opera house in Buenos Aires",
+  "extract": "The Teatro Colón is a historic opera house in Buenos Aires, Argentina. It is considered one of the ten best opera houses in the world by National Geographic. According to a survey carried out by the acoustics expert Leo Beranek among leading international opera and orchestra directors, the Teatro Colón has the room with the best acoustics for opera and the second best for concerts in the world.",
+  "url": "https://en.wikipedia.org/wiki/Teatro_Col%C3%B3n"
+ },
+ "Bab Zuwayla": {
+  "title": "Bab Zuwayla",
+  "description": "Gate in the wall of the Old City of Cairo, Egypt",
+  "extract": "Bab Zuwayla or Bab Zuweila is one of three remaining gates in the city walls of historic Cairo in Egypt. It was also known as Bawabat al-Mitwali or Bab al-Mitwali. The gate was built in 1092 by the Fatimid vizier Badr al-Jamali. The two minaret towers on top of it were added between 1415 and 1422 as part of the construction of the adjacent Mosque of Sultan al-Muayyad. Today it remains one of the major landmarks of Cairo.",
+  "url": "https://en.wikipedia.org/wiki/Bab_Zuwayla"
+ },
+ "Al-Azhar Mosque": {
+  "title": "Al-Azhar Mosque",
+  "description": "Mosque in Cairo, Egypt",
+  "extract": "Al-Azhar Mosque, known in Egypt simply as al-Azhar, is a mosque in the historic Islamic core of the city of Cairo, Egypt. Commissioned as the new capital of the Fatimid Caliphate in 970 CE, it was the first mosque established in a city that eventually earned the nickname \"the City of a Thousand Minarets\". Its name is usually thought to derive from az-Zahrāʾ, a title given to Fatima, the daughter of Muhammad.",
+  "url": "https://en.wikipedia.org/wiki/Al-Azhar_Mosque"
+ },
+ "Al-Hussein Mosque": {
+  "title": "Al-Hussein Mosque",
+  "description": "Mosque in Cairo, Egypt",
+  "extract": "The al-Hussein Mosque is a mosque and mausoleum, located near the Khan el-Khalili bazaar in Cairo, Egypt. Containing the tomb of Husayn ibn Ali that was originally built in 1154, the mosque and mausoleum were reconstructed in 1874. The mosque is located adjacent to the famous Al Azhar Mosque, in an area known as Al-Hussain, and is considered to be one of the holiest Islamic sites in Egypt. Some Shias believe that Husayn's head is buried on the grounds of the mosque where a shrine currently stands.",
+  "url": "https://en.wikipedia.org/wiki/Al-Hussein_Mosque"
+ },
+ "Khan el-Khalili": {
+  "title": "Khan el-Khalili",
+  "description": "Major souk in Cairo",
+  "extract": "Khan el-Khalili is a famous bazaar in the historic center of Cairo, Egypt. Established as a center of trade in the Mamluk era and named for one of its several historic caravanserais, the bazaar district has since become one of Cairo's main attractions for tourists and Egyptians alike. It is also home to many Egyptian artisans and workshops involved in the production of traditional crafts and souvenirs. The name Khan el-Khalili historically referred to a single building in the area; today it refers to the entire shopping district.",
+  "url": "https://en.wikipedia.org/wiki/Khan_el-Khalili"
+ },
+ "Qalawun complex": {
+  "title": "Qalawun complex",
+  "description": "Pious complex in Cairo, Egypt",
+  "extract": "The Qalawun complex, also known as the Funerary complex of Sultan al-Mansur Qalawun, is a historic religious complex located at Bayn al-Qasrayn on al-Mu'izz street, in Islamic Cairo, Egypt. Built by Sultan al-Mansur Qalawun between 1284 and 1285, the complex is like many other pious complexes and includes a hospital (bimaristan), a madrasa, mausoleum, and mosque.",
+  "url": "https://en.wikipedia.org/wiki/Qalawun_complex"
+ },
+ "Bayt al-Suhaymi": {
+  "title": "Bayt al-Suhaymi",
+  "description": "Building in Cairo, Egypt",
+  "extract": "Bayt al-Suhaymi is a traditional Egyptian Islamic themed house and museum in Cairo, Egypt.",
+  "url": "https://en.wikipedia.org/wiki/Bayt_al-Suhaymi"
  }
 }

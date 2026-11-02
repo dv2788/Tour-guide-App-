@@ -1,6 +1,7 @@
 // Sample tours to try straight away (and to show what Roamie can do). Each one was checked
 // against the real services: every stop is found on OpenStreetMap under this name, a real
-// walking (or driving) route joins them, and each has a Wikipedia article to tell.
+// walking (or driving) route joins them, and (but for a square or a street here and there) each
+// has a Wikipedia article to tell.
 // The names are what the guide will say: local names where OpenStreetMap only knows those.
 
 export const SAMPLES = [
@@ -25,6 +26,26 @@ export const SAMPLES = [
     stops: ['Manneken Pis', 'Grand-Place', 'Galeries Royales Saint-Hubert', 'Cathedral of St. Michael and St. Gudula', 'Mont des Arts', 'Palais Royal de Bruxelles'],
   },
   {
+    id: 'buenos-aires',
+    region: 'americas',
+    label: 'Buenos Aires',
+    city: 'Buenos Aires',
+    blurb: 'Casa Rosada, Avenida de Mayo and the Teatro Colón',
+    mode: 'walk',
+    km: 4.5,
+    stops: ['Casa Rosada', 'Catedral Metropolitana de Buenos Aires', 'Plaza de Mayo', 'Cabildo de Buenos Aires', 'Palacio Barolo', 'Obelisco de Buenos Aires', 'Teatro Colón'],
+  },
+  {
+    id: 'cairo',
+    region: 'africa',
+    label: 'Cairo',
+    city: 'Cairo',
+    blurb: 'Medieval Cairo along al-Muizz Street, gate to gate',
+    mode: 'walk',
+    km: 2.5,
+    stops: ['Bab Zuweila', 'Al-Azhar Mosque', 'Al-Hussein Mosque', 'Khan el-Khalili', 'Qalawun Complex', 'Bayt al-Suhaymi', 'Bab al-Futuh'],
+  },
+  {
     id: 'cape-town',
     region: 'africa',
     label: 'Cape Town',
@@ -35,6 +56,46 @@ export const SAMPLES = [
     stops: ['Castle of Good Hope', 'Cape Town City Hall', 'Greenmarket Square', 'Bo-Kaap Museum', "St. George's Cathedral", "Company's Garden"],
   },
   {
+    id: 'cartagena',
+    region: 'americas',
+    label: 'Cartagena',
+    city: 'Cartagena, Colombia',
+    blurb: 'The walled city, from the Clock Tower to Las Bóvedas',
+    mode: 'walk',
+    km: 2.6,
+    stops: ['Puerta del Reloj', 'Iglesia de San Pedro Claver', 'Palacio de la Inquisición', 'Catedral de Cartagena', 'Las Bóvedas'],
+  },
+  {
+    id: 'cusco',
+    region: 'americas',
+    label: 'Cusco',
+    city: 'Cusco',
+    blurb: 'Inca walls and colonial churches around the Plaza de Armas',
+    mode: 'walk',
+    km: 1.3,
+    stops: ['Coricancha', 'Plaza de Armas', 'Catedral del Cusco', 'Iglesia de la Compañía', 'Twelve-angled Stone'],
+  },
+  {
+    id: 'dakar',
+    region: 'africa',
+    label: 'Dakar',
+    city: 'Dakar',
+    blurb: 'The Plateau and its museums, the cathedral and the Grand Mosque',
+    mode: 'walk',
+    km: 5,
+    stops: ["Place de l'Indépendance", 'Musée Théodore Monod', 'Cathédrale du Souvenir Africain', 'Musée des Civilisations Noires', 'Grande Mosquée de Dakar'],
+  },
+  {
+    id: 'fes',
+    region: 'africa',
+    label: 'Fez',
+    city: 'Fes',
+    blurb: 'Fes el-Bali, from the Blue Gate to the tanneries',
+    mode: 'walk',
+    km: 1.6,
+    stops: ['Bab Bou Jeloud', 'Bou Inania Madrasa', 'Funduq al-Najjarin', 'Al-Attarine Madrasa', 'Al-Qarawiyyin Mosque', 'Chouara Tannery'],
+  },
+  {
     id: 'kinshasa',
     region: 'africa',
     label: 'Kinshasa',
@@ -43,6 +104,26 @@ export const SAMPLES = [
     mode: 'drive',
     km: 16,
     stops: ['Palais du Peuple', 'Stade des Martyrs', 'Cathédrale Notre-Dame du Congo', 'Jardin botanique de Kinshasa', 'Palais de la Nation'],
+  },
+  {
+    id: 'lima',
+    region: 'americas',
+    label: 'Lima',
+    city: 'Lima',
+    blurb: 'The City of Kings, from Plaza San Martín to San Francisco',
+    mode: 'walk',
+    km: 1.9,
+    stops: ['Plaza San Martín', 'Plaza de Armas de Lima', 'Palacio de Gobierno', 'Catedral de Lima', 'Palacio Arzobispal', 'Convento de San Francisco'],
+  },
+  {
+    id: 'marrakesh',
+    region: 'africa',
+    label: 'Marrakesh',
+    city: 'Marrakesh',
+    blurb: 'The medina: a madrasa, Jemaa el-Fna and two palaces',
+    mode: 'walk',
+    km: 4.2,
+    stops: ['Ben Youssef Madrasa', 'Jemaa el-Fna', 'Koutoubia Mosque', 'Saadian Tombs', 'El Badi Palace', 'Bahia Palace'],
   },
   {
     id: 'miami',
@@ -65,6 +146,16 @@ export const SAMPLES = [
     stops: ['Eiffel Tower', "Pont de l'Alma", 'Grand Palais', 'Place de la Concorde', 'Louvre Museum'],
   },
   {
+    id: 'rio-de-janeiro',
+    region: 'americas',
+    label: 'Rio de Janeiro',
+    city: 'Rio de Janeiro',
+    blurb: 'Old Rio, from Candelária to the Selarón Steps',
+    mode: 'walk',
+    km: 3.4,
+    stops: ['Igreja da Candelária', 'Paço Imperial', 'Confeitaria Colombo', 'Theatro Municipal', 'Museu Nacional de Belas Artes', 'Arcos da Lapa', 'Escadaria Selarón'],
+  },
+  {
     id: 'san-francisco',
     region: 'americas',
     label: 'San Francisco',
@@ -73,6 +164,16 @@ export const SAMPLES = [
     mode: 'walk',
     km: 3.7,
     stops: ['Ferry Building', 'Transamerica Pyramid', 'Dragon Gate', 'Washington Square', 'Coit Tower'],
+  },
+  {
+    id: 'santiago',
+    region: 'americas',
+    label: 'Santiago',
+    city: 'Santiago, Chile',
+    blurb: 'La Moneda, the Plaza de Armas and Santa Lucía Hill',
+    mode: 'walk',
+    km: 3.4,
+    stops: ['Palacio de La Moneda', 'Plaza de la Constitución', 'Museo de Arte Precolombino', 'Plaza de Armas', 'Catedral Metropolitana de Santiago de Chile', 'Mercado Central', 'Cerro Santa Lucía'],
   },
   {
     id: 'shenzhen',
@@ -93,6 +194,26 @@ export const SAMPLES = [
     mode: 'walk',
     km: 2.9,
     stops: ['Kaminarimon', 'Sensō-ji', 'Asakusa Shrine', 'Sumida Park', 'Tokyo Skytree'],
+  },
+  {
+    id: 'tunis',
+    region: 'africa',
+    label: 'Tunis',
+    city: 'Tunis',
+    blurb: 'Through the medina, from the Sea Gate to the Kasbah',
+    mode: 'walk',
+    km: 1.8,
+    stops: ['Bab el Bhar', 'Zitouna Mosque', 'Dar Ben Abdallah', 'Tourbet el Bey', 'Kasbah Mosque'],
+  },
+  {
+    id: 'zanzibar',
+    region: 'africa',
+    label: 'Zanzibar',
+    city: 'Zanzibar',
+    blurb: 'Stone Town: the market, the cathedral, palaces and the Old Fort',
+    mode: 'walk',
+    km: 2.4,
+    stops: ['Darajani Market', 'Christ Church', 'Old Dispensary', 'Palace Museum', 'House of Wonders', 'Old Fort', 'Forodhani Park'],
   },
 ];
 
