@@ -300,12 +300,20 @@ export function createWikiService({ lang = 'en', fetchImpl = defaultFetch, retry
     ]);
     // What the traveller came for (parks and viewpoints, markets…) is rarely among a city's most
     // famous articles: one more search for each, with the words the language uses for them.
-    const words = (THEME_SEARCH[lang] ?? THEME_SEARCH.en);
-    const themed = await Promise.allSettled(
-      themes
-        .filter((t) => words[t])
-        .map((t) => query({ generator: 'search', gsrsearch: `${words[t]} nearcoord:${meters}m,${lat.toFixed(4)},${lon.toFixed(4)}`, gsrnamespace: '0', gsrlimit: '100' })),
-    );
+    const words = THEME_SEARCH[lang] ?? THEME_SEARCH.en;
+    const themeList = themes.filter((t) => words[t]);
+    const themeSearch = (t) => query({ generator: 'search', gsrsearch: `${words[t]} nearcoord:${meters}m,${lat.toFixed(4)},${lon.toFixed(4)}`, gsrnamespace: '0', gsrlimit: '100' });
+    const themed = await Promise.allSettled(themeList.map(themeSearch));
+    // Asked all at once, Wikipedia sometimes refuses one of them (429): one more try, one at a
+    // time, so "no markets here" is never just a refused request.
+    for (const [i, answer] of themed.entries()) {
+      if (answer.status !== 'rejected') continue;
+      try {
+        themed[i] = { status: 'fulfilled', value: await themeSearch(themeList[i]) };
+      } catch (reason) {
+        themed[i] = { status: 'rejected', reason };
+      }
+    }
     const answers = [nearest, notables, ...themed];
     if (answers.every((a) => a.status === 'rejected')) throw answers[0].reason;
     const gone = goneAnswer.value ?? new Set();
@@ -333,7 +341,11 @@ export function createWikiService({ lang = 'en', fetchImpl = defaultFetch, retry
       }
     }
     // Search finds pages by any coordinate; keep the ones whose main location is in the radius.
-    return [...byId.values()].filter((p) => distanceMeters({ lat, lon }, p) <= meters * 1.05);
+    const list = [...byId.values()].filter((p) => distanceMeters({ lat, lon }, p) <= meters * 1.05);
+    // The interests Wikipedia wouldn't answer for, even on the second try: the app says so
+    // rather than "nothing here".
+    list.incomplete = themeList.filter((t, i) => themed[i].status === 'rejected');
+    return list;
   }
 
   /**

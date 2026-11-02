@@ -42,6 +42,7 @@ const LANDSCAPE_RE = words([
   // English
   'parks?', 'gardens?', 'viewpoints?', 'lookout', 'overlook', 'belvedere', 'promenade', 'esplanade', 'hills?', 'mountains?', 'mount', 'peaks?',
   'summit', 'volcano', 'lakes?', 'lagoon', 'beach(?:es)?', 'bay', 'cove', 'waterfalls?', 'falls', 'cascades?', 'gorge', 'canyon', 'cliffs?', 'cape',
+  'fells?', 'crags?', 'tarns?', 'tor', 'glen', 'loch', 'lough', 'moors?', 'heath', 'downs', 'common', 'ridge', 'crater', 'fjord',
   'headland', 'islands?', 'islet', 'forests?', 'woods', 'woodland', 'nature reserve', 'national park', 'caves?', 'dunes?', 'valley', 'oasis',
   'springs', 'coast', 'coastline', 'seafront', 'waterfront', 'arboretum',
   // French
@@ -115,7 +116,7 @@ export function placeThemes(poi) {
 // Matched against what a place *is* (the start of its description: "river in France",
 // "arrondissement of Paris"), not words further on ("bridge over the river").
 const AREA_RE =
-  /^(?:[\p{L}'’-]+\s+){0,2}(?:arrondissement|district|neighbou?rhood|suburb|area|space|point|junction|intersection|settlement|ville|cité|région|región|regione|provincia|département|departamento|bundesland|ciudad|stadt|città|comune|gemeinde|île|isla|insel|isola|barrio|bairro|stadtteil|quartiere|rione|quarter|quartier|borough|ward|commune|municipality|municipio|municipalité|city|town|village|capital|river|fleuve|rivière|río|fluss|fiume|lake|region|province|department|département|metropolitan|island|street|avenue|boulevard|rue|calle|straße|strasse|metro line|railway line|prefecture|canton|strait|estuary|bay|lagoon|gulf|canal|former name|historical name|old name|(?<!united\s)states|thoroughfare|sektor|sector|secteur|country|sovereign state|civil parish|business district)(?![\p{L}])/iu;
+  /^(?:[\p{L}'’-]+\s+){0,2}(?:arrondissement|district|neighbou?rhood|suburb|area|space|point|junction|intersection|settlement|ville|cité|région|región|regione|provincia|département|departamento|bundesland|ciudad|stadt|città|comune|gemeinde|île|isla|insel|isola|barrio|bairro|stadtteil|quartiere|rione|quarter|quartier|borough|ward|commune|municipality|municipio|municipalité|city|town|village|capital|river|fleuve|rivière|río|fluss|fiume|lake|region|province|department|département|metropolitan|island|street|avenue|boulevard|rue|calle|straße|strasse|metro line|railway line|prefecture|canton|strait|estuary|bay|lagoon|gulf|canal|former name|historical name|old name|(?<!united\s)states|thoroughfare|sektor|sector|secteur|country|sovereign state|civil parish|business district|mountain range|range|massif|mountains|alps|chaîne|cordillera|sierra|gebirge|massiv|catena|massiccio)(?![\p{L}])/iu;
 // "Innermost part of London", "Southern part of Manhattan" (but "Scottish National Gallery: Part of
 // National Galleries Scotland" is a gallery).
 const PART_OF_RE = /^(?:[\p{L}'’-]+\s+){0,2}part(?![\p{L}])/iu;
@@ -128,7 +129,7 @@ const TOWN_BUILDING_RE =
 // Wikipedia also places organisations, events and works at an address: not places to walk to.
 // (Matched on the short description: "British intelligence agency", "Satirical magazine", "Fire in 1666".)
 const NOT_A_PLACE_RE =
-  /(?:^|[^\p{L}])(?:agency|company|corporation|government|body|conglomerate|firm|manufacturer|magazine|newspaper|tabloid|broadcaster|publisher|record label|band|political party|parliament|legislat|senate|ministry|government department|central bank|stock exchange|securities exchange|university|college|school|religious order|higher education|research institution|educational institution|école|ecole|lycée|escuela|schule|scuola|society|association|organi[sz]ation|charity|foundation|club|team|brand|fashion house|retailer|airline|television|radio|channel|film|novel|album|song|video game|battle|siege|attack|assault|incident|affair|arson|explosion|bombing|storming|uprising|insurrection|rebellion|revolt|coup|protest|riot|election|treaty|festival|event|olympics|games|championship|tournament|competition|conflagration|massacre|scandal|police|intelligence|embassy|consulate|regulator|regulatory|authority|commission|series|former (?:country|state)|historical (?:country|state)|christmas tree|christmas market)(?![\p{L}])/iu;
+  /(?:^|[^\p{L}])(?:agency|company|corporation|government|body|conglomerate|firm|manufacturer|magazine|newspaper|tabloid|broadcaster|publisher|record label|band|political party|parliament|legislat|senate|ministry|government department|central bank|stock exchange|securities exchange|university|college|school|religious order|higher education|research institution|educational institution|école|ecole|lycée|escuela|schule|scuola|society|association|organi[sz]ation|charity|foundation|club|team|brand|fashion house|retailer|airline|television|radio|channel|film|novel|album|song|video game|battle|siege|attack|assault|incident|affair|arson|explosion|bombing|storming|uprising|insurrection|rebellion|revolt|coup|protest|riot|election|treaty|festival|event|olympics|games|championship|tournament|competition|conflagration|massacre|scandal|police|intelligence|embassy|consulate|regulator|regulatory|authority|commission|swimming pool|sports (?:centre|center|complex|hall|club)|leisure centre|fitness|gym|piscine|centre sportif|piscina|polideportivo|schwimmbad|sporthalle|palestra|centro sportivo|series|former (?:country|state)|historical (?:country|state)|christmas tree|christmas market)(?![\p{L}])/iu;
 // The same in French, Spanish, German and Italian (descriptions come in the reader's language).
 const NOT_A_PLACE_INTL_RE =
   /(?:^|[^\p{L}])(?:épisode|événement|evento|acontecimiento|ereignis|agence|agencia|agentur|agenzia|académies?|academias?|akademien?|accademi[ae]|entreprise|société|journal|quotidien|parti politique|ministère|gouvernement|université|banque|association|fondation|attentat|bataille|incendie|siège|émeute|traité|conférence|élection|jeux olympiques|libération|manifestation|empresa|periódico|partido político|ministerio|gobierno|universidad|banco|fundación|asociación|atentado|batalla|incendio|asedio|motín|tratado|conferencia|elecciones|juegos olímpicos|unternehmen|zeitung|partei|ministerium|regierung|universität|verein|stiftung|anschlag|schlacht|belagerung|aufstand|vertrag|konferenz|olympische|azienda|società|giornale|partito|ministero|governo|università|banca|fondazione|associazione|attentato|battaglia|assedio|rivolta|trattato|conferenza|elezioni|olimpiadi|giochi olimpici|sapin de noël|marché de noël|árbol de navidad|mercado navideño|mercadillo navideño|albero di natale|mercatino di natale|weihnachtsbaum|weihnachtsmarkt|christkindlmarkt)(?![\p{L}])/iu;
@@ -196,6 +197,14 @@ const MEMORIAL_START_RE =
   /^(?:[\p{L}'’-]+\s+){0,2}(?:memorial|monument|statue|mound|cenotaph|obelisk|mausoleum|museum|mémorial|musée|butte|monumento|estatua|museo|denkmal|mahnmal|gedenkstätte|statua|sacrario)(?![\p{L}])/iu;
 // A painting you walk into: "Painting by Louis Dumoulin in a rotunda" (the Waterloo Panorama).
 const ROTUNDA_RE = /(?:^|[^\p{L}])(?:rotunda|rotonde|rotonda|panorama|cyclorama)(?![\p{L}])/iu;
+// A summit, a glacier, a volcano: the article's spot is the top, not somewhere you walk to from
+// town in an afternoon (Chamonix's "landscapes" came out as the Aiguille du Midi, Mont Blanc
+// and the Grépon). On foot these are left out; a hill, a fell, a crag or a viewpoint stays.
+// By car they stay (a road to a pass or a viewpoint), and the camera may name them.
+const SUMMIT_HEAD_RE =
+  /^(?:[\p{L}'’-]+\s+){0,2}(?:mountain|peak|summit|aiguille|glacier|volcano|stratovolcano|montagne|mont|pic|sommet|volcan|montaña|pico|cumbre|volcán|glaciar|berg|gipfel|gletscher|vulkan|montagna|monte|picco|cima|vetta|vulcano|ghiacciaio)(?![\p{L}])/iu;
+// An island needs a boat (Dubrovnik's "landscapes" were Lokrum and Daksa): not on foot.
+const ISLAND_HEAD_RE = /^(?:[\p{L}'’-]+\s+){0,2}(?:islands?|islet|île|îlot|islas?|islote|inseln?|isol[ae]|isolotto)(?![\p{L}])/iu;
 // Coordinate kinds (from Wikipedia's {{coord}}) that are never a stop on a walk.
 const NOT_A_STOP_TYPES = new Set(['country', 'state', 'adm1st', 'adm2nd', 'adm3rd', 'city', 'event', 'edu', 'airport', 'waterbody', 'river', 'mountain', 'satellite', 'glacier', 'pass', 'forest']);
 // …except, on an outing for landscapes, these.
@@ -204,7 +213,7 @@ const NATURE_TYPES = new Set(['waterbody', 'mountain', 'glacier', 'pass', 'fores
 // bay, a hill, a forest, a beach, an island, a valley. On a landscapes outing these are places
 // to go although they're areas; a district with a garden in it, or a street, still isn't.
 const NATURAL_HEAD_RE =
-  /^(?:[\p{L}'’-]+\s+){0,2}(?:lake|loch|lough|tarn|reservoir|pond|lagoon|bay|cove|beach|coast|coastline|cliffs?|cape|headland|islands?|islet|hills?|mountains?|mount|peaks?|summit|ridge|volcano|crater|valley|glen|gorge|canyon|waterfalls?|falls|cascade|forest|woods?|woodland|heath|moor|marsh|wetland|dunes?|caves?|springs?|glacier|fjord|lac|lagune|baie|crique|plage|côte|falaises?|cap|île|colline|montagne|mont|sommet|crête|volcan|vallée|gorges?|cascade|chutes?|forêt|bois|lande|marais|dunes?|grotte|glacier|lago|laguna|bahía|cala|playa|costa|acantilados?|cabo|isla|cerro|colina|montaña|monte|cumbre|sierra|volcán|valle|cañón|garganta|cascada|bosque|selva|marisma|dunas?|cueva|see|bucht|strand|küste|klippen?|kap|insel|hügel|berg|gipfel|vulkan|tal|schlucht|wasserfall|wald|forst|heide|moor|düne|höhle|gletscher|baia|spiaggia|scogliera|capo|isola|collina|vetta|vulcano|gola|cascata|foresta|bosco|palude|duna|grotta|ghiacciaio)(?![\p{L}])/iu;
+  /^(?:(?!of\s|de\s|di\s|von\s)[\p{L}'’-]+\s+)?(?:lake|loch|lough|tarn|reservoir|pond|lagoon|bay|cove|beach|coast|coastline|cliffs?|cape|headland|islands?|islet|hills?|fells?|crags?|tor|mountains?|mount|peaks?|summit|ridge|volcano|crater|valley|glen|gorge|canyon|waterfalls?|falls|cascade|forest|woods?|woodland|heath|moor|marsh|wetland|dunes?|caves?|springs?|glacier|fjord|lac|lagune|baie|crique|plage|côte|falaises?|cap|île|colline|montagne|mont|sommet|crête|volcan|vallée|gorges?|cascade|chutes?|forêt|bois|lande|marais|dunes?|grotte|glacier|lago|laguna|bahía|cala|playa|costa|acantilados?|cabo|isla|cerro|colina|montaña|monte|cumbre|sierra|volcán|valle|cañón|garganta|cascada|bosque|selva|marisma|dunas?|cueva|see|bucht|strand|küste|klippen?|kap|insel|hügel|berg|gipfel|vulkan|tal|schlucht|wasserfall|wald|forst|heide|moor|düne|höhle|gletscher|baia|spiaggia|scogliera|capo|isola|collina|vetta|vulcano|gola|cascata|foresta|bosco|palude|duna|grotta|ghiacciaio)(?![\p{L}])/iu;
 
 /** 'museum' | 'historic' | 'sight' */
 export function placeKind(poi) {
@@ -219,10 +228,11 @@ export function placeKind(poi) {
  * street, an organisation, an event, an artwork inside a collection, or a building that's gone.
  * (Also used by "Point your camera", so it labels what's in front of you, not "Notre-Dame fire".)
  */
-export function isPlaceToSee(poi, { nature = false } = {}) {
+export function isPlaceToSee(poi, { nature = false, onFoot = false } = {}) {
   if (poi.category === 'skip' || poi.disambiguation || poi.gone) return false;
   const description = poi.description ?? '';
   const title = poi.title ?? '';
+  if (onFoot && (SUMMIT_HEAD_RE.test(description) || ISLAND_HEAD_RE.test(description) || (!description && /^(?:mont|mount|aiguille|pic|pico|monte)\s/iu.test(title)))) return false;
   // On an outing for landscapes, a lake, a bay, a hill or a forest is a place to go.
   const natural = nature && NATURAL_HEAD_RE.test(description);
   const memorial = MEMORIAL_START_RE.test(description);
@@ -254,9 +264,9 @@ export function isPlaceToSee(poi, { nature = false } = {}) {
  * tell (article length), and a nudge for historic places and museums. Areas, streets,
  * organisations, events, buildings that are gone and filler are excluded.
  */
-export function interestScore(poi, { interests = null } = {}) {
+export function interestScore(poi, { interests = null, modeId = 'walk' } = {}) {
   const nature = !!interests?.includes('landscape');
-  if (!isPlaceToSee(poi, { nature })) return -Infinity;
+  if (!isPlaceToSee(poi, { nature, onFoot: modeId !== 'drive' })) return -Infinity;
   const themes = placeThemes(poi);
   // A stub has too little to tell; a viewpoint or a garden needs fewer words to be worth it.
   if ((poi.length ?? 3000) < (nature && themes.has('landscape') ? 1200 : 2500)) return -Infinity;
@@ -621,7 +631,7 @@ export function suggestRoute({ start, candidates, modeId = 'walk', minutes = 60,
   const budget = minutes - reservedMinutes;
   const pool = candidates
     .filter((c) => !avoid?.has(c.id) && !avoid?.has(c.title))
-    .map((c) => ({ ...c, kind: placeKind(c), themes: placeThemes(c), score: interestScore(c, { interests }), stay: stayFor(c, modeId, minutes), visit: visitFor(c, visits.minutes) }))
+    .map((c) => ({ ...c, kind: placeKind(c), themes: placeThemes(c), score: interestScore(c, { interests, modeId }), stay: stayFor(c, modeId, minutes), visit: visitFor(c, visits.minutes) }))
     // With interests chosen, only what answers them (or is famous enough to anyway): no filler.
     .filter((c) => Number.isFinite(c.score) && (!interests?.length || c.score >= SCORE_FLOOR))
     .sort((a, b) => b.score - a.score)
@@ -782,6 +792,10 @@ export function proposeOutings({ start, candidates, modeId = 'walk', minutes = 6
       // …and something for each of them: "History and food" with no food is history.
       if (ints.some((i) => !route.stops.some((stop) => themesOf(stop).has(i)))) return;
     }
+    // An alternative with a single place that leaves half the time unused isn't a second
+    // outing worth the name (a lone park for a whole day). In a village, one more church
+    // for the hour is what there is.
+    if (avoid && route.stops.length < 2 && route.minutes + reservedMinutes < minutes * 0.5) return;
     // By name too: the same park can come back from two searches under two page ids.
     const ids = new Set(route.stops.flatMap((s) => [s.id, s.title]));
     if (out.some((o) => overlap(ids, o.ids) >= 0.7)) return;

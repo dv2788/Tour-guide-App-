@@ -281,3 +281,24 @@ test('links and pictures from Wikipedia answers are used only if they are plain 
     assert.equal(httpsOnly(bad), null, String(bad));
   }
 });
+
+test('a themed search Wikipedia refuses in the burst is asked once more; one still refused is reported, not read as "nothing"', async () => {
+  const page = (pageid, title, description, lat) => ({ pageid, title, length: 9000, description, langlinkscount: 5, coordinates: [{ lat, lon: 2.33 }] });
+  let parkAsked = 0;
+  const fetchImpl = async (url) => {
+    const q = decodeURIComponent(url.replace(/\+/g, ' ')); // spaces come as '+'
+    if (/gsrsearch=park OR garden/.test(q)) {
+      parkAsked++;
+      if (parkAsked === 1) return { ok: false, status: 429, headers: { get: () => null }, json: async () => ({}) }; // the burst
+      return { ok: true, status: 200, json: async () => ({ query: { pages: [page(7, 'Quiet Park', 'public park in Paris', 48.862)] } }) };
+    }
+    if (/gsrsearch=market OR/.test(q)) return { ok: false, status: 429, headers: { get: () => null }, json: async () => ({}) }; // never answers
+    if (/generator=geosearch|generator=search/.test(q)) return { ok: true, status: 200, json: async () => ({ query: { pages: [page(1, 'Corner Church', 'church in Paris', 48.8605)] } }) };
+    return { ok: false, status: 404, json: async () => ({}) };
+  };
+  const wiki = createWikiService({ lang: 'en', fetchImpl, retries: 0 });
+  const pois = await wiki.exploreArea(48.86, 2.33, 3000, 200, 200, { themes: ['landscape', 'food'] });
+  assert.ok(pois.some((p) => p.title === 'Quiet Park'), 'the park search was asked again and answered');
+  assert.equal(parkAsked, 2);
+  assert.deepEqual(pois.incomplete, ['food'], 'the food search is reported as unanswered');
+});

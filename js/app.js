@@ -690,6 +690,12 @@ async function planRoute() {
     await Promise.race([check, new Promise((resolve) => setTimeout(resolve, 6000))]);
     if (chosen.some((c) => c.gone)) proposals = propose();
     if (!proposals.length) {
+      // Wikipedia refused the search for what you asked for (twice): not "nothing here".
+      const missing = (candidates.incomplete ?? []).filter((t) => interests.includes(t));
+      if (missing.length) {
+        showImportNote(`Wikipedia was too busy to look for ${lookingFor(missing)} just now. Wait a moment, then tap “Curate my route” again.`, 'warn');
+        return;
+      }
       explainEmptyPlan({ origin, candidates, modeId, minutes, loop, radius: lookWithin, interests });
       return;
     }
