@@ -99,6 +99,11 @@ export function cleanSaved(raw, choices = {}) {
   if (str(raw.range) !== undefined && /^\d{1,2}$/.test(raw.range)) out.range = raw.range;
   if (typeof raw.rangeAuto === 'boolean') out.rangeAuto = raw.rangeAuto;
   for (const [key, allowed] of Object.entries(choices)) {
+    // Interests are several at once ("history" and "landscape"): only the ones offered, once each.
+    if (key === 'interests') {
+      if (Array.isArray(raw.interests)) out.interests = [...new Set(raw.interests.filter((v) => allowed.includes(v)))];
+      continue;
+    }
     if (typeof raw[key] === 'string' && allowed.includes(raw[key])) out[key] = raw[key];
   }
   if (typeof raw.voice === 'string' && /^(neural:[\w-]{1,80}:\d{1,3}|system:[^<>]{0,120})$/.test(raw.voice)) out.voice = raw.voice;

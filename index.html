@@ -90,6 +90,7 @@
     <symbol id="i-skip" viewBox="0 -960 960 960"><path d="M670-267.69v-424.62h45.38v424.62H670Zm-425.38 0v-424.62L552.92-480l-308.3 212.31ZM290-480Zm0 125.38L473.69-480 290-605.77v251.15Z"/></symbol>
     <symbol id="i-stars" viewBox="0 -960 960 960"><path d="m330-254.62 150-114.3 150 114.3-59-185.07L720.61-545H537.92L480-736.46 421.46-545H238.77l149.62 105.31L330-254.62ZM480.07-100q-78.22 0-147.4-29.92t-120.99-81.71q-51.81-51.79-81.75-120.94Q100-401.71 100-479.93q0-78.84 29.92-148.21t81.71-120.68q51.79-51.31 120.94-81.25Q401.71-860 479.93-860q78.84 0 148.21 29.92t120.68 81.21q51.31 51.29 81.25 120.63Q860-558.9 860-480.07q0 78.22-29.92 147.4t-81.21 120.99q-51.29 51.81-120.63 81.75Q558.9-100 480.07-100Zm-.07-45.39q139.69 0 237.15-97.76 97.46-97.77 97.46-236.85 0-139.69-97.46-237.15-97.46-97.46-237.15-97.46-139.08 0-236.85 97.46-97.76 97.46-97.76 237.15 0 139.08 97.76 236.85 97.77 97.76 236.85 97.76ZM480-480Z"/></symbol>
     <symbol id="i-walk" viewBox="0 -960 960 960"><path d="m291.46-50 117.93-587.15L293-588v130.31h-46v-161.08l182.39-76.77q13.61-6 27.76-7.69 14.16-1.69 27.62.92 14.69 2.62 25.85 9.85 11.15 7.23 18.76 18.46l35.08 55.61q33.69 53.01 80.39 82.81 46.69 29.81 100.07 32.12v45.38q-68.46-4.31-121.19-35.88-52.73-31.58-93.81-93.66l-40.31 174.31 90.85 87.62V-50h-45.38v-232.69L419.77-391.08 338.08-50h-46.62ZM540-756.31q-28.46 0-48.62-20.15-20.15-20.16-20.15-48.62 0-28.46 20.15-48.61 20.16-20.16 48.62-20.16 28.46 0 48.62 20.16 20.15 20.15 20.15 48.61t-20.15 48.62q-20.16 20.15-48.62 20.15Z"/></symbol>
+    <symbol id="i-hike" viewBox="0 -960 960 960"><path d="m282-40 121-620q5-24 23-37t38-13q20 0 37.5 9t28.5 26l39 64q19 32 52.5 57t78.5 39v-75h40v550h-40v-414q-51-11-96-39t-80-69l-29 145 85 81v296h-60v-244l-100-95-74 339h-64Zm17-403-75-14q-10-2-17.5-13t-5.5-22l30-157q5-29 29-44.5t53-10.5l36 7-50 254Zm231-311q-30 0-51.5-21.5T457-827q0-30 21.5-51.5T530-900q30 0 51.5 21.5T603-827q0 30-21.5 51.5T530-754Z"/></symbol>
     <symbol id="i-waves" viewBox="0 -960 960 960"><path d="M298.85-257.69v-444.62h45.38v444.62h-45.38ZM457.31-100v-760h45.38v760h-45.38ZM140-413.85v-132.3h45.39v132.3H140Zm476.15 156.16v-444.62h45.39v444.62h-45.39Zm158.46-156.16v-132.3H820v132.3h-45.39Z"/></symbol>
     <symbol id="i-turn-left" viewBox="0 -960 960 960"><path d="M625-180v-343.38q0-5.39-3.46-8.85t-8.85-3.46h-386L319.38-443l-31.61 32L140-558.38l147.77-147.77 31.61 32-92.69 93.07h386q23.6 0 40.65 16.86 17.04 16.86 17.04 40.84V-180H625Z"/></symbol>
     <symbol id="i-turn-right" viewBox="0 -960 960 960"><path d="M289.62-180v-343.38q0-23.98 17.04-40.84 17.05-16.86 40.65-16.86h386l-92.69-93.07 31.61-32L820-558.38 672.23-411l-31.61-32 92.69-92.69h-386q-5.39 0-8.85 3.46t-3.46 8.85V-180h-45.38Z"/></symbol>
@@ -169,33 +170,55 @@
               <svg class="icon"><use href="#i-stars" /></svg>Curate a route for me
             </button>
             <div id="suggest-panel" class="suggest-panel" hidden>
+              <p class="suggest-q" id="interests-label"><svg class="icon"><use href="#i-stars" /></svg>What would you like to see?</p>
+              <div class="chips" role="group" aria-labelledby="interests-label">
+                <label class="chip-opt"><input type="checkbox" name="interest" value="history" /><span>History</span></label>
+                <label class="chip-opt"><input type="checkbox" name="interest" value="culture" /><span>Culture</span></label>
+                <label class="chip-opt"><input type="checkbox" name="interest" value="landscape" /><span>Landscapes</span></label>
+                <label class="chip-opt"><input type="checkbox" name="interest" value="food" /><span>Food</span></label>
+              </div>
+              <p class="range-sub">Pick one or more and I'll propose different itineraries. Nothing picked: the best-known places around you.</p>
+              <p class="suggest-q" id="outing-label"><svg class="icon"><use href="#i-hike" /></svg>What kind of outing?</p>
+              <div class="chips" role="radiogroup" aria-labelledby="outing-label">
+                <label class="chip-opt"><input type="radio" name="outing" value="walk" checked /><span>City walk</span></label>
+                <label class="chip-opt"><input type="radio" name="outing" value="hike" /><span>Hike</span></label>
+                <label class="chip-opt"><input type="radio" name="outing" value="cycle" /><span>Bike ride</span></label>
+                <label class="chip-opt"><input type="radio" name="outing" value="drive" /><span>Scenic drive</span></label>
+              </div>
               <p class="suggest-q" id="range-label"><svg class="icon"><use href="#i-near" /></svg>Select range</p>
-              <p class="range-sub">How far from you should I look for monuments, museums and landmarks?</p>
+              <p class="range-sub">How far from you should I look? Up to 100 km for a drive.</p>
               <div class="range-pick">
                 <label class="chip-opt"><input type="checkbox" id="range-auto" name="rangeAuto" checked /><span>Fits my time</span></label>
                 <div class="range-row">
-                  <input type="range" id="range" name="range" min="0" max="12" step="1" value="4" aria-labelledby="range-label" />
+                  <input type="range" id="range" name="range" min="0" max="14" step="1" value="4" aria-labelledby="range-label" />
                   <output id="range-value" for="range">3 km</output>
                 </div>
-                <p class="range-scale" aria-hidden="true"><span>500 m</span><span>50 km</span></p>
+                <p class="range-scale" aria-hidden="true"><span>500 m</span><span>100 km</span></p>
               </div>
               <p class="suggest-q" id="duration-label"><svg class="icon"><use href="#i-clock" /></svg>How long do you want to be out?</p>
               <div class="chips" role="radiogroup" aria-labelledby="duration-label">
                 <label class="chip-opt"><input type="radio" name="duration" value="30" /><span>30 min</span></label>
+                <label class="chip-opt"><input type="radio" name="duration" value="45" /><span>45 min</span></label>
                 <label class="chip-opt"><input type="radio" name="duration" value="60" checked /><span>1 hour</span></label>
+                <label class="chip-opt"><input type="radio" name="duration" value="90" /><span>1 h 30</span></label>
                 <label class="chip-opt"><input type="radio" name="duration" value="120" /><span>2 hours</span></label>
+                <label class="chip-opt"><input type="radio" name="duration" value="180" /><span>3 hours</span></label>
                 <label class="chip-opt"><input type="radio" name="duration" value="240" /><span>Half day</span></label>
+                <label class="chip-opt"><input type="radio" name="duration" value="360" /><span>6 hours</span></label>
                 <label class="chip-opt"><input type="radio" name="duration" value="480" /><span>Full day</span></label>
+                <label class="chip-opt"><input type="radio" name="duration" value="600" /><span>Long day</span></label>
               </div>
               <label class="check"><input type="checkbox" id="loop" checked /><span>End where I started</span></label>
               <p class="hint">
-                I'll pick the best-known monuments, museums and landmarks within reach. On longer outings I'll add museum
-                visits and stop for a coffee, lunch, dinner or a drink at the right time.
+                I'll pick what fits your interests within reach and propose up to three itineraries to choose from. On longer
+                outings I'll add museum visits and stop for a coffee, lunch, dinner or a drink at the right time (a taste of
+                local food about every hour if you picked Food).
               </p>
               <button type="button" id="suggest-go" class="btn-primary btn-small">
                 <svg class="icon"><use href="#i-stars" /></svg>Curate my route
               </button>
             </div>
+            <div id="proposals" class="proposals" hidden></div>
             <div id="plan" class="plan" hidden>
               <p id="plan-summary" class="plan-summary"></p>
               <div id="plan-maps" class="plan-maps"></div>
@@ -225,12 +248,17 @@
 
           <section class="card">
             <h2 class="card-title"><span class="step">III</span>How will you travel?</h2>
-            <div class="tiles tiles-4" id="mode-picker">
+            <div class="tiles tiles-5" id="mode-picker">
               <label class="tile"><input type="radio" name="mode" value="walk" checked /><svg class="icon"><use href="#i-walk" /></svg><span>Walk</span></label>
+              <label class="tile"><input type="radio" name="mode" value="hike" /><svg class="icon"><use href="#i-hike" /></svg><span>Hike</span></label>
               <label class="tile"><input type="radio" name="mode" value="run" /><svg class="icon"><use href="#i-run" /></svg><span>Run</span></label>
               <label class="tile"><input type="radio" name="mode" value="cycle" /><svg class="icon"><use href="#i-bike" /></svg><span>Cycle</span></label>
               <label class="tile"><input type="radio" name="mode" value="drive" /><svg class="icon"><use href="#i-car" /></svg><span>Drive</span></label>
             </div>
+            <p id="hike-note" class="note" hidden>
+              Hikes follow the paths mapped on OpenStreetMap, which can be steep, rough or closed. Check the weather and daylight, wear good shoes,
+              take water, and turn back if a path looks unsafe.
+            </p>
             <p id="drive-note" class="note" hidden>
               Set everything up before you leave. Once the tour starts it's hands-free: you never need to touch the screen while driving.
             </p>

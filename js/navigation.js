@@ -322,10 +322,10 @@ export function maneuverIcon(step) {
 export function mapsLink(stop, modeId = 'walk', { apple = false } = {}) {
   const at = `${stop.lat.toFixed(6)},${stop.lon.toFixed(6)}`;
   if (apple) {
-    const flag = { walk: 'w', run: 'w', cycle: 'c', drive: 'd' }[modeId] ?? 'w';
+    const flag = { walk: 'w', hike: 'w', run: 'w', cycle: 'c', drive: 'd' }[modeId] ?? 'w';
     return `https://maps.apple.com/?daddr=${at}&dirflg=${flag}`;
   }
-  const mode = { walk: 'walking', run: 'walking', cycle: 'bicycling', drive: 'driving' }[modeId] ?? 'walking';
+  const mode = { walk: 'walking', hike: 'walking', run: 'walking', cycle: 'bicycling', drive: 'driving' }[modeId] ?? 'walking';
   return `https://www.google.com/maps/dir/?api=1&destination=${at}&travelmode=${mode}`;
 }
 
@@ -336,7 +336,7 @@ export function mapsLink(stop, modeId = 'walk', { apple = false } = {}) {
  */
 export function routeMapsLinks(stops, { modeId = 'walk', origin = null, perPart = 10 } = {}) {
   const at = (p) => `${p.lat.toFixed(6)},${p.lon.toFixed(6)}`;
-  const mode = { walk: 'walking', run: 'walking', cycle: 'bicycling', drive: 'driving' }[modeId] ?? 'walking';
+  const mode = { walk: 'walking', hike: 'walking', run: 'walking', cycle: 'bicycling', drive: 'driving' }[modeId] ?? 'walking';
   const links = [];
   for (let i = 0; i < stops.length; i += perPart) {
     const part = stops.slice(i, i + perPart);
@@ -357,6 +357,7 @@ const SETTINGS = {
   // speed in m/min; announce/reroute in m; merge = maneuvers this close are described as one
   // strays = positions in a row off the route before we call it a wrong turn (GPS jumps about)
   walk: { speed: 75, announce: 30, reroute: 40, merge: 25, strays: 3, speak: true },
+  hike: { speed: 58, announce: 30, reroute: 50, merge: 25, strays: 4, speak: true }, // GPS wanders more under trees and cliffs
   run: { speed: 160, announce: 45, reroute: 45, merge: 25, strays: 3, speak: true },
   cycle: { speed: 250, announce: 70, reroute: 50, merge: 20, strays: 2, speak: true },
   drive: { speed: 400, announce: 200, reroute: 80, merge: 15, strays: 2, speak: false }, // drivers use their maps app

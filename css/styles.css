@@ -2368,3 +2368,76 @@ body.lens-open {
   color: #14110a;
   letter-spacing: 0.12em;
 }
+
+/* ---------- Itineraries to choose from ---------- */
+
+.tiles-5 {
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+}
+
+.tiles-5 .tile {
+  padding: 12px 2px;
+}
+
+.proposals {
+  display: grid;
+  gap: 12px;
+}
+
+.proposals[hidden] {
+  display: none;
+}
+
+.proposals-head {
+  margin: 4px 0 0;
+  color: var(--gold);
+  font-family: var(--sans);
+  font-size: 0.7rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.proposal {
+  display: grid;
+  gap: 6px;
+  padding: 16px;
+  border: 1px solid var(--hairline-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.proposal:first-of-type {
+  border-color: var(--gold-bright);
+}
+
+.proposal-kicker {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.78rem;
+  letter-spacing: 0.03em;
+}
+
+.proposal-title {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 1.45rem;
+  font-weight: 500;
+  line-height: 1.15;
+}
+
+.proposal-stops {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+.proposal-note {
+  margin: 0;
+  color: var(--gold);
+  font-size: 0.85rem;
+}
+
+.proposal .btn-soft {
+  margin-top: 6px;
+}

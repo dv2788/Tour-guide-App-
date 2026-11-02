@@ -83,11 +83,24 @@ ChatGPT search), run `npm run indexnow` once the site is live: no account needed
 
 ## Let Roamie plan it: "Suggest a route for me"
 
-Tap **Use my location** (or type your city), then **Suggest a route for me** and answer one question:
-**how long do you want to be out?** (30 min, 1 hour, 2 hours, half a day or a full day). **Select range** sets
-how far to look for monuments, museums and landmarks: "Fits my time" (the default, worked out from the time and
-way of getting around), or any distance on the slider from 500 m to 50 km (beyond 10 km, Wikipedia's search for
-notable places does the looking). If nothing fits, it says why and offers the way out ("Plan 1 hour instead", "Look within 3 km").
+Tap **Use my location** (or type your city), then **Suggest a route for me**:
+
+- **What would you like to see?** History, culture, landscapes, food: one or more (or nothing, for the
+  best-known places around). Each place is sorted by what it is about, in five languages (a castle on a hill is
+  history and landscape); on a landscapes outing lakes, bays, hills and forests count as places to go, and a short
+  article is enough for a viewpoint. Wikipedia is also searched for each interest ("park OR garden OR
+  viewpoint…"), since parks and markets are rarely a city's most famous articles.
+- **What kind of outing?** A city walk, a **hike** (slower on paths, more time at each view, no museum
+  visits, a safety note), a bike ride or a scenic drive: the same choice as the travel mode.
+- **How long?** 30 min, 45 min, 1 hour, 1 h 30, 2 or 3 hours, half a day, 6 hours, a full day or a long day.
+- **Select range**: "Fits my time" (the default, from the time and the kind of outing; up to 60 km for a day's
+  drive), or any distance from 500 m to 100 km (beyond 10 km, Wikipedia's search for notable places does the looking).
+
+With interests picked, it proposes **up to three itineraries** to choose from: all your interests together
+(taking turns, so "history and landscapes" has both), then each on its own; with one interest, its best route,
+another through different places, and one with a companion interest. Near-copies and itineraries that wouldn't
+really be about their interest aren't offered. A **food** outing stops for a local taste (a market, a bakery, a
+pastry shop, an ice cream) about every hour between meals. If nothing fits, it says why and offers the way out ("Plan 1 hour instead", "Look within 3 km").
 
 Where the route starts: **the part of town you're staying in**, if you tell it (a neighbourhood, your hotel or
 a street; the box suggests the city's neighbourhoods, best known first, from Wikipedia). Otherwise where you

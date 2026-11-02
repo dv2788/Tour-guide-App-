@@ -33,6 +33,57 @@ const HISTORIC_WORDS = [
 ];
 const HISTORIC_RE = new RegExp(`(?:^|[^\\p{L}])(?:${HISTORIC_WORDS.join('|')})`, 'iu');
 const MUSEUM_RE = /(?:^|[^\p{L}])(?:museum|musée|musee|museo|museu|gallery|galerie|galleria|pinacoteca|kunsthalle)/iu;
+
+// ---------- What a place is about: history, culture, landscapes, food ----------
+// Whole words (and their plurals), in the five supported languages.
+const words = (list) => new RegExp(`(?:^|[^\\p{L}])(?:${list.join('|')})(?![\\p{L}])`, 'iu');
+const LANDSCAPE_RE = words([
+  // English
+  'parks?', 'gardens?', 'viewpoints?', 'lookout', 'overlook', 'belvedere', 'promenade', 'esplanade', 'hills?', 'mountains?', 'mount', 'peaks?',
+  'summit', 'volcano', 'lakes?', 'lagoon', 'beach(?:es)?', 'bay', 'cove', 'waterfalls?', 'falls', 'cascades?', 'gorge', 'canyon', 'cliffs?', 'cape',
+  'headland', 'islands?', 'islet', 'forests?', 'woods', 'woodland', 'nature reserve', 'national park', 'caves?', 'dunes?', 'valley', 'oasis',
+  'springs', 'coast', 'coastline', 'seafront', 'waterfront', 'arboretum',
+  // French
+  'parc', 'jardins?', 'belvédère', 'colline', 'montagne', 'mont', 'sommet', 'volcan', 'lac', 'lagune', 'plages?', 'baie', 'crique', 'chutes?',
+  'gorges', 'falaises?', 'cap', 'île', 'forêt', 'bois', 'réserve naturelle', 'grottes?', 'vallée', 'côte', 'corniche',
+  // Spanish
+  'parque', 'jardín', 'jardines', 'mirador', 'cerro', 'colina', 'montaña', 'monte', 'cumbre', 'volcán', 'lago', 'laguna', 'playas?', 'bahía',
+  'cala', 'cascada', 'garganta', 'cañón', 'acantilados?', 'cabo', 'isla', 'bosque', 'reserva natural', 'cuevas?', 'valle', 'manantial', 'malecón',
+  // German
+  'garten', 'gärten', 'aussichtspunkt', 'berg', 'hügel', 'gipfel', 'vulkan', 'see', 'strand', 'bucht', 'wasserfall', 'schlucht', 'klippen?',
+  'kap', 'insel', 'wald', 'naturschutzgebiet', 'nationalpark', 'höhle', 'tal', 'küste',
+  // Italian
+  'parco', 'giardin[oi]', 'collina', 'montagna', 'vetta', 'vulcano', 'spiaggia', 'baia', 'cascata', 'gola', 'scogliera', 'capo', 'isola',
+  'foresta', 'riserva naturale', 'grotta', 'lungomare',
+]);
+// Parks and the like that aren't landscapes.
+const NOT_LANDSCAPE_RE =
+  /(?:car|business|industrial|science|technology|office|retail|theme|amusement|water|trailer|skate|holiday|caravan)\s+park|parking|parkhaus|parkplatz|stadium|arena|estadio|stade|stadion|hotel|shopping|station|airport|cemetery|cimetière|cementerio|friedhof|cimitero/iu;
+const CULTURE_RE = words([
+  'theat(?:re|er)s?', 'opera(?: house)?', 'concert hall', 'auditorium', 'philharmonic', 'library', 'cultural cent(?:re|er)', 'arts? cent(?:re|er)',
+  'cinema', 'conservatory', 'théâtre', 'opéra', 'bibliothèque', 'centre culturel', 'salle de concert', 'teatro', 'ópera', 'biblioteca',
+  'centro cultural', 'auditorio', 'theater', 'oper', 'bibliothek', 'kulturzentrum', 'konzerthaus', 'philharmonie', 'centro culturale',
+]);
+const FOOD_RE = words([
+  'market(?:s| hall)?', 'food hall', 'covered market', 'caf[eé]s?', 'coffee ?house', 'restaurants?', 'bakery', 'patisserie', 'brewery', 'winery',
+  'vineyards?', 'chocolate', 'tea ?house', 'marché', 'halles', 'brasserie', 'boulangerie', 'pâtisserie', 'chocolaterie', 'vignoble', 'mercado',
+  'confitería', 'pastelería', 'panadería', 'cervecería', 'bodega', 'chocolatería', 'viñedo', 'markt', 'markthalle', 'kaffeehaus', 'konditorei',
+  'bäckerei', 'brauerei', 'weingut', 'mercato', 'caffè', 'pasticceria', 'birrificio', 'enoteca', 'gelateria', 'osteria', 'trattoria',
+]);
+
+/** What you'd do the outing for, in the order offered: 'history' | 'culture' | 'landscape' | 'food'. */
+export const INTERESTS = ['history', 'culture', 'landscape', 'food'];
+
+/** The interests a place answers (a set: a castle on a hill is history and landscape). */
+export function placeThemes(poi) {
+  const text = `${poi.title ?? ''} ${poi.description ?? ''}`;
+  const themes = new Set();
+  if (HISTORIC_RE.test(text)) themes.add('history');
+  if (MUSEUM_RE.test(text) || CULTURE_RE.test(text)) themes.add('culture');
+  if (LANDSCAPE_RE.test(text) && !NOT_LANDSCAPE_RE.test(text)) themes.add('landscape');
+  if (FOOD_RE.test(text)) themes.add('food');
+  return themes;
+}
 // Long articles about whole areas, rivers or streets aren't places you stop at.
 // Matched against what a place *is* (the start of its description: "river in France",
 // "arrondissement of Paris"), not words further on ("bridge over the river").
@@ -107,6 +158,8 @@ const IN_A_COLLECTION_RE =
   /^(?:painting|portrait|manuscript|tapestry|artwork|tableau|peinture|retable|manuscrit|tapisserie|cuadro|pintura|retablo|manuscrito|tapiz|gemälde|handschrift|dipinto|manoscritto|arazzo)(?![\p{L}])|\b(?:held|housed|kept|displayed|exhibited) (?:in|at|by)\b/iu;
 // Coordinate kinds (from Wikipedia's {{coord}}) that are never a stop on a walk.
 const NOT_A_STOP_TYPES = new Set(['country', 'state', 'adm1st', 'adm2nd', 'adm3rd', 'city', 'event', 'edu', 'airport', 'waterbody', 'river', 'mountain', 'satellite', 'glacier', 'pass', 'forest']);
+// …except, on an outing for landscapes, these.
+const NATURE_TYPES = new Set(['waterbody', 'mountain', 'glacier', 'pass', 'forest']);
 
 /** 'museum' | 'historic' | 'sight' */
 export function placeKind(poi) {
@@ -121,11 +174,13 @@ export function placeKind(poi) {
  * street, an organisation, an event, an artwork inside a collection, or a building that's gone.
  * (Also used by "Point your camera", so it labels what's in front of you, not "Notre-Dame fire".)
  */
-export function isPlaceToSee(poi) {
+export function isPlaceToSee(poi, { nature = false } = {}) {
   if (poi.category === 'skip' || poi.disambiguation || poi.gone) return false;
   const description = poi.description ?? '';
   const title = poi.title ?? '';
-  if ((AREA_RE.test(description) && !TOWN_BUILDING_RE.test(description)) || NOT_A_PLACE_RE.test(description) || NOT_A_PLACE_INTL_RE.test(description) || NOT_A_PLACE_START_RE.test(description)) return false;
+  // On an outing for landscapes, a lake, a bay, a hill or a forest is a place to go.
+  const natural = nature && placeThemes(poi).has('landscape');
+  if ((!natural && AREA_RE.test(description) && !TOWN_BUILDING_RE.test(description)) || NOT_A_PLACE_RE.test(description) || NOT_A_PLACE_INTL_RE.test(description) || NOT_A_PLACE_START_RE.test(description)) return false;
   // An assembly, unless it's its building ("edificio legislativo": Argentina's Palace of Congress).
   if (LEGISLATURE_RE.test(description) && !STRUCTURE_RE.test(description) && !HISTORIC_RE.test(title)) return false;
   if (IN_A_COLLECTION_RE.test(description) || GONE_RE.test(description) || NOT_A_PLACE_DE_RE.test(description)) return false;
@@ -140,7 +195,7 @@ export function isPlaceToSee(poi) {
   // Named like a street and nothing says otherwise: a street. Not an address ("10 Downing
   // Street"), an arch ("Rua Augusta Arch": triumphal arch) or a stadium ("Loftus Road").
   if (STREET_TITLE_RE.test(title) && !/^\d/.test(title) && (!description || STREETISH_RE.test(description))) return false;
-  if (GONE_TITLE_RE.test(title) || NOT_A_STOP_TYPES.has(poi.coordType)) return false;
+  if (GONE_TITLE_RE.test(title) || (NOT_A_STOP_TYPES.has(poi.coordType) && !(natural && NATURE_TYPES.has(poi.coordType)))) return false;
   // A railway station counts only when it's a landmark in its own right (Grand Central, St Pancras).
   if (poi.coordType === 'railwaystation' && (poi.langs ?? 0) < 40) return false;
   return true;
@@ -152,9 +207,12 @@ export function isPlaceToSee(poi) {
  * tell (article length), and a nudge for historic places and museums. Areas, streets,
  * organisations, events, buildings that are gone and filler are excluded.
  */
-export function interestScore(poi) {
-  if (!isPlaceToSee(poi)) return -Infinity;
-  if ((poi.length ?? 3000) < 2500) return -Infinity; // a stub: too little to tell
+export function interestScore(poi, { interests = null } = {}) {
+  const nature = !!interests?.includes('landscape');
+  if (!isPlaceToSee(poi, { nature })) return -Infinity;
+  const themes = placeThemes(poi);
+  // A stub has too little to tell; a viewpoint or a garden needs fewer words to be worth it.
+  if ((poi.length ?? 3000) < (nature && themes.has('landscape') ? 1200 : 2500)) return -Infinity;
   const story = Math.log10(Math.max(1000, poi.length ?? 3000)); // ~3.4 (short) to ~5.3 (major landmark)
   // Without the language count (older data), the article length stands in for fame.
   let score = poi.langs != null ? 1.8 * Math.log10(1 + poi.langs) + 0.4 * story : story;
@@ -163,6 +221,12 @@ export function interestScore(poi) {
   if (kind === 'museum') score += 0.6;
   if (poi.thumbnail) score += 0.2;
   if (poi.category === 'minor') score -= 1.5;
+  // What you came for first: a place that answers one of your interests rises, one that answers
+  // none sinks (a world-famous landmark on the way can still make it).
+  if (interests?.length) {
+    const hits = interests.filter((i) => themes.has(i)).length;
+    score += hits ? 0.9 + 0.3 * (hits - 1) : -2.5;
+  }
   return score;
 }
 
@@ -172,6 +236,7 @@ const SCORE_FLOOR = 3.3;
 /** Travel pace for planning: speed, time spent at an ordinary stop, and how much longer streets are than a straight line. */
 export const PACE = {
   walk: { kmh: 4.5, dwell: 5, detour: 1.3 },
+  hike: { kmh: 3.5, dwell: 8, detour: 1.5 }, // paths wind and climb; time to take in the view
   run: { kmh: 9, dwell: 1, detour: 1.3 },
   cycle: { kmh: 14, dwell: 3, detour: 1.3 },
   drive: { kmh: 22, dwell: 3, detour: 1.4 },
@@ -179,22 +244,31 @@ export const PACE = {
 
 export const DURATIONS = [
   { minutes: 30, label: '30 min' },
+  { minutes: 45, label: '45 min' },
   { minutes: 60, label: '1 hour' },
+  { minutes: 90, label: '1 h 30' },
   { minutes: 120, label: '2 hours' },
+  { minutes: 180, label: '3 hours' },
   { minutes: 240, label: 'Half day' },
+  { minutes: 360, label: '6 hours' },
   { minutes: 480, label: 'Full day' },
+  { minutes: 600, label: 'Long day' },
 ];
 
 /** How far to look for places: you can only go so far and come back in the time. */
 export function searchRadiusFor(modeId, minutes) {
   const pace = PACE[modeId] ?? PACE.walk;
   const reach = (pace.kmh * 1000 * (minutes / 60)) / 3;
-  return Math.round(Math.min(10000, Math.max(600, reach)));
+  // A day's drive reaches the next valley; a walk or a hike stays within 10 km.
+  const cap = { drive: 60000, cycle: 25000 }[modeId] ?? 10000;
+  return Math.round(Math.min(cap, Math.max(600, reach)));
 }
 
 /** Museums worth going inside, depending on how long you're out (never while running). */
-export function museumVisits(modeId, minutes) {
-  if (modeId === 'run') return { count: 0, minutes: 0 };
+export function museumVisits(modeId, minutes, interests = null) {
+  if (modeId === 'run' || modeId === 'hike') return { count: 0, minutes: 0 };
+  // Going inside a museum is for a culture outing (or one that asked for nothing in particular).
+  if (interests?.length && !interests.includes('culture')) return { count: 0, minutes: 0 };
   if (minutes >= 420) return { count: 2, minutes: 75 };
   if (minutes >= 210) return { count: 1, minutes: 60 };
   if (minutes >= 110) return { count: 1, minutes: 45 };
@@ -209,7 +283,11 @@ export const BREAKS = {
   lunch: { minutes: 60, kinds: [['restaurant'], ['cafe']] },
   drink: { minutes: 30, kinds: [['bar', 'pub'], ['cafe']] },
   dinner: { minutes: 75, kinds: [['restaurant']] },
+  // On a food outing, between meals: a market, a bakery, a pastry shop, an ice cream.
+  taste: { minutes: 20, kinds: [['marketplace', 'bakery', 'pastry', 'confectionery', 'chocolate', 'ice_cream', 'cheese', 'deli'], ['cafe']] },
 };
+// Of these, the ones OpenStreetMap files as shops rather than amenities.
+const SHOP_KINDS = new Set(['bakery', 'pastry', 'confectionery', 'chocolate', 'cheese', 'deli']);
 const amenitiesFor = (meal) => (BREAKS[meal]?.kinds ?? [['cafe']]).flat();
 
 /** What kind of break fits this time of day. */
@@ -226,7 +304,7 @@ export function mealAt(date) {
  * times (lunch 12:30, dinner 19:45) if you're out then; coffee or drink breaks (about one
  * per 2½ hours) go in the longest stretches without a break.
  */
-export function breakSchedule(start, minutes) {
+export function breakSchedule(start, minutes, { food = false } = {}) {
   const startHour = start.getHours() + start.getMinutes() / 60;
   const out = [];
   // Meals at the usual time, or as close to it as the outing allows (never in the first or
@@ -241,7 +319,8 @@ export function breakSchedule(start, minutes) {
     const roomy = minutes >= BREAKS[meal].minutes + 60;
     if (lo <= hi && roomy) out.push({ atMinute: Math.round(Math.min(Math.max(m, lo), hi)), meal, minutes: BREAKS[meal].minutes });
   }
-  const extra = Math.max(0, Math.round(minutes / 150) - out.length);
+  // A food outing tastes something about every hour; otherwise a break every 2½ hours.
+  const extra = Math.max(0, Math.round(minutes / (food ? 60 : 150)) - out.length);
   for (let k = 0; k < extra; k++) {
     let best = null;
     let prevEnd = 0;
@@ -250,11 +329,12 @@ export function breakSchedule(start, minutes) {
       if (!best || gap > best.gap) best = { gap, from: prevEnd };
       prevEnd = b.atMinute + b.minutes;
     }
-    if (!best || best.gap < 90) break;
+    if (!best || best.gap < (food ? 50 : 90)) break;
     const atMinute = Math.round(best.from + best.gap / 2);
     let meal = mealAt(new Date(start.getTime() + atMinute * 60000));
     if (meal === 'lunch') meal = 'coffee'; // proper meals only at meal times
     if (meal === 'dinner') meal = 'drink';
+    if (food && meal === 'coffee') meal = 'taste';
     out.push({ atMinute, meal, minutes: BREAKS[meal].minutes });
   }
   return out.sort((a, b) => a.atMinute - b.atMinute);
@@ -361,13 +441,15 @@ function untangle(points, pace) {
  * taken best first and slotted in where they add the least walking.
  * Returns { stops, minutes, meters, loop } (breaks are added afterwards with addBreaks).
  */
-export function suggestRoute({ start, candidates, modeId = 'walk', minutes = 60, loop = true, reservedMinutes = 0, maxStops = 12 }) {
+export function suggestRoute({ start, candidates, modeId = 'walk', minutes = 60, loop = true, reservedMinutes = 0, maxStops = 12, interests = null, avoid = null }) {
   const pace = PACE[modeId] ?? PACE.walk;
-  const visits = museumVisits(modeId, minutes);
+  const visits = museumVisits(modeId, minutes, interests);
   const budget = minutes - reservedMinutes;
   const pool = candidates
-    .map((c) => ({ ...c, kind: placeKind(c), score: interestScore(c) }))
-    .filter((c) => Number.isFinite(c.score))
+    .filter((c) => !avoid?.has(c.id) && !avoid?.has(c.title))
+    .map((c) => ({ ...c, kind: placeKind(c), themes: placeThemes(c), score: interestScore(c, { interests }) }))
+    // With interests chosen, only what answers them (or is famous enough to anyway): no filler.
+    .filter((c) => Number.isFinite(c.score) && (!interests?.length || c.score >= SCORE_FLOOR))
     .sort((a, b) => b.score - a.score)
     .slice(0, 60);
 
@@ -422,13 +504,106 @@ export function suggestRoute({ start, candidates, modeId = 'walk', minutes = 60,
   // there and back doesn't take the time for everything else (Lisbon: the famous museum 2.5 km
   // away left a half day with 3 stops, fewer than an hour's walk).
   for (let museums = 0; museums < visits.count && addBest((c) => c.kind === 'museum', visits.minutes, budget / 3); museums++);
-  // 2. Then everything else worth seeing.
+  // 2. Several interests: take turns, the one with the fewest stops so far first, so "history and
+  // landscapes" has both (not only the monuments, because they happen to be closer together).
+  if (interests?.length > 1) {
+    const count = Object.fromEntries(interests.map((i) => [i, 0]));
+    for (const c of chosen) for (const i of interests) if (c.themes.has(i)) count[i]++;
+    for (let turn = true; turn; ) {
+      turn = false;
+      for (const i of [...interests].sort((a, b) => count[a] - count[b])) {
+        if (!addBest((c) => c.themes.has(i))) continue;
+        for (const j of interests) if (chosen.at(-1).themes.has(j)) count[j]++;
+        turn = true;
+        break;
+      }
+    }
+  }
+  // 3. Then everything else worth seeing.
   while (addBest(() => true));
 
   untangle(points, pace);
   const stops = points.slice(1, loop ? -1 : undefined);
   const { minutes: total, meters } = timeline(start, stops, modeId, loop);
   return { stops, minutes: total, meters, loop, pathMinutes: Math.round(pathMinutes(points, pace)) };
+}
+
+// ---------- Several itineraries to choose from ----------
+
+/** What each kind of outing is called. */
+export const INTEREST_TITLES = {
+  history: 'History and monuments',
+  culture: 'Museums and culture',
+  landscape: 'Parks, views and nature',
+  food: 'Markets and local flavours',
+};
+const ALTERNATIVE_TITLES = {
+  history: 'More history, other places',
+  culture: 'More culture, other places',
+  landscape: 'More nature, other views',
+  food: 'More flavours, other places',
+};
+const SHORT_NAMES = { history: 'history', culture: 'culture', landscape: 'landscapes', food: 'food' };
+// What goes well with each interest, for a third proposal when only one was chosen.
+const COMPANION = { history: 'culture', culture: 'history', landscape: 'history', food: 'history' };
+
+/** "History, culture and landscapes". */
+export function proposalTitle(interests) {
+  if (interests.length === 1) return INTEREST_TITLES[interests[0]];
+  const names = interests.map((i) => SHORT_NAMES[i]);
+  const text = `${names.slice(0, -1).join(', ')} and ${names.at(-1)}`;
+  return text[0].toUpperCase() + text.slice(1);
+}
+
+/** How much two routes share: places in common, out of the longer one's. (A one-stop route
+ * inside a five-stop one is a different outing; four of five the same is not.) */
+function overlap(a, b) {
+  if (!a.size || !b.size) return 0;
+  let common = 0;
+  for (const x of a) if (b.has(x)) common++;
+  return common / Math.max(a.size, b.size);
+}
+
+/**
+ * Up to three different itineraries for what the traveller wants to see. No interest chosen:
+ * one route through the best-known places (as before). Several: all of them together first,
+ * then each on its own. Just one: the best route for it, another through different places, and
+ * one with a companion interest (landscapes and history: a castle on the hill). A proposal
+ * that is mostly the same places as one before it is dropped, and so is an empty one.
+ * Each: { key, title, interests, alternative, schedule, route } (breaks are added once chosen).
+ */
+export function proposeOutings({ start, candidates, modeId = 'walk', minutes = 60, loop = true, startedAt = new Date(), interests = [], maxStops = 12 }) {
+  const picked = INTERESTS.filter((i) => interests?.includes(i));
+  const out = [];
+  const add = (key, title, ints, { avoid = null } = {}) => {
+    const schedule = breakSchedule(startedAt, minutes, { food: !!ints?.includes('food') });
+    const reservedMinutes = schedule.reduce((n, b) => n + b.minutes, 0);
+    const route = suggestRoute({ start, candidates, modeId, minutes, loop, reservedMinutes, maxStops, interests: ints, avoid });
+    if (!route.stops.length) return;
+    // Named after an interest, it must mostly be about it: "More flavours" can't be the
+    // Sagrada Família alone, however famous (a famous landmark on the way is fine).
+    if (ints?.length) {
+      const matching = route.stops.filter((stop) => ints.some((i) => stop.themes?.has(i) ?? placeThemes(stop).has(i))).length;
+      if (!matching || matching * 2 < route.stops.length) return;
+    }
+    // By name too: the same park can come back from two searches under two page ids.
+    const ids = new Set(route.stops.flatMap((s) => [s.id, s.title]));
+    if (out.some((o) => overlap(ids, o.ids) >= 0.7)) return;
+    out.push({ key, title, interests: ints ?? [], alternative: !!avoid, ids, schedule, route });
+  };
+  if (!picked.length) {
+    add('best', 'The best-known places', null);
+  } else if (picked.length === 1) {
+    const [only] = picked;
+    add(only, INTEREST_TITLES[only], picked);
+    if (out[0]) add(`${only}-more`, ALTERNATIVE_TITLES[only], picked, { avoid: out[0].ids });
+    const pair = INTERESTS.filter((i) => i === only || i === COMPANION[only]);
+    add(pair.join('+'), proposalTitle(pair), pair);
+  } else {
+    add(picked.join('+'), proposalTitle(picked), picked);
+    for (const i of picked) if (out.length < 3) add(i, INTEREST_TITLES[i], [i]);
+  }
+  return out.slice(0, 3).map(({ ids, ...rest }) => rest);
 }
 
 /**
@@ -478,7 +653,20 @@ function normalizeOsm(e) {
   const lat = e.lat ?? e.center?.lat;
   const lon = e.lon ?? e.center?.lon;
   if (lat == null || !e.tags?.name) return null;
-  return { name: e.tags.name, lat, lon, amenity: e.tags.amenity, tags: e.tags };
+  // A bakery or pastry shop is filed as a shop: treated like any other kind of place to eat.
+  return { name: e.tags.name, lat, lon, amenity: e.tags.amenity ?? e.tags.shop, tags: e.tags };
+}
+
+/** The Overpass query for places of these kinds (amenities, and shops for the food ones). */
+export function foodQuery(kinds, { lat, lon }, radius) {
+  const amenities = kinds.filter((k) => !SHOP_KINDS.has(k));
+  const shops = kinds.filter((k) => SHOP_KINDS.has(k));
+  const around = `(around:${Math.round(radius)},${lat.toFixed(5)},${lon.toFixed(5)})`;
+  const parts = [
+    amenities.length ? `nwr["amenity"~"^(${amenities.join('|')})$"]["name"]${around};` : '',
+    shops.length ? `nwr["shop"~"^(${shops.join('|')})$"]["name"]${around};` : '',
+  ].join('');
+  return `[out:json][timeout:10];(${parts});out center tags 60;`;
 }
 
 /**
@@ -487,7 +675,7 @@ function normalizeOsm(e) {
  */
 export async function findFoodNear({ lat, lon }, meal, { radius = 400, geocoder = null, fetchImpl = defaultFetch } = {}) {
   const amenities = amenitiesFor(meal);
-  const query = `[out:json][timeout:10];nwr["amenity"~"^(${amenities.join('|')})$"]["name"](around:${Math.round(radius)},${lat.toFixed(5)},${lon.toFixed(5)});out center tags 60;`;
+  const query = foodQuery(amenities, { lat, lon }, radius);
   try {
     const controller = typeof AbortController === 'function' ? new AbortController() : null;
     const timer = setTimeout(() => controller?.abort(), 9000);

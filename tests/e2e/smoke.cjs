@@ -135,7 +135,7 @@ const LIVE = process.env.LIVE === '1';
     '!3e2';
   await page.evaluate(() => localStorage.clear());
   await page.goto(base);
-  await page.click('label:has(input[value=drive])'); // the link should switch this to walking
+  await page.click('#mode-picker label:has(input[value=drive])'); // the link should switch this to walking
   await page.evaluate((text) => navigator.clipboard.writeText(text), googleLink);
   await page.click('#paste-route');
   await page.waitForFunction(() => /✓/.test(document.getElementById('import-note').textContent), null, { timeout: 30000 });

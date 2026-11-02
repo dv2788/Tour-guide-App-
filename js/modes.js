@@ -16,6 +16,20 @@ export const MODES = {
     gapSeconds: 6, // quiet time between two stories
     announceDistance: false,
   },
+  hike: {
+    id: 'hike',
+    label: 'Hike',
+    icon: '🥾',
+    speedMps: 1.0, // paths, slopes, stops for the view
+    routeProfile: 'foot',
+    triggerRadius: 150, // fewer, more spread-out places in the hills
+    searchRadius: 1500,
+    arrivalRadius: 80,
+    sentences: 4,
+    stopSentences: 6,
+    gapSeconds: 10,
+    announceDistance: false,
+  },
   run: {
     id: 'run',
     label: 'Run',

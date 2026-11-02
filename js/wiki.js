@@ -76,6 +76,36 @@ export function photoPage(imageUrl) {
   return `https://${host}/wiki/File:${m[2]}`;
 }
 
+// Search words for each interest (Wikipedia's search: "park OR garden nearcoord:3000m,lat,lon").
+// History needs none: the most famous articles around are mostly monuments already.
+const THEME_SEARCH = {
+  en: {
+    culture: 'museum OR gallery OR theatre OR opera OR library',
+    landscape: 'park OR garden OR viewpoint OR hill OR lake OR beach OR waterfall OR forest OR mountain OR cliff',
+    food: 'market OR "food hall" OR café OR bakery OR restaurant OR brewery',
+  },
+  fr: {
+    culture: 'musée OR galerie OR théâtre OR opéra OR bibliothèque',
+    landscape: 'parc OR jardin OR belvédère OR colline OR lac OR plage OR cascade OR forêt OR mont OR falaise',
+    food: 'marché OR halles OR café OR boulangerie OR restaurant OR brasserie',
+  },
+  es: {
+    culture: 'museo OR galería OR teatro OR ópera OR biblioteca',
+    landscape: 'parque OR jardín OR mirador OR cerro OR lago OR playa OR cascada OR bosque OR monte OR acantilado',
+    food: 'mercado OR café OR pastelería OR restaurante OR bodega',
+  },
+  de: {
+    culture: 'Museum OR Galerie OR Theater OR Oper OR Bibliothek',
+    landscape: 'Park OR Garten OR Aussichtspunkt OR Berg OR See OR Strand OR Wasserfall OR Wald OR Hügel',
+    food: 'Markt OR Markthalle OR Café OR Bäckerei OR Restaurant OR Brauerei',
+  },
+  it: {
+    culture: 'museo OR galleria OR teatro OR opera OR biblioteca',
+    landscape: 'parco OR giardino OR belvedere OR collina OR lago OR spiaggia OR cascata OR bosco OR monte',
+    food: 'mercato OR caffè OR pasticceria OR ristorante OR osteria',
+  },
+};
+
 export function createWikiService({ lang = 'en', fetchImpl = defaultFetch, retryDelayMs = 2000, retries = 2 } = {}) {
   const host = `https://${lang}.wikipedia.org`;
   const summaries = new Map();
@@ -253,9 +283,9 @@ export function createWikiService({ lang = 'en', fetchImpl = defaultFetch, retry
    * whether it's still standing (one more, small request to Wikidata: `gone`).
    * Throws only if both Wikipedia requests fail.
    */
-  async function exploreArea(lat, lon, radius = 2000, limit = 200, notable = 200) {
-    // The nearest-articles search stops at 10 km; the notable-places search goes further (driving).
-    const meters = Math.min(50000, Math.max(10, Math.round(radius)));
+  async function exploreArea(lat, lon, radius = 2000, limit = 200, notable = 200, { themes = [] } = {}) {
+    // The nearest-articles search stops at 10 km; the notable-places search goes further (up to 100 km, driving).
+    const meters = Math.min(100000, Math.max(10, Math.round(radius)));
     const details = { prop: 'info|description|pageprops|langlinkscount|coordinates', ppprop: 'disambiguation|wikibase_item', coprop: 'type', colimit: 'max' };
     const query = (params) =>
       getJson(`${host}/w/api.php?${new URLSearchParams({ action: 'query', format: 'json', formatversion: '2', origin: '*', ...details, ...params })}`);
@@ -267,7 +297,15 @@ export function createWikiService({ lang = 'en', fetchImpl = defaultFetch, retry
       // Optional: without an answer in time, plan anyway.
       atMost(8000, goneAround(lat, lon, meters).catch(() => new Set()), new Set()),
     ]);
-    const answers = [nearest, notables];
+    // What the traveller came for (parks and viewpoints, markets…) is rarely among a city's most
+    // famous articles: one more search for each, with the words the language uses for them.
+    const words = (THEME_SEARCH[lang] ?? THEME_SEARCH.en);
+    const themed = await Promise.allSettled(
+      themes
+        .filter((t) => words[t])
+        .map((t) => query({ generator: 'search', gsrsearch: `${words[t]} nearcoord:${meters}m,${lat.toFixed(4)},${lon.toFixed(4)}`, gsrnamespace: '0', gsrlimit: '100' })),
+    );
+    const answers = [nearest, notables, ...themed];
     if (answers.every((a) => a.status === 'rejected')) throw answers[0].reason;
     const gone = goneAnswer.value ?? new Set();
     const byId = new Map();

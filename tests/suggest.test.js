@@ -178,7 +178,10 @@ test('breaks are slotted after the stop closest to the planned time', () => {
   assert.deepEqual(withBreak.map((s) => s.title), ['A', 'B', 'Café X', 'C']);
   assert.equal(withBreak[2].kind, 'food');
   assert.equal(withBreak[2].breakMinutes, 20);
-  assert.ok(searchRadiusFor('walk', 60) >= 1000 && searchRadiusFor('drive', 480) === 10000);
+  assert.ok(searchRadiusFor('walk', 60) >= 1000 && searchRadiusFor('walk', 600) === 10000);
+  // A day's drive reaches further (up to 60 km); a bike ride up to 25 km.
+  assert.ok(searchRadiusFor('drive', 480) > 50000 && searchRadiusFor('drive', 600) === 60000, String(searchRadiusFor('drive', 480)));
+  assert.equal(searchRadiusFor('cycle', 600), 25000);
 });
 
 test('findFoodNear uses Overpass, and the place search when Overpass is down', async () => {

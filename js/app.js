@@ -25,6 +25,8 @@ import { formatClock } from './openingHours.js';
 import { eventsFor, formatDays, eventLink } from './events.js';
 import {
   suggestRoute,
+  proposeOutings,
+  INTERESTS,
   searchRadiusFor,
   interestScore,
   DURATIONS,
@@ -70,6 +72,7 @@ function readForm() {
     source: data.get('source') ?? 'gps',
     simSpeed: data.get('simSpeed') ?? '8',
     voice: selectedVoiceKey(),
+    interests: data.getAll('interest').map(String),
     imported: [...imported.entries()],
     start: startPoint,
     areaPoint,
@@ -82,8 +85,9 @@ function fillForm(values) {
   if ('start' in values) startPoint = values.start ?? null;
   if ('areaPoint' in values) areaPoint = values.areaPoint ?? null;
   if ('plan' in values) plan = values.plan ?? null;
+  if (Array.isArray(values.interests)) for (const box of form.querySelectorAll('input[name=interest]')) box.checked = values.interests.includes(box.value);
   for (const [key, value] of Object.entries(values)) {
-    if (['imported', 'voice', 'start', 'areaPoint', 'plan'].includes(key)) continue;
+    if (['imported', 'voice', 'start', 'areaPoint', 'plan', 'interests'].includes(key)) continue;
     if (key === 'rangeAuto') {
       $('range-auto').checked = value !== false;
       continue;
@@ -102,6 +106,9 @@ function fillForm(values) {
 function syncFormHints() {
   const { mode, source } = readForm();
   $('drive-note').hidden = mode !== 'drive';
+  $('hike-note').hidden = mode !== 'hike';
+  // "What kind of outing?" and the travel mode are the same choice, asked in two places.
+  for (const radio of form.querySelectorAll('input[name=outing]')) radio.checked = radio.value === mode;
   $('sim-speed-row').hidden = source !== 'sim';
 }
 
@@ -109,6 +116,7 @@ function syncFormHints() {
 const FORM_CHOICES = {
   lang: LANGUAGES.map((l) => l.code),
   mode: Object.keys(MODES),
+  interests: INTERESTS,
   source: ['gps', 'sim'],
   rate: ['0.9', '1', '1.15'],
   simSpeed: ['1', '4', '8', '16'],
@@ -523,8 +531,8 @@ $('suggest-open').addEventListener('click', () => {
   $('suggest-open').setAttribute('aria-expanded', String(!panel.hidden));
 });
 
-const MEAL_LABEL = { coffee: 'Coffee break', lunch: 'Lunch', dinner: 'Dinner', drink: 'A drink' };
-const MEAL_ICON = { coffee: 'cafe', lunch: 'restaurant', dinner: 'restaurant', drink: 'bar' };
+const MEAL_LABEL = { coffee: 'Coffee break', lunch: 'Lunch', dinner: 'Dinner', drink: 'A drink', taste: 'A local taste' };
+const MEAL_ICON = { coffee: 'cafe', lunch: 'restaurant', dinner: 'restaurant', drink: 'bar', taste: 'cafe' };
 
 function formatMinutes(min) {
   if (min < 60) return `${min} min`;
@@ -549,7 +557,7 @@ const pickChip = (name, value) => {
 const durationNow = () => Number(form.querySelector('input[name=duration]:checked')?.value ?? 60);
 
 // The slider's stops: fine steps for walking, long ones for cycling and driving.
-const RANGE_STEPS = [500, 1000, 1500, 2000, 3000, 4000, 5000, 7500, 10000, 15000, 20000, 30000, 50000];
+const RANGE_STEPS = [500, 1000, 1500, 2000, 3000, 4000, 5000, 7500, 10000, 15000, 20000, 30000, 50000, 75000, 100000];
 const nearestStep = (meters) => RANGE_STEPS.reduce((best, r, i) => (Math.abs(r - meters) < Math.abs(RANGE_STEPS[best] - meters) ? i : best), 0);
 
 /** The search radius: what the time allows ("Fits my time"), or the distance on the slider. */
@@ -584,17 +592,22 @@ $('range-auto').addEventListener('change', () => {
   save(readForm());
 });
 form.addEventListener('change', (e) => {
-  if (e.target.name === 'duration' || e.target.name === 'mode') showRange();
+  if (e.target.name === 'outing') {
+    pickChip('mode', e.target.value);
+    syncFormHints();
+  }
+  if (['duration', 'mode', 'outing'].includes(e.target.name)) showRange();
+  if (['interest', 'outing'].includes(e.target.name)) save(readForm());
 });
 
 /** No stops: say why, and offer the way out (more time, or a wider range). */
-function explainEmptyPlan({ origin, candidates, modeId, minutes, loop, radius }) {
-  const worth = candidates.filter((c) => Number.isFinite(interestScore(c)));
+function explainEmptyPlan({ origin, candidates, modeId, minutes, loop, radius, interests = [] }) {
+  const worth = candidates.filter((c) => Number.isFinite(interestScore(c, { interests })));
   const label = (m) => DURATIONS.find((d) => d.minutes === m)?.label.toLowerCase() ?? `${m} min`;
   if (!worth.length) {
     const wider = RANGE_STEPS.find((r) => r >= radius * 2) ?? (radius < 50000 ? 50000 : null);
     showImportNote(
-      `I found no monuments, museums or landmarks within ${RANGE_LABEL(radius)} of ${origin.name ?? 'here'}.` +
+      `I found no ${interests.length ? lookingFor(interests) : 'monuments, museums or landmarks'} within ${RANGE_LABEL(radius)} of ${origin.name ?? 'here'}.` +
         (wider ? ` Look further, or type the places you'd like to visit.` : " Type the places you'd like to visit instead."),
       'warn',
       wider ? { label: `Look within ${RANGE_LABEL(wider)}`, run: () => (setRange(wider), planRoute()) } : null,
@@ -602,7 +615,7 @@ function explainEmptyPlan({ origin, candidates, modeId, minutes, loop, radius })
     return;
   }
   // There are places, but none fits in the time: the shortest outing that reaches some.
-  const longer = DURATIONS.map((d) => d.minutes).find((m) => m > minutes && suggestRoute({ start: origin, candidates, modeId, minutes: m, loop }).stops.length);
+  const longer = DURATIONS.map((d) => d.minutes).find((m) => m > minutes && suggestRoute({ start: origin, candidates, modeId, minutes: m, loop, interests }).stops.length);
   const nearest = [...worth].sort((a, b) => distanceMeters(origin, a) - distanceMeters(origin, b)).slice(0, 2);
   const names = nearest.map((c) => `${c.title.replace(/\s+\([^)]*\)$/, '')} (${formatMeters(distanceMeters(origin, c))})`).join(' and ');
   showImportNote(
@@ -612,12 +625,22 @@ function explainEmptyPlan({ origin, candidates, modeId, minutes, loop, radius })
   );
 }
 
+// What each interest means, for "Looking for … around you".
+const LOOKING_FOR = { history: 'monuments and historic places', culture: 'museums, theatres and galleries', landscape: 'parks, viewpoints and nature', food: 'markets and local food' };
+const lookingFor = (interests) => {
+  const parts = interests.map((i) => LOOKING_FOR[i]).filter(Boolean);
+  return parts.length > 1 ? `${parts.slice(0, -1).join(', ')} and ${parts.at(-1)}` : parts[0] ?? '';
+};
+const selectedInterests = () => [...form.querySelectorAll('input[name=interest]:checked')].map((box) => box.value);
+
 async function planRoute() {
   const button = $('suggest-go');
   const { mode: modeId, lang } = readForm();
-  const minutes = Number(form.querySelector('input[name=duration]:checked')?.value ?? 60);
+  const interests = selectedInterests();
+  const minutes = durationNow();
   const loop = $('loop').checked;
   button.disabled = true;
+  $('proposals').hidden = true;
   try {
     // From the part of town you're staying in; else around you, unless you typed another
     // city: then around that city's centre.
@@ -645,113 +668,156 @@ async function planRoute() {
 
     // How far to look: what the time allows, or the range chosen.
     const lookWithin = chosenRange(modeId, minutes);
-    showImportNote('Looking for the monuments, museums and landmarks around you…');
+    showImportNote(`Looking for the ${interests.length ? lookingFor(interests) : 'monuments, museums and landmarks'} around you…`);
     let candidates;
     try {
-      candidates = await createWikiService({ lang }).exploreArea(origin.lat, origin.lon, lookWithin);
+      candidates = await createWikiService({ lang }).exploreArea(origin.lat, origin.lon, lookWithin, 200, 200, { themes: interests });
     } catch {
       showImportNote("Wikipedia didn't answer just now, so I couldn't look for places. Wait a moment, then tap “Curate my route” again.", 'warn');
       return;
     }
     const startedAt = new Date();
-    const schedule = breakSchedule(startedAt, minutes);
-    const pickStops = () =>
-      suggestRoute({ start: origin, candidates, modeId, minutes, loop, reservedMinutes: schedule.reduce((n, b) => n + b.minutes, 0) });
-    let route = pickStops();
+    const propose = () => proposeOutings({ start: origin, candidates, modeId, minutes, loop, startedAt, interests });
+    let proposals = propose();
     // Last check on the stops chosen: demolished, says Wikipedia? Then choose again without them.
-    // (At most 6 s: without an answer, the route stands.)
-    const chosen = route.stops.map((s) => candidates.find((c) => c.id === s.id)).filter(Boolean);
+    // (At most 6 s: without an answer, the routes stand.)
+    const picked = new Set(proposals.flatMap((p) => p.route.stops.map((stop) => stop.id)));
+    const chosen = candidates.filter((c) => picked.has(c.id));
     const check = createWikiService({ lang }).markDemolished(chosen).catch(() => null);
     await Promise.race([check, new Promise((resolve) => setTimeout(resolve, 6000))]);
-    if (chosen.some((c) => c.gone)) route = pickStops();
-    if (!route.stops.length) {
-      explainEmptyPlan({ origin, candidates, modeId, minutes, loop, radius: lookWithin });
+    if (chosen.some((c) => c.gone)) proposals = propose();
+    if (!proposals.length) {
+      explainEmptyPlan({ origin, candidates, modeId, minutes, loop, radius: lookWithin, interests });
       return;
     }
-
-    // Food and drink, at the right moments.
-    const placed = placeBreaks(origin, route.stops, schedule, modeId, loop);
-    const geocoder = createGeocoder({ lang });
-    const radius = modeId === 'drive' ? 1500 : modeId === 'cycle' ? 700 : 400;
-    const { times: baseTimes } = timeline(origin, route.stops, modeId, loop);
-    const used = [];
-    let shift = 0; // earlier breaks push later ones back
-    for (const b of [...placed].sort((x, y) => x.afterIndex - y.afterIndex)) {
-      showImportNote(`Finding a good spot for ${MEAL_LABEL[b.meal].toLowerCase()}…`);
-      const near = route.stops[b.afterIndex];
-      const when = new Date(startedAt.getTime() + (baseTimes[b.afterIndex].leave + shift) * 60000);
-      const places = await findFoodNear(near, b.meal, { radius, geocoder });
-      // Open when you'd get there, local rather than chains, with alternatives to choose from.
-      b.options = pickFoodPlaces(places, b.meal, near, { radius, avoid: used, when, minutes: b.minutes });
-      b.place = b.options[0] ?? null;
-      if (b.place) {
-        used.push(b.place.name);
-        shift += b.minutes;
-      }
-    }
-    const stops = addBreaks(route.stops, placed);
-    const { times, minutes: total, meters } = timeline(origin, stops, modeId, loop);
-
-    // Fill the itinerary box (still editable) and remember what we know about each stop.
-    imported = new Map();
-    const seen = new Map();
-    const items = stops.map((stop, i) => {
-      // "Royal Square (Barcelona)" is Wikipedia's way to tell places apart: say "Royal Square".
-      let name = stop.kind === 'food' ? stop.title : stop.title.replace(/\s+\([^)]*\)$/, '');
-      const n = (seen.get(name) ?? 0) + 1;
-      seen.set(name, n);
-      if (n > 1) name = `${name} (${n})`;
-      imported.set(name, {
-        query: stop.title,
-        lat: stop.lat,
-        lon: stop.lon,
-        kind: stop.kind,
-        visitMinutes: stop.visitMinutes ?? null,
-        meal: stop.meal ?? null,
-        breakMinutes: stop.breakMinutes ?? null,
-        wikipedia: stop.tags?.wikipedia ?? (stop.kind !== 'food' && stop.id ? `${lang}:${stop.title}` : null), // the very article it was picked from
-        wikidata: stop.tags?.wikidata ?? null,
-      });
-      const item = { name, kind: stop.kind, meal: stop.meal ?? null, visitMinutes: stop.visitMinutes ?? null, breakMinutes: stop.breakMinutes ?? null, description: stop.description ?? '', arrive: times[i].arrive, lat: stop.lat, lon: stop.lon };
-      if (stop.kind === 'food') {
-        item.open = stop.open ?? null;
-        item.closes = stop.closes ?? null;
-        item.optionIndex = 0;
-        item.options = (stop.options ?? [stop]).map((o) => ({
-          name: o.name,
-          lat: o.lat,
-          lon: o.lon,
-          amenity: o.amenity,
-          open: o.open ?? null,
-          closes: o.closes ?? null,
-          wikipedia: o.tags?.wikipedia ?? null,
-          wikidata: o.tags?.wikidata ?? null,
-        }));
-      }
-      return item;
-    });
-    $('stops').value = items.map((it) => it.name).join('\n');
-    plan = { start: origin, loop, minutes: total, meters, startedAt: startedAt.toISOString(), items };
-    renderPlan();
-    showPlanMap();
-    // Fold the options away so the plan is right there.
-    $('suggest-panel').hidden = true;
-    $('suggest-open').setAttribute('aria-expanded', 'false');
-
-    const sights = items.filter((it) => it.kind !== 'food').length;
-    const breaks = items.length - sights;
-    const links = planMapsLinks();
-    showImportNote(
-      `✓ ${sights} place${sights > 1 ? 's' : ''} picked for their history` +
-        (breaks ? ` and ${breaks} break${breaks > 1 ? 's' : ''}` : '') +
-        `. Edit the list below if you like, begin the tour here, or follow it in your maps app.`,
-      '',
-      links.length ? { label: 'Open in Google Maps', run: () => window.open(links[0], '_blank', 'noopener') } : null,
-    );
-    save(readForm());
+    const context = { origin, modeId, minutes, loop, lang, startedAt };
+    if (proposals.length === 1) await finishPlan(proposals[0], context);
+    else showProposals(proposals, context);
   } finally {
     button.disabled = false;
   }
+}
+
+/** The itineraries to choose from: what each is about, how long, how far, and its stops. */
+function showProposals(proposals, context) {
+  const box = $('proposals');
+  const mode = getMode(context.modeId);
+  const cards = proposals.map((proposal) => {
+    const { route, schedule } = proposal;
+    const total = route.minutes + schedule.reduce((n, b) => n + b.minutes, 0);
+    const names = route.stops.map((stop) => stop.title.replace(/\s+\([^)]*\)$/, ''));
+    const choose = el('button', { type: 'button', className: 'btn-soft btn-small' }, ['Choose this itinerary']);
+    choose.addEventListener('click', async () => {
+      for (const b of box.querySelectorAll('button')) b.disabled = true;
+      try {
+        await finishPlan(proposal, context);
+        box.hidden = true;
+      } finally {
+        for (const b of box.querySelectorAll('button')) b.disabled = false;
+      }
+    });
+    return el('article', { className: 'proposal' }, [
+      el('p', { className: 'proposal-kicker' }, [`${mode.label} · about ${formatMinutes(total)} · ${(route.meters / 1000).toFixed(1)} km${route.loop ? ' round trip' : ''}`]),
+      el('h3', { className: 'proposal-title' }, [proposal.title]),
+      el('p', { className: 'proposal-stops' }, [
+        `${names.length} stop${names.length > 1 ? 's' : ''}: ${names.slice(0, 5).join(' · ')}${names.length > 5 ? ` and ${names.length - 5} more` : ''}`,
+      ]),
+      ...(proposal.interests.includes('food') ? [el('p', { className: 'proposal-note' }, ['With a local taste about every hour'])] : []),
+      choose,
+    ]);
+  });
+  box.replaceChildren(el('p', { className: 'proposals-head' }, [`${proposals.length} itineraries for you: choose one`]), ...cards);
+  box.hidden = false;
+  // Fold the options away so the choices are right there.
+  $('suggest-panel').hidden = true;
+  $('suggest-open').setAttribute('aria-expanded', 'false');
+  showImportNote('');
+  box.scrollIntoView?.({ block: 'start', behavior: 'smooth' });
+}
+
+/** The chosen itinerary becomes the plan: food and drink at the right moments, the list, the map. */
+async function finishPlan(proposal, { origin, modeId, loop, lang, startedAt }) {
+  const { route, schedule } = proposal;
+  // Food and drink, at the right moments.
+  const placed = placeBreaks(origin, route.stops, schedule, modeId, loop);
+  const geocoder = createGeocoder({ lang });
+  const radius = modeId === 'drive' ? 1500 : modeId === 'cycle' ? 700 : modeId === 'hike' ? 800 : 400;
+  const { times: baseTimes } = timeline(origin, route.stops, modeId, loop);
+  const used = [];
+  let shift = 0; // earlier breaks push later ones back
+  for (const b of [...placed].sort((x, y) => x.afterIndex - y.afterIndex)) {
+    showImportNote(`Finding a good spot for ${MEAL_LABEL[b.meal].toLowerCase()}…`);
+    const near = route.stops[b.afterIndex];
+    const when = new Date(startedAt.getTime() + (baseTimes[b.afterIndex].leave + shift) * 60000);
+    const places = await findFoodNear(near, b.meal, { radius, geocoder });
+    // Open when you'd get there, local rather than chains, with alternatives to choose from.
+    b.options = pickFoodPlaces(places, b.meal, near, { radius, avoid: used, when, minutes: b.minutes });
+    b.place = b.options[0] ?? null;
+    if (b.place) {
+      used.push(b.place.name);
+      shift += b.minutes;
+    }
+  }
+  const stops = addBreaks(route.stops, placed);
+  const { times, minutes: total, meters } = timeline(origin, stops, modeId, loop);
+
+  // Fill the itinerary box (still editable) and remember what we know about each stop.
+  imported = new Map();
+  const seen = new Map();
+  const items = stops.map((stop, i) => {
+    // "Royal Square (Barcelona)" is Wikipedia's way to tell places apart: say "Royal Square".
+    let name = stop.kind === 'food' ? stop.title : stop.title.replace(/\s+\([^)]*\)$/, '');
+    const n = (seen.get(name) ?? 0) + 1;
+    seen.set(name, n);
+    if (n > 1) name = `${name} (${n})`;
+    imported.set(name, {
+      query: stop.title,
+      lat: stop.lat,
+      lon: stop.lon,
+      kind: stop.kind,
+      visitMinutes: stop.visitMinutes ?? null,
+      meal: stop.meal ?? null,
+      breakMinutes: stop.breakMinutes ?? null,
+      wikipedia: stop.tags?.wikipedia ?? (stop.kind !== 'food' && stop.id ? `${lang}:${stop.title}` : null), // the very article it was picked from
+      wikidata: stop.tags?.wikidata ?? null,
+    });
+    const item = { name, kind: stop.kind, meal: stop.meal ?? null, visitMinutes: stop.visitMinutes ?? null, breakMinutes: stop.breakMinutes ?? null, description: stop.description ?? '', arrive: times[i].arrive, lat: stop.lat, lon: stop.lon };
+    if (stop.kind === 'food') {
+      item.open = stop.open ?? null;
+      item.closes = stop.closes ?? null;
+      item.optionIndex = 0;
+      item.options = (stop.options ?? [stop]).map((o) => ({
+        name: o.name,
+        lat: o.lat,
+        lon: o.lon,
+        amenity: o.amenity,
+        open: o.open ?? null,
+        closes: o.closes ?? null,
+        wikipedia: o.tags?.wikipedia ?? null,
+        wikidata: o.tags?.wikidata ?? null,
+      }));
+    }
+    return item;
+  });
+  $('stops').value = items.map((it) => it.name).join('\n');
+  plan = { start: origin, loop, minutes: total, meters, startedAt: startedAt.toISOString(), items };
+  renderPlan();
+  showPlanMap();
+  // Fold the options away so the plan is right there.
+  $('suggest-panel').hidden = true;
+  $('suggest-open').setAttribute('aria-expanded', 'false');
+
+  const sights = items.filter((it) => it.kind !== 'food').length;
+  const breaks = items.length - sights;
+  const links = planMapsLinks();
+  showImportNote(
+    `✓ ${sights} place${sights > 1 ? 's' : ''} picked ${proposal.interests.length ? `for ${proposal.title.toLowerCase()}` : 'for their history'}` +
+      (breaks ? ` and ${breaks} break${breaks > 1 ? 's' : ''}` : '') +
+      `. Edit the list below if you like, begin the tour here, or follow it in your maps app.`,
+    '',
+    links.length ? { label: 'Open in Google Maps', run: () => window.open(links[0], '_blank', 'noopener') } : null,
+  );
+  save(readForm());
 }
 $('suggest-go').addEventListener('click', planRoute);
 
