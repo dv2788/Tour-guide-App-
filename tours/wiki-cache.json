@@ -430,5 +430,287 @@
   "description": "Art museum in Dakar, Senegal",
   "extract": "The Théodore Monod African Art Museum in Dakar, Senegal is one of the oldest art museums in West Africa. It was promoted by Léopold Senghor, the country's first President.",
   "url": "https://en.wikipedia.org/wiki/Th%C3%A9odore_Monod_African_Art_Museum"
+ },
+ "Our Lady of Victories Cathedral, Dakar": {
+  "title": "Our Lady of Victories Cathedral, Dakar",
+  "description": "Church in Dakar, Senegal",
+  "extract": "The Our Lady of Victories Cathedral or Cathedral of Dakar, is a religious building that serves as the Catholic cathedral in the city of Dakar, the capital of the African country of Senegal, which is the seat of the Archdiocese of Dakar.",
+  "url": "https://en.wikipedia.org/wiki/Our_Lady_of_Victories_Cathedral%2C_Dakar"
+ },
+ "Museum of Black Civilisations": {
+  "title": "Museum of Black Civilisations",
+  "description": "Museum in Senegal",
+  "extract": "The Museum of Black Civilisations is a national museum in Dakar, Senegal, that opened on 6 December 2018.",
+  "url": "https://en.wikipedia.org/wiki/Museum_of_Black_Civilisations"
+ },
+ "Grand Mosque of Dakar": {
+  "title": "Grand Mosque of Dakar",
+  "description": "Mosque in Dakar, Senegal",
+  "extract": "The Grand Mosque of Dakar is a mosque in Dakar, Senegal, situated on Allée Pape Gueye Fall, in the Dakar médina.",
+  "url": "https://en.wikipedia.org/wiki/Grand_Mosque_of_Dakar"
+ },
+ "Bab Bou Jeloud": {
+  "title": "Bab Bou Jeloud",
+  "description": "City gate in Fez, Morocco",
+  "extract": "Bab Bou Jeloud is an ornate city gate in Fes el Bali, the old city of Fez, Morocco. The current gate was built by the French colonial administration in 1913 to serve as the grand entrance to the old city.",
+  "url": "https://en.wikipedia.org/wiki/Bab_Bou_Jeloud"
+ },
+ "Bou Inania Madrasa": {
+  "title": "Bou Inania Madrasa",
+  "description": "Madrasa, mosque in Fez, Morocco",
+  "extract": "The Bou Inania Madrasa or Bu 'Inaniya Madrasa is a madrasa in Fez, Morocco, built in 1350–55 by the Marinid sultan Abu Inan Faris. It is the only madrasa in Morocco which also functioned as a congregational mosque. It is widely acknowledged as a high point of Marinid architecture and of historic Moroccan architecture generally.",
+  "url": "https://en.wikipedia.org/wiki/Bou_Inania_Madrasa"
+ },
+ "Funduq al-Najjarin": {
+  "title": "Funduq al-Najjarin",
+  "description": "Historical building and museum in Fez, Morocco",
+  "extract": "Funduq al-Najjarin is a historic funduq in Fes el Bali, the old medina quarter in the city of Fez, Morocco.",
+  "url": "https://en.wikipedia.org/wiki/Funduq_al-Najjarin"
+ },
+ "Al-Attarine Madrasa": {
+  "title": "Al-Attarine Madrasa",
+  "description": "Historic madrasa in Fez, Morocco",
+  "extract": "The Al-Attarine Madrasa or Medersa al-Attarine is a madrasa in Fez, Morocco, near the Al-Qarawiyyin Mosque. It was built by the Marinid sultan Uthman II Abu Said between 1323 and 1325. The madrasa takes its name from the Souk al-Attarine, the spice and perfume market. It is considered one of the highest achievements of Marinid architecture due to its rich and harmonious decoration and its efficient use of limited space. Arranged around an ornate internal courtyard, the madrasa includes a small prayer hall, an ablutions facility, and sleeping quarters.",
+  "url": "https://en.wikipedia.org/wiki/Al-Attarine_Madrasa"
+ },
+ "University of al-Qarawiyyin": {
+  "title": "University of al-Qarawiyyin",
+  "description": "University in Fez, Morocco",
+  "extract": "The University of al-Qarawiyyin, also written Al-Karaouine or Al Quaraouiyine, is a university located in Fez, Morocco. It was founded as a mosque by Fatima al-Fihri in 857–859 and subsequently became one of the leading spiritual and educational centers of the Islamic Golden Age. It was incorporated into Morocco's modern state university system in 1963 and officially renamed \"University of Al Quaraouiyine\" two years later. The mosque building itself is also a significant complex of historical Moroccan and Islamic architecture that features elements from many different periods of Moroccan history.",
+  "url": "https://en.wikipedia.org/wiki/University_of_al-Qarawiyyin"
+ },
+ "Chouara Tannery": {
+  "title": "Chouara Tannery",
+  "description": "Moroccan tannery in Fez",
+  "extract": "Chouara Tannery is one of the three tanneries in the city of Fez, Morocco. It is the largest tannery in the city and one of the oldest. It is located in Fes el Bali, the oldest medina quarter of the city, near the Saffarin Madrasa along the Oued Fes. Since the inception of the city, the tanning industry has been continually operating in the same fashion as it did in the early centuries. Today, the tanning industry in the city is considered one of the main tourist attractions. The tanneries are packed with round stone vessels filled with dye or white liquids for softening the hides. The leather goods produced in the tanneries are exported around the world.",
+  "url": "https://en.wikipedia.org/wiki/Chouara_Tannery"
+ },
+ "Plaza San Martín, Lima": {
+  "title": "Plaza San Martín, Lima",
+  "description": "Cultural heritage site in Peru",
+  "extract": "San Martín Square is one of the most representative public spaces of the city of Lima, Peru. It is located at the ninth block of Colmena avenue, within the Historic Centre of Lima which was declared a World Heritage Site in 1988 by UNESCO. It is located near the Plaza Mayor and is connected to it by the Jiron de la Union. Its central monument gives homage to Peru's liberator, José de San Martín.",
+  "url": "https://en.wikipedia.org/wiki/Plaza_San_Mart%C3%ADn%2C_Lima"
+ },
+ "Plaza Mayor, Lima": {
+  "title": "Plaza Mayor, Lima",
+  "description": "Cultural heritage site in Peru",
+  "extract": "The Plaza Mayor, also known as the Plaza de Armas, is the main public square of the historic centre of the city of Lima, Peru. It dates back to the foundation of the city by Francisco Pizarro on 18 January 1535. Delimited by Carabaya, Junín, Huallaga, and Unión streets, it is surrounded by a number of major landmarks, including the Government Palace, the Metropolitan Cathedral, the Archbishop's Palace, the Municipal Palace, and the Palacio de la Unión.",
+  "url": "https://en.wikipedia.org/wiki/Plaza_Mayor%2C_Lima"
+ },
+ "Government Palace, Peru": {
+  "title": "Government Palace, Peru",
+  "description": "Building in Lima, Peru",
+  "extract": "The Government Palace, also known as the House of Pizarro, is the seat of the executive branch of the Peruvian government, and the official residence of the president of Peru. The palace is a stately government building, occupying the northern side of the Plaza Mayor in Peru's capital city, Lima. Set on the Rímac River, the palace occupies the site of a very large huaca that incorporated a shrine to Taulichusco, the last kuraka of Lima.",
+  "url": "https://en.wikipedia.org/wiki/Government_Palace%2C_Peru"
+ },
+ "Metropolitan Cathedral of Lima": {
+  "title": "Metropolitan Cathedral of Lima",
+  "description": "Cultural heritage site in Lima, Peru",
+  "extract": "The Cathedral Basilica of Lima, commonly known as the Metropolitan Cathedral of Lima, is a Roman Catholic cathedral in Lima, Peru. It is the seat of the Archdiocese of Lima. Its construction began in 1535 by Francisco Pizarro and was completed in 1797, having been built in its present form between 1602 and 1797. Its patron saint is Saint John, Apostle and Evangelist, to whom it is dedicated.",
+  "url": "https://en.wikipedia.org/wiki/Metropolitan_Cathedral_of_Lima"
+ },
+ "Archbishop's Palace, Lima": {
+  "title": "Archbishop's Palace, Lima",
+  "description": "Palace in Lima, Peru",
+  "extract": "The Archbishop’s Palace of Lima, the capital of Peru, is the residence of the Archbishop of Lima, and the administrative headquarters of the Archdiocese of Lima. It is located at the Plaza Mayor, in the Historic Centre of Lima.",
+  "url": "https://en.wikipedia.org/wiki/Archbishop's_Palace%2C_Lima"
+ },
+ "Basilica and Convent of San Francisco, Lima": {
+  "title": "Basilica and Convent of San Francisco, Lima",
+  "description": "Cultural heritage site in Peru",
+  "extract": "The Basilica and Convent of San Francisco is a Catholic church building located in the Historic Centre of Lima, Peru. The church, together with the Sanctuary of Our Lady of Solitude and the Church of the Virgin of the Miracle, forms a religious monumental complex surrounded by Amazonas, Áncash and Lampa streets, as well as Abancay Avenue.",
+  "url": "https://en.wikipedia.org/wiki/Basilica_and_Convent_of_San_Francisco%2C_Lima"
+ },
+ "Ben Youssef Madrasa": {
+  "title": "Ben Youssef Madrasa",
+  "description": "Madrasa in Marrakesh, Morocco",
+  "extract": "The Ben Youssef Madrasa is an Islamic madrasa (college) in Marrakesh, Morocco. The madrasa is named after the adjacent Ben Youssef Mosque, and was commissioned in 1564–65 CE by the Saadian sultan Abdallah al-Ghalib. Functioning today as a historical site, the Ben Youssef Madrasa was the largest Islamic college in the Maghreb at its height, and is widely recognized as a pinnacle of Saadian and Moroccan architecture.",
+  "url": "https://en.wikipedia.org/wiki/Ben_Youssef_Madrasa"
+ },
+ "Jemaa el-Fnaa": {
+  "title": "Jemaa el-Fnaa",
+  "description": "Moroccan cultural heritage site",
+  "extract": "Jemaa el-Fnaa, also Jemaa el-Fna, Djema el-Fna or Djemaa el-Fnaa, is a square and market place in the medina quarter of Marrakesh, Morocco. It remains the main square of Marrakesh, used by locals and tourists.",
+  "url": "https://en.wikipedia.org/wiki/Jemaa_el-Fnaa"
+ },
+ "Kutubiyya Mosque": {
+  "title": "Kutubiyya Mosque",
+  "description": "Mosque in Marrakesh, Morocco",
+  "extract": "The Kutubiyya Mosque or Koutoubia Mosque is the largest mosque in Marrakesh, Morocco. It is located in the southwest medina quarter of Marrakesh, near the Jemaa el-Fnaa market place, and is flanked by large gardens.",
+  "url": "https://en.wikipedia.org/wiki/Kutubiyya_Mosque"
+ },
+ "Saadian Tombs": {
+  "title": "Saadian Tombs",
+  "description": "Necropolis, cemetery in Marrakesh, Morocco",
+  "extract": "The Saadian Tombs are a historic royal necropolis in Marrakesh, Morocco, located on the south side of the Kasbah Mosque, inside the royal kasbah (citadel) district of the city. They date to the time of the Saadian dynasty and in particular to the reign of Ahmad al-Mansur (1578–1603), though members of Morocco's monarchy continued to be buried here for a time afterwards. The complex is regarded by many art historians as the high point of Moroccan architecture in the Saadian period due to its luxurious decoration and careful interior design. Today the site is a major tourist attraction in Marrakesh.",
+  "url": "https://en.wikipedia.org/wiki/Saadian_Tombs"
+ },
+ "El Badi Palace": {
+  "title": "El Badi Palace",
+  "description": "Historical monument in Marrakesh, Morocco",
+  "extract": "El Badi Palace or Badi' Palace is a ruined palace in Marrakesh, Morocco. It was commissioned by the sultan Ahmad al-Mansur of the Saadian dynasty a few months after his accession in 1578, with construction and embellishment continuing throughout most of his reign. The palace, decorated with materials imported from numerous countries ranging from Italy to Mali, was used for receptions and designed to showcase the Sultan's wealth and power. It was one part of a larger Saadian palace complex occupying the Kasbah district of Marrakesh.",
+  "url": "https://en.wikipedia.org/wiki/El_Badi_Palace"
+ },
+ "Bahia Palace": {
+  "title": "Bahia Palace",
+  "description": "Palace in Marrakesh, Morocco",
+  "extract": "The Bahia Palace is a mid to late 19th-century palace in Marrakesh, Morocco. The palace was first begun by Si Musa, grand vizier under the Alawi sultan Muhammad ibn Abd al-Rahman, in the 1860s. It was expanded by his son Si Ba Ahmed ibn Musa, grand vizier of Sultan Moulay Abdelaziz, between 1894 and 1900. Today it is a well-known historic monument and tourist attraction in the city.",
+  "url": "https://en.wikipedia.org/wiki/Bahia_Palace"
+ },
+ "Candelária Church": {
+  "title": "Candelária Church",
+  "description": "Roman Catholic church in Rio de Janeiro, Brazil",
+  "extract": "The Candelária Church is an important historical Roman Catholic church in the city of Rio de Janeiro, in southeastern Brazil. It was built and decorated during a long period, from 1775 to the late 19th century. The church combines a Portuguese colonial Baroque façade with later Neoclassical and Neo-Renaissance interior elements.",
+  "url": "https://en.wikipedia.org/wiki/Candel%C3%A1ria_Church"
+ },
+ "Paço Imperial": {
+  "title": "Paço Imperial",
+  "description": "Building in Rio de Janeiro, Brazil",
+  "extract": "The Paço Imperial, or Imperial Palace, previously known as the Royal Palace of Rio de Janeiro and Palace of the Viceroys, is a historic building in the center of the city of Rio de Janeiro, Brazil. The Paço Imperial was built in the 18th century to serve as a residence for the governors of colonial Brazil. From 1808, it was used as a royal residence by King John VI of Portugal as King of Portugal and later also as King of Brazil. In 1822 it became the city palace of the monarchs of the Empire of Brazil, Pedro I and Pedro II, who used it not as a residence, but as a workplace. It was one of the main political centers of Brazil for nearly 150 years, from 1743 to 1889.",
+  "url": "https://en.wikipedia.org/wiki/Pa%C3%A7o_Imperial"
+ },
+ "Confeitaria Colombo": {
+  "title": "Confeitaria Colombo",
+  "description": "Restaurant in Rio de Janeiro, Brazil",
+  "extract": "Confeitaria Colombo is a coffeehouse located in downtown Rio de Janeiro, Brazil. It is one of the main landmarks of the city's Central Region. Website City Guides named Colombo one of the 10 most beautiful cafés in the world.",
+  "url": "https://en.wikipedia.org/wiki/Confeitaria_Colombo"
+ },
+ "Theatro Municipal (Rio de Janeiro)": {
+  "title": "Theatro Municipal (Rio de Janeiro)",
+  "description": "Opera house in Centro, Rio de Janeiro",
+  "extract": "The Theatro Municipal is an opera house in the Centro district of Rio de Janeiro, Brazil. Built in the early twentieth century, it is considered to be one of the most beautiful and important theaters in the country.",
+  "url": "https://en.wikipedia.org/wiki/Theatro_Municipal_(Rio_de_Janeiro)"
+ },
+ "Museu Nacional de Belas Artes": {
+  "title": "Museu Nacional de Belas Artes",
+  "description": "Fine art museum in Rio de Janeiro, Brazil",
+  "extract": "The Museu Nacional de Belas Artes is a national art museum located in the city of Rio de Janeiro, Brazil. The museum, officially established in 1937 by the initiative of education minister Gustavo Capanema, was inaugurated in 1938 by President Getúlio Vargas. The museum collection, on the other hand, takes its rise in the transfer of the Portuguese Court to Brazil in the early 19th century, when King John VI brought along with him part of the Portuguese Royal Collection. This art collection stayed in Brazil after the King's return to Europe and became the core collection of the National School of Fine Arts. When the museum was created in 1937, it became the heir not only the National School collection, but also of its headquarters, a 1908 eclectic style building projected by Spanish architect Adolfo Morales de los Ríos.",
+  "url": "https://en.wikipedia.org/wiki/Museu_Nacional_de_Belas_Artes"
+ },
+ "Carioca Aqueduct": {
+  "title": "Carioca Aqueduct",
+  "description": "Aqueduct in Rio de Janeiro, Brazil",
+  "extract": "The Carioca Aqueduct, also known as Arcos da Lapa, is an aqueduct in the city of Rio de Janeiro, Brazil. The aqueduct was built in the middle of the 18th century to bring fresh water from the Carioca River to the population of the city. It is a typical example of colonial architecture and engineering.",
+  "url": "https://en.wikipedia.org/wiki/Carioca_Aqueduct"
+ },
+ "Escadaria Selarón": {
+  "title": "Escadaria Selarón",
+  "description": "Set of steps in Rio de Janeiro, Brazil",
+  "extract": "Escadaria Selarón, locally known as the 'Lapa Steps' for being situated at the \"Lapa\" neighborhood, is a set of world-famous steps in Rio de Janeiro, Brazil. They are the work of Chilean-born artist Jorge Selarón who claimed it as \"my tribute to the Brazilian people\".",
+  "url": "https://en.wikipedia.org/wiki/Escadaria_Selar%C3%B3n"
+ },
+ "La Moneda Palace": {
+  "title": "La Moneda Palace",
+  "description": "Building in Santiago, Chile",
+  "extract": "La Moneda Palace, or simply La Moneda, is the seat of the president of the Republic of Chile. It also houses the offices of three cabinet ministers: Interior, General Secretariat of the Presidency, and General Secretariat of the Government. Located in downtown Santiago, it occupies an entire block in the Civic District, bordered by Moneda street to the north, Morandé street to the east, Alameda del Libertador Bernardo O'Higgins to the south, and Teatinos street to the west.",
+  "url": "https://en.wikipedia.org/wiki/La_Moneda_Palace"
+ },
+ "Plaza de la Constitución (Santiago)": {
+  "title": "Plaza de la Constitución (Santiago)",
+  "description": "Town square in Santiago, Chile",
+  "extract": "The Plaza de la Constitución is a plaza occupying a full square block in the heart of the civic district of Santiago, Chile. It is located in front of the northern facade of the Palacio de la Moneda and is surrounded by other government buildings such as those housing the Ministry of Finance, Ministry of Foreign Affairs, Ministry of Justice, Banco Central de Chile and the Intendencia de Santiago. The square is bounded by Moneda Street on the south, Morandé Street on the east, Agustinas Street on the north, and Teatinos Street on the west.",
+  "url": "https://en.wikipedia.org/wiki/Plaza_de_la_Constituci%C3%B3n_(Santiago)"
+ },
+ "Museo Chileno de Arte Precolombino": {
+  "title": "Museo Chileno de Arte Precolombino",
+  "description": "Art museum in Santiago, Chile",
+  "extract": "The Chilean Museum of Pre-Columbian Art is an art museum dedicated to the study and display of pre-Columbian artworks and artifacts from Central and South America.",
+  "url": "https://en.wikipedia.org/wiki/Museo_Chileno_de_Arte_Precolombino"
+ },
+ "Plaza de Armas (Santiago)": {
+  "title": "Plaza de Armas (Santiago)",
+  "description": "Main square of Santiago, Chile",
+  "extract": "The Plaza de Armas is the main square of Santiago, the capital of Chile. Plaza de Armas metro station is located under the square. Surrounding the square are some historic buildings, including the Metropolitan Cathedral of Santiago, Central Post Office Building, Palacio de la Real Audiencia de Santiago, and the building that serves as the seat of local government for Santiago, which was formerly occupied by the Cabildo of the city before being remodeled. There are also other architecturally significant buildings that face the square, including the Capilla del Sagrario, the Palacio arzobispal, the Edificio Comercial Edwards, and the Portal Fernández Concha. The Casa Colorada, the Cuartel General del Cuerpo de Bomberos de Santiago and the Museo Chileno de Arte Precolombino are located a short walk from the square.",
+  "url": "https://en.wikipedia.org/wiki/Plaza_de_Armas_(Santiago)"
+ },
+ "Santiago Metropolitan Cathedral": {
+  "title": "Santiago Metropolitan Cathedral",
+  "description": "Roman Catholic Cathedral in Chile",
+  "extract": "Santiago Metropolitan Cathedral is the seat of the Archdiocese of Santiago and the main temple of the Catholic Church in that country. As a Cathedral Church, it is the permanent seat of the Archbishop of Santiago and is dedicated to the Assumption of the Virgin Mary.",
+  "url": "https://en.wikipedia.org/wiki/Santiago_Metropolitan_Cathedral"
+ },
+ "Mercado Central de Santiago": {
+  "title": "Mercado Central de Santiago",
+  "description": "Market in Chile",
+  "extract": "The Mercado Central de Santiago is the central market of Santiago de Chile. It was opened in 1872 and Fermín Vivaceta was in charge of its construction. The market replaced the Plaza del Abasto, which was destroyed by a fire in 1864.",
+  "url": "https://en.wikipedia.org/wiki/Mercado_Central_de_Santiago"
+ },
+ "Santa Lucía Hill": {
+  "title": "Santa Lucía Hill",
+  "description": "Hill in Santiago, Chile",
+  "extract": "Santa Lucía Hill, also known in Mapuche as Huelén Hill, is a hill in the centre of Santiago, Chile. It is situated between Alameda del Libertador Bernardo O'Higgins in the south, Santa Lucía Street in the west and Victoria Subercaseaux on the east. An adjacent metro station is named after it. The hill has an altitude of 629 m and a height of 69 m over the surrounding area.",
+  "url": "https://en.wikipedia.org/wiki/Santa_Luc%C3%ADa_Hill"
+ },
+ "Bab el Bhar": {
+  "title": "Bab el Bhar",
+  "description": "City gate in Tunis, Tunisia",
+  "extract": "Bab el Bhar, also known as Porte De France, is a gate on the east side of the medina of Tunis, the capital of Tunisia. It marks the separation between the medina and the modern city.",
+  "url": "https://en.wikipedia.org/wiki/Bab_el_Bhar"
+ },
+ "Al-Zaytuna Mosque": {
+  "title": "Al-Zaytuna Mosque",
+  "description": "Historical mosque in Tunis, Tunisia",
+  "extract": "Al-Zaytuna Mosque is a major mosque at the center of the historic medina of Tunis, Tunisia. The mosque is the oldest in the city. It was founded at the end of the 7th century or in the early 8th century, but its current architectural form dates from a reconstruction in the 9th century, including many antique columns reused from Carthage, and from later additions and restorations over the centuries.",
+  "url": "https://en.wikipedia.org/wiki/Al-Zaytuna_Mosque"
+ },
+ "Dar Ben Abdallah": {
+  "title": "Dar Ben Abdallah",
+  "description": "Palace in Tunis, Tunisia",
+  "extract": "Dar Ben Abdallah is an old palace in the medina of Tunis.",
+  "url": "https://en.wikipedia.org/wiki/Dar_Ben_Abdallah"
+ },
+ "Tourbet el Bey": {
+  "title": "Tourbet el Bey",
+  "description": "Mausoleum in Tunisia",
+  "extract": "The Tourbet el Bey is a Tunisian royal mausoleum in the southwest of the medina of Tunis.",
+  "url": "https://en.wikipedia.org/wiki/Tourbet_el_Bey"
+ },
+ "Kasbah Mosque, Tunis": {
+  "title": "Kasbah Mosque, Tunis",
+  "description": "Mosque in Tunis, Tunisia",
+  "extract": "Kasbah Mosque is a mosque in the Tunis, Tunisia. It stands in the Kasbah district of the historic medina of Tunis. It was built between 1230 and 1233 on the orders of the first Hafsid ruler, Abu Zakariya Yahya, to serve as the main Friday mosque of the Kasbah.",
+  "url": "https://en.wikipedia.org/wiki/Kasbah_Mosque%2C_Tunis"
+ },
+ "Darajani Market": {
+  "title": "Darajani Market",
+  "description": "",
+  "extract": "The Darajani Market is the main bazaar in Stone Town, Zanzibar. It is also known as Estella Market and informally as Marikiti Kuu. The market is located in Darajani Road, in the surroundings of the Anglican Cathedral of Christ.",
+  "url": "https://en.wikipedia.org/wiki/Darajani_Market"
+ },
+ "Christ Church Cathedral, Zanzibar": {
+  "title": "Christ Church Cathedral, Zanzibar",
+  "description": "Anglican cathedral in Stone Town, Zanzibar, Tanzania",
+  "extract": "Christ Church is an Anglican cathedral in Stone Town, Zanzibar, Tanzania. It belongs to the Anglican Church of Tanzania. It is a landmark historical church, as well as one of the most prominent examples of early Christian architecture in East Africa.",
+  "url": "https://en.wikipedia.org/wiki/Christ_Church_Cathedral%2C_Zanzibar"
+ },
+ "Old Dispensary (Zanzibar)": {
+  "title": "Old Dispensary (Zanzibar)",
+  "description": "Historic building in Stone Town, Zanzibar",
+  "extract": "The Old Dispensary, also known as Ithnashiri Dispensary, is a historical building in Stone Town, Zanzibar. It is located on the seafront, in Mizingani Road, halfway between the Palace Museum and the harbour. It owes its name to the fact that it served as a dispensary in the first half of the 20th century.",
+  "url": "https://en.wikipedia.org/wiki/Old_Dispensary_(Zanzibar)"
+ },
+ "Sultan's Palace, Zanzibar": {
+  "title": "Sultan's Palace, Zanzibar",
+  "description": "Museum in Zanzibar",
+  "extract": "The Sultan's Palace is one of the main historical buildings of Stone Town, Zanzibar, Tanzania. It is a 3-story building with merlon-decorated white walls, located in Mizingani Road, on the seafront, between the House of Wonders and the Old Dispensary.",
+  "url": "https://en.wikipedia.org/wiki/Sultan's_Palace%2C_Zanzibar"
+ },
+ "House of Wonders": {
+  "title": "House of Wonders",
+  "description": "Landmark building in Stone Town, Zanzibar",
+  "extract": "The House of Wonders or Palace of Wonders is a landmark building in Stone Town, Zanzibar. It is the largest and tallest building of Stone Town and occupies a prominent place facing the Forodhani Gardens on the old town's seafront in Mizingani Road. It is located between the Old Fort and the Palace Museum. It is one of six palaces built by Barghash bin Said, second Sultan of Zanzibar, and it is said to be located on the site of the 17th-century palace of Zanzibari queen Fatuma. The House of Wonders housed the Museum of History and Culture of Zanzibar and the Swahili Coast.",
+  "url": "https://en.wikipedia.org/wiki/House_of_Wonders"
+ },
+ "Old Fort of Zanzibar": {
+  "title": "Old Fort of Zanzibar",
+  "description": "Fort in Zanzibar, Tanzania",
+  "extract": "The Old Fort, also known as the Arab Fort and by other names, is a fortification located in Stone Town, the capital of Zanzibar. It is the oldest building and a major visitor attraction of Stone Town. It is located on the main seafront, adjacent to another landmark building of the city, the House of Wonders, and facing the Forodhani Gardens.",
+  "url": "https://en.wikipedia.org/wiki/Old_Fort_of_Zanzibar"
+ },
+ "Forodhani Gardens": {
+  "title": "Forodhani Gardens",
+  "description": "Park in Zanzibar, Tanzania",
+  "extract": "The Forodhani Gardens is a small park in the historical city of Stone Town, Zanzibar, Tanzania. The gardens are located along the main seawalk of Stone Town, just in front of the most famous buildings of Stone Town, i.e., the House of Wonders and the Old Fort.",
+  "url": "https://en.wikipedia.org/wiki/Forodhani_Gardens"
  }
 }
