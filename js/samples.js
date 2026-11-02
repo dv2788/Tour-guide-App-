@@ -6,6 +6,7 @@
 export const SAMPLES = [
   {
     id: 'barcelona',
+    region: 'europe',
     label: 'Barcelona',
     city: 'Barcelona',
     blurb: 'Gaudí, La Rambla and the Gothic Quarter',
@@ -15,6 +16,7 @@ export const SAMPLES = [
   },
   {
     id: 'brussels',
+    region: 'europe',
     label: 'Brussels',
     city: 'Brussels',
     blurb: 'From Manneken Pis to the Royal Palace',
@@ -24,6 +26,7 @@ export const SAMPLES = [
   },
   {
     id: 'cape-town',
+    region: 'africa',
     label: 'Cape Town',
     city: 'Cape Town',
     blurb: 'The Castle, the old city and the Bo-Kaap',
@@ -33,6 +36,7 @@ export const SAMPLES = [
   },
   {
     id: 'kinshasa',
+    region: 'africa',
     label: 'Kinshasa',
     city: 'Kinshasa',
     blurb: 'A drive past the landmarks of Lingwala and Gombe',
@@ -42,6 +46,7 @@ export const SAMPLES = [
   },
   {
     id: 'miami',
+    region: 'americas',
     label: 'Miami Beach',
     city: 'Miami Beach',
     blurb: 'Art Deco South Beach and the Versace mansion',
@@ -51,6 +56,7 @@ export const SAMPLES = [
   },
   {
     id: 'paris',
+    region: 'europe',
     label: 'Paris',
     city: 'Paris',
     blurb: 'From the Eiffel Tower to the Louvre',
@@ -60,6 +66,7 @@ export const SAMPLES = [
   },
   {
     id: 'san-francisco',
+    region: 'americas',
     label: 'San Francisco',
     city: 'San Francisco',
     blurb: 'California: the Ferry Building up to Coit Tower',
@@ -69,6 +76,7 @@ export const SAMPLES = [
   },
   {
     id: 'shenzhen',
+    region: 'asia',
     label: 'Shenzhen',
     city: 'Shenzhen',
     blurb: 'Lotus Hill to the Ping An tower, along Futian’s axis',
@@ -78,6 +86,7 @@ export const SAMPLES = [
   },
   {
     id: 'tokyo',
+    region: 'asia',
     label: 'Tokyo',
     city: 'Tokyo',
     blurb: 'Asakusa’s temples to the Skytree',
@@ -88,5 +97,14 @@ export const SAMPLES = [
 ];
 
 export const DEFAULT_SAMPLE = 'barcelona';
+
+/** Parts of the world, for filtering the sample tours ('' = all). */
+export const REGIONS = [
+  ['', 'All'],
+  ['europe', 'Europe'],
+  ['africa', 'Africa'],
+  ['americas', 'Americas'],
+  ['asia', 'Asia'],
+];
 
 export const sampleById = (id) => SAMPLES.find((s) => s.id === id) ?? SAMPLES.find((s) => s.id === DEFAULT_SAMPLE);

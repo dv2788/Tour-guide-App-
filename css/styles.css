@@ -1196,6 +1196,45 @@ select:focus {
   letter-spacing: 0.12em;
 }
 
+.sample-regions {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 0 20px 10px;
+  scrollbar-width: none;
+}
+
+.sample-regions::-webkit-scrollbar {
+  display: none;
+}
+
+.sample-regions button {
+  flex: 0 0 auto;
+  padding: 8px 10px;
+  border: 1px solid var(--hairline-strong);
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 0.66rem;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s var(--ease);
+}
+
+.sample-regions button[aria-pressed='true'] {
+  border-color: var(--gold-bright);
+  background: var(--soft);
+  color: var(--gold);
+}
+
+.sample-regions button:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+
 .samples-row {
   display: flex;
   gap: 10px;

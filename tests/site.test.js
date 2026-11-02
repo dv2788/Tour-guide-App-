@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
-import { SAMPLES } from '../js/samples.js';
+import { SAMPLES, REGIONS } from '../js/samples.js';
 
 // The pages search engines read must match the sample tours (run `npm run build:site` after editing them).
 const read = (path) => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
@@ -22,6 +22,19 @@ test('every sample tour has its own page, in the sitemap and linked from the hom
     for (const stop of sample.stops) assert.ok(unescape(page).includes(stop), `${sample.id}: mentions ${stop}`);
     assert.match(sitemap, new RegExp(`/tours/${sample.id}/</loc>`), `${sample.id}: in the sitemap`);
     assert.ok(index.includes(`href="tours/${sample.id}/"`), `${sample.id}: linked from the home page`);
+  }
+});
+
+test('every sample tour has a part of the world, a unique id, and stops to walk', () => {
+  const regions = new Set(REGIONS.map(([id]) => id).filter(Boolean));
+  const ids = new Set();
+  for (const sample of SAMPLES) {
+    assert.ok(regions.has(sample.region), `${sample.id}: region "${sample.region}" is one of ${[...regions].join(', ')}`);
+    assert.ok(!ids.has(sample.id), `${sample.id}: unique`);
+    ids.add(sample.id);
+    assert.ok(sample.stops.length >= 4 && sample.stops.length <= 8, `${sample.id}: 4 to 8 stops`);
+    assert.equal(new Set(sample.stops).size, sample.stops.length, `${sample.id}: no stop twice`);
+    assert.ok(['walk', 'drive'].includes(sample.mode) && sample.km > 0 && sample.blurb && sample.city, `${sample.id}: mode, distance, blurb, city`);
   }
 });
 

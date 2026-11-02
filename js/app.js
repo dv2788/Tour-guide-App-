@@ -1,7 +1,7 @@
 // Screen wiring: the setup form, the map, the "now playing" card and the controls.
 
 import { getMode, MODES } from './modes.js';
-import { SAMPLES, DEFAULT_SAMPLE, sampleById } from './samples.js';
+import { SAMPLES, DEFAULT_SAMPLE, REGIONS, sampleById } from './samples.js';
 import { LANGUAGES, speechLocale } from './i18n.js';
 import { createWikiService, photoPage } from './wiki.js';
 import { createGeocoder, fetchRoute, fetchDirections, fetchStreetName } from './geocode.js';
@@ -140,6 +140,7 @@ $('samples').replaceChildren(
     button.type = 'button';
     button.className = 'sample';
     button.dataset.id = sample.id;
+    button.dataset.region = sample.region;
     button.setAttribute('aria-pressed', 'false');
     const how = sample.mode === 'drive' ? 'by car' : 'on foot';
     button.innerHTML = `<span class="sample-city"></span><span class="sample-blurb"></span><span class="sample-meta"><svg class="icon" role="img" aria-label="${how}"><use href="#i-${sample.mode === 'drive' ? 'car' : 'walk'}" /></svg>${sample.stops.length} stops · ${sample.km} km</span>`;
@@ -149,6 +150,26 @@ $('samples').replaceChildren(
     return button;
   }),
 );
+// Filter the sample tours by part of the world (only the parts that have some).
+{
+  const present = REGIONS.filter(([id]) => !id || SAMPLES.some((s) => s.region === id));
+  const show = (region) => {
+    for (const b of $('sample-regions').children) b.setAttribute('aria-pressed', String(b.dataset.region === region));
+    for (const card of $('samples').children) card.hidden = Boolean(region) && card.dataset.region !== region;
+    $('samples').scrollLeft = 0;
+  };
+  $('sample-regions').replaceChildren(
+    ...present.map(([id, label]) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.dataset.region = id;
+      b.textContent = label;
+      b.setAttribute('aria-pressed', String(!id));
+      b.addEventListener('click', () => show(id));
+      return b;
+    }),
+  );
+}
 $('demo').addEventListener('click', () => loadSample(DEFAULT_SAMPLE));
 
 // ---------- Importing a route from a maps app ----------
