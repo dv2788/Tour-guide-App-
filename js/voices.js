@@ -1,36 +1,40 @@
 // Which voice reads the tour. Two kinds:
-//  - "soothing" AI voices (Piper neural TTS, run on the phone, downloaded once), chosen for
-//    a calm delivery: moderate pitch, steady intonation, unhurried pace, soft high end.
-//    See docs/voices.md for how they were compared, and each voice's dataset licence.
-//    (The Jenny dataset asks that the voice be credited as "Jenny (Dioco)" in apps.)
+//  - AI voices that run on the phone (downloaded once): Supertonic 3, one natural voice model
+//    that speaks all five languages (js/supertonicVoice.js), and the lighter Piper voices
+//    (js/neuralVoice.js). Chosen for a calm delivery: moderate pitch, steady intonation,
+//    unhurried pace, soft high end. See docs/voices.md for how they were compared, and each
+//    voice's licence. (The Jenny dataset asks that the voice be credited as "Jenny (Dioco)".)
 //  - the phone's built-in voices, ranked so the calmest natural-sounding one comes first.
 
 // profile 'calm': soothing delivery. profile 'documentary': a deep, unhurried narrator in the
 // style of classic nature documentaries (an original voice, not an imitation of anyone).
+// Supertonic's voice styles (the same voice in every language): F1 calm and composed,
+// slightly low; M2 deep, calm and serious; F5 kind, soft-spoken and soothing.
+const supertonic = ([calm, narrator, soft]) => [
+  { id: 'supertonic-3', style: 'F1', label: 'Nora', note: calm, profile: 'calm' },
+  { id: 'supertonic-3', style: 'M2', label: 'Victor', note: narrator, profile: 'documentary' },
+  { id: 'supertonic-3', style: 'F5', label: 'Lea', note: soft, profile: 'calm' },
+];
 export const NEURAL_VOICES = {
   en: [
-    { id: 'en_GB-jenny_dioco-medium', label: 'Jenny (Dioco)', note: 'Calm and gentle · British', profile: 'calm' },
-    { id: 'en_US-amy-medium', label: 'Amy', note: 'Warm and soft · American', profile: 'calm' },
-    { id: 'en_GB-vctk-medium', speaker: 10, label: 'Arthur', note: 'Documentary narrator · deep British voice', profile: 'documentary' },
+    ...supertonic(['Natural and calm · the new voice', 'Documentary narrator · deep and composed', 'Soft-spoken and gentle']),
+    { id: 'en_GB-jenny_dioco-medium', label: 'Jenny (Dioco)', note: 'Lighter voice (smaller download) · British', profile: 'calm' },
   ],
   fr: [
-    { id: 'fr_FR-siwis-medium', label: 'Siwis', note: 'Douce et claire', profile: 'calm' },
-    { id: 'fr_FR-upmc-medium', speaker: 0, label: 'Jessica', note: 'Chaleureuse', profile: 'calm' },
-    { id: 'fr_FR-upmc-medium', speaker: 1, label: 'Pierre', note: 'Narrateur de documentaire · voix grave', profile: 'documentary' },
+    ...supertonic(['Naturelle et posée · la nouvelle voix', 'Narrateur de documentaire · grave et posé', 'Douce et chaleureuse']),
+    { id: 'fr_FR-siwis-medium', label: 'Siwis', note: 'Voix légère (téléchargement plus petit)', profile: 'calm' },
   ],
   es: [
-    { id: 'es_MX-claude-high', label: 'Claude', note: 'Pausada y cálida · México', profile: 'calm' },
-    { id: 'es_ES-sharvard-medium', speaker: 1, label: 'Sharvard', note: 'Cálida · España', profile: 'calm' },
-    { id: 'es_ES-sharvard-medium', speaker: 0, label: 'Marcos', note: 'Narrador de documental · voz grave', profile: 'documentary' },
+    ...supertonic(['Natural y serena · la nueva voz', 'Narrador de documental · grave y sereno', 'Suave y cálida']),
+    { id: 'es_MX-claude-high', label: 'Claude', note: 'Voz ligera (descarga más pequeña) · México', profile: 'calm' },
   ],
   de: [
-    { id: 'de_DE-kerstin-low', label: 'Kerstin', note: 'Ruhig und gleichmäßig', profile: 'calm' },
-    // Already a deep voice: lowering it further blurs German consonants.
-    { id: 'de_DE-thorsten-medium', label: 'Thorsten', note: 'Dokumentarfilm-Erzähler · tiefe Stimme', profile: 'documentary', tweak: { pitch: 1 } },
+    ...supertonic(['Natürlich und ruhig · die neue Stimme', 'Dokumentarfilm-Erzähler · tief und ruhig', 'Sanft und warm']),
+    { id: 'de_DE-kerstin-low', label: 'Kerstin', note: 'Leichte Stimme (kleinerer Download)', profile: 'calm' },
   ],
   it: [
-    { id: 'it_IT-paola-medium', label: 'Paola', note: 'Calma e regolare', profile: 'calm' },
-    { id: 'it_IT-serena-medium', label: 'Serena', note: 'Limpida', profile: 'calm' },
+    ...supertonic(['Naturale e calma · la nuova voce', 'Narratore di documentari · profondo e pacato', 'Dolce e calda']),
+    { id: 'it_IT-paola-medium', label: 'Paola', note: 'Voce leggera (download più piccolo)', profile: 'calm' },
   ],
 };
 
@@ -50,16 +54,19 @@ export function voiceProfile(name, tweak = {}) {
   return { ...(VOICE_PROFILES[name] ?? VOICE_PROFILES.calm), ...tweak };
 }
 
-/** Voice ids are stored as "neural:<piper id>:<speaker>" or "system:<voice name>". */
+/**
+ * Voice ids are stored as "neural:<model id>:<speaker number or style name>" (e.g.
+ * "neural:supertonic-3:F1", "neural:en_GB-vctk-medium:10") or "system:<voice name>".
+ */
 export function neuralVoiceKey(v) {
-  return `neural:${v.id}:${v.speaker ?? 0}`;
+  return `neural:${v.id}:${v.style ?? v.speaker ?? 0}`;
 }
 
 export function parseVoiceKey(key) {
   if (typeof key !== 'string') return null;
   if (key.startsWith('neural:')) {
-    const [, id, speaker] = key.split(':');
-    return { kind: 'neural', id, speaker: Number(speaker) || 0 };
+    const [, id, variant = '0'] = key.split(':');
+    return /^\d+$/.test(variant) ? { kind: 'neural', id, speaker: Number(variant) } : { kind: 'neural', id, speaker: 0, style: variant };
   }
   if (key.startsWith('system:')) return { kind: 'system', name: key.slice(7) };
   return null;

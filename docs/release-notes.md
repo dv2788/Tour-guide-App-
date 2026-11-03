@@ -20,6 +20,10 @@ The first beta: everything a traveller needs to try Roamie for real, free, in th
   hiking, running, cycling and driving.
 - The story of every place you pass, from Wikipedia, in English, French, Spanish, German or
   Italian, with a calm guide or a documentary narrator (voices run on the phone).
+- A new, natural voice: Nora, Victor (the narrator) and Lea are one voice model (Supertonic 3)
+  that speaks all five languages, served by the app itself (110 MB, once). Numbers, years,
+  centuries and kings' names are read as a guide would say them. The lighter Piper voices stay
+  as an option and as the fallback.
 - First person: travel through the streets in 3D, facing the way you go, with signposts for the
   stops; with a Google key, real Street View photos instead.
 - Point your camera at a building to hear what it is, and be guided there.

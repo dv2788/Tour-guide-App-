@@ -55,8 +55,9 @@ test('the first AI voice of each language and the phone voices are free; the oth
   // Same model, other speaker: Arthur and Pierre are speakers of multi-voice models.
   assert.equal(isFreeVoice('fr', 'neural:fr_FR-upmc-medium:1'), false);
   const plus = createPlus({ config: ON, storage: memory() });
-  assert.equal(plus.voiceAllowed('en', 'neural:en_GB-vctk-medium:10'), false);
-  assert.equal(plus.voiceAllowed('en', 'neural:en_GB-jenny_dioco-medium:0'), true);
+  assert.equal(plus.voiceAllowed('en', 'neural:supertonic-3:M2'), false);
+  assert.equal(plus.voiceAllowed('en', 'neural:en_GB-jenny_dioco-medium:0'), false);
+  assert.equal(plus.voiceAllowed('en', 'neural:supertonic-3:F1'), true);
 });
 
 test('one free city: walk it as often as you like, its suburbs included; a second city needs Plus', () => {

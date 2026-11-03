@@ -5,7 +5,52 @@ should be **calm**: not too high, steady rather than sing-song, unhurried, and s
 and hissy. It should also be **free, private and work offline**. So it runs on the phone itself, and nothing
 you hear is sent to a server.
 
-## The engine
+## The voices today: Supertonic 3 (November 2026)
+
+Roamie's main voices are now **[Supertonic 3](https://github.com/supertone-inc/supertonic)** (Supertone, 99 million
+parameters, [Open RAIL-M licence](../voices/supertonic-3/LICENSE)): one model that speaks 31 languages, including all five
+of Roamie's, with natural intonation; it reads letters rather than phonemes, so it needs no pronunciation
+dictionary. Three of its ten voice styles are in the app, and each speaks every language the same way:
+
+| In the app | Style | Supertone's description | Pitch | Spread | Words/min | High freq. |
+| --- | --- | --- | ---: | ---: | ---: | ---: |
+| **Nora** (default) | F1 | calm, slightly low, steady and composed | 188 | 5.6 | 159 | 0.7% |
+| **Victor** (narrator) | M2 | deep, robust; calm, composed and serious | 95 | 5.8 | 161 | 0.4% |
+| **Lea** | F5 | kind, gentle, soft-spoken and soothing | 158 | 5.8 | 164 | 1.2% |
+| F4 | | crisp and confident | 196 | 3.9 | 185 | 0.5% |
+| F2, F3 | | bright and cheerful; announcer | 156–181 | 7.4–7.9 | 154–169 | 0.5–14% |
+| M5 | | warm, soft-spoken storyteller | 87 | 5.9 | 159 | 1.0% |
+| M1, M3, M4 | | lively; polished presenter; youthful | 98–131 | 5.0–9.2 | 158–193 | 0.4–2.1% |
+
+(Measured as in the table below, on the English preview sentence; the Piper default Jenny measures 179 / 4.0 / 160.)
+The Piper voices stay as the "lighter" option (63 MB, faster on old phones) and as the fallback.
+
+How it runs on the phone:
+
+- **Four networks** on ONNX Runtime Web (already used for Piper): how long the sentence takes, what it says, the
+  sound in a compact form refined from noise over a few steps, and the 44.1 kHz waveform (`js/supertonicVoice.js`).
+- **8-bit**: the app ships a copy with 8-bit weights, 110 MB instead of 398 MB. Checked against the full model with
+  the same noise and duration, the 8-bit model's output differs *less* than two renderings of the same sentence by
+  the full model differ from each other (mel-cepstral distance 171–188 against 216–291, in the same units), i.e. less
+  than the model's own natural variation. 8-bit *arithmetic* (dynamic quantization) was tried and rejected: the
+  vocoder's output turned to noise. Expanding the weights back to 32-bit at load was tried too: three times slower in
+  the browser and twice the memory. The memory of the tab is about 360 MB (1.2 GB with the full model).
+- **Numbers in words** (`js/numbers.js`): the model read "1904" wrongly in German, Spanish and Italian
+  ("neunzehn… null vier", "mil nueve… ciento cuatro") though not in English or French. Years, counts, decimals,
+  percentages, units, ordinals, centuries and regnal numbers are written out first, in all five languages:
+  *nineteen oh four*, *mille neuf cent quatre*, *neunzehnhundertvier*, *im vierzehnten Jahrhundert*, *Luigi
+  quattordicesimo*, *siglo catorce*, *Louis quatorze*, *Henry the fifth*.
+- **Speed that fits the phone**: the refinement steps go from 8 (cleanest) down to 3 so the voice stays ahead of
+  the listener; the app measures the first sentences and settles. On a slow server core, one thread, the browser
+  makes speech at 1.9× real time with 8 steps and 1.0× with 4 (a recent iPhone core is about three times faster;
+  the app prepares the next sentence while the current one plays).
+- **In a worker**: the runtime does its work off the page's main thread (for the Piper voices too now), so the map
+  and the first-person view stay smooth while a sentence is being made.
+- The same **warmth EQ**, pauses and fades as below; the narrator profile is the same deeper, slower rendering.
+
+## The lighter voices: Piper
+
+### The engine
 
 [Piper](https://github.com/rhasspy/piper) neural text-to-speech (MIT licence), running in the browser on
 ONNX Runtime Web. Each voice is a ~63 MB model, plus an 18 MB pronunciation dictionary shared by all
@@ -87,7 +132,16 @@ Named "Arthur" in the app (the dataset speaker has no name).
 
 ## Listen
 
-The same sentence (the one used to compare the voices), exactly as the app plays it:
+The same sentence (the one used to compare the voices), exactly as the app plays it (numbers in words, pace,
+pitch and warmth EQ). The new voices first:
+
+- Nora: [English](voice-samples/nora-en.mp3), [français](voice-samples/nora-fr.mp3), [español](voice-samples/nora-es.mp3), [Deutsch](voice-samples/nora-de.mp3), [italiano](voice-samples/nora-it.mp3)
+- Victor, the narrator (the documentary sentence): [English](voice-samples/victor-en.mp3), [français](voice-samples/victor-fr.mp3), [español](voice-samples/victor-es.mp3), [Deutsch](voice-samples/victor-de.mp3), [italiano](voice-samples/victor-it.mp3)
+- Lea: [English](voice-samples/lea-en.mp3), [français](voice-samples/lea-fr.mp3), [español](voice-samples/lea-es.mp3), [Deutsch](voice-samples/lea-de.mp3), [italiano](voice-samples/lea-it.mp3)
+- Nora reading a passage full of numbers (years, a height, a count, a century, a king): [English](voice-samples/nora-numbers-en.mp3), [français](voice-samples/nora-numbers-fr.mp3), [español](voice-samples/nora-numbers-es.mp3), [Deutsch](voice-samples/nora-numbers-de.mp3), [italiano](voice-samples/nora-numbers-it.mp3)
+- Nora as a slow phone hears her, with 3 refinement steps instead of 8: [English](voice-samples/nora-3-steps-en.mp3), [Deutsch](voice-samples/nora-3-steps-de.mp3)
+
+The lighter Piper voices:
 
 - English: [Jenny (Dioco)](voice-samples/en-jenny.mp3), [Amy](voice-samples/en-amy.mp3), narrator [Arthur](voice-samples/en-arthur.mp3)
 - Français : [Siwis](voice-samples/fr-siwis.mp3), [Jessica](voice-samples/fr-jessica.mp3), narrateur [Pierre](voice-samples/fr-pierre.mp3)

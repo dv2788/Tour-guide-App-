@@ -6,6 +6,7 @@ import { chunkForSpeech } from './text.js';
 import { speechLocale } from './i18n.js';
 import { rankSystemVoices, prepareForNeuralVoice, voiceProfile } from './voices.js';
 import { getPiperVoice, SoothingPlayer } from './neuralVoice.js';
+import { getSupertonicVoice, SupertonicVoice } from './supertonicVoice.js';
 
 const WORDS_PER_MINUTE = 165;
 const estimateMs = (text, rate) => Math.max(1200, ((text.split(/\s+/).length / WORDS_PER_MINUTE) * 60000) / rate);
@@ -82,15 +83,17 @@ export class SystemBackend {
   }
 }
 
-/** The soothing AI voice (Piper), synthesized on the device and played with a warm EQ. */
+/** The AI voice (Supertonic or Piper), synthesized on the device and played with a warm EQ. */
 export class NeuralBackend {
   kind = 'neural';
 
-  constructor({ lang, id, speaker = 0, label = null, profile = 'calm', tweak }) {
+  constructor({ lang, id, speaker = 0, style = null, label = null, profile = 'calm', tweak }) {
     this.lang = lang;
     this.label = label ?? id;
     this.profile = voiceProfile(profile, tweak);
-    this.voice = getPiperVoice(id, speaker);
+    this.voice = id === 'supertonic-3' ? getSupertonicVoice(style ?? 'F1') : getPiperVoice(id, speaker);
+    // What the text needs before this voice reads it (numbers in words, regnal numbers…).
+    this.prepareText = this.voice instanceof SupertonicVoice ? (text) => SupertonicVoice.prepare(text, lang) : (text) => prepareForNeuralVoice(text, lang);
     this.player = new SoothingPlayer({ pitch: this.profile.pitch, eq: this.profile.eq });
     this.prepared = new Map(); // text -> Promise<audio>, so the next sentence is ready in time
   }
@@ -100,7 +103,7 @@ export class NeuralBackend {
   }
 
   get ready() {
-    return !!this.voice.session;
+    return this.voice.ready;
   }
 
   unlock() {
@@ -113,7 +116,7 @@ export class NeuralBackend {
     if (!this.prepared.has(key)) {
       const { pace, pitch, pause } = this.profile;
       // Played back at `pitch` speed, so synthesize a little faster to keep the overall pace.
-      const promise = this.voice.synthesize(prepareForNeuralVoice(text, this.lang), { pace: (pace * pitch) / rate, pause });
+      const promise = this.voice.synthesize(this.prepareText(text), { pace: (pace * pitch) / rate, pause, lang: this.lang });
       promise.catch(() => this.prepared.delete(key));
       this.prepared.set(key, promise);
       while (this.prepared.size > 8) this.prepared.delete(this.prepared.keys().next().value);
@@ -193,8 +196,8 @@ export class Narrator {
    * Switch to the soothing AI voice once it's loaded (downloading it the first time).
    * Until then, and if it fails, the built-in voice keeps talking.
    */
-  async useNeuralVoice({ id, speaker = 0, label, profile, tweak }, onProgress) {
-    const neural = new NeuralBackend({ lang: this.lang, id, speaker, label, profile, tweak });
+  async useNeuralVoice({ id, speaker = 0, style = null, label, profile, tweak }, onProgress) {
+    const neural = new NeuralBackend({ lang: this.lang, id, speaker, style, label, profile, tweak });
     this.neural = neural;
     if (this.unlocked) neural.unlock();
     await neural.load(onProgress);
@@ -303,8 +306,12 @@ export class Narrator {
   }
 
   #chunksFor(text) {
-    // Shorter pieces for the AI voice: the first words are heard sooner.
-    return chunkForSpeech(text, this.backend.kind === 'neural' ? 160 : 220, this.lang);
+    if (this.backend.kind !== 'neural') return chunkForSpeech(text, 220, this.lang);
+    // Shorter pieces for the AI voice, and a short first one: the first words are heard sooner
+    // (the voice makes speech at about real time on a slow phone).
+    const chunks = chunkForSpeech(text, 160, this.lang);
+    if (chunks[0]?.length > 90) chunks.splice(0, 1, ...chunkForSpeech(chunks[0], 90, this.lang));
+    return chunks;
   }
 
   #scheduleNext() {

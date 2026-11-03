@@ -41,7 +41,7 @@ export function isFreeVoice(lang, key) {
   const parsed = parseVoiceKey(key);
   if (!parsed || parsed.kind === 'system') return true;
   const first = NEURAL_VOICES[lang]?.[0];
-  return !!first && neuralVoiceKey(first) === `neural:${parsed.id}:${parsed.speaker}`;
+  return !!first && neuralVoiceKey(first) === neuralVoiceKey(parsed);
 }
 
 /** The free AI voice for a language ({ id, label, … }). */

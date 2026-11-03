@@ -73,7 +73,7 @@ async function openCache() {
  * Download a file once and keep it on the device. Reports progress in bytes. With an
  * integrity fingerprint, a file that doesn't match (downloaded or kept) is thrown away.
  */
-async function fetchCached(url, onBytes = () => {}, integrity = null) {
+export async function fetchCached(url, onBytes = () => {}, integrity = null) {
   const cache = await openCache();
   const hit = await cache?.match(url);
   if (hit) {
@@ -126,14 +126,46 @@ export function voiceFiles(voiceId) {
   return { model: base, config: `${base}.json` };
 }
 
-/** Has this voice already been downloaded to the device? */
-export async function isVoiceDownloaded(voiceId) {
+/** Is this file already kept on the device? */
+export async function isCached(url) {
   const cache = await openCache();
-  return !!(await cache?.match(voiceFiles(voiceId).model));
+  return !!(await cache?.match(url));
+}
+
+/** Has this Piper voice already been downloaded to the device? */
+export function isVoiceDownloaded(voiceId) {
+  return isCached(voiceFiles(voiceId).model);
 }
 
 export function neuralVoicesSupported() {
   return typeof WebAssembly === 'object' && typeof fetch === 'function' && !!(window.AudioContext || window.webkitAudioContext);
+}
+
+let ortLoading = null;
+
+/**
+ * ONNX Runtime Web, loaded once and shared by all the voices: the pinned script, and the
+ * checked WebAssembly kept on the device. (A page that has already set it up, like the
+ * tests, keeps its own.) One thread: threads need cross-origin isolation, which GitHub
+ * Pages can't give.
+ */
+export function loadOrt(onBytes = () => {}) {
+  ortLoading ??= (async () => {
+    if (window.ort?.env?.wasm?.wasmPaths) return window.ort;
+    const ortFile = ortWasmFile();
+    const [, ortWasm] = await Promise.all([loadScript(ORT_SCRIPT), fetchCached(`${ORT_BASE}${ortFile}`, onBytes, ORT_WASM[ortFile])]);
+    const ort = window.ort;
+    ort.env.wasm.numThreads = 1;
+    // The runtime works in its own worker, so the map and the first-person view stay smooth
+    // while a sentence is being made (which takes seconds).
+    ort.env.wasm.proxy = true;
+    ort.env.wasm.wasmPaths = { [ortFile]: URL.createObjectURL(new Blob([ortWasm], { type: 'application/wasm' })) };
+    return ort;
+  })().catch((error) => {
+    ortLoading = null;
+    throw error;
+  });
+  return ortLoading;
 }
 
 const instances = new Map();
@@ -161,6 +193,10 @@ export class PiperVoice {
     return this.loading;
   }
 
+  get ready() {
+    return !!this.session;
+  }
+
   async #load(onProgress) {
     const files = voiceFiles(this.voiceId);
     // Rough sizes, only used to weight the progress bar before servers tell us exact ones.
@@ -174,25 +210,18 @@ export class PiperVoice {
       onProgress(Math.min(1, Object.values(loaded).reduce((a, b) => a + b, 0) / all));
     };
 
-    const [, , configBuf, modelBuf, wasm, data, ortWasm] = await Promise.all([
-      loadScript(ORT_SCRIPT),
+    const [ort, , configBuf, modelBuf, wasm, data] = await Promise.all([
+      loadOrt(report('ort')),
       loadScript(PHONEMIZER_SCRIPT),
       fetchCached(files.config),
       fetchCached(files.model, report('model')),
       fetchCached(PHONEMIZER_WASM.url, report('wasm'), PHONEMIZER_WASM.integrity),
       fetchCached(PHONEMIZER_DATA.url, report('data'), PHONEMIZER_DATA.integrity),
-      fetchCached(`${ORT_BASE}${ortFile}`, report('ort'), ORT_WASM[ortFile]),
     ]);
     this.config = JSON.parse(new TextDecoder().decode(configBuf));
     this.sampleRate = this.config.audio.sample_rate;
     this.phonemizerWasm = wasm;
     this.phonemizerData = data;
-
-    const ort = window.ort;
-    // Run the copy we checked (and keep on the device), not a fresh unchecked download. One thread:
-    // threads need cross-origin isolation, which GitHub Pages can't give.
-    ort.env.wasm.numThreads = 1;
-    ort.env.wasm.wasmPaths = { [ortFile]: URL.createObjectURL(new Blob([ortWasm], { type: 'application/wasm' })) };
     this.ort = ort;
     this.session = await ort.InferenceSession.create(modelBuf, { executionProviders: ['wasm'] });
     onProgress(1);

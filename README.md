@@ -282,16 +282,19 @@ how to copy the full link instead, and still uses any place names shared alongsi
 
 Two kinds of guide, in every language:
 
-- **Calm guides** (Jenny, Amy, Siwis, Claude, Kerstin, Paola…): soft, steady, unhurried.
-- **Documentary narrators** (Arthur, Pierre, Marcos, Thorsten): a deep, slow storyteller in the spirit of
-  classic nature documentaries, with long pauses and their own way of telling it: *"And here, on your
-  left… Casa Batlló."* An original voice, not an imitation of any real person.
+- **Calm guides** (Nora, Lea; and the lighter Jenny, Siwis, Claude, Kerstin, Paola): soft, steady, unhurried.
+- **Documentary narrator** (Victor): a deep, slow storyteller in the spirit of classic nature documentaries,
+  with long pauses and his own way of telling it: *"And here, on your left… Casa Batlló."* An original
+  voice, not an imitation of any real person.
 
-All of them are **natural AI voices that run on the phone itself**
-([Piper](https://github.com/rhasspy/piper)): free, private (nothing you hear is sent anywhere), and it works
-offline after a one-time ~80 MB download. They were picked by measuring pitch, steadiness, pace and harshness
-across the whole voice collection, and checking every one with a speech recognizer. See
-**[docs/voices.md](docs/voices.md)** for the comparison and [listen to the samples](docs/voice-samples/).
+All of them are **natural AI voices that run on the phone itself**: free, private (nothing you hear is sent
+anywhere), and they work offline after a one-time download. Nora, Victor and Lea are one voice model,
+[Supertonic 3](https://github.com/supertone-inc/supertonic) (Open RAIL-M licence), that speaks all five
+languages: served by the app itself, 110 MB once. It reads numbers, years, centuries and kings' names the way
+a guide says them. The lighter voices are [Piper](https://github.com/rhasspy/piper) voices (~80 MB), picked by
+measuring pitch, steadiness, pace and harshness across the whole collection, and checking every one with a
+speech recognizer. See **[docs/voices.md](docs/voices.md)** for the comparison and
+[listen to the samples](docs/voice-samples/).
 
 Prefer no download? Pick one of the phone's own voices. The calmest ones are listed first. If the AI voice is
 still downloading or ever fails, the phone's voice takes over without a gap.

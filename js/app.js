@@ -22,6 +22,7 @@ import { sharesNameToken } from './text.js';
 import { parseItinerary, parseTextList, SOURCE_LABELS } from './itineraryImport.js';
 import { NEURAL_VOICES, neuralVoiceKey, parseVoiceKey, rankSystemVoices, PREVIEW_TEXT, PREVIEW_TEXT_DOCUMENTARY, voiceProfile } from './voices.js';
 import { isVoiceDownloaded, neuralVoicesSupported } from './neuralVoice.js';
+import { isSupertonicDownloaded } from './supertonicVoice.js';
 import { createPlus, freeVoice, isFreeVoice } from './plus.js';
 import { cleanSaved } from './saved.js';
 import { formatClock } from './openingHours.js';
@@ -983,7 +984,12 @@ function showPlanMap() {
 // ---------- Choosing a guide (voice) ----------
 
 function neuralVoiceInfo(lang, key) {
-  return (NEURAL_VOICES[lang] ?? []).find((v) => v.id === key.id && (v.speaker ?? 0) === key.speaker);
+  return (NEURAL_VOICES[lang] ?? []).find((v) => neuralVoiceKey(v) === neuralVoiceKey(key));
+}
+
+/** Is this AI voice already on the phone? */
+function voiceDownloaded(key) {
+  return key.id === 'supertonic-3' ? isSupertonicDownloaded() : isVoiceDownloaded(key.id);
 }
 
 /** The voice picked in the form, e.g. "neural:en_GB-jenny_dioco-medium:0" or "system:Samantha". */
@@ -1072,20 +1078,21 @@ function populateGuides(selectedKey) {
   refreshGuideStatus();
 }
 
-/** "80 MB download, once" / "✓ On your phone, works offline" under each AI voice. */
+/** "110 MB download, once" / "✓ On your phone, works offline" under each AI voice. */
 async function refreshGuideStatus() {
   for (const card of $('guides').querySelectorAll('.guide')) {
     const key = parseVoiceKey(card.dataset.value);
     const status = card.querySelector('.guide-status');
     if (card.classList.contains('busy')) continue;
     if (key?.kind === 'neural') {
-      const downloaded = await isVoiceDownloaded(key.id);
+      const downloaded = await voiceDownloaded(key);
       const withPlus = !plus.voiceAllowed($('lang').value, card.dataset.value);
+      const size = key.id === 'supertonic-3' ? '110 MB' : '80 MB';
       status.textContent = downloaded
         ? `✓ On your phone, works offline${withPlus ? ' · with Plus' : ''}`
         : withPlus
-          ? 'With Plus · 80 MB download, once'
-          : 'Free · 80 MB download, once';
+          ? `With Plus · ${size} download, once`
+          : `Free · ${size} download, once`;
       status.classList.toggle('ready', downloaded);
     } else {
       status.textContent = '';
@@ -2096,7 +2103,7 @@ form.addEventListener('submit', async (event) => {
     });
 
     // If the soothing voice is already on this phone, wait (briefly) so it reads the welcome.
-    if (voiceKey?.kind === 'neural' && (await isVoiceDownloaded(voiceKey.id))) {
+    if (voiceKey?.kind === 'neural' && (await voiceDownloaded(voiceKey))) {
       setStatus('Warming up the voice…');
       await Promise.race([voiceReady, new Promise((r) => setTimeout(r, 15000))]);
       if (!alive()) return;

@@ -1,6 +1,7 @@
-// Browser test of the soothing AI voice, end to end and in real time: tap "Listen",
-// download the voice for real (≈80 MB, needs internet), check speech is actually played,
-// then run the start of a tour with it. Map and Wikipedia answers come from fixtures.
+// Browser test of the AI voices, end to end and in real time: tap "Listen", load the new
+// voice (Supertonic, ≈110 MB, served by the app itself) and the lighter Piper voice (≈80 MB,
+// downloaded for real: needs internet), check speech is actually played, then run the start
+// of a tour with the narrator. Map and Wikipedia answers come from fixtures.
 // Usage: node tests/e2e/voice.cjs
 
 const path = require('node:path');
@@ -32,9 +33,9 @@ const { serve, mockNetwork, saveRouteCaches, cspBlocked } = require('./mocks.cjs
   await page.goto(base);
   const voice = await page.$eval('input[name=voice]:checked', (el) => el.value);
   console.log('Default voice:', voice);
-  expect(voice === 'neural:en_GB-jenny_dioco-medium:0', 'the soothing AI voice is the default');
+  expect(voice === 'neural:supertonic-3:F1', 'the new AI voice (Nora) is the default');
 
-  // 1. Preview the calm voice, then the documentary narrator
+  // 1. Preview the calm voices (new and lighter), then the documentary narrator
   const preview = async (value, name) => {
     const card = `.guide[data-value="${value}"]`;
     const before = await played();
@@ -45,13 +46,14 @@ const { serve, mockNetwork, saveRouteCaches, cspBlocked } = require('./mocks.cjs
     await page.waitForFunction((b) => window.__played.reduce((a, x) => a + x, 0) > b + 3, before, { timeout: 60000 });
     console.log(`${name}: downloaded and ready in ${ready} s, speech is playing`);
   };
-  await preview('neural:en_GB-jenny_dioco-medium:0', 'Jenny');
+  await preview('neural:supertonic-3:F1', 'Nora');
   await page.screenshot({ path: path.join(__dirname, 'screenshots', '6-guides.png'), fullPage: true });
-  await preview('neural:en_GB-vctk-medium:10', 'Arthur (narrator)');
+  await preview('neural:en_GB-jenny_dioco-medium:0', 'Jenny (Piper)');
+  await preview('neural:supertonic-3:M2', 'Victor (narrator)');
 
   // 2. A tour read by the narrator (the voice is now cached on the "phone")
   await page.click('#demo');
-  await page.click('.guide[data-value="neural:en_GB-vctk-medium:10"] label');
+  await page.click('.guide[data-value="neural:supertonic-3:M2"] label');
   await page.selectOption('#sim-speed', '1');
   const before = await played();
   await page.click('button[type=submit]');
@@ -66,7 +68,7 @@ const { serve, mockNetwork, saveRouteCaches, cspBlocked } = require('./mocks.cjs
   const tourAudio = (await played()) - before;
   const label = await page.$eval('#now-label', (el) => el.textContent);
   console.log(`Now playing label: "${label}"`);
-  expect(/Arthur|arrived/i.test(label), 'the player shows the guide by name');
+  expect(/Victor|arrived/i.test(label), 'the player shows the guide by name');
   const voiceLine = await page.$eval('#voice-line', (el) => (el.hidden ? '' : el.textContent));
   console.log(`Tour: welcome + arrival, ${tourAudio.toFixed(1)} s of speech played${voiceLine ? `; note: ${voiceLine}` : ''}`);
   expect(tourAudio > 15, `the AI voice read the welcome (only ${tourAudio.toFixed(1)} s played)`);

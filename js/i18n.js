@@ -207,6 +207,23 @@ const DOCUMENTARY = {
     nextStop: 'Unsere Reise führt weiter zu {name}, {d} von hier.',
     tourDone: 'Damit endet unsere Reise. Doch die Stadt hat noch viele Geschichten zu erzählen, und ich erzähle sie Ihnen unterwegs.',
   },
+  it: {
+    welcome: 'Benvenuti a {city}. Guardiamo più da vicino.',
+    started: 'Il nostro viaggio comincia.',
+    freeRoam: 'Oggi non c’è un percorso fisso. Vedremo semplicemente cosa troviamo.',
+    left: 'Ed ecco, alla nostra sinistra',
+    right: 'Ora, alla nostra destra',
+    ahead: 'Proprio davanti a noi',
+    behind: 'Ormai dietro di noi',
+    nearby: 'Qui vicino',
+    poiIntro: '{dir}… {title}.',
+    firstStop: 'La nostra prima tappa è {name}, a circa {d} da qui.',
+    arrived: 'Ed eccoci a {name}.',
+    nextStop: 'Il nostro viaggio prosegue verso {name}, a {d} da qui.',
+    tourDone: 'E così il nostro viaggio giunge al termine. Ma questa città ha ancora storie da raccontare, e ve le racconterò lungo la strada.',
+    museumVisit: 'I suoi tesori si ammirano da dentro. Prendetevi circa {n} minuti; io aspetterò in silenzio.',
+    stayHere: 'Questo è un luogo in cui indugiare. Prendetevi circa {n} minuti; aspetterò in silenzio finché non ripartirete.',
+  },
 };
 const STYLES = { documentary: DOCUMENTARY };
 

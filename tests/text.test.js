@@ -76,7 +76,7 @@ test('voices: calm built-in voices ranked first, novelty voices never', async ()
 
   assert.deepEqual(parseVoiceKey('neural:es_ES-sharvard-medium:1'), { kind: 'neural', id: 'es_ES-sharvard-medium', speaker: 1 });
   assert.deepEqual(parseVoiceKey('system:Ava (Premium)'), { kind: 'system', name: 'Ava (Premium)' });
-  assert.equal(defaultVoiceKey('fr'), 'neural:fr_FR-siwis-medium:0');
+  assert.equal(defaultVoiceKey('fr'), 'neural:supertonic-3:F1');
 });
 
 test('documentary narration phrases, with standard fallbacks', async () => {
@@ -92,7 +92,8 @@ test('documentary narration phrases, with standard fallbacks', async () => {
     'Et là, sur votre droite, dans 300 mètres… Grand Palais. A palace. It is grand.',
   );
   // Italian has no narrator phrasing: standard phrases are used.
-  assert.equal(t('it', 'left', {}, 'documentary'), 'Alla tua sinistra');
+  assert.equal(t('it', 'left', {}, 'documentary'), 'Ed ecco, alla nostra sinistra');
+  assert.equal(t('it', 'breakDrink', {}, 'documentary'), 'È il momento di bere qualcosa.', 'keys the narrator lacks fall back to the standard phrase');
 });
 
 test('text from anyone can never freeze the phone: cleaning and splitting take one pass', () => {

@@ -76,22 +76,22 @@ const shots = path.join(__dirname, 'screenshots');
   const page = await openPage(context);
   expect(await page.isVisible('#plus-open'), 'the Plus button shows in the top bar');
   const badges = await page.$$eval('.guide', (cards) => cards.filter((c) => c.querySelector('.badge-plus')).map((c) => c.dataset.value));
-  expect(!badges.includes('neural:en_GB-jenny_dioco-medium:0'), 'Jenny (the free voice) has no Plus badge');
-  expect(badges.includes('neural:en_GB-vctk-medium:10') && badges.includes('neural:en_US-amy-medium:0'), `Arthur and Amy are Plus voices (${badges})`);
+  expect(!badges.includes('neural:supertonic-3:F1'), 'Nora (the free voice) has no Plus badge');
+  expect(badges.includes('neural:supertonic-3:M2') && badges.includes('neural:en_GB-jenny_dioco-medium:0'), `Victor and Jenny are Plus voices (${badges})`);
   expect(!badges.some((v) => v.startsWith('system:')), "the phone's voices are free");
   await (await page.$('#guides')).screenshot({ path: path.join(shots, 'plus-0-voices.png') });
   await page.click('#demo');
-  await page.click('.guide[data-value="neural:en_GB-vctk-medium:10"] label');
+  await page.click('.guide[data-value="neural:supertonic-3:M2"] label');
   await page.click('.cta-bar button[type=submit]');
   await page.waitForSelector('#plus[open]');
-  expect(/Arthur is one of the Plus voices\. Jenny \(Dioco\) reads every tour for free/.test(await reason(page)), `reason: ${await reason(page)}`);
+  expect(/Victor is one of the Plus voices\. Nora reads every tour for free/.test(await reason(page)), `reason: ${await reason(page)}`);
   expect(await page.isHidden('#tour'), "the tour didn't start");
   expect((await page.$eval('#plus-buy', (a) => a.href)) === 'https://buy.polar.sh/polar_cl_test', 'Get Plus leads to the Polar checkout');
   expect(/€9\.99/.test(await page.textContent('#plus-buy')), 'the price is on the button');
   await page.screenshot({ path: path.join(shots, 'plus-1-voice.png') });
-  await page.click('#plus-alt'); // "Use Jenny instead"
+  await page.click('#plus-alt'); // "Use Nora instead"
   expect(!(await dialogOpen(page)), 'the Plus screen closes');
-  expect((await page.$eval('input[name=voice]:checked', (el) => el.value)) === 'neural:en_GB-jenny_dioco-medium:0', 'Jenny is chosen instead');
+  expect((await page.$eval('input[name=voice]:checked', (el) => el.value)) === 'neural:supertonic-3:F1', 'Nora is chosen instead');
 
   // ---- 2. The first city is free: a real tour in Barcelona starts, and Barcelona is remembered ----
   await beginRealTour(page);
@@ -142,8 +142,8 @@ const shots = path.join(__dirname, 'screenshots');
   expect((await page.$$('.badge-plus')).length === 0, 'no more Plus badges on the voices');
   await page.screenshot({ path: path.join(shots, 'plus-3-unlocked.png') });
   await page.click('#plus-close');
-  // Now Paris, for real, with Arthur.
-  await page.click('.guide[data-value="neural:en_GB-vctk-medium:10"] label');
+  // Now Paris, for real, with Victor.
+  await page.click('.guide[data-value="neural:supertonic-3:M2"] label');
   await beginRealTour(page);
   // (The Barcelona walk, from Paris: the guide warns you're far away, and carries on.)
   await page.waitForFunction(() => /Tour running|far from Barcelona/.test(document.getElementById('status').textContent), null, { timeout: 30000 });
@@ -174,7 +174,7 @@ const shots = path.join(__dirname, 'screenshots');
   expect(await page4.isHidden('#plus-open'), 'no Plus button while Plus is off');
   expect((await page4.$$('.badge-plus')).length === 0, 'no Plus badges while Plus is off');
   await page4.click('#demo');
-  await page4.click('.guide[data-value="neural:en_GB-vctk-medium:10"] label');
+  await page4.click('.guide[data-value="neural:supertonic-3:M2"] label');
   await page4.click('label.tile:has(input[name=source][value=gps])');
   await page4.click('.cta-bar button[type=submit]');
   await page4.waitForFunction(() => /Tour running|far from Barcelona/.test(document.getElementById('status').textContent), null, { timeout: 30000 });

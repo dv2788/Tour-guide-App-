@@ -40,25 +40,28 @@
       </ul>
 
       <h2>Voices</h2>
-      <p>The AI voices you can download are <a href="https://github.com/rhasspy/piper">Piper</a> voices (MIT licence),
-        run on your phone with <a href="https://onnxruntime.ai/">ONNX Runtime Web</a> (MIT) and the
+      <p>The AI voices run on your phone with <a href="https://onnxruntime.ai/">ONNX Runtime Web</a> (MIT); nothing you
+        hear is sent anywhere.</p>
+      <p><strong>Nora, Victor and Lea</strong> are voice styles of <a href="https://github.com/supertone-inc/supertonic">Supertonic 3</a>
+        by <a href="https://supertone.ai/">Supertone</a>, one model that speaks all of Roamie's languages, under the
+        <a href="voices/supertonic-3/LICENSE">BigScience Open RAIL-M licence</a>. Roamie ships a modified copy of the model:
+        its weights were converted to 8-bit numbers (a quarter of the size, the same voice). The licence comes with
+        use restrictions that bind everyone who uses the model, including through Roamie: no unlawful use, no harm to
+        minors, no disinformation, no harassment or defamation, no impersonating people, no discriminatory or
+        exploitative uses, no automated decisions about people's rights, and never presenting what it says as a
+        human's words. The full list is Attachment A of the licence.</p>
+      <p>The lighter voices are <a href="https://github.com/rhasspy/piper">Piper</a> voices (MIT licence), with the
         <a href="https://github.com/espeak-ng/espeak-ng">eSpeak NG</a> pronunciation engine (GPL-3.0), via
-        <a href="https://github.com/diffusionstudio/piper-wasm">piper-wasm</a>. Each voice comes from recordings that
+        <a href="https://github.com/diffusionstudio/piper-wasm">piper-wasm</a>. Each comes from recordings that
         people made available:</p>
       <table>
         <thead><tr><th>Voice</th><th>Recordings</th><th>Licence</th></tr></thead>
         <tbody>
           <tr><td>Jenny (Dioco)</td><td><a href="https://github.com/dioco-group/jenny-tts-dataset">Jenny TTS dataset</a>, Dioco</td><td>Attribution: “Jenny (Dioco)”</td></tr>
-          <tr><td>Amy</td><td><a href="https://github.com/MycroftAI/mimic3-voices">Mycroft Mimic 3 voices</a></td><td>See source</td></tr>
-          <tr><td>Arthur</td><td>VCTK corpus, CSTR, University of Edinburgh</td><td><a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></td></tr>
           <tr><td>Siwis</td><td>SIWIS French Speech Synthesis Database</td><td><a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></td></tr>
-          <tr><td>Jessica, Pierre</td><td>UPMC French speech corpus</td><td><a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a></td></tr>
           <tr><td>Claude</td><td>Mexican Spanish voice (Piper)</td><td>Apache 2.0</td></tr>
-          <tr><td>Sharvard, Marcos</td><td>Sharvard Spanish corpus</td><td><a href="https://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a></td></tr>
           <tr><td>Kerstin</td><td>German voice (Piper)</td><td>CC0</td></tr>
-          <tr><td>Thorsten</td><td><a href="https://www.thorsten-voice.de/">Thorsten-Voice</a>, Thorsten Müller</td><td>CC0</td></tr>
           <tr><td>Paola</td><td><a href="https://huggingface.co/datasets/paolapersico1/Voice-Dataset-Italian">Italian voice dataset</a>, Paola Persico</td><td>See source</td></tr>
-          <tr><td>Serena</td><td>Italian voice (Piper)</td><td><a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></td></tr>
         </tbody>
       </table>
       <p class="muted">Most of these voices were trained starting from Piper's “Lessac” voice, made from the
