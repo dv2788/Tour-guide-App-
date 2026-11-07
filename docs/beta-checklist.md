@@ -37,5 +37,5 @@ What "ready to publish" means, and where each item stands. ✓ done · ◻ needs
 - ◻ **Street View photos**: a Google key (`docs/street-view.md`). Without it, first person is the 3D map.
 - ◻ **Own domain**: buy heyroamie.com and connect it (`docs/domain.md`); then I move the site.
 - ◻ **Name check** for "Roamie" (trade marks in your main markets).
-- ◻ **Launch day** (1 December): the posts in the launch kit, from your accounts.
+- ◻ **Launch day** (8 December, moved back a week for more polish): the posts in the launch kit, from your accounts.
 - ◻ **Plus**: Polar details, a commercial routing service, a business registration (`docs/plus.md`).
