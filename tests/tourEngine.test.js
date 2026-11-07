@@ -374,3 +374,20 @@ test('approaching a stop, the arrival line is composed and the voice primed befo
   assert.equal(arrival[0].text, narrator.primed[0]);
   assert.equal(narrator.primed.length, 1);
 });
+
+test('the welcome comes before an arrival at the first stop even when the voice is busy with a direction', async (t) => {
+  const stops = [{ name: 'Final Square', lat: LAT, lon: LON }];
+  const { engine, narrator } = makeEngine({ stops, pois: [] });
+  t.after(() => engine.stop());
+  narrator.current = { text: 'Head north.', meta: { interjection: true }, options: {} }; // a direction is being spoken
+  const started = engine.start();
+  engine.update({ lat: LAT, lon: LON }); // first fix lands right on the first stop
+  await started;
+  await flush();
+  await flush();
+  assert.deepEqual(
+    narrator.queue.map((s) => s.meta.kind),
+    ['city', 'stop'],
+    'queued in this order: welcome, then the arrival',
+  );
+});

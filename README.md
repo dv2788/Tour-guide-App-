@@ -323,6 +323,8 @@ still downloading or ever fails, the phone's voice takes over without a gap.
 - Arriving at a stop interrupts any other story: *"You have arrived at Plaça Reial… Next stop: Barcelona Cathedral, 450 meters away."*
 - Big places count as reached when you get to their edge, not their centre point (the Louvre is 600 m long).
 - Stops are detected along the whole path you travelled, so fast driving or a weak GPS signal can't skip one.
+- The tour always opens with the welcome, even when you start right at the first stop or a direction is
+  already being spoken; the arrival follows it.
 - Visiting stops out of order works: a later stop you come to is announced, and the ones before it are
   skipped. A later stop you merely start next to (a round trip begins and ends by the same place) waits
   its turn. No itinerary at all also works ("free roam").

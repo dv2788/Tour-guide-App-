@@ -18,7 +18,8 @@ The first beta: everything a traveller needs to try Roamie for real, free, in th
 **On the way**
 - Turn-by-turn directions, spoken before each turn, with real street names, for walking,
   hiking, running, cycling and driving. A stop you happen to start next to (a round trip begins
-  and ends by the same place) waits its turn instead of being announced at once.
+  and ends by the same place) waits its turn instead of being announced at once. The tour
+  always opens with the welcome, even when you start right at the first stop.
 - The story of every place you pass, from Wikipedia, in English, French, Spanish, German or
   Italian, with a calm guide or a documentary narrator (voices run on the phone).
 - Told the way a guide tells it: "You have arrived at Casa Batlló, a building in the centre of

@@ -114,12 +114,18 @@ export class TourEngine {
       hasStops: this.stops.length > 0,
       happening: this.happening,
     });
-    this.#say(text, {
-      kind: 'city',
-      title: this.city?.name ?? 'Tour started',
-      thumbnail: citySummary?.thumbnail ?? null,
-      url: citySummary?.url ?? null,
-    });
+    // The tour opens with the welcome: an arrival at the first stop (you often start right
+    // there) or a direction already being spoken must not push it back.
+    this.#say(
+      text,
+      {
+        kind: 'city',
+        title: this.city?.name ?? 'Tour started',
+        thumbnail: citySummary?.thumbnail ?? null,
+        url: citySummary?.url ?? null,
+      },
+      { priority: true },
+    );
     this.ready = true;
     this.resolveReady();
     this.tick();
