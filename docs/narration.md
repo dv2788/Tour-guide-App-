@@ -59,10 +59,14 @@ The welcome, Italian (the first paragraph was all statistics):
    the article in this language never uses (a translation: "Eiffel Tower" in a French walk, "Barcelona Cathedral" in
    a German one). Then the article's own words: the definition's subject when it is short (*la tour Eiffel*, *les
    Tombeaux saadiens*), else the title with the article its kind takes (*la Cathédrale Sainte-Croix de Barcelone*,
-   *der Dom*). Articles contract: *au musée du Louvre*, *alla Boqueria*, *al palacio*, *beim Dom*, *bei der
-   Kathedrale*. English adds "the" where English puts one (*the Eiffel Tower*, *the Place de la Concorde*) and
-   leaves *Casa Batlló*, *Jemaa el-Fna*, *Sumida Park*. The city's name follows the article's title (*Barcelone*,
-   *Bruxelles*, *Marrakech*).
+   *der Dom*). A name that is no kind of place takes the article its own article gives it: "Le Grand Palais des
+   Champs-Élysées, plus communément appelé…" makes *au Grand Palais*; "L'Arena di Verona è…" makes *all'Arena di
+   Verona*; "The Louvre, or the Louvre Museum, is…" makes *the Louvre*. A bare name inside the article's own short
+   name takes that name: *Louvre* → *au musée du Louvre*, *Retiro* → *el Parque del Retiro*. Articles contract:
+   *au musée du Louvre*, *alla Boqueria*, *al palacio*, *beim Dom*, *bei der Kathedrale*. English adds "the" where
+   English puts one (*the Eiffel Tower*, *the Place de la Concorde*) and leaves *Casa Batlló*, *Jemaa el-Fna*,
+   *Sumida Park*. Accents don't make a name foreign (*Santa Maria del Mar* is *Santa María del Mar*). The city's
+   name follows the article's title (*Barcelone*, *Bruxelles*, *Marrakech*).
 6. **Read aloud properly** (`expandForSpeech`): "1329–1383" → "1329 to 1383" (à, a, bis, a); a dash in a sentence
    becomes a comma; "&" → and; "c. 1400" → around 1400; "St." → Saint / Sankt; "e.g.", "z. B.", "n°", "Nr.",
    "Jh.", "sec." written out. Abbreviations are expanded before sentences are split, so "St." ends no sentence.
@@ -70,6 +74,11 @@ The welcome, Italian (the first paragraph was all statistics):
 7. **Nothing twice.** A passing place whose article was already told under another title (a redirect) is skipped;
    a stop's article is never also told as a passing place.
 8. **The camera view** tells its stories the same way (`js/lensView.js`).
+9. **Ready before you arrive.** In the quiet stretch before a stop (no new story starts within about 150 m on
+   foot), the engine composes the arrival line and the AI voice synthesizes its first sentences, so the guide
+   speaks the moment you arrive instead of after a few seconds of silence (`TourEngine#primeArrival`,
+   `Narrator.prime`). What is said is exactly what was prepared. If the AI voice ever stalls on a sentence
+   (20 s plus 0.3 s per character), the phone's own voice takes over rather than leaving the tour silent.
 
 ## How it was checked
 
@@ -81,7 +90,10 @@ languages, before and after (about 60 stops), then the browser tests ran a tour 
 ## Known limits
 
 - A proper name that starts with a kind word gets its article even when locals say it without
-  ("Vous voici au Grand Palais" is right; "the Plaça Reial" is one of two usages).
+  ("the Plaça Reial" is one of two usages). German names that are no kind of place get none
+  ("Sie sind bei Grand Palais angekommen"): the case of the article can't be read off the text.
+- When the article's formal name is short enough, it wins over a nickname: *Sagrada Família* becomes
+  *el Templo Expiatorio de la Sagrada Familia* in Spanish, correct but formal.
 - Wikipedia's own quality: a thin article stays thin; a lead that is all names and dates is read as such.
 - The documentary narrator's phrasing exists in English, French, Spanish, German and Italian; other languages
   fall back to the standard phrases.

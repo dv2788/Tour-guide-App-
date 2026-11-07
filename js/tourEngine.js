@@ -19,6 +19,7 @@ const MINOR_AFTER_MS = 45000; // streets, stations…: only worth it after a lon
 // then speak without it rather than keep you waiting.
 const WELCOME_WAIT_MS = 4000;
 const ARRIVAL_WAIT_MS = 8000;
+const ARRIVAL_HYSTERESIS_M = 25; // GPS wobble at the edge of a stop's radius isn't "coming to it"
 const LEAD_WAIT_MS = 2500; // the whole lead section of an article: nice to have, not worth a long silence
 const atMost = (promise, ms) => Promise.race([promise, new Promise((resolve) => setTimeout(() => resolve(null), ms))]);
 
@@ -169,9 +170,12 @@ export class TourEngine {
     const usePath = previous && distanceMeters(previous, current) <= MAX_TRUSTED_JUMP_M;
     const closest = (stop) =>
       usePath ? distanceToSegmentMeters(stop, previous, current) : distanceMeters(current, stop);
+    // A later stop is reached only when you come to it: standing next to it at the start (a round
+    // trip begins and ends by the same place) or lingering nearby doesn't skip the stops before it.
+    const cameTo = (stop) => !!previous && distanceMeters(previous, stop) > stop.arrivalRadius + ARRIVAL_HYSTERESIS_M;
     const reached = this.stops
       .slice(this.nextStopIndex)
-      .filter((stop) => closest(stop) <= stop.arrivalRadius);
+      .filter((stop) => closest(stop) <= stop.arrivalRadius && (stop.index === this.nextStopIndex || cameTo(stop)));
     for (const stop of reached) this.#arrive(stop);
   }
 
@@ -199,12 +203,14 @@ export class TourEngine {
 
     // 2. Otherwise, talk about interesting places you're passing.
     if (this.narrator.busy || this.pendingPoi || this.pendingArrivals > 0) return;
+    const approaching = next && distanceToNext <= next.arrivalRadius + this.mode.arrivalRadius * 1.5;
+    if (approaching) this.#primeArrival(next);
     if (this.quietAt) {
       // Visiting a museum or having a meal: stay quiet until they set off again.
       if (distanceMeters(pos, this.quietAt) <= this.quietAt.arrivalRadius + 120) return;
       this.quietAt = null;
     }
-    if (next && distanceToNext <= next.arrivalRadius + this.mode.arrivalRadius * 1.5) return; // about to arrive
+    if (approaching) return; // about to arrive: no new story now
     const quietFor = this.now() - this.lastIdleAt;
     const gapMs = this.mode.gapSeconds * 1000;
     if (quietFor < gapMs) {
@@ -268,24 +274,13 @@ export class TourEngine {
     try {
       const [summary] = await Promise.all([atMost(this.#stopArticle(stop), ARRIVAL_WAIT_MS), this.readyPromise]); // after the welcome
       if (!this.running) return;
-      const lead = stop.storyPromise ? await atMost(stop.storyPromise, LEAD_WAIT_MS) : null;
-      if (!this.running) return;
-      const following = this.stops[this.nextStopIndex] ?? null;
-      const text = buildArrivalNarration({
-        lang: this.lang,
-        style: this.style,
-        mode: this.mode,
-        stopName: stop.name,
-        summary,
-        lead,
-        city: this.city?.name ?? '',
-        nextStopName: following ? this.#spokenName(following) : null,
-        nextDistance: following ? distanceMeters(stop, following) : 0,
-        kind: stop.kind,
-        meal: stop.meal,
-        visitMinutes: stop.visitMinutes,
-        stayMinutes: stop.stayMinutes,
-      });
+      // The line was usually composed (and its first words synthesized) on the way here.
+      let text = stop.arrivalText;
+      if (!text) {
+        const lead = stop.storyPromise ? await atMost(stop.storyPromise, LEAD_WAIT_MS) : null;
+        if (!this.running) return;
+        text = this.#arrivalNarration(stop, summary, lead);
+      }
       const interrupt = this.narrator.current?.meta?.kind === 'poi';
       this.#say(
         text,
@@ -297,9 +292,45 @@ export class TourEngine {
     }
   }
 
+  #arrivalNarration(stop, summary, lead) {
+    const following = this.stops[stop.index + 1] ?? null;
+    return buildArrivalNarration({
+      lang: this.lang,
+      style: this.style,
+      mode: this.mode,
+      stopName: stop.name,
+      summary,
+      lead,
+      city: this.city?.name ?? '',
+      nextStopName: following ? this.#spokenName(following) : null,
+      nextDistance: following ? distanceMeters(stop, following) : 0,
+      kind: stop.kind,
+      meal: stop.meal,
+      visitMinutes: stop.visitMinutes,
+      stayMinutes: stop.stayMinutes,
+    });
+  }
+
+  /**
+   * Approaching a stop, with nothing being said: compose its arrival line now and let the voice
+   * get its first sentences ready, so the guide speaks the moment you arrive. Needs the stop's
+   * article and lead, and the next stop's article (its name is said the way that article does).
+   */
+  #primeArrival(stop) {
+    if (stop.arrivalText || stop.summary === undefined) return;
+    if (stop.storyPromise && stop.lead === undefined) return;
+    const following = this.stops[stop.index + 1];
+    if (following && following.summary === undefined && following.kind !== 'food') return;
+    stop.arrivalText = this.#arrivalNarration(stop, stop.summary, stop.lead ?? null);
+    this.narrator.prime?.(stop.arrivalText);
+  }
+
   #stopArticle(stop) {
     // Cafés and restaurants only get a story when they're notable (tagged with an article).
-    if (stop.kind === 'food' && !stop.wikipedia && !stop.wikidata) return Promise.resolve(null);
+    if (stop.kind === 'food' && !stop.wikipedia && !stop.wikidata) {
+      stop.summary ??= null; // known: nothing to tell (so the break's line can be primed too)
+      return Promise.resolve(null);
+    }
     if (!stop.articlePromise) {
       stop.articlePromise = this.wiki
         .resolveArticle(stop)
@@ -307,7 +338,12 @@ export class TourEngine {
         .then((s) => {
           if (s?.pageid) this.narrated.add(s.pageid); // don't also mention it as a passing place
           stop.summary = s;
-          if (s?.title && this.wiki.story) stop.storyPromise = this.wiki.story(s.title).catch(() => null);
+          if (s?.title && this.wiki.story) {
+            stop.storyPromise = this.wiki
+              .story(s.title)
+              .catch(() => null)
+              .then((lead) => (stop.lead = lead ?? null));
+          }
           return s;
         });
     }

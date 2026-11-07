@@ -323,7 +323,9 @@ still downloading or ever fails, the phone's voice takes over without a gap.
 - Arriving at a stop interrupts any other story: *"You have arrived at Plaça Reial… Next stop: Barcelona Cathedral, 450 meters away."*
 - Big places count as reached when you get to their edge, not their centre point (the Louvre is 600 m long).
 - Stops are detected along the whole path you travelled, so fast driving or a weak GPS signal can't skip one.
-- Visiting stops out of order works. No itinerary at all also works ("free roam").
+- Visiting stops out of order works: a later stop you come to is announced, and the ones before it are
+  skipped. A later stop you merely start next to (a round trip begins and ends by the same place) waits
+  its turn. No itinerary at all also works ("free roam").
 - The guide uses the names you typed ("Plaça Reial", not OpenStreetMap's English "Royal Square"), and picks
   the square "Plaça de Catalunya", not the metro station under it.
 
@@ -345,8 +347,11 @@ js/app.js             screen wiring, map (Leaflet + MapLibre vector maps)
 js/samples.js         the sample tours
 js/tourEngine.js      decides what to say and when (no DOM: fully unit-tested)
 js/narration.js       builds the sentences the guide says
+js/story.js           turns an article into what a guide would say: definitions folded in, names in your language, no statistics
+js/numbers.js         numbers, years, ordinals and units in words, for the AI voice
 js/narrator.js        what to say next: queue, pause/skip/repeat, priority for arrivals, voice fallback
-js/neuralVoice.js     the on-device AI voice (Piper on ONNX Runtime Web), warm EQ, caching
+js/neuralVoice.js     the on-device AI voices' shared parts (ONNX Runtime Web, caching, warm EQ) and the Piper voice
+js/supertonicVoice.js the Supertonic 3 voice: one model, five languages, adaptive quality
 js/voices.js          voice catalogue, calm built-in voice ranking, pronunciation fixes
 js/itineraryImport.js reading routes pasted from maps apps and plain lists
 js/suggest.js         suggested routes: interest scoring, museum visits, meal breaks, route order

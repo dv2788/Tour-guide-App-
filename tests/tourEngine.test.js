@@ -93,7 +93,7 @@ test('arriving at a stop cuts off a story about a passing place', async (t) => {
   assert.deepEqual(arrival.options, { priority: true, interrupt: true });
 });
 
-test('stops reached out of order are still announced, with the next one after', async (t) => {
+test('a later stop you start next to waits for you; coming back to it out of order is announced, with the next one after', async (t) => {
   const stops = [
     { name: 'A', lat: LAT, lon: east(1000) },
     { name: 'B', lat: LAT, lon: east(50) },
@@ -102,6 +102,16 @@ test('stops reached out of order are still announced, with the next one after', 
   const { engine, narrator } = makeEngine({ stops, pois: [] });
   t.after(() => engine.stop());
   await engine.start();
+  // Standing by B (a round trip starts and ends near the same place): the tour begins with A.
+  engine.update({ lat: LAT, lon: east(50) });
+  engine.update({ lat: LAT, lon: east(60) }); // a wobble at the same spot
+  await flush();
+  await flush();
+  assert.equal(narrator.spoken.filter((s) => s.meta.kind === 'stop').length, 0, 'B not announced at the start');
+  assert.match(narrator.spoken.at(-1).text, /^Your first stop is A, 950 meters away\.$/);
+  assert.equal(engine.nextStopIndex, 0);
+  // Off towards A, then back to B before reaching A: B is reached, A is skipped.
+  engine.update({ lat: LAT, lon: east(300) });
   engine.update({ lat: LAT, lon: east(50) });
   await flush();
   await flush();
@@ -333,4 +343,34 @@ test('directions to the first stop start at once, even while Wikipedia is slow t
   assert.deepEqual([...new Set(targets)], ['Final Square'], 'the guide knows where to go before the welcome');
   assert.equal(engine.ready, false, 'the welcome is still waiting');
   engine.stop();
+});
+
+test('approaching a stop, the arrival line is composed and the voice primed before you get there', async (t) => {
+  const { engine, narrator, advance } = makeEngine({ pois: [] });
+  t.after(() => engine.stop());
+  await engine.start();
+  narrator.finishAll();
+  // 400 m out: nothing primed yet (a story about the way could still come).
+  engine.update({ lat: LAT, lon: east(200) });
+  await flush();
+  await flush();
+  advance(15000);
+  narrator.finishAll();
+  await flush();
+  assert.deepEqual(narrator.primed, []);
+  // 120 m out, inside the quiet zone before a stop: the line is ready and the voice warms up.
+  engine.update({ lat: LAT, lon: east(480) });
+  await flush();
+  await flush();
+  assert.equal(narrator.primed.length, 1);
+  assert.match(narrator.primed[0], /^You have arrived at Final Square\. A grand square\. Kings were crowned here\. That was your last stop/);
+  // Arriving says exactly the primed line (what was synthesized), once.
+  engine.update({ lat: LAT, lon: east(600) });
+  await flush();
+  await flush();
+  await flush();
+  const arrival = narrator.spoken.filter((s) => s.meta.kind === 'stop');
+  assert.equal(arrival.length, 1);
+  assert.equal(arrival[0].text, narrator.primed[0]);
+  assert.equal(narrator.primed.length, 1);
 });

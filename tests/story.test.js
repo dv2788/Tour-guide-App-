@@ -86,7 +86,18 @@ test('a stop is named the way the language names it: the article when the travel
   assert.equal(placeName('Saadian Tombs', { title: 'Tombeaux saadiens', extract: 'Les Tombeaux saadiens sont une nécropole royale historique à Marrakech, au Maroc.' }, 'fr'), 'les Tombeaux saadiens');
   assert.equal(placeName('Barcelona', { title: 'Barcelone', extract: 'Barcelone est la capitale de la Catalogne.' }, 'fr', { preferTitle: true }), 'Barcelone');
   assert.equal(placeName('Brussels', { title: 'Ville de Bruxelles', extract: 'La Ville de Bruxelles est une commune.' }, 'fr', { preferTitle: true }), 'Bruxelles');
-  assert.equal(spokenName('Louvre', { title: 'Musée du Louvre', firstSentence: 'Le musée du Louvre est un musée situé à Paris.' }, 'fr'), 'Louvre');
+  // The article's own words when the traveller's name has none: "à Louvre" is no French.
+  assert.equal(spokenName('Louvre', { title: 'Musée du Louvre', firstSentence: 'Le musée du Louvre est un musée situé à Paris.' }, 'fr'), 'le musée du Louvre');
+  assert.equal(
+    spokenName('Grand Palais', { title: 'Grand Palais', firstSentence: 'Le Grand Palais des Champs-Élysées, plus communément appelé Grand Palais, est un monument parisien.' }, 'fr'),
+    'le Grand Palais',
+  );
+  assert.equal(spokenName('Opéra Garnier', { title: 'Opéra Garnier', firstSentence: "L'opéra Garnier, ou palais Garnier, est un théâtre national." }, 'fr'), "l'Opéra Garnier");
+  assert.equal(spokenName('Louvre', { title: 'Louvre', firstSentence: 'The Louvre, or the Louvre Museum, is a national art museum in Paris.' }, 'en'), 'the Louvre');
+  assert.equal(spokenName('Arena di Verona', { title: 'Arena di Verona', firstSentence: "L'Arena di Verona è un anfiteatro romano." }, 'it'), "l'Arena di Verona");
+  assert.equal(spokenName('Retiro', { title: 'Parque del Retiro', firstSentence: 'El Parque del Retiro, popularmente conocido como el Retiro, es un parque público de Madrid.' }, 'es'), 'el Parque del Retiro');
+  assert.equal(spokenName('Montmartre', { title: 'Montmartre', firstSentence: 'Montmartre est une colline du nord de Paris.' }, 'fr'), 'Montmartre');
+  assert.equal(spokenName('Grand Palais', { title: 'Grand Palais', firstSentence: 'Das Grand Palais ist ein Ausstellungsgebäude in Paris.' }, 'de'), 'Grand Palais'); // German cases: left alone
   assert.equal(plainTitle('Royal Square (Barcelona)'), 'Royal Square');
 });
 

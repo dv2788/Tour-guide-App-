@@ -3,6 +3,7 @@
 export class FakeNarrator {
   constructor() {
     this.spoken = []; // every speak() call, in order
+    this.primed = []; // every prime() call
     this.queue = [];
     this.current = null;
     this.listeners = {};
@@ -13,6 +14,9 @@ export class FakeNarrator {
   }
   get busy() {
     return !!this.current || this.queue.length > 0;
+  }
+  prime(text) {
+    this.primed.push(text);
   }
   speak(text, meta = {}, options = {}) {
     const item = { text, meta, options };

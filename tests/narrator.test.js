@@ -11,6 +11,7 @@ function fakeVoice(kind = 'system', { fail = false } = {}) {
     available: true,
     spoken: [],
     prepared: [],
+    preparedWith: [],
     pending: [],
     speak(text) {
       voice.spoken.push(text);
@@ -21,8 +22,9 @@ function fakeVoice(kind = 'system', { fail = false } = {}) {
       voice.pending.push(entry);
       return { done, cancel: () => (entry.cancelled = true) };
     },
-    prepare(text) {
+    prepare(text, options = {}) {
       voice.prepared.push(text);
+      voice.preparedWith.push(options);
     },
     /** Finish whatever is being said now. */
     async finishCurrent() {
@@ -143,4 +145,35 @@ test('a non-urgent direction waits for the end of the story', async () => {
   assert.equal(voice.pending[0].cancelled, false, 'the story is not cut off');
   await voice.finishCurrent();
   assert.equal(voice.spoken.at(-1), 'Head east onto Rue de Rivoli.');
+});
+
+test('an AI voice that never finishes a sentence is given up on, and the built-in voice takes over', async () => {
+  const { NeuralBackend } = await import('../js/narrator.js');
+  const ai = new NeuralBackend({ lang: 'en', id: 'supertonic-3' });
+  ai.voice = { ready: true, synthesize: () => new Promise(() => {}) }; // stalls forever
+  ai.player = { play: async () => {}, stop() {} };
+  ai.budgetMs = () => 30;
+  const builtIn = fakeVoice('system');
+  const n = new Narrator({ backend: builtIn });
+  const events = [];
+  n.on('voice', (e) => events.push(`${e.kind}:${e.error?.message ?? ''}`));
+  n.backend = ai;
+  n.speak('Hello there.');
+  await wait(80);
+  assert.deepEqual(builtIn.spoken, ['Hello there.']);
+  assert.deepEqual(events, ['system:synthesis timed out']);
+  assert.equal(ai.prepared.size, 0, 'the stuck promise is dropped');
+});
+
+test('priming gets the first two pieces ready at full quality; only the AI voice is primed', () => {
+  const voice = fakeVoice('neural');
+  const n = new Narrator({ backend: voice });
+  const sentence = (i) => `Sentence number ${i} is about seventy characters long so the chunker splits it off.`;
+  n.prime([1, 2, 3, 4].map(sentence).join(' '));
+  assert.equal(voice.prepared.length, 2, 'a short first piece, then the next one');
+  assert.equal(voice.prepared[0], sentence(1));
+  assert.ok(voice.preparedWith.every((o) => o.unhurried === true));
+  const builtIn = fakeVoice('system');
+  new Narrator({ backend: builtIn }).prime('One. Two.');
+  assert.deepEqual(builtIn.prepared, []);
 });

@@ -166,6 +166,33 @@ const DETERMINER = {
   de: /^(?:ein|eine|einer|eines|der|die|das|eins der|eine der|einer der|zwei|drei)\b/i,
   it: /^(?:un|una|uno|un['’]|il|la|lo|l['’]|i|gli|le|uno dei|una delle|uno degli|due|tre)\b/i,
 };
+// The definite article at the start of a name or sentence ("Le Grand Palais…", "L'Arena…").
+const DEFINITE = {
+  en: /^(the)\s+/i,
+  fr: /^(?:(le|la|les)\s+|(l['’])\s*)/i,
+  es: /^(el|la|los|las)\s+/i,
+  it: /^(?:(il|lo|la|i|gli|le)\s+|(l['’])\s*)/i,
+};
+const fold = (s) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+
+/**
+ * The article a name takes, from how the article's own text starts: "Le Grand Palais des
+ * Champs-Élysées, plus communément appelé…" gives "le Grand Palais"; "The Louvre, or the Louvre
+ * Museum, is…" gives "the Louvre". Null when none of the texts starts with the name.
+ */
+function articleFromText(name, texts, lang) {
+  const re = DEFINITE[lang];
+  if (!re) return null;
+  const wanted = fold(name);
+  for (const text of texts) {
+    const m = text ? re.exec(text) : null;
+    if (!m) continue;
+    const rest = fold(text.slice(m[0].length));
+    if (rest.startsWith(wanted) && !/\p{L}/u.test(rest.slice(wanted.length, wanted.length + 1))) return m[0].trim().toLowerCase();
+  }
+  return null;
+}
+
 const ARTICLES = {
   en: /^(?:the|a|an)\s/i,
   fr: /^(?:le|la|les|l['’]|un|une)\s?/i,
@@ -258,11 +285,16 @@ export function englishName(name) {
 
 export function spokenName(name, { title, firstSentence, ignore = '', preferTitle = false } = {}, lang = 'en') {
   const given = String(name ?? '').trim();
-  if (lang === 'en') return preferTitle ? given : englishName(given);
+  if (lang === 'en') {
+    const said = preferTitle ? given : englishName(given);
+    // "Louvre": English says "the Louvre", and its article's first words do too.
+    if (said === given && !preferTitle && !ARTICLES.en.test(given) && articleFromText(given, [firstSentence], 'en')) return `the ${given}`;
+    return said;
+  }
   if (!title) return given;
   const own = plainTitle(title);
-  const skip = new Set(words(ignore)); // the city's name is in many titles: it says nothing
-  const tokens = (s) => words(s).filter((w) => !skip.has(w));
+  const skip = new Set(words(ignore).map(fold)); // the city's name is in many titles: it says nothing
+  const tokens = (s) => words(s).map(fold).filter((w) => !skip.has(w)); // "María" and "Maria" are one word
   const def = !preferTitle && firstSentence ? splitDefinition(cleanForSpeech(firstSentence), lang) : null;
   const known = new Set([...tokens(own), ...(def ? tokens(def.name) : [])]);
   // "Eiffel Tower" in French, "Barcelona Cathedral" in German: a word the article never uses
@@ -274,9 +306,20 @@ export function spokenName(name, { title, firstSentence, ignore = '', preferTitl
   else said = own;
   if (ARTICLES[lang]?.test(said)) return said[0].toLowerCase() + said.slice(1);
   const first = said.split(/[\s-]/)[0];
+  const join = (article, rest) => (/['’]$/.test(article) ? `${article}${rest}` : `${article} ${rest}`);
   const article = articleFor(first, lang);
-  if (!article) return said;
-  return article.endsWith("'") ? `${article}${said}` : `${article} ${said}`;
+  if (article) return join(article, said);
+  // Not a kind of place, but the article's own text starts with an article and this name
+  // ("Le Grand Palais…", "L'Arena di Verona è…"): say it that way.
+  const fromText = articleFromText(said, [def?.name, def?.subject, firstSentence ? cleanForSpeech(firstSentence) : '', own], lang);
+  if (fromText) return join(fromText, said);
+  // "Louvre": the article calls it "Le musée du Louvre"; a short name of the article's that
+  // contains the traveller's, with its article, is how a local says it ("au musée du Louvre").
+  if (def && DEFINITE[lang]?.test(def.name) && def.name.length <= 60) {
+    const inside = new RegExp(`(?<!\\p{L})${fold(said).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?!\\p{L})`, 'u');
+    if (inside.test(fold(def.name)) && words(def.name).length <= words(said).length + 3) return def.name[0].toLowerCase() + def.name.slice(1);
+  }
+  return said;
 }
 
 /** "à le musée" -> "au musée", "a el palacio" -> "al palacio", "bei dem Dom" -> "beim Dom"… */

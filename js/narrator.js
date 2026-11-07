@@ -6,11 +6,18 @@ import { chunkForSpeech } from './text.js';
 import { speechLocale } from './i18n.js';
 import { rankSystemVoices, prepareForNeuralVoice, voiceProfile } from './voices.js';
 import { getPiperVoice, SoothingPlayer } from './neuralVoice.js';
-import { getSupertonicVoice, SupertonicVoice } from './supertonicVoice.js';
+import { getSupertonicVoice, SupertonicVoice, MAX_STEPS } from './supertonicVoice.js';
 
 const WORDS_PER_MINUTE = 165;
 const estimateMs = (text, rate) => Math.max(1200, ((text.split(/\s+/).length / WORDS_PER_MINUTE) * 60000) / rate);
 const CALM_PITCH = 0.95; // built-in voices: a touch lower
+// Synthesis watchdog: 20 s plus 0.3 s per character (a 160-character piece gets 68 s, about
+// seven times its speaking time). Beyond that the AI voice has stalled, and the built-in voice takes over.
+const SYNTH_BASE_MS = 20000;
+const SYNTH_MS_PER_CHAR = 300;
+// Pieces of speech kept ready (each about 10 s of audio, ~1.7 MB): the next sentences of the
+// current story, plus the start of the next stop's story, primed on the way there.
+const PREPARED_MAX = 12;
 
 /** The phone's built-in text-to-speech, using the calmest available voice. */
 export class SystemBackend {
@@ -110,31 +117,45 @@ export class NeuralBackend {
     this.player.unlock();
   }
 
-  /** Start synthesizing ahead of time. */
-  prepare(text, { rate }) {
+  /** Start synthesizing ahead of time. `unhurried`: there is time, so take the voice's best quality. */
+  prepare(text, { rate, unhurried = false }) {
     const key = `${rate}|${text}`;
     if (!this.prepared.has(key)) {
       const { pace, pitch, pause } = this.profile;
       // Played back at `pitch` speed, so synthesize a little faster to keep the overall pace.
-      const promise = this.voice.synthesize(this.prepareText(text), { pace: (pace * pitch) / rate, pause, lang: this.lang });
+      const options = { pace: (pace * pitch) / rate, pause, lang: this.lang };
+      if (unhurried) options.steps = MAX_STEPS;
+      const promise = this.voice.synthesize(this.prepareText(text), options);
       promise.catch(() => this.prepared.delete(key));
       this.prepared.set(key, promise);
-      while (this.prepared.size > 8) this.prepared.delete(this.prepared.keys().next().value);
+      while (this.prepared.size > PREPARED_MAX) this.prepared.delete(this.prepared.keys().next().value);
     }
     return this.prepared.get(key);
+  }
+
+  /**
+   * How long synthesis may take before the voice is treated as stuck: generous even for a slow
+   * phone (a few times real time), but not forever, or a stall would leave the tour silent.
+   */
+  budgetMs(text) {
+    return SYNTH_BASE_MS + text.length * SYNTH_MS_PER_CHAR;
   }
 
   speak(text, { rate }) {
     let cancelled = false;
     const done = (async () => {
-      const audio = await this.prepare(text, { rate });
+      let timer;
+      const stuck = new Promise((_, reject) => (timer = setTimeout(() => reject(new Error('synthesis timed out')), this.budgetMs(text))));
+      stuck.catch(() => {});
+      const audio = await Promise.race([this.prepare(text, { rate }), stuck]).finally(() => clearTimeout(timer));
       if (cancelled) return;
       const seconds = audio.samples.length / audio.sampleRate / this.profile.pitch;
-      let timer;
-      const watchdog = new Promise((resolve) => (timer = setTimeout(resolve, seconds * 1000 + 4000)));
+      let playTimer;
+      const watchdog = new Promise((resolve) => (playTimer = setTimeout(resolve, seconds * 1000 + 4000)));
       await Promise.race([this.player.play(audio), watchdog]);
-      clearTimeout(timer);
+      clearTimeout(playTimer);
     })();
+    done.catch(() => this.prepared.delete(`${rate}|${text}`)); // don't hand a stuck promise out again
     return {
       done,
       cancel: () => {
@@ -212,6 +233,15 @@ export class Narrator {
 
   setRate(rate) {
     this.rate = rate;
+  }
+
+  /**
+   * Get the start of something the guide will say soon ready: the AI voice needs a few seconds
+   * per sentence, and the first words of an arrival shouldn't come after a silence.
+   */
+  prime(text) {
+    if (!text || this.backend.kind !== 'neural' || !this.backend.prepare) return;
+    for (const chunk of this.#chunksFor(text).slice(0, 2)) this.backend.prepare(chunk, { rate: this.rate, unhurried: true });
   }
 
   /**

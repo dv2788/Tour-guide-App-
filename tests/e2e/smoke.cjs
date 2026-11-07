@@ -65,20 +65,25 @@ const LIVE = process.env.LIVE === '1';
     await page.waitForTimeout(1500);
     // Directions to the next stop: card, gold line, a spoken turn.
     await page.waitForFunction(() => /min/.test(document.getElementById('nav-target').textContent) && document.querySelector('.nav-line'), null, { timeout: 30000 });
-    // (Right after a wrong turn the card says "Finding a new way…" for a moment.)
-    await page.waitForFunction(() => !/Finding/.test(document.getElementById('nav-sentence').textContent), null, { timeout: 30000 }).catch(() => {});
-    await page.waitForTimeout(2500); // let the map tiles load
-    const nav = await page.evaluate(() => {
-      const vertices = (el) => (el?.getAttribute('d')?.match(/[ML]/g) ?? []).length;
-      return {
-        sentence: document.getElementById('nav-sentence').textContent,
-        target: document.getElementById('nav-target').textContent,
-        link: document.getElementById('nav-open').href,
-        navLinePoints: vertices(document.querySelector('.nav-line')),
-        vectorMap: document.getElementById('map').classList.contains('vector-map'),
-        status: document.getElementById('status').textContent,
-      };
-    });
+    // (Right after a wrong turn, or on reaching a stop, the card says "Finding the way…" for a
+    // moment while the routing service answers: sample again rather than at that moment.)
+    let nav;
+    for (let attempt = 0; attempt < 4; attempt++) {
+      await page.waitForFunction(() => !/Finding/.test(document.getElementById('nav-sentence').textContent), null, { timeout: 30000 }).catch(() => {});
+      await page.waitForTimeout(2500); // let the map tiles load
+      nav = await page.evaluate(() => {
+        const vertices = (el) => (el?.getAttribute('d')?.match(/[ML]/g) ?? []).length;
+        return {
+          sentence: document.getElementById('nav-sentence').textContent,
+          target: document.getElementById('nav-target').textContent,
+          link: document.getElementById('nav-open').href,
+          navLinePoints: vertices(document.querySelector('.nav-line')),
+          vectorMap: document.getElementById('map').classList.contains('vector-map'),
+          status: document.getElementById('status').textContent,
+        };
+      });
+      if (!/Finding/.test(nav.sentence) && nav.navLinePoints >= 6) break;
+    }
     console.log('Directions:', JSON.stringify(nav));
     expect(/head|turn|bear|keep|continue|just ahead/i.test(nav.sentence), `a direction is shown (${nav.sentence})`);
     expect(!/Rue du Test|Quai des Essais/.test(nav.sentence), 'directions name real streets');
@@ -114,7 +119,7 @@ const LIVE = process.env.LIVE === '1';
   const said = await runTour('2');
   console.log('\nScenario 1, typed itinerary. The guide said:\n');
   said.forEach((t, i) => console.log(`${String(i + 1).padStart(2)}. ${t}\n`));
-  expect(said[0]?.startsWith('Welcome to Barcelona.'), 'starts with a welcome to Barcelona');
+  expect(/^Welcome to Barcelona[.,] /.test(said[0] ?? ''), 'starts with a welcome to Barcelona');
   const arrivals = arrivalsIn(said);
   expect(
     JSON.stringify(arrivals) === JSON.stringify(fixtures.stops),

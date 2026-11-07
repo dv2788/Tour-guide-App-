@@ -17,19 +17,21 @@ The first beta: everything a traveller needs to try Roamie for real, free, in th
 
 **On the way**
 - Turn-by-turn directions, spoken before each turn, with real street names, for walking,
-  hiking, running, cycling and driving.
+  hiking, running, cycling and driving. A stop you happen to start next to (a round trip begins
+  and ends by the same place) waits its turn instead of being announced at once.
 - The story of every place you pass, from Wikipedia, in English, French, Spanish, German or
   Italian, with a calm guide or a documentary narrator (voices run on the phone).
 - Told the way a guide tells it: "You have arrived at Casa Batlló, a building in the centre of
   Barcelona" rather than the encyclopedia's "Casa Batlló is a building in the center of
   Barcelona, Spain"; at a stop, the whole lead section of the article, not just its first
   paragraph; statistics and administrative geography left out; a stop named the way your
-  language names it ("Vous voici à la cathédrale Sainte-Croix de Barcelone"); ranges, dashes
-  and abbreviations said properly; a place never told twice.
+  language names it ("Vous voici à la cathédrale Sainte-Croix de Barcelone", "au Grand Palais",
+  "the Louvre"); ranges, dashes and abbreviations said properly; a place never told twice.
 - A new, natural voice: Nora, Victor (the narrator) and Lea are one voice model (Supertonic 3)
   that speaks all five languages, served by the app itself (110 MB, once). Numbers, years,
   centuries and kings' names are read as a guide would say them. The lighter Piper voices stay
-  as an option and as the fallback.
+  as an option and as the fallback. The voice speaks the moment you reach a stop: the arrival
+  is prepared on the way there. Should it ever stall, the phone's own voice takes over.
 - First person: travel through the streets in 3D, facing the way you go, with signposts for the
   stops; with a Google key, real Street View photos instead.
 - Point your camera at a building to hear what it is, and be guided there.
