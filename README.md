@@ -307,7 +307,7 @@ still downloading or ever fails, the phone's voice takes over without a gap.
 | 2. Move | Your position comes from GPS, or from a simulated trip that follows the directions along real streets | Geolocation API, routing.openstreetmap.de |
 | 3. Look around | Places near you with a Wikipedia article are fetched as you go | Wikipedia geosearch |
 | 4. Decide | The guide picks the best nearby place: close, notable (has a photo), not behind you, not already told, not a metro station | `js/tourEngine.js` |
-| 5. Talk | It says where it is ("on your right") and tells its story, in your language | Wikipedia + an on-device AI voice (or the phone's own) |
+| 5. Talk | It says where it is ("on your right") and tells its story the way a guide would: "You have arrived at Casa Batlló, a building in the centre of Barcelona", the whole lead section at a stop, no statistics, names in your language (`js/story.js`) | Wikipedia + an on-device AI voice (or the phone's own) |
 
 ### Each way of travelling gets its own guide
 

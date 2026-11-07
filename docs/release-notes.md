@@ -20,6 +20,12 @@ The first beta: everything a traveller needs to try Roamie for real, free, in th
   hiking, running, cycling and driving.
 - The story of every place you pass, from Wikipedia, in English, French, Spanish, German or
   Italian, with a calm guide or a documentary narrator (voices run on the phone).
+- Told the way a guide tells it: "You have arrived at Casa Batlló, a building in the centre of
+  Barcelona" rather than the encyclopedia's "Casa Batlló is a building in the center of
+  Barcelona, Spain"; at a stop, the whole lead section of the article, not just its first
+  paragraph; statistics and administrative geography left out; a stop named the way your
+  language names it ("Vous voici à la cathédrale Sainte-Croix de Barcelone"); ranges, dashes
+  and abbreviations said properly; a place never told twice.
 - A new, natural voice: Nora, Victor (the narrator) and Lea are one voice model (Supertonic 3)
   that speaks all five languages, served by the app itself (110 MB, once). Numbers, years,
   centuries and kings' names are read as a guide would say them. The lighter Piper voices stay

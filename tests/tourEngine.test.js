@@ -57,7 +57,7 @@ test('a walk past two places to the final stop', async (t) => {
 
   const said = narrator.spoken.map((s) => s.text);
   assert.equal(said.length, 5, said.join('\n'));
-  assert.match(said[0], /^Welcome to Testville\. Testville is a city\. It is nice\.$/);
+  assert.match(said[0], /^Welcome to Testville, a city\. It is nice\. It has a river\.$/);
   assert.match(said[1], /^Your first stop is Final Square, 600 meters away\.$/);
   assert.match(said[2], /^On your left: Left Museum\. A museum\. It has art\. It is old\. It is big\.$/);
   assert.match(said[3], /^On your right: Right Church\. A church\. It has bells\.$/);
@@ -263,7 +263,7 @@ test('museum visits and meals: the guide says so, then stays quiet until you lea
   engine.update({ lat: LAT, lon: east(100) }); // at the museum
   await flush();
   await flush();
-  assert.match(narrator.spoken.at(-1).text, /You have arrived at Grand Museum\. A great museum\. It's well worth going inside: allow about 60 minutes/);
+  assert.match(narrator.spoken.at(-1).text, /You have arrived at the Grand Museum\. A great museum\. It's well worth going inside: allow about 60 minutes/);
   narrator.finishAll();
   clock += 60000;
   engine.update({ lat: LAT, lon: east(105) }); // wandering inside: the garden is close, but no story
@@ -308,7 +308,7 @@ test('a long stay (a castle, a viewpoint): the guide says how long, and lets you
   await flush();
   await flush();
   const statue = narrator.spoken.at(-1).text;
-  assert.match(statue, /You have arrived at Small Statue\./);
+  assert.match(statue, /You have arrived at the Small Statue\./);
   assert.ok(!/Take your time/.test(statue), 'five minutes: nothing to announce');
 });
 

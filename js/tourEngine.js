@@ -7,6 +7,7 @@ import {
   buildWelcomeNarration,
   buildFirstStopNarration,
   buildArrivalNarration,
+  placeName,
   LINGER_MINUTES,
 } from './narration.js';
 
@@ -18,6 +19,7 @@ const MINOR_AFTER_MS = 45000; // streets, stations…: only worth it after a lon
 // then speak without it rather than keep you waiting.
 const WELCOME_WAIT_MS = 4000;
 const ARRIVAL_WAIT_MS = 8000;
+const LEAD_WAIT_MS = 2500; // the whole lead section of an article: nice to have, not worth a long silence
 const atMost = (promise, ms) => Promise.race([promise, new Promise((resolve) => setTimeout(() => resolve(null), ms))]);
 
 /**
@@ -99,12 +101,15 @@ export class TourEngine {
       citySummary = await atMost(this.wiki.resolveArticle(this.city, { maxDistance: 30000 }).catch(() => null), WELCOME_WAIT_MS);
       if (citySummary) this.narrated.add(citySummary.pageid);
     }
+    // The city's whole lead section (its story, not just its first paragraph), if it comes quickly.
+    const lead = citySummary?.title && this.wiki.story ? await atMost(this.wiki.story(citySummary.title).catch(() => null), LEAD_WAIT_MS) : null;
     if (!this.running) return;
     const text = buildWelcomeNarration({
       lang: this.lang,
       style: this.style,
       cityName: this.city?.name,
       citySummary,
+      lead,
       hasStops: this.stops.length > 0,
       happening: this.happening,
     });
@@ -184,7 +189,7 @@ export class TourEngine {
     if (next) {
       if (!this.announcedFirstStop && this.nextStopIndex === 0) {
         this.announcedFirstStop = true;
-        this.#say(buildFirstStopNarration({ lang: this.lang, style: this.style, stopName: next.name, distance: distanceToNext }), {
+        this.#say(buildFirstStopNarration({ lang: this.lang, style: this.style, stopName: this.#spokenName(next), distance: distanceToNext }), {
           kind: 'info',
           title: next.name,
         });
@@ -224,6 +229,7 @@ export class TourEngine {
     try {
       const summary = await this.wiki.summary(poi.title).catch(() => null);
       if (!this.running) return;
+      if (summary?.pageid && summary.pageid !== poi.id && this.narrated.has(summary.pageid)) return; // told already, under another title
       if (summary?.pageid) this.narrated.add(summary.pageid);
       // Recompute direction now: we may have moved while the story was loading.
       const distance = distanceMeters(this.position, poi);
@@ -262,6 +268,8 @@ export class TourEngine {
     try {
       const [summary] = await Promise.all([atMost(this.#stopArticle(stop), ARRIVAL_WAIT_MS), this.readyPromise]); // after the welcome
       if (!this.running) return;
+      const lead = stop.storyPromise ? await atMost(stop.storyPromise, LEAD_WAIT_MS) : null;
+      if (!this.running) return;
       const following = this.stops[this.nextStopIndex] ?? null;
       const text = buildArrivalNarration({
         lang: this.lang,
@@ -269,7 +277,9 @@ export class TourEngine {
         mode: this.mode,
         stopName: stop.name,
         summary,
-        nextStopName: following?.name ?? null,
+        lead,
+        city: this.city?.name ?? '',
+        nextStopName: following ? this.#spokenName(following) : null,
         nextDistance: following ? distanceMeters(stop, following) : 0,
         kind: stop.kind,
         meal: stop.meal,
@@ -296,10 +306,17 @@ export class TourEngine {
         .catch(() => null)
         .then((s) => {
           if (s?.pageid) this.narrated.add(s.pageid); // don't also mention it as a passing place
+          stop.summary = s;
+          if (s?.title && this.wiki.story) stop.storyPromise = this.wiki.story(s.title).catch(() => null);
           return s;
         });
     }
     return stop.articlePromise;
+  }
+
+  /** A stop's name as this language says it (once its article is known; the given name until then). */
+  #spokenName(stop) {
+    return placeName(stop.name, stop.summary ?? null, this.lang, { city: this.city?.name ?? '' });
   }
 
   async #prefetchStopArticles() {

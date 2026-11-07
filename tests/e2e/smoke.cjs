@@ -98,7 +98,8 @@ const LIVE = process.env.LIVE === '1';
     await page.click('#btn-end');
     return said;
   }
-  const arrivalsIn = (said) => said.filter((t) => t.startsWith('You have arrived at')).map((t) => t.match(/^You have arrived at (.+?)\./)[1]);
+  // "You have arrived at the Plaça de Catalunya, a large square…": the name, without "the" and what follows.
+  const arrivalsIn = (said) => said.filter((t) => t.startsWith('You have arrived at')).map((t) => t.match(/^You have arrived at (?:the )?(.+?)(?:,|\.)/)[1]);
 
   // ---- Scenario 1: the sample walk, typed stops ----
   await page.goto(base);
@@ -123,7 +124,7 @@ const LIVE = process.env.LIVE === '1';
   // OpenStreetMap's English names are "Batlló House", "Royal Square", "Cathedral of Santa Eulalia".
   expect(!said.some((t) => /(^You have arrived at|Next stop:) (Batlló House|Royal Square|Cathedral of Santa Eulalia)/.test(t)), 'uses the names the traveller typed');
   expect(!said.some((t) => /^(On your (left|right)|Ahead of you|Just behind you): [^.]*station/.test(t)), 'skips metro and railway stations');
-  const square = said.find((t) => t.startsWith('You have arrived at Plaça de Catalunya')) ?? '';
+  const square = said.find((t) => /^You have arrived at (?:the )?Plaça de Catalunya/.test(t)) ?? '';
   expect(/square/i.test(square) && !/metro|railway/i.test(square), `describes the Plaça de Catalunya square, not the station under it (${square.slice(0, 120)})`);
 
   // ---- Scenario 2: paste a Google Maps walking route ----

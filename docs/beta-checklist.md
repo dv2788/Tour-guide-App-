@@ -14,6 +14,8 @@ What "ready to publish" means, and where each item stands. ✓ done · ◻ needs
   Wikipedia search asked again); 2,300 flagged problems went down to 159, nearly all of them
   a famous landmark on the way or a war memorial the checker wrongly suspected.
 - ✓ Stop times checked across those cities: no statue gets an hour, no cathedral gets five minutes.
+- ✓ What the guide says, checked on sample tours in five languages: the definition folded into the arrival,
+  the full lead section at stops, no statistics, names in the listener's language, nothing told twice.
 - ✓ New AI voice (Supertonic 3, all five languages): 8-bit copy checked against the full model, every
   language transcribed word for word by a speech recognizer, numbers written out, speed adapts to the phone.
 - ✓ Live site re-checked after every push.

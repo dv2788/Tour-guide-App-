@@ -1,7 +1,7 @@
 // Keeps the app itself available with a weak connection. Map tiles and Wikipedia
 // always come from the network (they're live data), so they're not cached here.
 // The AI voice files are cached separately by js/neuralVoice.js and js/supertonicVoice.js.
-const CACHE = 'roamie-v49';
+const CACHE = 'roamie-v50';
 const SHELL = [
   './',
   './index.html',
@@ -36,6 +36,7 @@ const SHELL = [
   './js/neuralVoice.js',
   './js/numbers.js',
   './js/supertonicVoice.js',
+  './js/story.js',
   './js/openingHours.js',
   './js/plus.js',
   './js/plus-config.js',

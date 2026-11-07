@@ -5,7 +5,7 @@
 
 import { cameraHeading, smoothHeading, compassJitter, placesInView, placesAround, whereItIs, screenFov } from './lens.js';
 import { distanceMeters, bearingDegrees, angleDiff } from './geo.js';
-import { firstSentences } from './text.js';
+import { storySentences, polish, plainTitle } from './story.js';
 import { photoPage } from './wiki.js';
 import { declination, trueHeading } from './declination.js';
 
@@ -313,7 +313,7 @@ export function createLens({ wiki, streetName, narrator }) {
     box.hidden = false;
     box.tabIndex = -1;
     box.dataset.name = name;
-    const text = summary?.extract ? firstSentences(summary.extract, 5) : summary === null ? 'Looking it up…' : '';
+    const text = summary?.extract ? polish(storySentences(summary.extract, { count: 5, maxChars: 700, lang: wiki.lang ?? 'en' }).join(' '), wiki.lang ?? 'en') : summary === null ? 'Looking it up…' : '';
     box.replaceChildren(
       ...(summary?.thumbnail ? [el('img', { src: summary.thumbnail, alt: '', className: 'lens-popup-img', loading: 'lazy', decoding: 'async' })] : []),
       el('h3', { textContent: summary?.title ?? name }),
@@ -344,7 +344,8 @@ export function createLens({ wiki, streetName, narrator }) {
   function tell(summary) {
     const voice = narrator();
     voice.unlock?.(); // inside the tap, so phones allow the sound
-    voice.speak(`${summary.title}. ${firstSentences(summary.extract, 6)}`, { kind: 'poi', title: summary.title, thumbnail: summary.thumbnail, url: summary.url }, { priority: true, interrupt: true });
+    const story = polish(storySentences(summary.extract, { count: 6, maxChars: 750, lang: wiki.lang ?? 'en' }).join(' '), wiki.lang ?? 'en');
+    voice.speak(`${plainTitle(summary.title)}. ${story}`, { kind: 'poi', title: summary.title, thumbnail: summary.thumbnail, url: summary.url }, { priority: true, interrupt: true });
   }
 
   return { open, close, setTarget, get isOpen() { return Boolean(state); } };

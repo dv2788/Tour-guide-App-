@@ -188,6 +188,10 @@ async function mockNetwork(context, { routeCacheName = 'smoke' } = {}) {
         .sort((a, b) => articleLength(b.page.title) - articleLength(a.page.title))
         .slice(0, Number(p.get('gsrlimit')));
       json(route, { query: { pages: found.map(({ page }, i) => ({ ...withDetails(page), index: i + 1 })) } });
+    } else if (p.get('prop') === 'extracts') {
+      // The whole lead section of an article, for a stop: the recorded summary stands in for it.
+      const pages = (p.get('titles') ?? '').split('|').map((title) => ({ title, extract: fixtures.summaries[title]?.extract ?? '' }));
+      json(route, { batchcomplete: true, query: { pages } });
     } else if (p.get('prop') === 'categories') {
       // Is it demolished? None of the recorded places is.
       json(route, { query: { pages: (p.get('titles') ?? '').split('|').map((title) => ({ title, categories: [{ title: 'Category:Buildings and structures in Barcelona' }] })) } });

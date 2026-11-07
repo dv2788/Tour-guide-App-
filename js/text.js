@@ -8,7 +8,7 @@ export function cleanForSpeech(text) {
   if (!text) return '';
   // Whitespace runs first: every step below then works in a single pass, whatever the text
   // (Wikipedia text is written by anyone: a run of 100,000 spaces must not freeze the phone).
-  let s = String(text).replace(/\s{2,}/g, ' ');
+  let s = String(text).replace(/[\u200b-\u200d\ufeff]/g, '').replace(/\s{2,}/g, ' '); // zero-width marks left by footnotes
   s = dropAsides(s);
   s = s.replace(/\s+([,.;:!?])/g, '$1');
   s = s.replace(/\s{2,}/g, ' ');

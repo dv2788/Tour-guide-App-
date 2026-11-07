@@ -217,6 +217,24 @@ export function createWikiService({ lang = 'en', fetchImpl = defaultFetch, retry
     return promise;
   }
 
+  const stories = new Map();
+
+  /**
+   * The whole lead section of an article (several paragraphs of plain text), for a stop where
+   * there is time to listen: the summary above is only its first paragraph. Null when empty.
+   */
+  function story(title) {
+    if (stories.has(title)) return stories.get(title);
+    const params = new URLSearchParams({ action: 'query', prop: 'extracts', exintro: '1', explaintext: '1', redirects: '1', format: 'json', formatversion: '2', origin: '*', titles: title });
+    const promise = getJson(`${host}/w/api.php?${params}`).then((d) => {
+      const text = String(d?.query?.pages?.[0]?.extract ?? '').trim();
+      return text ? { text, paragraphs: text.split(/\n+/).map((p) => p.trim()).filter(Boolean) } : null;
+    });
+    stories.set(title, promise);
+    promise.catch(() => stories.delete(title));
+    return promise;
+  }
+
   /** Article title in this language for a Wikidata item (e.g. Q243 -> "Eiffel Tower"). */
   async function titleFromWikidata(qid) {
     const params = new URLSearchParams({
@@ -421,5 +439,5 @@ export function createWikiService({ lang = 'en', fetchImpl = defaultFetch, retry
       .slice(0, limit);
   }
 
-  return { lang, nearby, summary, titleFromWikidata, resolveArticle, exploreArea, neighbourhoods, markDemolished };
+  return { lang, nearby, summary, story, titleFromWikidata, resolveArticle, exploreArea, neighbourhoods, markDemolished };
 }
