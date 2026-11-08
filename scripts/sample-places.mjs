@@ -42,7 +42,9 @@ for (const sample of SAMPLES) {
   const stops = {};
   for (const stop of sample.stops) {
     const known = before?.stops?.[stop];
-    const place = known ? { name: stop, ...known } : await geocoder.findPlace(stop, city, stop);
+    // `queries` names what to ask the map for when the stop's name isn't what the map calls it
+    // (the local name in another script, say); the stop keeps its own name.
+    const place = known ? { name: stop, ...known } : await geocoder.findPlace(sample.queries?.[stop] ?? stop, city, stop);
     if (!place) throw new Error(`${stop} (${sample.label}) not found on the map`);
     stops[stop] = keep(place);
   }
