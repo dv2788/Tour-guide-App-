@@ -34,7 +34,9 @@ function inTurn(task) {
 }
 
 // A city, town or island is never the article for a stop in it.
-const SETTLEMENT_RE = /\b(?:city|town|municipality|village|comune|commune|province|region|island|country|capital)\b/i;
+const SETTLEMENT_RE = /\b(?:city|town|municipality|village|comune|commune|province|region|island|country|capital|department|county)\b/i;
+// Wikipedia's own kinds of coordinates for places that are areas with a centre point.
+const ADMIN_COORD_RE = /^(?:country|city|adm\w*)$/i;
 /** Every significant word of `b` is in `a` ("Higashi Chaya District" contains "Higashi Chaya"). */
 function nameContains(a, b) {
   const ta = new Set(nameTokens(a));
@@ -286,9 +288,16 @@ export function createWikiService({ lang = 'en', fetchImpl = defaultFetch, retry
     }
 
     if (here) {
+      // The nearest article sharing a word of the name, or one on the very spot (15 m: a
+      // monument's own coordinates). Never a town, region or department whose centre point
+      // happens to be here, nor the building next door.
       const near = await nearby(here.lat, here.lon, 250, 15).catch(() => []);
       const match = near.find(
-        (p) => p.category !== 'skip' && (distanceMeters(here, p) < 40 || sharesNameToken(name, p.title)),
+        (p) =>
+          p.category !== 'skip' &&
+          !ADMIN_COORD_RE.test(p.coordType ?? '') &&
+          !SETTLEMENT_RE.test(p.description) &&
+          (sharesNameToken(name, p.title) || distanceMeters(here, p) < 15),
       );
       if (match) {
         const s = await summary(match.title).catch(() => null);

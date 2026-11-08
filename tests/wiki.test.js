@@ -75,6 +75,34 @@ test('resolveArticle rejects a same-named article in another city', async () => 
   assert.equal(article, null);
 });
 
+test('resolveArticle never takes a region or the building next door for a stop without an article', async () => {
+  const here = { lat: 14.5567, lon: -90.7337 };
+  const { fetchImpl } = mockFetch([
+    [
+      'generator=geosearch',
+      {
+        query: {
+          pages: [
+            { pageid: 1, title: 'Sacatepéquez Department', description: 'Department of Guatemala', coordinates: [{ lat: 14.5567, lon: -90.7337, type: 'adm1st' }] },
+            { pageid: 2, title: 'Some Bank Building', description: 'Historic building in Antigua Guatemala', coordinates: [{ lat: 14.5569, lon: -90.7337, type: 'landmark' }] },
+          ],
+        },
+      },
+    ],
+    ['/page/summary/Sacatep', { pageid: 1, title: 'Sacatepéquez Department', type: 'standard', extract: 'A department…', coordinates: here }],
+    ['/page/summary/Some_Bank_Building', { pageid: 2, title: 'Some Bank Building', type: 'standard', extract: 'A bank…', coordinates: here }],
+    ['list=search', { query: { search: [] } }],
+  ]);
+  const wiki = createWikiService({ lang: 'en', fetchImpl });
+  assert.equal(await wiki.resolveArticle({ name: 'Parque Central', ...here }), null);
+  // A nearby article that shares the name is still the one.
+  const { fetchImpl: f2 } = mockFetch([
+    ['generator=geosearch', { query: { pages: [{ pageid: 3, title: 'Parque Central de Antigua', description: 'Square', coordinates: [{ lat: 14.5568, lon: -90.7338, type: 'landmark' }] }] } }],
+    ['/page/summary/Parque_Central_de_Antigua', { pageid: 3, title: 'Parque Central de Antigua', type: 'standard', extract: 'The square…', coordinates: here }],
+  ]);
+  assert.equal((await createWikiService({ lang: 'en', fetchImpl: f2 }).resolveArticle({ name: 'Parque Central', ...here })).title, 'Parque Central de Antigua');
+});
+
 test('resolveArticle asks Wikipedia\'s search last, and keeps a hit only at the spot and with the name', async () => {
   const near = { lat: 36.5725, lon: 136.6666 };
   const { fetchImpl, seen } = mockFetch([
