@@ -110,7 +110,7 @@ const LIVE = process.env.LIVE === '1';
   await page.goto(base);
   const samples = await page.$$eval('.sample .sample-city', (els) => els.map((e) => e.textContent));
   console.log('Sample tours:', samples.join(', '));
-  expect(['Barcelona', 'Brussels', 'Cape Town', 'Kinshasa', 'Miami Beach', 'San Francisco', 'Shenzhen'].every((c) => samples.includes(c)), 'sample tours from several cities');
+  expect(['Barcelona', 'Brussels', 'Cape Town', 'Kinshasa', 'Miami Beach', 'San Francisco', 'Shenzhen', 'Matera', 'Khiva', 'Hobart'].every((c) => samples.includes(c)), 'sample tours from several cities');
   await page.click('.sample[data-id="cape-town"]');
   expect((await page.$eval('#city', (el) => el.value)) === 'Cape Town', 'a sample tour fills in its city');
   await page.click('#demo');

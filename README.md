@@ -42,6 +42,53 @@ this name, a real route joining them, a Wikipedia article for each). Use them fr
 | **Shenzhen** | Lotus Hill to the Ping An tower · 4 km | Lianhuashan Park, Shenzhen Library, Civic Center, Shenzhen Museum, Ping An Finance Center |
 | **Tokyo** | Asakusa's temples to the Skytree · 2.9 km | Kaminarimon, Sensō-ji, Asakusa Shrine, Sumida Park, Tokyo Skytree |
 
+### Off the beaten track
+
+38 more tours of smaller, less visited places, added in November 2026 and checked the same way (every stop
+found on the map, a real route, and an article for each stop in English or in the local language; stops
+with nothing to tell were left out):
+
+| City | Tour | Stops |
+| --- | --- | --- |
+| **Matera** (Europe) | The Sassi: cave houses, rock churches and the cathedral · 2.9 km | Palombaro Lungo, Sassi di Matera, Cattedrale di Matera, San Pietro Caveoso, Madonna de Idris, Casa Grotta di Vico Solitario, Palazzo Lanfranchi, Convento di Sant'Agostino |
+| **Gjirokastër** (Europe) | The stone city: castle, bazaar and Ottoman tower houses · 1.9 km | Gjirokastër Castle, Gjirokastër Bazaar, Zekate House, Ethnographic Museum |
+| **Kotor** (Europe) | Inside the walls: the Sea Gate, Saint Tryphon and the old squares · 0.4 km | Square of Arms, Katedrala Svetog Tripuna, Church of Saint Luke, Crkva Svetog Nikole |
+| **Mostar** (Europe) | The Old Bridge, the bazaar and the mosques of the old town · 2 km | Stari Most, Koski Mehmed Pasha Mosque, Crooked Bridge, Karađoz-begova džamija, Muslibegović House |
+| **Plovdiv** (Europe) | Roman theatre and stadium, the Revival houses of the old town · 1.5 km | Roman Stadium of Philippopolis, Dzhumaya Mosque, Ancient Theatre of Philippopolis, Church of St. Constantine and Helena, Nebet Tepe |
+| **Sibiu** (Europe) | Transylvania's Saxon squares, the Council Tower and the Bridge of Lies · 0.6 km | Piața Mare, Brukenthal National Museum, Council Tower, Podul Minciunilor, Lutheran Cathedral of Saint Mary |
+| **Tbilisi** (Europe) | Old Tbilisi: sulphur baths, Narikala and the churches by the river · 3.4 km | Metekhi Church, Abanotubani, Narikala, Sioni Cathedral, Anchiskhati Basilica, Bridge of Peace, Freedom Square |
+| **Český Krumlov** (Europe) | A bend of the Vltava: the castle, the Cloak Bridge and the old square · 1.3 km | Český Krumlov Castle, Cloak Bridge, Kostel svatého Víta, Egon Schiele Art Centrum |
+| **Évora** (Europe) | Roman temple, Gothic cathedral and the Chapel of Bones · 1 km | Templo Romano de Évora, Sé de Évora, Igreja de São Francisco, Capela dos Ossos, Universidade de Évora |
+| **Syracuse** (Europe) | Ortigia: the Temple of Apollo, the Duomo and the Fountain of Arethusa · 1.6 km | Tempio di Apollo, Antico Mercato di Ortigia, Cathedral of Syracuse, Fountain of Arethusa, Castello Maniace |
+| **Ohrid** (Europe) | Lakeside churches, the ancient theatre and Samuel's Fortress · 2.2 km | Robevi House, Church of St. Sophia, Ancient Theatre of Ohrid, Samuel's Fortress, Plaošnik, Kaneo |
+| **Mdina** (Europe) | The Silent City and Rabat: the cathedral, the bastions and the catacombs · 1.6 km | Mdina Gate, St. Paul's Cathedral, Palazzo Falson, Carmelite Priory, Domus Romana, St. Paul's Catacombs |
+| **Albi** (Europe) | Red-brick Albi: Sainte-Cécile, the Berbie palace and the old bridge · 1.3 km | Albi Cathedral, Palais de la Berbie, Pont Vieux, Église Saint-Salvi |
+| **Essaouira** (Africa) | Sea walls, the fishing port and the medina's squares · 2.3 km | Bab Doukkala, Museum Sidi Mohamed Ben Abdellah, Skala du Port, Mellah |
+| **Asmara** (Africa) | Africa's modernist city: Fiat Tagliero, Cinema Impero and the cathedrals · 3.8 km | Fiat Tagliero, Cinema Impero, Cattedrale di Asmara, Nda Mariam |
+| **Sousse** (Africa) | The medina: the Ribat, the Great Mosque and the kasbah museum · 1.3 km | Ribat of Sousse, Grande Mosquée de Sousse, Musée archéologique de Sousse, Bab el Finga |
+| **Valparaíso** (Americas) | Funiculars and painted hills: Cerro Alegre and Cerro Concepción · 1.8 km | Plaza Sotomayor, Ascensor El Peral, Palacio Baburizza, Ascensor Concepción, La Matriz |
+| **Antigua Guatemala** (Americas) | Baroque ruins and the Santa Catalina arch under the volcanoes · 1.7 km | Catedral de San José, Palacio de los Capitanes Generales, Arco de Santa Catalina, La Merced, Convento de las Capuchinas |
+| **Guanajuato** (Americas) | Silver-town alleys, the Juárez theatre and the Alhóndiga · 1.1 km | Teatro Juárez, Basílica de Nuestra Señora de Guanajuato, Universidad de Guanajuato, Alhóndiga de Granaditas |
+| **Willemstad** (Americas) | Punda and Otrobanda: the swinging bridge, the Handelskade and the synagogue · 1.4 km | Queen Emma Bridge, Fort Amsterdam, Mikvé Israel-Emanuel, Kura Hulanda Museum |
+| **Ouro Preto** (Americas) | Aleijadinho's baroque: Praça Tiradentes and the gold-rush churches · 1 km | Museu da Inconfidência, Igreja de Nossa Senhora do Carmo, Igreja de São Francisco de Assis, Igreja de Nossa Senhora do Pilar |
+| **Cuenca** (Americas) | Blue domes, the flower market and the river barranco · 1.9 km | Parque Calderón, Catedral de la Inmaculada Concepción, Catedral Vieja de Cuenca, Museo Pumapungo |
+| **Savannah** (Americas) | Live oaks and squares, from Forsyth Park to River Street · 3.4 km | Forsyth Park, Mercer Williams House, Monterey Square, Cathedral of St. John the Baptist, Colonial Park Cemetery, Owens–Thomas House, City Market, River Street |
+| **Lunenburg** (Americas) | Painted harbour town of the Bluenose: church, academy and the fisheries museum · 2.4 km | Fisheries Museum of the Atlantic, St. John's Anglican Church, Lunenburg Academy, Knaut-Rhuland House, Zion Lutheran Church, Lunenburg Opera House |
+| **Luang Prabang** (Asia) | Gilded temples between two rivers, and Mount Phousi at sunset · 1.9 km | Phou Si, Wat Mai Suwannaphumaham, Wat Sensoukharam, Wat Xieng Thong |
+| **George Town** (Asia) | Clan houses, the Kapitan Keling mosque and the Blue Mansion · 5.3 km | Fort Cornwallis, Goddess of Mercy Temple, Kapitan Keling Mosque, Khoo Kongsi, Pinang Peranakan Mansion, Cheong Fatt Tze Mansion, Clan Jetties |
+| **Galle** (Asia) | Around the Dutch fort: ramparts, the lighthouse and the old churches · 1.4 km | Galle Clock Tower, National Maritime Museum, Dutch Reformed Church, Meeran Jumma Masjid, Galle Fort Lighthouse |
+| **Bhaktapur** (Asia) | Newar squares: the 55-Window Palace, Nyatapola and the potters · 0.6 km | Bhaktapur Durbar Square, Nyatapola Temple, Bhairabnath Temple, Pottery Square |
+| **Kanazawa** (Asia) | Kenroku-en, the castle, the geisha and samurai districts · 1.7 km | Kanazawa Castle, Kenroku-en, 21st Century Museum of Contemporary Art, Kanazawa, Oyama Shrine |
+| **Gyeongju** (Asia) | Silla's capital: royal tombs, the observatory and Wolji Pond · 4.5 km | Daereungwon, Cheomseongdae, Gyochon Traditional Village, Woljeonggyo Bridge, Donggung Palace and Wolji Pond, Gyeongju National Museum |
+| **Khiva** (Asia) | Itchan Kala: the unfinished minaret, the Ark and the Juma Mosque · 1 km | Kalta Minor, Kunya-Ark, Juma Mosque, Pahlavon Mahmud Mausoleum, Tash Hauli Palace |
+| **Bukhara** (Asia) | Silk Road Bukhara: Lyab-i Hauz, the Kalyan minaret and the Ark · 3.5 km | Lyab-i Hauz, Chor Minor, Po-i-Kalyan, Kalyan Minaret, Ark of Bukhara, Bolo Haouz Mosque |
+| **Yazd** (Asia) | Windcatchers and mud brick: the Friday mosque, Amir Chakhmaq and the fire temple · 7.9 km | Jameh Mosque of Yazd, Alexander's Prison, Yazd Water Museum, Amir Chakhmaq Complex, Zoroastrian Fire Temple, Dowlat Abad Garden |
+| **Vigan** (Asia) | Spanish colonial Calle Crisologo, the cathedral and the plazas · 2 km | Plaza Salcedo, Vigan Cathedral, Syquia Mansion, Bantay Bell Tower |
+| **Tainan** (Asia) | Taiwan's old capital: Chihkan Tower, the Confucian temple and Koxinga's shrine · 2.5 km | Chihkan Tower, Grand Matsu Temple, Hayashi Department Store, Tainan Confucius Temple, Tainan Art Museum, Koxinga Shrine |
+| **Hobart** (Oceania) | Sandstone Salamanca, Battery Point and the waterfront · 1.8 km | Constitution Dock, Tasmanian Museum and Art Gallery, Franklin Square, Parliament House, Hobart, Salamanca Place, St David's Park, Battery Point |
+| **Fremantle** (Oceania) | Convict prison, the Round House and the markets of the old port · 7.3 km | Fremantle Prison, Fremantle Markets, Fremantle Town Hall, Round House, Fishing Boat Harbour, Western Australian Maritime Museum |
+| **Dunedin** (Oceania) | Edinburgh of the South: the railway station, the Octagon and First Church · 3.6 km | Dunedin Railway Station, Toitū Otago Settlers Museum, First Church of Otago, The Octagon, St Paul's Cathedral, Otago Museum, Olveston |
+
 They live in `js/samples.js`; any city works the same way: type your own stops, paste a route, or let Roamie
 curate one.
 

@@ -712,5 +712,1085 @@
   "description": "Park in Zanzibar, Tanzania",
   "extract": "The Forodhani Gardens is a small park in the historical city of Stone Town, Zanzibar, Tanzania. The gardens are located along the main seawalk of Stone Town, just in front of the most famous buildings of Stone Town, i.e., the House of Wonders and the Old Fort.",
   "url": "https://en.wikipedia.org/wiki/Forodhani_Gardens"
+ },
+ "Sassi di Matera": {
+  "title": "Sassi di Matera",
+  "description": "UNESCO World Heritage Site in Basilicata, Italy",
+  "extract": "The Sassi di Matera are two districts of the Italian city of Matera, Basilicata, well-known for their ancient cave dwellings inhabited since the Paleolithic period.",
+  "url": "https://en.wikipedia.org/wiki/Sassi_di_Matera"
+ },
+ "Matera Cathedral": {
+  "title": "Matera Cathedral",
+  "description": "Cathedral in Matera, Basilicata, Italy",
+  "extract": "Matera Cathedral is a Roman Catholic cathedral in Matera, Basilicata, Italy. It is dedicated to the Virgin Mary under the designation of the Madonna della Bruna and to Saint Eustace. Formerly the seat of the Bishops, later Archbishops, of Matera, it is now the cathedral of the Archdiocese of Matera-Irsina.",
+  "url": "https://en.wikipedia.org/wiki/Matera_Cathedral"
+ },
+ "San Pietro Caveoso": {
+  "title": "San Pietro Caveoso",
+  "description": "Catholic church in Matera, Italy",
+  "extract": "San Pietro Caveoso, also known as \"Saint Peter and Saint Paul Church\", is a Catholic church situated in the Sassi of Matera.",
+  "url": "https://en.wikipedia.org/wiki/San_Pietro_Caveoso"
+ },
+ "Museo nazionale d'arte medievale e moderna della Basilicata": {
+  "title": "Museo nazionale d'arte medievale e moderna della Basilicata",
+  "description": "Museum in Matera, Basilicata, Italy",
+  "extract": "The Museo nazionale d'arte medievale e moderna della Basilicata is an art museum located inside the building Palazzo Lanfranchi, which is located in Piazzetta Pascoli, in the Historic Centre of Matera Basilicata, Italy. In front of the entrance, a sculpture by artist Kengiro Azuma titled La Goccia is exhibited.",
+  "url": "https://en.wikipedia.org/wiki/Museo_nazionale_d'arte_medievale_e_moderna_della_Basilicata"
+ },
+ "Gjirokastër Fortress": {
+  "title": "Gjirokastër Fortress",
+  "description": "Fort in Gjirokastër, Albania",
+  "extract": "Gjirokastër Castle is a fortress in Gjirokastër, Albania, known historically during Ottoman rule as Ergiri which also includes a Bektashi türbe. Gjirokastër Castle is situated at a height of 336 metres (1,102 ft). It dominates the town and overlooks the strategically important route along the river valley.",
+  "url": "https://en.wikipedia.org/wiki/Gjirokast%C3%ABr_Fortress"
+ },
+ "Bazaar Mosque, Gjirokastër": {
+  "title": "Bazaar Mosque, Gjirokastër",
+  "description": "Sunni mosque in Gjirokastër, Albania",
+  "extract": "The Bazaar Mosque, also known as the Memi Bey Mosque, is a Sunni mosque located in Gjirokastër, Albania. The mosque was designated as a Cultural Monument of Albania in 1973; and forms part of the Historic Centres of Berat and Gjirokastër, designated as a UNESCO World Heritage Site in 2005.",
+  "url": "https://en.wikipedia.org/wiki/Bazaar_Mosque%2C_Gjirokast%C3%ABr"
+ },
+ "Zekate House": {
+  "title": "Zekate House",
+  "description": "",
+  "extract": "Zekate House, is a house in Gjirokastër, Albania. The house was built in 1811–1812 by Beqir Zeko, a local Albanian general administrator in Ali Pasha's government. It is described as \"one of the grandest examples of Gjirokastër architecture in the Ottoman style\", and as the authentic southern Albanian Tosk type residential housing of the early 19th century wealthy Albanians.",
+  "url": "https://en.wikipedia.org/wiki/Zekate_House"
+ },
+ "Ethnographic Museum of Gjirokastër": {
+  "title": "Ethnographic Museum of Gjirokastër",
+  "description": "Museum in Gjirokastër, Albania",
+  "extract": "Gjirokastër Ethnographic Museum is a museum in western Gjirokastër, Albania. The museum, constructed in 1966, is built on the site of communist leader Enver Hoxha's birth home and offers an insight into the traditional lifestyle of the town. From 1966 to 1991, the building served as the Anti-Fascist Museum, but after the fall of socialism in Albania it was converted to house cultural artefacts and traditional homewares. The museum is open year-round to visitors.",
+  "url": "https://en.wikipedia.org/wiki/Ethnographic_Museum_of_Gjirokast%C3%ABr"
+ },
+ "Trg od Oružja": {
+  "title": "Trg od Oružja",
+  "description": "Square in Kotor, Montenegro",
+  "extract": "Trg od Oružja is the main and the largest town square in Kotor, Montenegro.",
+  "url": "https://en.wikipedia.org/wiki/Trg_od_Oru%C5%BEja"
+ },
+ "Kotor Cathedral": {
+  "title": "Kotor Cathedral",
+  "description": "Church in Montenegro",
+  "extract": "The Cathedral of Saint Tryphon in Kotor, Montenegro, is one of two Roman Catholic cathedrals in Montenegro. It is the seat of the Roman Catholic Diocese of Kotor, which covers the entire Bay of Kotor and Municipality of Budva.",
+  "url": "https://en.wikipedia.org/wiki/Kotor_Cathedral"
+ },
+ "Church of St. Luke (Kotor)": {
+  "title": "Church of St. Luke (Kotor)",
+  "description": "Church in Montenegro",
+  "extract": "The Church of St. Luke in Boka Kotorska, Montenegro belongs to the Serbian Orthodox Church. The Byzantine and Gothic architecture was built in 1195 during Stefan Nemanja's reign. In the 17th century, Dimitrije Daskal painted the icons of the iconostasis of the Church of Sveti Luka.",
+  "url": "https://en.wikipedia.org/wiki/Church_of_St._Luke_(Kotor)"
+ },
+ "Church of St. Nicholas, Kotor": {
+  "title": "Church of St. Nicholas, Kotor",
+  "description": "Serbian Orthodox church in Kotor, Montenegro",
+  "extract": "The Church of St. Nicholas is a Serbian Orthodox church built from 1902 to 1909 in the city of Kotor. On that place the Orthodox Church existed from 1810 to the Christmas Eve in 1896, when it was burnt down in fire.",
+  "url": "https://en.wikipedia.org/wiki/Church_of_St._Nicholas%2C_Kotor"
+ },
+ "Stari Most": {
+  "title": "Stari Most",
+  "description": "Bridge in Mostar, Bosnia and Herzegovina",
+  "extract": "The Old Bridge, also known as the Mostar Bridge, is a rebuilt 16th-century Ottoman bridge in the city of Mostar in Bosnia and Herzegovina. It crosses the river Neretva and connects the two parts of the city, which is named after the bridge keepers who guarded the Old Bridge during the Ottoman era. Commissioned by Suleiman the Magnificent in 1557 and designed by Mimar Hayruddin, a student and apprentice of the architect Mimar Sinan, the Old Bridge is an exemplary piece of Balkan Islamic architecture.",
+  "url": "https://en.wikipedia.org/wiki/Stari_Most"
+ },
+ "Kriva Ćuprija": {
+  "title": "Kriva Ćuprija",
+  "description": "Bridge in Mostar, Bosnia and Herzegovina",
+  "extract": "Kriva Ćuprija is a small stone bridge across the Radobolja river in Mostar, Bosnia and Herzegovina. The bridge is oldest one arch bridge in Mostar, built in 1558 during the Ottoman rule. Its builder was the Ottoman architect Ćejvan Ketoda.",
+  "url": "https://en.wikipedia.org/wiki/Kriva_%C4%86uprija"
+ },
+ "Karađoz Bey Mosque": {
+  "title": "Karađoz Bey Mosque",
+  "description": "Mosque in Mostar, Bosnia and Herzegovina",
+  "extract": "The Karađoz Bey Mosque is a Sunni mosque, located in the city of Mostar, Bosnia and Herzegovina. Completed in 965 AH (1557/1558 CE) during the Ottoman era, the mosque was destroyed in the early 1990s during the Bosnian War, and rebuilt in 2004.",
+  "url": "https://en.wikipedia.org/wiki/Kara%C4%91oz_Bey_Mosque"
+ },
+ "Muslibegović House": {
+  "title": "Muslibegović House",
+  "description": "Traditional residential in Mostar, Bosnia and Herzegovina",
+  "extract": "Muslibegović House is a national monument by KONS, and a museum located in Mostar, Bosnia and Herzegovina. The monument complex includes a residential building and two courtyards, including the surrounding walls with entrance gateways, and movable property. Some of its most valuable exhibits include the manuscript of the Qur'an made by Sami, levhas from 1855, and a decorated sabre from 1866. The residential complex of the Muslibegović family, located in Mostar's Brankovac mahala, dates from the second half of the 18th century.",
+  "url": "https://en.wikipedia.org/wiki/Muslibegovi%C4%87_House"
+ },
+ "Stadium of Philippopolis": {
+  "title": "Stadium of Philippopolis",
+  "description": "Ancient Roman stadium",
+  "extract": "The Stadium of Philippopolis was the ancient Roman stadium of Philippopolis, built in the 2nd century AD, during the Roman imperial period. It is among the largest and best preserved buildings from the time of the Roman Empire in the Balkan Peninsula. At the time the stadium was built, Philippopolis was the capital of the Roman province of Thracia.",
+  "url": "https://en.wikipedia.org/wiki/Stadium_of_Philippopolis"
+ },
+ "Dzhumaya Mosque": {
+  "title": "Dzhumaya Mosque",
+  "description": "Mosque in Plovdiv, Bulgaria",
+  "extract": "The Dzhumaya Mosque, also known as the Friday Mosque, is a mosque located in Plovdiv, in the Plovdiv Province of Bulgaria. Located in the centre of Plovdiv, the mosque was built in 1363–1364 on the site of the Sveta Petka Tarnovska Cathedral Church after the conquest of Plovdiv by the Ottoman army. During the reign of Sultan Murad I in the 15th century the old building was demolished and replaced by the modern-day mosque.",
+  "url": "https://en.wikipedia.org/wiki/Dzhumaya_Mosque"
+ },
+ "Roman theatre of Philippopolis": {
+  "title": "Roman theatre of Philippopolis",
+  "description": "Ancient Roman theater in Plovdiv, Bulgaria",
+  "extract": "The Roman theatre of Philippopolis is one of the world's best-preserved ancient Roman theatres, located in the city center of modern Plovdiv, Bulgaria, once the ancient city of Philippopolis. It was constructed in the 1st century AD, probably during the reign of Domitian. The theatre can host between 5,000 and 7,000 spectators and it is currently in use.",
+  "url": "https://en.wikipedia.org/wiki/Roman_theatre_of_Philippopolis"
+ },
+ "Church of Sts. Constantine and Helena (Plovdiv)": {
+  "title": "Church of Sts. Constantine and Helena (Plovdiv)",
+  "description": "Church in Plovdiv, Bulgaria",
+  "extract": "The Church of Saints Constantine and Helena is a church in Plovdiv, Bulgaria. It is considered to be among the oldest churches in the city.",
+  "url": "https://en.wikipedia.org/wiki/Church_of_Sts._Constantine_and_Helena_(Plovdiv)"
+ },
+ "Nebet Tepe": {
+  "title": "Nebet Tepe",
+  "description": "Prehistoric settlement in Plovdiv, Bulgaria",
+  "extract": "Nebet Tepe is one of the hills of Plovdiv where the ancient town was founded. The earliest settlements on Nebet Tepe are dated back to 4000 BC. The site was first settled by Thracians, later expanded by Philip II of Macedon and the Roman Empire. As the town expanded, Nebet Tepe became the citadel of the town's acropolis. There are remains of the city's walls, towers, and a postern from the time of Justinian leading down to the Maritsa river. Today, the archaeological complex on the hill is one of the most popular tourist sights in Plovdiv and a cultural monument of national significance.",
+  "url": "https://en.wikipedia.org/wiki/Nebet_Tepe"
+ },
+ "Piața Mare": {
+  "title": "Piața Mare",
+  "description": "City square in Sibiu, Romania",
+  "extract": "Piața Mare is the central city square in Sibiu, Romania.",
+  "url": "https://en.wikipedia.org/wiki/Pia%C8%9Ba_Mare"
+ },
+ "Brukenthal National Museum": {
+  "title": "Brukenthal National Museum",
+  "description": "Museum in Sibiu, Romania",
+  "extract": "The Brukenthal National Museum is a museum in Sibiu, Transylvania, Romania, established in the late 18th century by Samuel von Brukenthal (1721-1803) in his city palace. Baron Brukenthal, governor of the Grand Principality of Transylvania established his first collections around 1790. The collections were officially opened to the public in 1817, making the museum the oldest institution of its kind on the territory of modern-day Romania.",
+  "url": "https://en.wikipedia.org/wiki/Brukenthal_National_Museum"
+ },
+ "Council Tower of Sibiu": {
+  "title": "Council Tower of Sibiu",
+  "description": "Tower in Sibiu, Romania",
+  "extract": "The Council Tower of Sibiu is a tower situated between the two main squares of the Historic center in Sibiu, the Great Square and the Small Square.",
+  "url": "https://en.wikipedia.org/wiki/Council_Tower_of_Sibiu"
+ },
+ "Bridge of Lies": {
+  "title": "Bridge of Lies",
+  "description": "Bridge in Transylvania, Romania",
+  "extract": "The Bridge of Lies is a legendary pedestrian bridge located in the center of the Transylvanian city of Sibiu in central Romania. There are many legends surrounding the bridge because of its name. It is the first cast iron bridge built in what is today Romania.",
+  "url": "https://en.wikipedia.org/wiki/Bridge_of_Lies"
+ },
+ "Sibiu Lutheran Cathedral": {
+  "title": "Sibiu Lutheran Cathedral",
+  "description": "Church in Sibiu, Romania",
+  "extract": "The Lutheran Cathedral of Saint Mary is the most famous Gothic-style church in Sibiu, Transylvania, central Romania. Its massive 73.34 m high steeple is a landmark of the city. The four turrets situated on top of the steeple are said to have been a sign to let foreigners know that the town had the right to sentence to death. It belongs to the Lutheran, German-speaking Evangelical Church of Augustan Confession in Romania.",
+  "url": "https://en.wikipedia.org/wiki/Sibiu_Lutheran_Cathedral"
+ },
+ "Metekhi Church": {
+  "title": "Metekhi Church",
+  "description": "Church in Tbilisi, Georgia",
+  "extract": "The Metekhi church of the Nativity of the Mother of God, known simply as Metekhi, is a Georgian Orthodox Christian church located on the left bank of the river Kura. It sits on the Metekhi Cliff opposite the old town of Tbilisi, Georgia. Much of the existing structure dates back to the Middle Ages and was built between 1278 and 1289 AD under the reign of King Demetrius II of Georgia, although oral tradition traces Metekhi's origins further to the 5th century.",
+  "url": "https://en.wikipedia.org/wiki/Metekhi_Church"
+ },
+ "Abanotubani": {
+  "title": "Abanotubani",
+  "description": "District in Tbilisi, Georgia",
+  "extract": "Abanotubani is the ancient district of Tbilisi, Georgia, known for its sulphuric baths.",
+  "url": "https://en.wikipedia.org/wiki/Abanotubani"
+ },
+ "Narikala": {
+  "title": "Narikala",
+  "description": "Ancient fortress overlooking Tbilisi, Georgia (country)",
+  "extract": "Narikala is an ancient fortress overlooking Tbilisi, the capital of Georgia, and the Mtkvari (Kura) River. The fortress consists of two walled sections on a steep hill between the sulfur baths and the botanical gardens of Tbilisi. On the lower court there is the recently restored St Nicholas church. Newly built in 1996–1997, it replaces the original 13th-century church that was destroyed in a fire. The new church is of \"prescribed cross\" type, having doors on three sides. The internal part of the church is decorated with the frescos showing scenes from both the Bible and the history of Georgia.",
+  "url": "https://en.wikipedia.org/wiki/Narikala"
+ },
+ "Tbilisi Sioni Cathedral": {
+  "title": "Tbilisi Sioni Cathedral",
+  "description": "Orthodox Christian cathedral in Tbilisi, Georgia",
+  "extract": "The Sioni Cathedral of the Dormition is a Georgian Orthodox cathedral located in Tbilisi, the capital of Georgia. Following a medieval Georgian tradition of naming churches after specific places in the Holy Land, the Sioni Cathedral bears the name of Mount Zion at Jerusalem. It is commonly referred to as the \"Tbilisi Sioni\" to distinguish it from other churches in Georgia with the same name.",
+  "url": "https://en.wikipedia.org/wiki/Tbilisi_Sioni_Cathedral"
+ },
+ "Anchiskhati Basilica": {
+  "title": "Anchiskhati Basilica",
+  "description": "Church in Tbilisi, Georgia",
+  "extract": "The Anchiskhati Basilica of St Mary is the oldest surviving church in Tbilisi, Georgia. It belongs to the Georgian Orthodox Church and dates from the sixth century.",
+  "url": "https://en.wikipedia.org/wiki/Anchiskhati_Basilica"
+ },
+ "Bridge of Peace": {
+  "title": "Bridge of Peace",
+  "description": "Bridge in Tbilisi, Georgia",
+  "extract": "The Bridge of Peace is a bow-shaped pedestrian bridge, a steel and glass construction illuminated with numerous LEDs, over the Kura River, linking the Rike Park with Old town in central Tbilisi. Since its opening in 2010 the structure has become an important pedestrian crossing in the city, as well as a significant tourist attraction and one of the most well-recognized landmarks of the capital.",
+  "url": "https://en.wikipedia.org/wiki/Bridge_of_Peace"
+ },
+ "Freedom Square, Tbilisi": {
+  "title": "Freedom Square, Tbilisi",
+  "description": "Historic site in Tbilisi, Georgia",
+  "extract": "Freedom Square or Liberty Square is located in the center of Tbilisi, Georgia, at the eastern end of Rustaveli Avenue.",
+  "url": "https://en.wikipedia.org/wiki/Freedom_Square%2C_Tbilisi"
+ },
+ "Český Krumlov Castle": {
+  "title": "Český Krumlov Castle",
+  "description": "Castle in the Czech Republic",
+  "extract": "Český Krumlov Castle is a castle in Český Krumlov in the South Bohemian Region of the Czech Republic. It dates back to 1253 when the first castle was built by the Vítkovci family, the main branch of the powerful Bohemian family Rosenberg.",
+  "url": "https://en.wikipedia.org/wiki/%C4%8Cesk%C3%BD_Krumlov_Castle"
+ },
+ "Church of Saint Vitus (Český Krumlov)": {
+  "title": "Church of Saint Vitus (Český Krumlov)",
+  "description": "Church in Český Krumlov, Czech Republic",
+  "extract": "Church of Saint Vitus is a Roman Catholic church in Český Krumlov, Czech Republic. It is dedicated to Saint Vitus. It is an important late-Gothic monument built in 1407–1438, with later modifications. In 1995, it was declared a national cultural monument.",
+  "url": "https://en.wikipedia.org/wiki/Church_of_Saint_Vitus_(%C4%8Cesk%C3%BD_Krumlov)"
+ },
+ "Egon Schiele Art Centrum": {
+  "title": "Egon Schiele Art Centrum",
+  "description": "Museum and gallery in Český Krumlov, Czech Republic",
+  "extract": "The Egon Schiele Art Centrum (ESAC) is a museum and gallery devoted to the Austrian painter Egon Schiele in Krumau, Czech Republic.",
+  "url": "https://en.wikipedia.org/wiki/Egon_Schiele_Art_Centrum"
+ },
+ "Roman Temple of Évora": {
+  "title": "Roman Temple of Évora",
+  "description": "Temple in Évora, Portugal",
+  "extract": "The Roman Temple of Évora, also referred to as the Templo de Diana is an ancient temple in the Portuguese city of Évora. The temple is part of the historical centre of the city, which was included in the classification by UNESCO as a World Heritage Site. It represents one of the most significant landmarks relating to the Roman and Lusitanian civilizations of Évora and in Portuguese territory.",
+  "url": "https://en.wikipedia.org/wiki/Roman_Temple_of_%C3%89vora"
+ },
+ "Cathedral of Évora": {
+  "title": "Cathedral of Évora",
+  "description": "Roman Catholic church in Évora, Portugal",
+  "extract": "The Cathedral of Évora is a Roman Catholic church in the city of Évora, Portugal. It is one of the oldest and most important local monuments, lying on the highest spot of the city. It is part of the historical city centre, and the seat of the Archdiocese of Évora.",
+  "url": "https://en.wikipedia.org/wiki/Cathedral_of_%C3%89vora"
+ },
+ "Igreja de São Francisco (Évora)": {
+  "title": "Igreja de São Francisco (Évora)",
+  "description": "Church building in Portugal",
+  "extract": "The Church of St. Francis is located in Évora, Portugal. It is best known for its Chapel of Bones. The Church was classified as National Monument in 1910.",
+  "url": "https://en.wikipedia.org/wiki/Igreja_de_S%C3%A3o_Francisco_(%C3%89vora)"
+ },
+ "Capela dos Ossos": {
+  "title": "Capela dos Ossos",
+  "description": "Historical monument in Évora, Portugal",
+  "extract": "The Capela dos Ossos is a monument in Évora, Portugal. It is a small interior chapel located next to the entrance of the Church of St. Francis. The Chapel gets its name because the interior walls are covered and decorated with human skulls and bones.",
+  "url": "https://en.wikipedia.org/wiki/Capela_dos_Ossos"
+ },
+ "University of Évora": {
+  "title": "University of Évora",
+  "description": "Public university in Évora, Portugal",
+  "extract": "The University of Évora is a public university in Évora, Portugal. It is the second-oldest university in the country, established in 1559 by the cardinal Henry, and it received University status in April of the same year from Pope Paul IV, as documented in his Cum a nobis papal bull. Running under the aegis of the Society of Jesus meant that the university was a target of the Marquis of Pombal's Jesuit oppression, being closed down permanently in 1779 and its masters either incarcerated or exiled.",
+  "url": "https://en.wikipedia.org/wiki/University_of_%C3%89vora"
+ },
+ "Temple of Apollo (Syracuse)": {
+  "title": "Temple of Apollo (Syracuse)",
+  "description": "Ancient Greek monument in Syracuse, Sicily, Italy",
+  "extract": "The Temple of Apollo is one of the most important ancient Greek monuments of Magna Graecia on Ortygia, in front of the Piazza Pancali in Syracuse, Sicily, Italy.",
+  "url": "https://en.wikipedia.org/wiki/Temple_of_Apollo_(Syracuse)"
+ },
+ "Cathedral of Syracuse": {
+  "title": "Cathedral of Syracuse",
+  "description": "UNESCO World Heritage Site",
+  "extract": "The Cathedral of Syracuse, formally the Cattedrale metropolitana della Natività di Maria Santissima, is an ancient Catholic church in Syracuse, Sicily, the seat of the Catholic Archdiocese of Siracusa. Its structure is originally a Greek doric temple, and for this reason it is included in a UNESCO World Heritage Site designated in 2005.",
+  "url": "https://en.wikipedia.org/wiki/Cathedral_of_Syracuse"
+ },
+ "Fountain of Arethusa": {
+  "title": "Fountain of Arethusa",
+  "description": "Sicilian natural fountain that features in mythology and literature",
+  "extract": "The Fountain of Arethusa is a natural spring on the island of Ortygia in the historical centre of the city of Syracuse in Sicily. According to Greek mythology, this freshwater fountain is the place where the nymph Arethusa, the patron figure of ancient Syracuse, returned to Earth's surface after escaping from her undersea home in Arcadia.",
+  "url": "https://en.wikipedia.org/wiki/Fountain_of_Arethusa"
+ },
+ "Castello Maniace": {
+  "title": "Castello Maniace",
+  "description": "Building in Syracuse, Italy",
+  "extract": "The Castello Maniace is a citadel and castle in Syracuse, Sicily, southern Italy. It is situated at the far point of the Ortygia island promontory, where it was constructed between 1232 and 1240 by the Emperor Frederick II. It bears the name of George Maniakes, the Byzantine general who besieged and took the city in 1038. Originally, one could only enter the castle over a bridge spanning a moat. A feature of the castle is the decorated portal. Today the castle is open to the public and is a local tourist attraction in Syracuse.",
+  "url": "https://en.wikipedia.org/wiki/Castello_Maniace"
+ },
+ "Robevi family house": {
+  "title": "Robevi family house",
+  "description": "House in Ohrid, North Macedonia",
+  "extract": "The Robevi House is a famous and historic building in Ohrid, North Macedonia. It was built in its current state in 1863–1864 by Todor Petkov from a village Gari near Debar. Today the house is a protected cultural monument and belongs to the Institute for Protection of Cultural Monuments and National Museum.",
+  "url": "https://en.wikipedia.org/wiki/Robevi_family_house"
+ },
+ "Church of Saint Sophia, Ohrid": {
+  "title": "Church of Saint Sophia, Ohrid",
+  "description": "Church in Ohrid, North Macedonia",
+  "extract": "The Church of Saint Sophia is a church in Ohrid, North Macedonia. The church is one of the most important monuments of North Macedonia, housing architecture and art from the Middle Ages.",
+  "url": "https://en.wikipedia.org/wiki/Church_of_Saint_Sophia%2C_Ohrid"
+ },
+ "Ancient Theatre of Ohrid": {
+  "title": "Ancient Theatre of Ohrid",
+  "description": "Archaeological site in North Macedonia",
+  "extract": "The Ancient theatre of Ohrid is located in Ohrid, North Macedonia. It was built in 200 BC and is the only Hellenistic-type theatre in the country as the other three in Scupi, Stobi and Heraklea Lynkestis are from Roman times. It is unclear how many people the original theater used to seat, as only the lower section still exists. The open theater has a perfect location: the two hills that surround it keep it protected from winds that could interfere with acoustics during performances. It was built at the end of 3rd or the beginning of 2nd century BC, during the late Hellenistic period.",
+  "url": "https://en.wikipedia.org/wiki/Ancient_Theatre_of_Ohrid"
+ },
+ "Samuel's Fortress, Ohrid": {
+  "title": "Samuel's Fortress, Ohrid",
+  "description": "Fortress in the old town of Ohrid, North Macedonia",
+  "extract": "Samuel's Fortress is a fortress in the old town of Ohrid, North Macedonia. It was the capital of the First Bulgarian Empire during the rule of Tsar Samuel at the turn of the 11th century. Today, this historical monument is a major tourist attraction and was heavily restored in 2003 with the addition of entirely new battlements where none had survived.",
+  "url": "https://en.wikipedia.org/wiki/Samuel's_Fortress%2C_Ohrid"
+ },
+ "Plaošnik": {
+  "title": "Plaošnik",
+  "description": "Archaeological site in Ohrid, North Macedonia",
+  "extract": "Plaošnik or simply Plaoš is an archaeological site and holy place in Ohrid, North Macedonia, located 250 meters south of Samuil's Fortress. The site is in the process of being restored to its original condition.",
+  "url": "https://en.wikipedia.org/wiki/Plao%C5%A1nik"
+ },
+ "Church of St. John at Kaneo": {
+  "title": "Church of St. John at Kaneo",
+  "description": "Orthodox church in North Macedonia",
+  "extract": "Saint John the Theologian, Kaneo or simply Saint John at Kaneo is a Macedonian Orthodox church situated on the cliff over Kaneo Beach overlooking Lake Ohrid in the city of Ohrid, North Macedonia. The church is dedicated to John of Patmos, the writer of Revelation, who has been by some considered to be the same person as John the Apostle. The construction date of the church remains unknown but documents detailing the church property suggest that it was built before the year 1447. Archaeologists believe that the church was constructed some time before the rise of the Ottoman Empire very likely in the 13th century. Restoration work in 1964 led to the discovery of frescoes in its dome.",
+  "url": "https://en.wikipedia.org/wiki/Church_of_St._John_at_Kaneo"
+ },
+ "Mdina Gate": {
+  "title": "Mdina Gate",
+  "description": "City gate in Mdina, Malta",
+  "extract": "Mdina Gate, also known as the Main Gate or the Vilhena Gate, is the main gate into the fortified city of Mdina, Malta. It was built in the Baroque style in 1724 to designs of Charles François de Mondion, during the magistracy of Grand Master António Manoel de Vilhena.",
+  "url": "https://en.wikipedia.org/wiki/Mdina_Gate"
+ },
+ "St Paul's Cathedral, Mdina": {
+  "title": "St Paul's Cathedral, Mdina",
+  "description": "Church in Mdina, Malta",
+  "extract": "The Metropolitan Cathedral of Saint Paul, commonly known as St Paul's Cathedral or the Mdina Cathedral, is a Catholic cathedral in Mdina, Malta, dedicated to St. Paul the Apostle. The cathedral was founded in the 12th century, and according to tradition it stands on the site where Roman governor Publius met St. Paul following his shipwreck on Malta. The original cathedral was severely damaged in the 1693 Sicily earthquake, so it was dismantled and rebuilt in the Baroque style to a design of the Maltese architect Lorenzo Gafà between 1696 and 1705. The cathedral is regarded as Gafà's masterpiece.",
+  "url": "https://en.wikipedia.org/wiki/St_Paul's_Cathedral%2C_Mdina"
+ },
+ "Palazzo Falson": {
+  "title": "Palazzo Falson",
+  "description": "Residence used as a historic house museum in Mdina, Malta",
+  "extract": "Palazzo Falson, formerly known as Palazzo Cumbo-Navarra, Casa dei Castelletti, and the Norman House, is a medieval townhouse in Mdina, Malta. It was built as a family residence by the Maltese nobility, and is named after the Falson family. It is presently open to the public as a house-museum with seventeen rooms of historic domestic belongings and a number of antique collections.",
+  "url": "https://en.wikipedia.org/wiki/Palazzo_Falson"
+ },
+ "Annunciation Church, Mdina": {
+  "title": "Annunciation Church, Mdina",
+  "description": "Church in Mdina, Malta",
+  "extract": "The Church of the Annunciation also known as The Carmelite Church is a rich Baroque priory church of the Priory of Our Lady of Mount Carmel located in Mdina, Malta.",
+  "url": "https://en.wikipedia.org/wiki/Annunciation_Church%2C_Mdina"
+ },
+ "Domvs Romana": {
+  "title": "Domvs Romana",
+  "description": "Roman and Muslim archaeological site in Malta",
+  "extract": "The Domus Romana, stylized as the Domvs Romana, is a ruined Roman-era house located on the boundary between Mdina and Rabat, Malta. It was built in the 1st century BC as an aristocratic town house (domus) within the Roman city of Melite. In the 11th century, a Muslim cemetery was established on the remains of the domus.",
+  "url": "https://en.wikipedia.org/wiki/Domvs_Romana"
+ },
+ "St. Paul's Catacombs": {
+  "title": "St. Paul's Catacombs",
+  "description": "Christian catacombs in Malta",
+  "extract": "St. Paul's Catacombs are some of the most prominent features of Malta's early Christianity archeology. The archeological clearing of the site has revealed an extensive system of underground galleries and tombs dating from the third to the eighth centuries CE.",
+  "url": "https://en.wikipedia.org/wiki/St._Paul's_Catacombs"
+ },
+ "Albi Cathedral": {
+  "title": "Albi Cathedral",
+  "description": "Church in Albi, France",
+  "extract": "The Cathedral of Saint Cecilia of Albi, also known as Albi Cathedral, is the seat of the Catholic Archbishop of Albi. First built in the aftermath of the Albigensian Crusade, the exterior resembles a fortress, but the interior is lavishly decorated with art and sculpture, a very ornate choir screen, and walls in bright blues and golds, in the Toulousian or Southern French Gothic style. It was begun in 1282 and was under construction for 200 years. It is claimed to be the largest brick building in the world. In 2010 the cathedral, along with its episcopal buildings, was designated a UNESCO World Heritage Site because of its unique architecture and the remarkable consistency in its design.",
+  "url": "https://en.wikipedia.org/wiki/Albi_Cathedral"
+ },
+ "Musée Toulouse-Lautrec": {
+  "title": "Musée Toulouse-Lautrec",
+  "description": "Art museum in Albi, southern France",
+  "extract": "The Musée Toulouse-Lautrec is an art museum in Albi, southern France, dedicated mainly to the work of the painter Henri de Toulouse-Lautrec who was born in Albi. The 13th-century building was originally the palace of the bishop of Albi Cathedral, which is next to the museum. Both are part of a UNESCO World Heritage Site.",
+  "url": "https://en.wikipedia.org/wiki/Mus%C3%A9e_Toulouse-Lautrec"
+ },
+ "Sidi Mohammed ben Abdallah Museum": {
+  "title": "Sidi Mohammed ben Abdallah Museum",
+  "description": "History museum in Essaouira, Morocco",
+  "extract": "The Sidi Mohammed ben Abdallah Museum is a history museum in the city of Essaouira, Morocco. It was named after the founder of the city, Mohammed ben Abdallah.",
+  "url": "https://en.wikipedia.org/wiki/Sidi_Mohammed_ben_Abdallah_Museum"
+ },
+ "Sqala of the Port": {
+  "title": "Sqala of the Port",
+  "description": "Historic site in Marrakesh-Safi, Morocco",
+  "extract": "The Sqala du Port or Sqala Al Marsa is an artillery platform dating from the 18th century located in Essaouira, Morocco. It is one of the principal fortifications of the city of Essaouira and is situated within the Port of Essaouira.",
+  "url": "https://en.wikipedia.org/wiki/Sqala_of_the_Port"
+ },
+ "Mellah": {
+  "title": "Mellah",
+  "description": "Walled Jewish quarter in Morocco",
+  "extract": "A mellah is the place of residence historically assigned to Jewish communities in Morocco.",
+  "url": "https://en.wikipedia.org/wiki/Mellah"
+ },
+ "Fiat Tagliero Building": {
+  "title": "Fiat Tagliero Building",
+  "description": "Futurist style service station in Asmara, Eritrea",
+  "extract": "The Fiat Tagliero Building is a Futurist-style filling station in Asmara, Eritrea. It was completed in 1938 and designed by the Italian engineer Giuseppe Pettazzi.",
+  "url": "https://en.wikipedia.org/wiki/Fiat_Tagliero_Building"
+ },
+ "Cinema Impero": {
+  "title": "Cinema Impero",
+  "description": "Art Deco-style cinema in Asmara, Eritrea",
+  "extract": "The Cinema Impero is an Art Deco-style cinema in Asmara, the capital of Eritrea. It was built in 1937 by the colonial authorities in Italian Eritrea.",
+  "url": "https://en.wikipedia.org/wiki/Cinema_Impero"
+ },
+ "Church of Our Lady of the Rosary, Asmara": {
+  "title": "Church of Our Lady of the Rosary, Asmara",
+  "description": "Catholic church in Eritrea",
+  "extract": "The Church of Our Lady of the Rosary, Asmara is a Catholic church built in the early 1920s in Asmara, when the city was the capital of Italian Eritrea. Often called \"The Cathedral\", it is a large Lombard Romanesque style church in the centre of the city, built in 1923 to serve as the principal church of the Apostolic Vicariate of Eritrea.",
+  "url": "https://en.wikipedia.org/wiki/Church_of_Our_Lady_of_the_Rosary%2C_Asmara"
+ },
+ "Enda Mariam Cathedral, Asmara": {
+  "title": "Enda Mariam Cathedral, Asmara",
+  "description": "Main cathedral of Eritrea",
+  "extract": "Enda Mariam Cathedral is an Eritrean Orthodox church in Asmara, Eritrea. The cathedral is located on Arbate Asmara Street.",
+  "url": "https://en.wikipedia.org/wiki/Enda_Mariam_Cathedral%2C_Asmara"
+ },
+ "Ribat of Sousse": {
+  "title": "Ribat of Sousse",
+  "description": "Fort in Tunisia",
+  "extract": "Ribat of Sousse is a ribat in the city of Sousse, Tunisia. Although scholars differ on the chronology of its original construction, it was most likely founded in the 8th century and reconstructed or completed in its current form during the early 9th century, under the Aghlabid dynasty. Although a large number of ribats were built in the region during that period, the Ribat of Sousse is by far the best-preserved.",
+  "url": "https://en.wikipedia.org/wiki/Ribat_of_Sousse"
+ },
+ "Great Mosque of Sousse": {
+  "title": "Great Mosque of Sousse",
+  "description": "Mosque in Sousse, Tunisia",
+  "extract": "The Great Mosque of Sousse is a historical mosque in the coastal city of Sousse, Tunisia. The construction dates back to 851, during the rule of the Aghlabid dynasty, vassals of the Abbasid Caliphate. It was commissioned by the ruler Abu al-‘Abbas Muhammad al-Aghlabi. It is a major monument of Aghlabid architecture in the early Islamic period. The mosque was renovated and its prayer hall expanded multiple times over the following centuries.",
+  "url": "https://en.wikipedia.org/wiki/Great_Mosque_of_Sousse"
+ },
+ "Sousse Archaeological Museum": {
+  "title": "Sousse Archaeological Museum",
+  "description": "Archaeological museum in Tunisia",
+  "extract": "The Sousse Archaeological Museum is an archaeological museum located in Sousse, Sousse Governorate, Tunisia.",
+  "url": "https://en.wikipedia.org/wiki/Sousse_Archaeological_Museum"
+ },
+ "Sotomayor Square": {
+  "title": "Sotomayor Square",
+  "description": "Square in Valparaíso, Chile",
+  "extract": "The Sotomayor Square is a town square in Valparaíso, Chile. It is named after Rafael Sotomayor. The square is lined by buildings occupying full block-fronts of the streets that flank it. The focus of the square is the monument that honors the Chilean sailors who fell during the Battle of Iquique and the Battle of Punta Gruesa. The square and surrounding buildings were designated a Zona Típica on 23 January 1979.",
+  "url": "https://en.wikipedia.org/wiki/Sotomayor_Square"
+ },
+ "El Peral funicular": {
+  "title": "El Peral funicular",
+  "description": "Fenicular railway in Chile",
+  "extract": "The El Peral funicular is located between two urban centers of Valparaíso, Chile, Plaza de la Justicia, a quiet place in Valparaiso’s downtown and Paseo Yugoslavo that offers a sightseeing balcony with a vista of the bay and mountains.",
+  "url": "https://en.wikipedia.org/wiki/El_Peral_funicular"
+ },
+ "Palacio Baburizza": {
+  "title": "Palacio Baburizza",
+  "description": "",
+  "extract": "Palacio Baburizza is the former residence of Croatian businessman Pascual Baburizza located in Valparaíso, Chile. It was built in 1916 by Italian architects, and eventually turned into a museum in 1971, and declared a historic monument in 1976.",
+  "url": "https://en.wikipedia.org/wiki/Palacio_Baburizza"
+ },
+ "Ascensor Concepción": {
+  "title": "Ascensor Concepción",
+  "description": "National monument of Chile",
+  "extract": "The Ascensor Concepción is the oldest of the funiculars of Valparaíso, Chile. Inaugurated on December 1, 1883, It connects the Elías Alley, which faces the Reloj Turri on the Plan de Valparaíso, with the Gervasoni Promenade on the Concepción Hill. The funicular was declared a Historic Monument on September 1, 1998.",
+  "url": "https://en.wikipedia.org/wiki/Ascensor_Concepci%C3%B3n"
+ },
+ "Iglesia de la Matriz": {
+  "title": "Iglesia de la Matriz",
+  "description": "Church in Valparaíso, Chile",
+  "extract": "The Iglesia de La Matriz del Salvador is a church in the city of Valparaíso, Chile. Located in the heart of the port district of the city, surrounded by cobblestone streets and houses, it has a historical importance in the city and was declared a National Monument of Chile in 1971.",
+  "url": "https://en.wikipedia.org/wiki/Iglesia_de_la_Matriz"
+ },
+ "Antigua Guatemala Cathedral": {
+  "title": "Antigua Guatemala Cathedral",
+  "description": "Cathedral in Antigua Guatemala, Guatemala",
+  "extract": "Parish of San José, located in the city of Antigua Guatemala, is part of the Archdiocese of Santiago de Guatemala and is located in a section of the old Primate Cathedral of Antigua Guatemala, which was destroyed by the 1773 Guatemala earthquakes. The first construction of the cathedral began in 1545 with the rubble brought from the destroyed settlement in the Almolonga Valley, which had been a second attempt to found a town in the region. Its complete construction was hampered by frequent earthquakes over the years. On April 7, 1669, the temple was demolished and a second sanctuary would be inaugurated in 1680 under the direction of Juan Pascual and José de Porres. There is also evidence that the Spanish engineer and image maker Martín de Andújar Cantos worked on its reconstruction.",
+  "url": "https://en.wikipedia.org/wiki/Antigua_Guatemala_Cathedral"
+ },
+ "Palacio de los Capitanes Generales, Antigua Guatemala": {
+  "title": "Palacio de los Capitanes Generales, Antigua Guatemala",
+  "description": "Building in Antigua Guatemala, Guatemala",
+  "extract": "The Captain General Palace, or Palacio de los Capitanes Generales, is a large building localed in the Central Square of Antigua Guatemala. It serves as the headquarters of the Guatemala Institute of Tourism, the Antigua Tourism Association, National Police and the Sacatepquez Department government. It also houses the National Museum of Guatemalan Art.",
+  "url": "https://en.wikipedia.org/wiki/Palacio_de_los_Capitanes_Generales%2C_Antigua_Guatemala"
+ },
+ "Arco de Santa Catalina": {
+  "title": "Arco de Santa Catalina",
+  "description": "Monument in Antigua Guatemala",
+  "extract": "The Santa Catalina Arch is one of the distinguishable landmarks in Antigua Guatemala, Guatemala, located on 5th Avenue North. Built in the 17th century, it originally connected the Santa Catalina convent to a school, allowing the cloistered nuns to pass from one building to the other without going out on the street. A clock on top was added in the era of the Central American Federation, in the 1830s. The Guatemala Post Office Building in Guatemala City is based upon the arch.",
+  "url": "https://en.wikipedia.org/wiki/Arco_de_Santa_Catalina"
+ },
+ "Iglesia de La Merced, Antigua Guatemala": {
+  "title": "Iglesia de La Merced, Antigua Guatemala",
+  "description": "Building in Antigua Guatemala, Guatemala",
+  "extract": "The Church and Convent of La Merced is a Catholic church located in the city of Antigua Guatemala in Guatemala. The architect Juan de Dios Estrada was in charge of its construction from 1749. The church was dedicated in 1767.",
+  "url": "https://en.wikipedia.org/wiki/Iglesia_de_La_Merced%2C_Antigua_Guatemala"
+ },
+ "Iglesia y Convento de las Capuchinas, Antigua Guatemala": {
+  "title": "Iglesia y Convento de las Capuchinas, Antigua Guatemala",
+  "description": "Building in Antigua Guatemala, Guatemala",
+  "extract": "The Iglesia y Convento de las Capuchinas is a notable convent and church in Antigua Guatemala, Guatemala. It is one of the finest examples of an 18th-century convent in Guatemala. It was consecrated in 1736 but like the rest of the city suffered damage during the 1751 and 1773 earthquakes respectively, and was abandoned by order of the Captain General at the time.",
+  "url": "https://en.wikipedia.org/wiki/Iglesia_y_Convento_de_las_Capuchinas%2C_Antigua_Guatemala"
+ },
+ "Teatro Juárez": {
+  "title": "Teatro Juárez",
+  "description": "Historic theater in Guanajuato, Mexico",
+  "extract": "The Teatro Juárez is a historical 19th century theater located in the Mexican city of Guanajuato. It was built from 1872 to 1903 from a design by architect José Noriega and by order of General Florencio Antillón. The building was completed by architect Antonio Rivas Mercado and engineer Alberto Malo, who implemented refurbishments that significantly changed the exterior and interior aspect.",
+  "url": "https://en.wikipedia.org/wiki/Teatro_Ju%C3%A1rez"
+ },
+ "Universidad de Guanajuato": {
+  "title": "Universidad de Guanajuato",
+  "description": "University in Mexico",
+  "extract": "The Universidad de Guanajuato is a university based in the Mexican state of Guanajuato, made up of about 47,108 students in programs ranging from high school level to the doctorate level. Over 30,893 of those are pursuing undergraduate, masters, and doctorate degrees and 16,215 are in highschool. The university offers 215 academic programs, including 117 postgraduate programs, and 90 bachelor's degrees. The university has schools in fourteen cities throughout the state of Guanajuato.",
+  "url": "https://en.wikipedia.org/wiki/Universidad_de_Guanajuato"
+ },
+ "Alhóndiga de Granaditas": {
+  "title": "Alhóndiga de Granaditas",
+  "description": "History museum in Guanajauto, Guanajauto",
+  "extract": "The Alhóndiga de Granaditas  is an old grain storage building in Guanajuato City, Mexico. This historic building was created to replace an old grain exchange near the city's river. The name Alhóndiga translates roughly from both Arabic and Spanish as grain market or warehouse. It is equivalent to the regional grain exchange. Its construction lasted from 1798 to 1809, by orders of Juan Antonio de Riaño y Bárcena, a Spaniard who was the quartermaster of the city during the Viceroyalty of New Spain. Miguel Hidalgo y Costilla and his insurgent army stormed the building during the first battle of the Mexican War of Independence, leading to the legend of el Pípila. The building received World Heritage listing as part of the Historic Town of Guanajuato in 1988.",
+  "url": "https://en.wikipedia.org/wiki/Alh%C3%B3ndiga_de_Granaditas"
+ },
+ "Queen Emma Bridge": {
+  "title": "Queen Emma Bridge",
+  "description": "Bridge in Willemstad, Curaçao",
+  "extract": "The Queen Emma Bridge is a pontoon bridge across St. Anna Bay on Curaçao island in the Dutch Caribbean. It connects the Punda and Otrobanda quarters of the capital city, Willemstad. It was named after Emma of Waldeck and Pyrmont, who was queen consort of the Netherlands during its construction. The bridge is hinged and opens regularly to enable the passage of oceangoing vessels. On the opposite end from the hinge is a small shelter where an operator controls two diesel engines turning propellers. The propellers are mounted perpendicular to the length of the bridge and allow it to swing parallel to the shore. The process only takes a few minutes to complete.",
+  "url": "https://en.wikipedia.org/wiki/Queen_Emma_Bridge"
+ },
+ "Fort Amsterdam (Curaçao)": {
+  "title": "Fort Amsterdam (Curaçao)",
+  "description": "Building in Willemstad, Curaçao",
+  "extract": "Fort Amsterdam is a fort situated in Willemstad, Curaçao. It was constructed in 1634 by the Dutch West India Company (WIC) and served not only as a military fort but also as the headquarters of the WIC. Currently it serves as the seat of the government and governor of Curaçao. The fort is named after the Amsterdam chamber of the WIC and was considered the main of eight forts on the island.",
+  "url": "https://en.wikipedia.org/wiki/Fort_Amsterdam_(Cura%C3%A7ao)"
+ },
+ "Curaçao Synagogue": {
+  "title": "Curaçao Synagogue",
+  "description": "Synagogue in Willemstad, Curaçao",
+  "extract": "The Mikvé Israel-Emanuel Synagogue is a Reconstructionist Jewish congregation and synagogue, located at Hanchi di Snoa 29, Punda, in the city of Willemstad, Curaçao, a constituent country of the Kingdom of the Netherlands in southern Caribbean Sea. The congregation was established in 1651 and the synagogue was completed in 1732, making it the oldest surviving synagogue in the Americas.",
+  "url": "https://en.wikipedia.org/wiki/Cura%C3%A7ao_Synagogue"
+ },
+ "Kurá Hulanda Museum": {
+  "title": "Kurá Hulanda Museum",
+  "description": "Museum in Willemstad, Curaçao",
+  "extract": "The Kurá Hulanda Museum is an anthropological museum located in the Kura Hulanda Village district of Willemstad, Curaçao. The museum teaches about the Atlantic slave trade, and African history in the Caribbean, and was opened in April 1999 by Jacob Gelt Dekker.",
+  "url": "https://en.wikipedia.org/wiki/Kur%C3%A1_Hulanda_Museum"
+ },
+ "Museu da Inconfidência": {
+  "title": "Museu da Inconfidência",
+  "description": "",
+  "extract": "Museu da Inconfidência or Museum of the Inconfidência is a history museum dedicated to those who died in a failed rebellion movement Inconfidência Mineira for Brazilian independence from Portugal. It was established in 1938. It is located in Tiradentes Square in Ouro Preto in Minas Gerais in a former Jail. It was declared as a National Museum of Brazil in 1990.",
+  "url": "https://en.wikipedia.org/wiki/Museu_da_Inconfid%C3%AAncia"
+ },
+ "Church of Our Lady of Mount Carmel (Ouro Preto)": {
+  "title": "Church of Our Lady of Mount Carmel (Ouro Preto)",
+  "description": "Church in Ouro Preto, Minas Gerais, Brazil",
+  "extract": "The Church of Our Lady of Mount Carmel is a Catholic church in the Brazilian city of Ouro Preto, and an important example of the Rococo tradition in Brazil. It is a listed monument by the National Institute Historic and Artistic Heritage (IPHAN).",
+  "url": "https://en.wikipedia.org/wiki/Church_of_Our_Lady_of_Mount_Carmel_(Ouro_Preto)"
+ },
+ "Church of Saint Francis of Assisi (Ouro Preto)": {
+  "title": "Church of Saint Francis of Assisi (Ouro Preto)",
+  "description": "Church in Minas Gerais, Brazil",
+  "extract": "The Church of Saint Francis of Assisi is a Rococo Catholic church in Ouro Preto, Brazil. Its erection began in 1766 after a design by the Brazilian architect and sculptor Antônio Francisco Lisboa, otherwise known as Aleijadinho. Lisboa designed both the structure of the church and the carved decorations on the interior, which were only finished towards the end of the 19th century. The circular bell towers and the oculus closed by a relief were original features in religious architecture of that time in Brazil. The façade has a single entrance door under a soapstone frontispiece under a relief depicting Saint Francis receiving the stigmata. The interior is richly decorated with golden woodwork, statues and paintings, and the wooden ceiling displays a painting by Manuel da Costa Ataíde.",
+  "url": "https://en.wikipedia.org/wiki/Church_of_Saint_Francis_of_Assisi_(Ouro_Preto)"
+ },
+ "Our Lady of the Pillar Mother Church (Ouro Preto)": {
+  "title": "Our Lady of the Pillar Mother Church (Ouro Preto)",
+  "description": "Catholic church in Ouro Preto (Minas Gerais, Brazil)",
+  "extract": "The Minor Basilica of Our Lady of the Pillar in Ouro Preto, Minas Gerais, popularly called the Our Lady of the Pillar Mother Church, is one of the best known Catholic buildings among those erected during the Brazilian Gold Rush. It is a listed monument by the National Historic and Artistic Heritage Institute (IPHAN). It is located at the Monsenhor Castilho Barbosa Square.",
+  "url": "https://en.wikipedia.org/wiki/Our_Lady_of_the_Pillar_Mother_Church_(Ouro_Preto)"
+ },
+ "New Cathedral of Cuenca": {
+  "title": "New Cathedral of Cuenca",
+  "description": "Church building in Cuenca, Ecuador",
+  "extract": "The Cathedral of the Immaculate Conception, commonly referred to as the New Cathedral of Cuenca, is the cathedral church in Cuenca, Ecuador. It is situated in front of Parque Calderon.",
+  "url": "https://en.wikipedia.org/wiki/New_Cathedral_of_Cuenca"
+ },
+ "Old Cathedral of Cuenca": {
+  "title": "Old Cathedral of Cuenca",
+  "description": "UNESCO World Heritage Site",
+  "extract": "The Sagrario Church - also known as the Old Cathedral of Cuenca is a temple whose construction began in the mid-16th century, and was considered the main Spanish place of worship during the time of Spanish colonization in Cuenca (Ecuador). Today it functions as the Museum of Religious Art, known for its wide variety of altars and the history it offers. It is located in the center of the city of Cuenca, and one of its most emblematic museums, which is located in Parque Calderón, in front of the New Cathedral.",
+  "url": "https://en.wikipedia.org/wiki/Old_Cathedral_of_Cuenca"
+ },
+ "Pumapungo Museum": {
+  "title": "Pumapungo Museum",
+  "description": "Ethnographic & Art museum in Cuenca, Ecuador",
+  "extract": "The Pumapungo Museum is an ethnographic and art museum in Cuenca, Ecuador.",
+  "url": "https://en.wikipedia.org/wiki/Pumapungo_Museum"
+ },
+ "Forsyth Park": {
+  "title": "Forsyth Park",
+  "description": "Public park in Savannah, Georgia",
+  "extract": "Forsyth Park is a large city park that occupies 30 acres (0.12 km2) in the Savannah Historic District of Savannah, Georgia, United States. The park is bordered by Gaston Street to the north, Drayton Street to the east, Park Avenue to the south and Whitaker Street to the west. It contains walking paths, a children's play area, a Fragrant Garden for the blind, a large fountain, tennis courts, basketball courts, areas for soccer and Frisbee, and home field for Savannah Shamrocks Rugby Club. From time to time, there are concerts held at Forsyth to the benefit of the public.",
+  "url": "https://en.wikipedia.org/wiki/Forsyth_Park"
+ },
+ "Mercer House (Savannah, Georgia)": {
+  "title": "Mercer House (Savannah, Georgia)",
+  "description": "Historic house in Savannah, Georgia, US, built in the 1860s",
+  "extract": "Mercer House is an Italianate mansion at 429 Bull Street in Savannah, Georgia, United States. Completed in 1868, it occupies the southwestern civic block of Monterey Square in the city's Historic District.",
+  "url": "https://en.wikipedia.org/wiki/Mercer_House_(Savannah%2C_Georgia)"
+ },
+ "Monterey Square (Savannah, Georgia)": {
+  "title": "Monterey Square (Savannah, Georgia)",
+  "description": "Public square in Savannah, Georgia",
+  "extract": "Monterey Square is one of the 22 squares of Savannah, Georgia, United States. It is located in the southernmost row of the city's five rows of squares, on Bull Street and Wayne Street, and was laid out in 1847. It is south of Madison Square, west of Taylor Square, north of Forsyth Park and east of Chatham Square. The oldest building on the square is the Herman Kuhlman Duplex, at 22–24 West Taylor Street, which dates to 1851.",
+  "url": "https://en.wikipedia.org/wiki/Monterey_Square_(Savannah%2C_Georgia)"
+ },
+ "Cathedral Basilica of St. John the Baptist (Savannah, Georgia)": {
+  "title": "Cathedral Basilica of St. John the Baptist (Savannah, Georgia)",
+  "description": "Historic church in Georgia, United States",
+  "extract": "The Cathedral Basilica of St. John the Baptist is a Roman Catholic cathedral and minor basilica near Lafayette Square at 222 East Harris Street, Savannah, Georgia, in the United States. It is the mother church of the Roman Catholic Diocese of Savannah.",
+  "url": "https://en.wikipedia.org/wiki/Cathedral_Basilica_of_St._John_the_Baptist_(Savannah%2C_Georgia)"
+ },
+ "Colonial Park Cemetery": {
+  "title": "Colonial Park Cemetery",
+  "description": "Historic cemetery in Savannah, Georgia, United States",
+  "extract": "Colonial Park Cemetery is an 18th- and early 19th-century burial ground located in downtown Savannah, Georgia. It became a city park in 1896, 43 years after burials in the cemetery ceased, and is open to visitors.",
+  "url": "https://en.wikipedia.org/wiki/Colonial_Park_Cemetery"
+ },
+ "Owens–Thomas House": {
+  "title": "Owens–Thomas House",
+  "description": "Historic house in Savannah, Georgia, US",
+  "extract": "The Owens–Thomas House & Slave Quarters is a historic home in Savannah, Georgia, that is operated as a historic house museum by Telfair Museums. It is located at 124 Abercorn Street, on the northeast corner of Oglethorpe Square. The Owens–Thomas House was designated a National Historic Landmark in 1976, as one of the nation's finest examples of English Regency architecture.",
+  "url": "https://en.wikipedia.org/wiki/Owens%E2%80%93Thomas_House"
+ },
+ "City Market (Savannah, Georgia)": {
+  "title": "City Market (Savannah, Georgia)",
+  "description": "Shopping mall in Georgia, United States",
+  "extract": "City Market is a historic market complex in the Historic District of Savannah, Georgia. Originally centered on the site of today's Ellis Square from 1733, today it stretches west from Ellis Square to Franklin Square. Established in the 1700s with a wooden building, locals gathered here for their groceries and services. This building burned in the Great Savannah Fire of 1820 and was replaced the following year with a single-storey structure that wrapped around the square. \"It was a wooden shed, about twenty-five feet wide,\" remembered historian Charles Seton Henry Hardee, who moved to Savannah in 1835. It had a shingle roof, supported by brick pillars. An uncovered section was used for the sale of live poultry and seafood. The covered area was mainly used for the sale of vegetables and dressed poultry. A brick building, the work of architects Augustus Schwaab and Martin Phillip Muller, was erected in 1876. They had submitted plans to the city six years earlier. The cost of the building's construction \"vastly exceeded expectations\" after excavations revealed weakened arches in the basement floor that required them to be replaced. It was an ornate structure with arches in the Romanesque style and large circular windows.",
+  "url": "https://en.wikipedia.org/wiki/City_Market_(Savannah%2C_Georgia)"
+ },
+ "River Street (Savannah, Georgia)": {
+  "title": "River Street (Savannah, Georgia)",
+  "description": "Street in Savannah, Georgia, United States",
+  "extract": "River Street is a commercial street and promenade in Savannah, Georgia, United States. It runs along the southern edge of the Savannah River for 2 miles (3.2 km), from the merging of North and East Lathrop Avenues in the west to East Bay Street in the east. Its most well-known section runs from the Talmadge Memorial Bridge, then continues below City Hall and Yamacraw Bluff to its eastern terminus. It is West River Street up to where the Hyatt Regency Savannah spans it. It is here, around 40 feet (12 m) below Bay Street, that it becomes East River Street. The street is one-way (westbound) from Martin Luther King Jr. Boulevard.",
+  "url": "https://en.wikipedia.org/wiki/River_Street_(Savannah%2C_Georgia)"
+ },
+ "Fisheries Museum of the Atlantic": {
+  "title": "Fisheries Museum of the Atlantic",
+  "description": "Museum in Nova Scotia, Canada",
+  "extract": "The Fisheries Museum of the Atlantic is a museum in Lunenburg, Nova Scotia, Canada, operating seasonally from mid-May through mid-October. The museum commemorates the fishing heritage of the Atlantic coast of Canada. Housed in brightly painted red buildings, with floating vessels at wharfside, the Museum offers a host of attractions, a maritime gift shop and restaurant.",
+  "url": "https://en.wikipedia.org/wiki/Fisheries_Museum_of_the_Atlantic"
+ },
+ "St. John's Anglican Church (Lunenburg)": {
+  "title": "St. John's Anglican Church (Lunenburg)",
+  "description": "Church in Lunenburg, Nova Scotia, Canada",
+  "extract": "St. John's Anglican Church was the first church established in Lunenburg, Nova Scotia, Canada (1753). It is the second Church of England built in Nova Scotia, and is the second oldest continuous Protestant church in present-day Canada. Early on 1 November 2001, St. John's church suffered significant damage by fire. It was restored and re-dedicated June 12, 2005.",
+  "url": "https://en.wikipedia.org/wiki/St._John's_Anglican_Church_(Lunenburg)"
+ },
+ "Lunenburg Academy": {
+  "title": "Lunenburg Academy",
+  "description": "National Historic Site of Canada",
+  "extract": "The Lunenburg Academy is a historic school building located in Lunenburg, Nova Scotia. Constructed in 1895 to replace a building that had been destroyed by fire, the academy operated as a school from 1895 until 2012, when the Town of Lunenburg took over the property. It was designated a National Historic Site in 1983 for its distinctive Second Empire architectural features and its illustration of Nova Scotia's education system in the 19th century. As of 2019, the building houses a library and music school, and restoration efforts are ongoing.",
+  "url": "https://en.wikipedia.org/wiki/Lunenburg_Academy"
+ },
+ "Knaut–Rhuland House": {
+  "title": "Knaut–Rhuland House",
+  "description": "Historic house in Lunenburg, Nova Scotia",
+  "extract": "Knaut–Rhuland House is a historic 18th-century house in Lunenburg, Nova Scotia, Canada. It is a designated a National Historic Site of Canada, as well as a Provincially Registered Property under the provincial Heritage Property Act. It is located within the Old Town Lunenburg World Heritage Site. The Knaut–Rhuland House is owned by the Lunenburg Heritage Society, which operates a museum in the house open to the public during the summer.",
+  "url": "https://en.wikipedia.org/wiki/Knaut%E2%80%93Rhuland_House"
+ },
+ "Zion Evangelical Lutheran Church (Lunenburg)": {
+  "title": "Zion Evangelical Lutheran Church (Lunenburg)",
+  "description": "Church in Nova Scotia, Canada",
+  "extract": "The Zion Evangelical Lutheran Church is a church in Lunenburg, Nova Scotia. The church is the home of the oldest active Lutheran congregation in Canada. German Lutheran settlers arrived in 1753 and held services in the open air and later at St. John's Anglican Church (Lunenburg). The first church on this site was built in 1772 in preparation for the arrival of its first pastor, the Rev. Mr. Friederich Schultz at Lunenburg. He stayed for 8 years.",
+  "url": "https://en.wikipedia.org/wiki/Zion_Evangelical_Lutheran_Church_(Lunenburg)"
+ },
+ "Lunenburg Opera House": {
+  "title": "Lunenburg Opera House",
+  "description": "1909 theatre building in Lunenburg, Nova Scotia, Canada",
+  "extract": "The Lunenburg Opera House is a building within the UNESCO World Heritage Site in Lunenburg, Nova Scotia, Canada. In 1907, the land needed to build the Opera House was purchased by the Rising Sun Lodge of the International Order of Odd Fellows from C. E. Kaulbach for $3,560 and construction began on the Opera House in the same year. Construction was completed in 1908, and the building opened for its first concert that year. The Opera House operated as a vaudeville concert hall and live theatre until the 1940s, when it was converted to a cinema, the Capitol Theatre.",
+  "url": "https://en.wikipedia.org/wiki/Lunenburg_Opera_House"
+ },
+ "Mount Phou Si": {
+  "title": "Mount Phou Si",
+  "description": "Hill in Laos",
+  "extract": "Mount Phou Si, also written Mount Phu Si, is a 100 m (328 ft) high hill in the centre of the old town of Luang Prabang in Laos. It lies in the heart of the old town peninsula and is bordered on one side by the Mekong River and on the other side by the Nam Khan River. The hill is a local religious site, and houses several Buddhist shrines.",
+  "url": "https://en.wikipedia.org/wiki/Mount_Phou_Si"
+ },
+ "Wat Mai Suwannaphumaham": {
+  "title": "Wat Mai Suwannaphumaham",
+  "description": "Largest Theravadin Buddhist temple in Luang Prabang, Laos",
+  "extract": "Wat Mai Suwannaphumaham often simply Wat Mai or Wat May (ວັດໃໝ່) is a Buddhist temple or wat in Luang Prabang, Laos. Built at the turn of the 18th century, it is the largest temple in Luang Prabang.",
+  "url": "https://en.wikipedia.org/wiki/Wat_Mai_Suwannaphumaham"
+ },
+ "Wat Sen": {
+  "title": "Wat Sen",
+  "description": "Buddhist temple (wat) in Luang Phrabang, Laos",
+  "extract": "Wat Sen also known as Wat Sene Souk Haram (ວັດແສນສຸກຂາຣາມ) is a Buddhist temple (wat), located in Luang Phrabang, Laos. It is one of several dozen temples in the ancient capital.",
+  "url": "https://en.wikipedia.org/wiki/Wat_Sen"
+ },
+ "Wat Xieng Thong": {
+  "title": "Wat Xieng Thong",
+  "description": "Buddhist temple in Luang Prabang, Laos",
+  "extract": "Wat Xieng Thong is a Buddhist temple on the northern tip of the peninsula of Luang Prabang, Laos. Built between 1559 and 1560 by King Setthathirath, Wat Xieng Thong is one of the most important of Lao monasteries and remains a significant monument to the spirit of religion, royalty and traditional art.",
+  "url": "https://en.wikipedia.org/wiki/Wat_Xieng_Thong"
+ },
+ "Fort Cornwallis": {
+  "title": "Fort Cornwallis",
+  "description": "Bastion fort in George Town, Penang, Malaysia",
+  "extract": "Fort Cornwallis is a bastion fort in George Town, Penang, Malaysia, built by the British East India Company in the late 18th century. Named after the then Lieutenant-General The 2nd Earl Cornwallis (1738–1805), the Governor-General of Bengal at the time of the fort's construction, it is the largest standing fort in Malaysia. The fort was built intended to respond to possible enemy threats during the Napoleonic Wars, a threat that in the end never materialised. The tourism fee to enter the fort costs RM10 for Malaysians and RM20 for foreigners.",
+  "url": "https://en.wikipedia.org/wiki/Fort_Cornwallis"
+ },
+ "Goddess of Mercy Temple": {
+  "title": "Goddess of Mercy Temple",
+  "description": "Taoist temple in George Town, Malaysia",
+  "extract": "The Goddess of Mercy Temple, also known as Kuan Im Teng or Kong Hock Keong, is a Mahayana Buddhist temple within George Town in the Malaysian state of Penang. Located at Pitt Street, it was built in 1800, making it the oldest Chinese temple in the state.",
+  "url": "https://en.wikipedia.org/wiki/Goddess_of_Mercy_Temple"
+ },
+ "Kapitan Keling Mosque": {
+  "title": "Kapitan Keling Mosque",
+  "description": "Mosque in George Town, Penang, Malaysia",
+  "extract": "The Kapitan Keling Mosque is a mosque built in the 19th century by Indian Muslim traders in George Town, Penang, Malaysia. It is situated on the corner of Buckingham Street and Pitt Street. Being a prominent Islamic historic centre, it is part of the World Heritage Site of George Town and lies at the centre of the city's Tamil Muslim neighbourhood, the chulias. It is the first permanent Muslim institution to have been established in the area, dating from the early 1800s. Cauder Mohuddeen Merican is known as the founder of the mosque and leader of the Chulias. In 1801 Sir George Leith, who was then Lieutenant Governor of Penang, appointed a prominent Indian Muslim leader, Cauder Mohudeen, as Captain of the South Indian “Keling” community. He granted a piece of land to build a mosque on the south side of Malabar Street. Cauder Mohudeen was a ship mandoor or foreman from Porto Novo, which the Tamils called Parangipettai and the Muslims Mahmudbandar, about 50 kilometres south of Pondicherry in India. He was referred to as 'Kapitan Kling'.",
+  "url": "https://en.wikipedia.org/wiki/Kapitan_Keling_Mosque"
+ },
+ "Khoo Kongsi": {
+  "title": "Khoo Kongsi",
+  "description": "Hokkien clan temple in Penang, Malaysia",
+  "extract": "The Leong San Tong Khoo Kongsi, or Khoo Kongsi for short, is the largest Hokkien clanhouse in Malaysia, with elaborate and highly ornamented architecture, a mark of the dominant presence of the Chinese in Penang, Malaysia. The Khoo Kongsi is the grandest clan temple in the country. It is also one of the city's major historic attractions. The clan temple has retained its historic setting, which includes an association building, a traditional theatre, and the late 19th century rowhouses for clan members, all clustered around a granite-paved square. It is located in Cannon Square in the heart of the oldest part of the city of George Town, in the midst of narrow, winding lanes and pre-war houses.",
+  "url": "https://en.wikipedia.org/wiki/Khoo_Kongsi"
+ },
+ "Pinang Peranakan Mansion": {
+  "title": "Pinang Peranakan Mansion",
+  "description": "Historic house museum in Penang, Malaysia",
+  "extract": "The Pinang Peranakan Mansion in George Town, Penang, Malaysia, is a museum dedicated to Penang's Peranakan heritage. The museum itself is housed within a distinctive green-hued mansion at Church Street, George Town, which once served as the residence and office of a 19th-century Chinese tycoon, Chung Keng Quee.",
+  "url": "https://en.wikipedia.org/wiki/Pinang_Peranakan_Mansion"
+ },
+ "Cheong Fatt Tze Mansion": {
+  "title": "Cheong Fatt Tze Mansion",
+  "description": "Boutique hotel in Penang, Malaysia",
+  "extract": "The Cheong Fatt Tze Mansion is a government gazetted heritage building located on Leith Street in George Town, Penang, Malaysia. The mansion's external decorations and indigo-blue outer walls make it a very distinctive building, and it is sometimes referred to as The Blue Mansion. Built by the merchant Cheong Fatt Tze at the end of the 19th century, the mansion has 38 rooms, 5 granite-paved courtyards, 7 staircases and 220 vernacular timber louvre windows. It served as Cheong's private residence as well as the seat of his business activities in Penang.",
+  "url": "https://en.wikipedia.org/wiki/Cheong_Fatt_Tze_Mansion"
+ },
+ "Clan Jetties": {
+  "title": "Clan Jetties",
+  "description": "Neighbourhood of George Town, Penang, Malaysia",
+  "extract": "The Clan Jetties form a residential neighbourhood within the city of George Town in the Malaysian state of Penang. Situated within the city's central business district, it now comprises seven wooden villages lining the coastal road of Weld Quay, each owned by residents of a specific Chinese clan – Ong, Lim, Chew, Tan, Lee, Mixed Clan and Yeoh jetties.",
+  "url": "https://en.wikipedia.org/wiki/Clan_Jetties"
+ },
+ "Galle Clock Tower": {
+  "title": "Galle Clock Tower",
+  "description": "Clock tower",
+  "extract": "The Galle Clock Tower is located within the Galle Fort in Galle, Sri Lanka. The Clock Tower is a popular landmark and overlooks the central Moon Bastion, on the site of the former guard room. The clock tower was constructed in 1883, paid for through public subscriptions by the people of Galle, in recognition of Dr. P. D. Anthonisz. It was based on a design by John Henry Gues Landon. The clock was the sole gift of a grateful patient, Mudaliyar Samson de Abrew Rajapakse.",
+  "url": "https://en.wikipedia.org/wiki/Galle_Clock_Tower"
+ },
+ "National Maritime Museum (Galle)": {
+  "title": "National Maritime Museum (Galle)",
+  "description": "Museum in Sri Lanka",
+  "extract": "The National Maritime Museum or National Maritime Archaeology Museum in Galle, Sri Lanka is situated within Galle Fort. It was first opened to the public on 9 May 1992 and is located in a 1671 Dutch Warehouse above the Old Gate of Galle Fort. Whilst the building housing the museum survived the impact of the 26 December 2004 tsunami, the adjoining UNESCO Maritime Archaeology Unit was completely destroyed and all the exhibitions were flood damaged and the majority of maritime archeological artifacts were lost. Under Sri Lanka – Netherlands Cultural Co-operation Program, the Royal Government of Netherlands provided financial assistance for reconstruction of the Maritime Museum. After 3 years period of reconstruction, the Maritime Museum was re-opened to the public.",
+  "url": "https://en.wikipedia.org/wiki/National_Maritime_Museum_(Galle)"
+ },
+ "Groote Kerk, Galle": {
+  "title": "Groote Kerk, Galle",
+  "description": "Church building in Galle, Sri Lanka",
+  "extract": "The Groote Kerk or Dutch Reformed Church is located within the Galle Fort in Galle, Sri Lanka and is situated near the entrance to the fort. The church was built by the Dutch in 1755 and is one of the oldest Protestant churches still in use in the country.",
+  "url": "https://en.wikipedia.org/wiki/Groote_Kerk%2C_Galle"
+ },
+ "Meeran Jumma Mosque": {
+  "title": "Meeran Jumma Mosque",
+  "description": "Mosque in Galle, Southern, Sri Lanka",
+  "extract": "The Meeran Jumma Mosque, commonly known as Galle Fort Mosque, is a mosque located within Galle Fort, Southern Province, Sri Lanka.",
+  "url": "https://en.wikipedia.org/wiki/Meeran_Jumma_Mosque"
+ },
+ "Galle Lighthouse": {
+  "title": "Galle Lighthouse",
+  "description": "Lighthouse in Sri Lanka",
+  "extract": "The Galle Lighthouse is an onshore lighthouse in Galle, Sri Lanka and is operated and maintained by the Sri Lanka Ports Authority. It is Sri Lanka's oldest light station.",
+  "url": "https://en.wikipedia.org/wiki/Galle_Lighthouse"
+ },
+ "Bhaktapur Durbar Square": {
+  "title": "Bhaktapur Durbar Square",
+  "description": "Royal square in Bhaktapur, Nepal",
+  "extract": "Bhaktapur Durbar Square is a former royal palace complex located in Bhaktapur, Nepal. It housed the Malla kings of Nepal from 14th to 15th century and the kings of the Kingdom of Bhaktapur from 15th to late 18th century until the kingdom was conquered in 1769. Today, this square is recognised by UNESCO, managed jointly by the Archeological Department of Nepal and Bhaktapur Municipality, and is undergoing extensive restoration due to the damage from the earthquake in 1934 and the recent earthquake of 2015.",
+  "url": "https://en.wikipedia.org/wiki/Bhaktapur_Durbar_Square"
+ },
+ "Nyatapola Temple": {
+  "title": "Nyatapola Temple",
+  "description": "Five tiered pagoda temple in Bhaktapur, Nepal",
+  "extract": "Nyātāpola is a five tiered temple located in the central part of Bhaktapur, Nepal. It is the tallest monument within the city and is also the tallest temple of Nepal. This temple was commissioned by King Bhupatindra Malla, the construction of which lasted for six months from 25 January 1702 to 26 June 1702. The temple has survived four major earthquakes and its aftershocks including the recent 7.8 magnitude April 2015 earthquake which caused major damage to the city of Bhaktapur.",
+  "url": "https://en.wikipedia.org/wiki/Nyatapola_Temple"
+ },
+ "Kanazawa Castle": {
+  "title": "Kanazawa Castle",
+  "description": "Castle in Kanazawa, Ishikawa, Japan",
+  "extract": "Kanazawa Castle  is a large, partially restored Japanese castle in Kanazawa, Ishikawa, Japan. It is located adjacent to the celebrated Kenroku-en Garden, which once formed the castle's private outer garden. It was the headquarters of Kaga Domain, ruled by the Maeda clan for 14 generations from the Sengoku period until the coming of the Meiji Restoration in 1871.",
+  "url": "https://en.wikipedia.org/wiki/Kanazawa_Castle"
+ },
+ "Kenroku-en": {
+  "title": "Kenroku-en",
+  "description": "Park in Kanazawa, Ishikawa, Japan",
+  "extract": "Kenroku-en , located in Kanazawa, Ishikawa, Japan, is a strolling style garden constructed during the Edo period by the Maeda clan. Along with Kairaku-en and Kōraku-en, Kenroku-en is considered one of the Three Great Gardens of Japan and is noted for its beauty across all seasons, particularly in winter. Spread over nearly 25 acres, features of the landscape include meandering paths, a large pond, several tea houses, and one of Japan's oldest fountains. First opening to the public in 1871, the garden was later designated a National Site of Scenic Beauty in 1922, and subsequently received status as a National Site of Special Scenic Beauty in 1985. The grounds are open through paid admission year-round during daylight hours.",
+  "url": "https://en.wikipedia.org/wiki/Kenroku-en"
+ },
+ "21st Century Museum of Contemporary Art, Kanazawa": {
+  "title": "21st Century Museum of Contemporary Art, Kanazawa",
+  "description": "Japanese museum",
+  "extract": "The 21st Century Museum of Contemporary Art, Kanazawa  is a museum of contemporary art located in Kanazawa, Ishikawa, Japan.",
+  "url": "https://en.wikipedia.org/wiki/21st_Century_Museum_of_Contemporary_Art%2C_Kanazawa"
+ },
+ "Oyama Shrine (Kanazawa)": {
+  "title": "Oyama Shrine (Kanazawa)",
+  "description": "Shinto shrine in Ishikawa Prefecture, Japan",
+  "extract": "Oyama Shrine  is a Shinto shrine in Kanazawa, Ishikawa, Japan.",
+  "url": "https://en.wikipedia.org/wiki/Oyama_Shrine_(Kanazawa)"
+ },
+ "Daereungwon": {
+  "title": "Daereungwon",
+  "description": "Tomb complex in Gyeongju, South Korea",
+  "extract": "Daereungwon is a complex of Silla-era tumulus tombs in Gyeongju, South Korea. Since 2011, it has been a designated Historic Site. Daereungwon is a popular tourist attraction. In 2023, it was reported that it received around one million visitors on average per year.",
+  "url": "https://en.wikipedia.org/wiki/Daereungwon"
+ },
+ "Cheomseongdae": {
+  "title": "Cheomseongdae",
+  "description": "Observatory in Gyeongju, South Korea",
+  "extract": "Cheomseongdae is an astronomical observatory in Gyeongju, South Korea. Cheomseongdae is the oldest surviving astronomical observatory in Asia, and possibly even the world. It was constructed during the Silla period, during the reign of Queen Seondeok. Cheomseongdae was designated as the country's 31st national treasure on December 20, 1962. It is part of Gyeongju Historic Areas, a UNESCO World Heritage Site.",
+  "url": "https://en.wikipedia.org/wiki/Cheomseongdae"
+ },
+ "Gyochon Traditional Village": {
+  "title": "Gyochon Traditional Village",
+  "description": "Folk village in Gyeongju, South Korea",
+  "extract": "Gyochon Traditional Village (Korean: 교촌마을) is a Korean folk village in Gyeongju, South Korea.",
+  "url": "https://en.wikipedia.org/wiki/Gyochon_Traditional_Village"
+ },
+ "Woljeonggyo": {
+  "title": "Woljeonggyo",
+  "description": "Bridge in Gyeongju, South Korea",
+  "extract": "Woljeonggyo is a covered bridge in Gyeongju, South Korea. Originally built in 760 A.D. during the Unified Silla period and lost during the Joseon period, it was rebuilt and opened in April 2018.",
+  "url": "https://en.wikipedia.org/wiki/Woljeonggyo"
+ },
+ "Donggung Palace and Wolji Pond": {
+  "title": "Donggung Palace and Wolji Pond",
+  "description": "Palace and pond in Gyeongju, South Korea",
+  "extract": "Donggung Palace and Wolji Pond are a Silla-era former palace and artificial pond in Gyeongju, South Korea. They were part of the palace complex of ancient Silla. It was constructed by order of King Munmu in 674 CE. The pond was formerly known as Anapji (안압지) and is situated at the northeast edge of the Wolseong Palace, in central Gyeongju. The pond is an oval shape; 200m from east to west and 180m from north to south. It contains three small islands.",
+  "url": "https://en.wikipedia.org/wiki/Donggung_Palace_and_Wolji_Pond"
+ },
+ "Gyeongju National Museum": {
+  "title": "Gyeongju National Museum",
+  "description": "National museum in South Korea",
+  "extract": "The Gyeongju National Museum (Korean: 국립경주박물관) is a museum in Gyeongju, South Korea. Its holdings are largely devoted to relics of the Silla kingdom, of which Gyeongju was the capital.",
+  "url": "https://en.wikipedia.org/wiki/Gyeongju_National_Museum"
+ },
+ "Kaltaminor": {
+  "title": "Kaltaminor",
+  "description": "Building in Khiva, Uzbekistan",
+  "extract": "Kaltaminor is a memorial minaret in Khiva. It is located on the front side of the Muhammad Amin Khan madrasa and sometimes considered as part of it.",
+  "url": "https://en.wikipedia.org/wiki/Kaltaminor"
+ },
+ "Konya Ark": {
+  "title": "Konya Ark",
+  "description": "Ancient fortress in Khiva, Uzbekistan",
+  "extract": "Konya Ark is the citadel in the Itchan Kala, the historic old town of Khiva in Uzbekistan. It is an outstanding part of the UNESCO World Heritage Site.",
+  "url": "https://en.wikipedia.org/wiki/Konya_Ark"
+ },
+ "Juma Mosque, Khiva": {
+  "title": "Juma Mosque, Khiva",
+  "description": "Mosque in Khiva, Uzbekistan",
+  "extract": "Juma Mosque is a 10th–18th century mosque in Khiva, Uzbekistan. It is one of the principal monuments of Itchan Kala, the walled old city of Khiva, which is a World Heritage Site. It stands in the middle of Itchan Kala, on the road connecting the west gate and the east gate. The mosque was first documented in the 10th century, but it was rebuilt in 1788.",
+  "url": "https://en.wikipedia.org/wiki/Juma_Mosque%2C_Khiva"
+ },
+ "Pahlavon Mahmud Complex": {
+  "title": "Pahlavon Mahmud Complex",
+  "description": "Momerial monument in Khiva",
+  "extract": "The Pahlavon Mahmud complex, Pahlavon Mahmud mausoleum or Polvon ota mausoleum is a memorial monument in Khiva, Khorezm. The mausoleum complex has a total area of 50x30m, and was originally built in 1664 as a miraculous dome over the grave of Pahlavon Mahmud. Pahlavon Mahmud (1247-1326) was a local poet who emerged from humble craftsmen, and was also famous for his heroic strength as an unbeatable wrestler, and his ability to heal people. His tomb has been and is still considered a sacred place by representatives of Uzbeks, Turkmens, Karakalpaks and other peoples. This complex is also known in Khiva as “Hazrati Pahlavon Pir”.",
+  "url": "https://en.wikipedia.org/wiki/Pahlavon_Mahmud_Complex"
+ },
+ "Toshhovli Palace": {
+  "title": "Toshhovli Palace",
+  "description": "Palace in Khiva, Uzbekistan",
+  "extract": "The Toshhovli Palace or Tach Khaouli Palace,, is a palace located in Khiva (Uzbekistan) in the fortified district of Itchan Kala, the whole of which has been a UNESCO world heritage site since 1990.",
+  "url": "https://en.wikipedia.org/wiki/Toshhovli_Palace"
+ },
+ "Lab-i Hauz": {
+  "title": "Lab-i Hauz",
+  "description": "Hauz complex in Bukhara, Uzbekistan",
+  "extract": "Lab-i Hauz is the name of the area surrounding one of the few remaining hauz pools that have survived in the city of Bukhara, Uzbekistan. Until the Soviet period, there were many such pools, which were the city's principal source of water, but they were notorious for spreading disease and were mostly filled in during the 1920s and 1930s.",
+  "url": "https://en.wikipedia.org/wiki/Lab-i_Hauz"
+ },
+ "Chor Minor": {
+  "title": "Chor Minor",
+  "description": "Historic gatehouse in Bukhara, Uzbekistan",
+  "extract": "Chor Minor, alternatively known as the Madrasah of Khalif Niyaz-kul, is a historic gatehouse for a now-destroyed madrasa in the historic city of Bukhara, Uzbekistan. It is located in a lane northeast of the Lyab-i Hauz complex. It is protected as a cultural heritage monument, and also it is a part of the World Heritage Site Historic Centre of Bukhara. In Persian, the name of the monument means \"four minarets\", referring to the building's four towers.",
+  "url": "https://en.wikipedia.org/wiki/Chor_Minor"
+ },
+ "Po-i-Kalyan": {
+  "title": "Po-i-Kalyan",
+  "description": "Islamic religious complex in Bukhara, Uzbekistan",
+  "extract": "Po-i-Kalan, or Poi Kalan, is an Islamic religious complex located in Bukhara, Uzbekistan. The complex consists of three parts, the Kalan Mosque, the Kalan Minaret to which the name refers, and the Mir-i-Arab Madrasah.",
+  "url": "https://en.wikipedia.org/wiki/Po-i-Kalyan"
+ },
+ "Kalyan Minaret": {
+  "title": "Kalyan Minaret",
+  "description": "Minaret in Bukhara, Uzbekistan",
+  "extract": "The Kalyan Minaret is a minaret of the Po-i-Kalyan mosque complex in Bukhara, Uzbekistan and one of the most prominent landmarks in the city.",
+  "url": "https://en.wikipedia.org/wiki/Kalyan_Minaret"
+ },
+ "Ark of Bukhara": {
+  "title": "Ark of Bukhara",
+  "description": "5th-century fortress in Bukhara, Uzbekistan",
+  "extract": "The Ark of Bukhara is a massive fortress located in the city of Bukhara, Uzbekistan, that was initially built and occupied around the 5th century AD. The Ark's current structure began to develop during the 16th century under the Shaybanid Uzbek dynasty, while all of its existing buildings were constructed in the last three centuries. In addition to being a military structure, the Ark encompassed what was essentially a town that, during much of the fortress's history, was inhabited by the various royal courts that held sway over the region surrounding Bukhara. The Ark was used as a fortress until it fell to the Soviet Union in 1920. Currently, the Ark is a tourist attraction and houses museums covering its history. The museums and other restored areas include an archaeological museum, the throne room, the reception and coronation court, a local history museum, and the court mosque.",
+  "url": "https://en.wikipedia.org/wiki/Ark_of_Bukhara"
+ },
+ "Bolo Haouz Mosque": {
+  "title": "Bolo Haouz Mosque",
+  "description": "Mosque in Bukhara, Uzbekistan",
+  "extract": "Bolo Haouz Mosque is a historical mosque in Bukhara, Uzbekistan. Built in 1712, on the opposite side of the citadel of Ark in Registan district, it is inscribed in the UNESCO World Heritage Site list along with other parts of the historic city. It served as a Friday mosque during the time when the emir of Bukhara was being subjugated under the Bolshevik Russian rule in the 1920s. Thin columns made of painted wood were added to the frontal part of the iwan (entrance) in 1917, additionally supporting the bulged roof of summer prayer room. The columns are decorated with colored muqarnas.",
+  "url": "https://en.wikipedia.org/wiki/Bolo_Haouz_Mosque"
+ },
+ "Jameh Mosque of Yazd": {
+  "title": "Jameh Mosque of Yazd",
+  "description": "Shi'ite mosque in Yazd, Yazd province, Iran",
+  "extract": "The Jāmeh Mosque of Yazd is a Friday mosque (jāmeh) located in the city of Yazd, in the province of Yazd, Iran. Built on the site of a 9th-century CE fire temple, the mosque was completed during the 14th and 15th centuries CE and renovated in subsequent years. Between 1982 and 2005 the mosque was depicted on the obverse of the Iranian 200 rial banknote. The mosque has served as the spiritual center of Yazd for centuries, and is renowned for its complete display of architectural motifs from Medieval Persian dynasties as well as Zoroastrian and Muslim coexistence in the city of Yazd.",
+  "url": "https://en.wikipedia.org/wiki/Jameh_Mosque_of_Yazd"
+ },
+ "Amir Chakhmaq Complex": {
+  "title": "Amir Chakhmaq Complex",
+  "description": "Caravanserai and square complex in Yazd, Iran",
+  "extract": "The Amir Chakhmaq Complex is a prominent structure in Yazd, Iran, noted for its symmetrical sunken alcoves. It is a mosque located on a square of the same name. It also contains a caravanserai, a tekyeh, a bathhouse, a cold water well, and a confectionery. At night, the building is lit up after twilight hours after sun set with orange lighting in the arched alcoves which makes it a spectacle. During the Iran–Iraq War and the Iraq wars with the United States and Afghanistan, many Iraqis and Afghanis came to inhabit the Amir Chakhmaq Square.",
+  "url": "https://en.wikipedia.org/wiki/Amir_Chakhmaq_Complex"
+ },
+ "Fire Temple of Yazd": {
+  "title": "Fire Temple of Yazd",
+  "description": "Zoroastrian fire temple in Yazd, Iran",
+  "extract": "\n\nThe Fire Temple of Yazd, also known as Yazd Atash Behram, is a Zoroastrian fire temple in Yazd, Yazd province, Iran. It enshrines the Atash Behram, meaning \"Victorious Fire\", dated to 470 AD. It is one of the nine Atash Behrams, the only one of the highest-grade fires in Iran, where Zoroastrians have practiced their religion since 400 BC; the other eight Atash Behrams are in India. According to Aga Rustam Noshiravan Belivani, of Sharifabad, the Anjuman-i Nasiri opened the Yazd Atash Behram in the 1960s to non-Zoroastrian visitors.",
+  "url": "https://en.wikipedia.org/wiki/Fire_Temple_of_Yazd"
+ },
+ "Dowlatabad Garden": {
+  "title": "Dowlatabad Garden",
+  "description": "UNESCO World Heritage Site in Iran",
+  "extract": "Dowlatabad Garden is a historical garden in Yazd, Iran. Its 33.8 meters tall windcatcher is the tallest adobe-made windcatcher in the world. It was listed as a UNESCO world heritage site in 2011, as part of the Persian gardens. It is also listed in UNESCO as a part of the historical city of Yazd in 2017.",
+  "url": "https://en.wikipedia.org/wiki/Dowlatabad_Garden"
+ },
+ "Plaza Salcedo": {
+  "title": "Plaza Salcedo",
+  "description": "Plaza Salcedo in Vigan, Ilocos Sur",
+  "extract": "Plaza Salcedo is a public park in Vigan, Ilocos Sur, Philippines. The park is the longer arm of an L-shaped open space where a popular dancing fountain display is located. Named after the Spanish conquistador Juan de Salcedo, Plaza Salcedo is the city's town center and is known for being the execution site of Filipina revolutionary Gabriela Silang in September 1873. The plaza contains, in its center, an obelisk, erected during the 17th century. The lagoon surrounding the obelisk was created during the 1970s to store water for use during times of fire, which was especially common in the then-municipality in the preceding decades.",
+  "url": "https://en.wikipedia.org/wiki/Plaza_Salcedo"
+ },
+ "Vigan Cathedral": {
+  "title": "Vigan Cathedral",
+  "description": "Roman Catholic church in Ilocos Sur, Philippines",
+  "extract": "The Metropolitan Cathedral and Parish of the Conversion of Saint Paul, commonly known as Vigan Cathedral and locally known as Simbaan a Dakkel, is a Roman Catholic cathedral in Vigan, Ilocos Sur, Philippines. It contains the cathedra of the Archdiocese of Nueva Segovia. It is part of the UNESCO World Heritage Site declaration for the Historic City of Vigan in 1999.",
+  "url": "https://en.wikipedia.org/wiki/Vigan_Cathedral"
+ },
+ "Syquia Mansion": {
+  "title": "Syquia Mansion",
+  "description": "Heritage museum in Ilocos Sur, Philippines",
+  "extract": "The Syquia Mansion is a stone house or bahay na bato in Vigan, Ilocos Sur, Philippines. The mansion is one of the oldest bahay na bato houses in Vigan. It now serves as a museum, displaying artifacts, including furniture and paintings, and exhibits about Philippine President Elpidio Quirino.",
+  "url": "https://en.wikipedia.org/wiki/Syquia_Mansion"
+ },
+ "Bantay Church": {
+  "title": "Bantay Church",
+  "description": "Roman Catholic church in Ilocos Sur, Philippines",
+  "extract": "The Parish of Saint Augustine of Hippo, also known as the Archdiocesan Shrine of Our Lady of Charity and colloquially known as Bantay Church, is a Roman Catholic church in Bantay, Ilocos Sur in the Philippines. Dedicated to Saint Augustine of Hippo, the church is under the jurisdiction of the Archdiocese of Nueva Segovia. It houses enshrined an image of the Blessed Virgin Mary venerated under the title of Our Lady of Charity.",
+  "url": "https://en.wikipedia.org/wiki/Bantay_Church"
+ },
+ "Fort Provintia": {
+  "title": "Fort Provintia",
+  "description": "Dutch outpost in Taiwan",
+  "extract": "Fort Provintia or Providentia, also known as Chihkan Tower, was a Dutch outpost on Formosa at a site now located in West Central District, Tainan, Taiwan. It was built in 1653 during the Dutch colonization of Taiwan. The Dutch, intending to strengthen their standing, sited the fort at Sakam, about 2 miles (3.2 km) due east from modern-day Anping. During the Siege of Fort Zeelandia (1662), the fort was surrendered to Koxinga, but was later destroyed by a rebellion and earthquakes in the 18th century. It was rebuilt afterwards in the 19th century under Qing rule.",
+  "url": "https://en.wikipedia.org/wiki/Fort_Provintia"
+ },
+ "Grand Matsu Temple": {
+  "title": "Grand Matsu Temple",
+  "description": "Mazu temple in Tainan, Taiwan",
+  "extract": "The Grand Matsu Temple, also known as the Datianhou or Great Queen of Heaven Temple, is a Taiwanese temple to the goddess Mazu, who is the Goddess of Sea and Patron Deity of fishermen, sailors and any occupations related to the sea. The temple is located in West Central District, Tainan, Taiwan.",
+  "url": "https://en.wikipedia.org/wiki/Grand_Matsu_Temple"
+ },
+ "Hayashi Department Store": {
+  "title": "Hayashi Department Store",
+  "description": "Department store in West Central, Tainan, Taiwan",
+  "extract": "The Hayashi Department Store is a department store in West Central District, Tainan, Taiwan.",
+  "url": "https://en.wikipedia.org/wiki/Hayashi_Department_Store"
+ },
+ "Tainan Confucian Temple": {
+  "title": "Tainan Confucian Temple",
+  "description": "Temple in West Central, Tainan, Taiwan",
+  "extract": "The Tainan Confucian Temple or Quan Tai Shou Xue, is a Confucian temple on Nanmen Road (南門路) in West Central District, Tainan, Taiwan. ",
+  "url": "https://en.wikipedia.org/wiki/Tainan_Confucian_Temple"
+ },
+ "Tainan Art Museum": {
+  "title": "Tainan Art Museum",
+  "description": "Museum in West Central, Tainan, Taiwan",
+  "extract": "The Tainan Art Museum is an art museum in West Central District, Tainan, Taiwan.",
+  "url": "https://en.wikipedia.org/wiki/Tainan_Art_Museum"
+ },
+ "Koxinga Shrine": {
+  "title": "Koxinga Shrine",
+  "description": "Temple in Taiwan, formerly a Shinto Shrine",
+  "extract": "Koxinga Shrine is a Taiwanese historical temple originally known as Kaishan Temple. Located in Tainan, Taiwan, it was built in honor of Koxinga.",
+  "url": "https://en.wikipedia.org/wiki/Koxinga_Shrine"
+ },
+ "Constitution Dock": {
+  "title": "Constitution Dock",
+  "description": "Harbourside dock in Hobart, Tasmania, Australia",
+  "extract": "Constitution Dock is the harbour-side dock area of Hobart, the capital city of the Australian state of Tasmania, in the Port of Hobart, on the River Derwent.",
+  "url": "https://en.wikipedia.org/wiki/Constitution_Dock"
+ },
+ "Tasmanian Museum & Art Gallery": {
+  "title": "Tasmanian Museum & Art Gallery",
+  "description": "Art and history museum in Hobart, Australia",
+  "extract": "The Tasmanian Museum & Art Gallery (TMAG) is a museum located in Hobart, Tasmania, Australia. The museum was established in 1846, by the Royal Society of Tasmania, the oldest Royal Society outside England. \nThe TMAG receives 400,000 visitors annually.",
+  "url": "https://en.wikipedia.org/wiki/Tasmanian_Museum_%26_Art_Gallery"
+ },
+ "Franklin Square (Hobart)": {
+  "title": "Franklin Square (Hobart)",
+  "description": "Public square in Hobart, Tasmania",
+  "extract": "Franklin Square is a 1.6-acre (0.63-hectare) oak-lined public square located in the Hobart central business district in Tasmania, Australia. It is named for the British Royal Navy officer and Arctic explorer Sir John Franklin, who served as the 4th Lieutenant-Governor of Van Diemen's Land. The centrepiece of the park is a statue of Franklin, with an epitaph written by Alfred, Lord Tennyson. As the city's most central urban parkland and transportation hub, Franklin Square is frequently utilised for festive markets, public gatherings and as a place for public protest.",
+  "url": "https://en.wikipedia.org/wiki/Franklin_Square_(Hobart)"
+ },
+ "Parliament House, Hobart": {
+  "title": "Parliament House, Hobart",
+  "description": "House of parliament for Tasmania, Australia",
+  "extract": "Parliament House, Hobart, located on Salamanca Place in Hobart, Tasmania, Australia, is the meeting place of the Parliament of Tasmania. The building was originally designed as a customs house but changed use in 1841 when Tasmania achieved self-government. The building served both purposes from 1841 to 1904, when the customs offices were relocated.",
+  "url": "https://en.wikipedia.org/wiki/Parliament_House%2C_Hobart"
+ },
+ "Salamanca Place": {
+  "title": "Salamanca Place",
+  "description": "Precinct in Hobart, Tasmania, Australia",
+  "extract": "Salamanca Place is a historic waterfront precinct in Hobart, the capital city of the Australian island state of Tasmania. Centred on the street of the same name at the foot of Battery Point, it includes a row of nineteenth-century sandstone warehouses, the weekly Salamanca Market, and restaurants, bars, galleries and public spaces.",
+  "url": "https://en.wikipedia.org/wiki/Salamanca_Place"
+ },
+ "St David's Park": {
+  "title": "St David's Park",
+  "description": "Historic park in Hobart, Tasmania, Australia",
+  "extract": "St David's Park is a heritage-listed park in Hobart, Tasmania, bounded by Davey Street, Salamanca Place, and Sandy Bay Road. The site originally served as Hobart’s primary burial ground and is the final resting place of several early settlers, including its founding Lieutenant Governor, David Collins. Today, St David's Park functions as a public park featuring an English landscape garden, memorial walls, and historical monuments.",
+  "url": "https://en.wikipedia.org/wiki/St_David's_Park"
+ },
+ "Battery Point": {
+  "title": "Battery Point",
+  "description": "Suburb of Hobart, Tasmania, Australia",
+  "extract": "Battery Point is a suburb of the city of Hobart, Tasmania, Australia. It is immediately south of the Hobart central business district. It is in the local government area of City of Hobart.",
+  "url": "https://en.wikipedia.org/wiki/Battery_Point"
+ },
+ "Fremantle Prison": {
+  "title": "Fremantle Prison",
+  "description": "Former prison in Fremantle, Western Australia",
+  "extract": "Fremantle Prison, sometimes referred to as Fremantle Gaol or Fremantle Jail, is a former Australian prison and World Heritage Site in Fremantle, Western Australia. The site includes the prison cellblocks, gatehouse, perimeter walls, cottages, and tunnels. It was initially used for convicts transported from Britain, but was transferred to the colonial government in 1886 for use for locally-sentenced prisoners. Royal Commissions were held in 1898 and 1911, and instigated some reform to the prison system, but significant changes did not begin until the 1960s. The government department in charge of the prison underwent several reorganisations in the 1970s and 1980s, but the culture of Fremantle Prison was resistant to change. Growing prisoner discontent culminated in a 1988 riot with guards taken hostage, and a fire that caused $1.8 million worth of damage. The prison closed in 1991, replaced by the new maximum-security Casuarina Prison.",
+  "url": "https://en.wikipedia.org/wiki/Fremantle_Prison"
+ },
+ "Fremantle Markets": {
+  "title": "Fremantle Markets",
+  "description": "Market in Fremantle, Western Australia",
+  "extract": "The Fremantle Markets is a public market located on the corner of South Terrace and Henderson Street, Fremantle, Western Australia.",
+  "url": "https://en.wikipedia.org/wiki/Fremantle_Markets"
+ },
+ "Fremantle Town Hall": {
+  "title": "Fremantle Town Hall",
+  "description": "Town hall in Fremantle, Western Australia",
+  "extract": "Fremantle Town Hall is a town hall located in the portside city of Fremantle, Western Australia, and situated on the corner of High, William and Adelaide Streets. The official opening, on 22 June 1887, coincided with the celebration of Queen Victoria's Jubilee and it was formally named by the mayor, Daniel Keen Congdon and the state governor, Frederick Broome, as the Town and Jubilee Hall.",
+  "url": "https://en.wikipedia.org/wiki/Fremantle_Town_Hall"
+ },
+ "Round House (Western Australia)": {
+  "title": "Round House (Western Australia)",
+  "description": "Former gaol in Fremantle, Western Australia",
+  "extract": "The Round House was the first permanent building built in the Swan River Colony. Constructed in late 1830 and opened in 1831, it is the second oldest surviving European building in Western Australia, after the Wiebbe Hayes Stone Fort on West Wallabi Island.",
+  "url": "https://en.wikipedia.org/wiki/Round_House_(Western_Australia)"
+ },
+ "Fremantle Fishing Boat Harbour": {
+  "title": "Fremantle Fishing Boat Harbour",
+  "description": "Fishing boat harbour in Fremantle, Western Australia",
+  "extract": "Fremantle Fishing Boat Harbour is a marina in Fremantle, Western Australia adjacent to the more recently constructed Challenger Harbour. It provides large sheltered mooring areas and wharf space for vessels up to 60 metres (200 ft), refuelling facilities and support services to the Fremantle fishing industry.",
+  "url": "https://en.wikipedia.org/wiki/Fremantle_Fishing_Boat_Harbour"
+ },
+ "Western Australian Museum": {
+  "title": "Western Australian Museum",
+  "description": "State museum of Western Australia",
+  "extract": "The Western Australian Museum is a statutory authority within the Culture and the Arts Portfolio, established under the Museum Act 1969.",
+  "url": "https://en.wikipedia.org/wiki/Western_Australian_Museum"
+ },
+ "Dunedin railway station": {
+  "title": "Dunedin railway station",
+  "description": "Railway station in New Zealand",
+  "extract": "Dunedin railway station is a prominent landmark and tourist site in Dunedin, a city in the South Island of New Zealand. It is speculated by locals to be the most photographed building in the country, as well as the second most photographed in the southern hemisphere, after the Sydney Opera House.",
+  "url": "https://en.wikipedia.org/wiki/Dunedin_railway_station"
+ },
+ "Toitū Otago Settlers Museum": {
+  "title": "Toitū Otago Settlers Museum",
+  "description": "Museum in Dunedin, New Zealand",
+  "extract": "The Toitū Otago Settlers Museum is a regional history museum in Dunedin, New Zealand. Its brief covers the territory of the old Otago Province, that is, New Zealand from the Waitaki River south, though its main focus is the city of Dunedin. It is New Zealand's oldest history museum.",
+  "url": "https://en.wikipedia.org/wiki/Toit%C5%AB_Otago_Settlers_Museum"
+ },
+ "First Church of Otago": {
+  "title": "First Church of Otago",
+  "description": "19th-century Presbyterian church in Dunedin, New Zealand",
+  "extract": "First Church is a prominent church in the New Zealand city of Dunedin. It is located in the heart of the city on Moray Place, 100 metres to the south of the city centre. The church is the city's primary Presbyterian church. The building is regarded as the most impressive of New Zealand's nineteenth-century churches, and is listed by Heritage New Zealand as a Category I structure.",
+  "url": "https://en.wikipedia.org/wiki/First_Church_of_Otago"
+ },
+ "The Octagon, Dunedin": {
+  "title": "The Octagon, Dunedin",
+  "description": "City centre of Dunedin",
+  "extract": "The Octagon is the city centre of Dunedin, in the South Island of New Zealand. It is an eight-sided plaza with a circular one-way carriageway, bisected by the city's main street, and is also the central terminus of two other main thoroughfares. The Octagon is predominantly a pedestrian reserve, with grass and paved features, and is surmounted by a statue of the Scottish poet Robert Burns. Several of Dunedin's significant buildings and institutions adjoin the plaza, which is also a major hub for public transport in Dunedin, primarily taxi services.",
+  "url": "https://en.wikipedia.org/wiki/The_Octagon%2C_Dunedin"
+ },
+ "St Paul's Cathedral, Dunedin": {
+  "title": "St Paul's Cathedral, Dunedin",
+  "description": "Anglican church in Dunedin, New Zealand",
+  "extract": "St Paul's Cathedral is an Anglican cathedral church located in The Octagon near the Dunedin Town Hall in Dunedin, New Zealand. The cathedral is the seat of the Bishop of Dunedin and the mother church of the Anglican Diocese of Dunedin.",
+  "url": "https://en.wikipedia.org/wiki/St_Paul's_Cathedral%2C_Dunedin"
+ },
+ "Tūhura Otago Museum": {
+  "title": "Tūhura Otago Museum",
+  "description": "Public museum in Dunedin, New Zealand",
+  "extract": "Tūhura Otago Museum, located near the city centre of Dunedin, New Zealand, adjacent to the University of Otago campus, is one of the country's largest museums and a prominent attraction in the city. The museum's extensive collections encompass natural science specimens and humanities artifacts from the Otago region and around the world, which are featured in its long-term gallery displays. A notable feature of the museum is its interactive science centre, which includes an immersive tropical rainforest butterfly house. In 2022, the museum was officially renamed Tūhura Otago Museum, incorporating the Māori name \"Tūhura\", meaning \"to discover, investigate, and explore.\"",
+  "url": "https://en.wikipedia.org/wiki/T%C5%ABhura_Otago_Museum"
+ },
+ "Olveston (house)": {
+  "title": "Olveston (house)",
+  "description": "Historic home and museum in New Zealand",
+  "extract": "Olveston Historic Home is a substantial house and museum in an inner suburb of Dunedin, New Zealand. The house was designed by Ernest George in the Jacobean style in the early 20th century for the Theomin family. When Dorothy Theomin died in 1966, the house, garden and contents were gifted to the city, and are now open to the public. The house is decorated and furnished much as it was when the family lived there, creating a snapshot of upperclass colonial Edwardian life. The Theomins were avid collectors and their art, furniture, weapons and decorative items can be seen throughout the house.",
+  "url": "https://en.wikipedia.org/wiki/Olveston_(house)"
  }
 }

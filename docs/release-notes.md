@@ -13,7 +13,7 @@ The first beta: everything a traveller needs to try Roamie for real, free, in th
 - Lunch, dinner, coffee or a drink at the right time, at independent places that are open; on
   a food outing, a local taste about every hour.
 - Start from where you are, from a typed city, or from the part of town you're staying in.
-- Paste a route from Google Maps or any maps app, or type your own stops. 21 sample tours.
+- Paste a route from Google Maps or any maps app, or type your own stops. 59 sample tours, 38 of them off the beaten track (Matera, Gjirokastër, Khiva, Asmara, Willemstad, Hobart…), in five parts of the world.
 
 **On the way**
 - Turn-by-turn directions, spoken before each turn, with real street names, for walking,
