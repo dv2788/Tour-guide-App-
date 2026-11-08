@@ -226,6 +226,7 @@ export const REGIONS = [
   ['africa', 'Africa'],
   ['americas', 'Americas'],
   ['asia', 'Asia'],
+  ['oceania', 'Oceania'],
 ];
 
 export const sampleById = (id) => SAMPLES.find((s) => s.id === id) ?? SAMPLES.find((s) => s.id === DEFAULT_SAMPLE);
