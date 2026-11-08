@@ -2,7 +2,7 @@
 // Uses public, CORS-enabled endpoints, so no API key or backend is needed.
 
 import { distanceMeters } from './geo.js';
-import { classifyPlace, sharesNameToken } from './text.js';
+import { classifyPlace, sharesNameToken, nameTokens } from './text.js';
 
 const defaultFetch = (...args) => globalThis.fetch(...args);
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -31,6 +31,15 @@ function inTurn(task) {
     if (line.active < MAX_AT_ONCE) run();
     else line.waiting.push(run);
   });
+}
+
+// A city, town or island is never the article for a stop in it.
+const SETTLEMENT_RE = /\b(?:city|town|municipality|village|comune|commune|province|region|island|country|capital)\b/i;
+/** Every significant word of `b` is in `a` ("Higashi Chaya District" contains "Higashi Chaya"). */
+function nameContains(a, b) {
+  const ta = new Set(nameTokens(a));
+  const tb = nameTokens(b);
+  return tb.length > 0 && tb.every((w) => ta.has(w));
 }
 
 export class WikipediaBusyError extends Error {}
@@ -285,8 +294,27 @@ export function createWikiService({ lang = 'en', fetchImpl = defaultFetch, retry
         const s = await summary(match.title).catch(() => null);
         if (s?.extract) return s;
       }
+      // Last, Wikipedia's own search: "Higashi Chaya District" is the article "Higashi Chaya",
+      // "Kapana" is "Kapana (Plovdiv)". A hit counts only if it stands here and one name
+      // contains the other's words ("Lamu Market" is not "Lamu Fort").
+      if (name) {
+        for (const title of (await searchTitles(name).catch(() => [])).slice(0, 4)) {
+          if (!nameContains(name, title) && !nameContains(title, name)) continue;
+          const s = await summary(title).catch(() => null);
+          if (!s?.extract || s.type === 'disambiguation' || s.lat == null || distanceMeters(here, s) > maxDistance) continue;
+          if (SETTLEMENT_RE.test(s.description ?? '') || (!wantsTransit && TRANSIT_RE.test(`${s.title} ${s.description}`))) continue;
+          return s;
+        }
+      }
     }
     return null;
+  }
+
+  /** Titles Wikipedia's search gives for a name, best first. */
+  async function searchTitles(q) {
+    const params = new URLSearchParams({ action: 'query', list: 'search', srsearch: q, srlimit: '5', format: 'json', formatversion: '2', origin: '*' });
+    const data = await getJson(`https://${lang}.wikipedia.org/w/api.php?${params}`);
+    return (data?.query?.search ?? []).map((h) => h.title);
   }
 
   /**

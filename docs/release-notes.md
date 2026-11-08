@@ -21,7 +21,9 @@ The first beta: everything a traveller needs to try Roamie for real, free, in th
   and ends by the same place) waits its turn instead of being announced at once. The tour
   always opens with the welcome, even when you start right at the first stop.
 - The story of every place you pass, from Wikipedia, in English, French, Spanish, German or
-  Italian, with a calm guide or a documentary narrator (voices run on the phone).
+  Italian, with a calm guide or a documentary narrator (voices run on the phone). A stop whose
+  name isn't quite the article's ("Higashi Chaya District") is still found, through Wikipedia's
+  search, and only if the article stands where the stop is.
 - Told the way a guide tells it: "You have arrived at Casa Batlló, a building in the centre of
   Barcelona" rather than the encyclopedia's "Casa Batlló is a building in the center of
   Barcelona, Spain"; at a stop, the whole lead section of the article, not just its first

@@ -7,7 +7,7 @@ function mockFetch(routes) {
   const fetchImpl = async (url) => {
     seen.push(url);
     for (const [pattern, body] of routes) {
-      if (url.includes(pattern)) return { ok: true, status: 200, json: async () => body };
+      if (url.includes(pattern)) return body === null ? { ok: false, status: 404, json: async () => ({}) } : { ok: true, status: 200, json: async () => body };
     }
     return { ok: false, status: 404, json: async () => ({}) };
   };
@@ -73,6 +73,24 @@ test('resolveArticle rejects a same-named article in another city', async () => 
   // The replica in Paris, Texas
   const article = await wiki.resolveArticle({ name: 'Eiffel Tower', lat: 33.6609, lon: -95.5555 });
   assert.equal(article, null);
+});
+
+test('resolveArticle asks Wikipedia\'s search last, and keeps a hit only at the spot and with the name', async () => {
+  const near = { lat: 36.5725, lon: 136.6666 };
+  const { fetchImpl, seen } = mockFetch([
+    ['generator=geosearch', { query: { pages: [] } }],
+    ['/page/summary/Higashi_Chaya_District', null], // not an article title
+    ['list=search&srsearch=Higashi+Chaya+District', { query: { search: [{ title: 'Kanazawa' }, { title: 'Higashi Chaya' }] } }],
+    ['/page/summary/Kanazawa', { pageid: 1, title: 'Kanazawa', type: 'standard', description: 'City in Ishikawa, Japan', extract: 'Kanazawa is…', coordinates: near }],
+    ['/page/summary/Higashi_Chaya', { pageid: 2, title: 'Higashi Chaya', type: 'standard', description: 'Geisha district in Kanazawa', extract: 'Higashi Chaya is…', coordinates: near }],
+    ['list=search&srsearch=Lamu+Market', { query: { search: [{ title: 'Lamu Fort' }] } }],
+    ['/page/summary/Lamu_Fort', { pageid: 3, title: 'Lamu Fort', type: 'standard', description: 'Fort in Lamu', extract: 'The fort…', coordinates: near }],
+  ]);
+  const wiki = createWikiService({ lang: 'en', fetchImpl });
+  const found = await wiki.resolveArticle({ name: 'Higashi Chaya District', ...near });
+  assert.equal(found.title, 'Higashi Chaya', 'the district, not the city whose name the search put first');
+  assert.ok(seen.some((u) => u.includes('list=search')));
+  assert.equal(await wiki.resolveArticle({ name: 'Lamu Market', ...near }), null, 'a hit sharing one word is not the place');
 });
 
 test('exploreArea adds the most notable places in the whole radius to the nearest ones, in two requests', async () => {
