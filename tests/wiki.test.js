@@ -103,7 +103,26 @@ test('resolveArticle never takes a region or the building next door for a stop w
   assert.equal((await createWikiService({ lang: 'en', fetchImpl: f2 }).resolveArticle({ name: 'Parque Central', ...here })).title, 'Parque Central de Antigua');
 });
 
-test('resolveArticle asks Wikipedia\'s search last, and keeps a hit only at the spot and with the name', async () => {
+test('resolveArticle ignores kinds of places and the city\'s name when matching nearby articles, and skips lists', async () => {
+  const here = { lat: 27.6722, lon: 85.4283 };
+  const nearby = (pages) => ['generator=geosearch', { query: { pages: pages.map((p, i) => ({ pageid: i + 1, title: p, description: 'Square in Bhaktapur', coordinates: [{ lat: 27.6725, lon: 85.4283, type: 'landmark' }] })) } }];
+  const summaryOf = (title) => [`/page/summary/${title.replace(/ /g, '_')}`, { pageid: 9, title, type: 'standard', extract: `${title}…`, coordinates: here }];
+  const none = ['list=search', { query: { search: [] } }];
+  // "Pottery Square" shares only "square" with "Bhaktapur Durbar Square"
+  let wiki = createWikiService({ lang: 'en', fetchImpl: mockFetch([nearby(['Bhaktapur Durbar Square']), summaryOf('Bhaktapur Durbar Square'), none]).fetchImpl });
+  assert.equal(await wiki.resolveArticle({ name: 'Pottery Square', ...here, city: 'Bhaktapur' }), null);
+  // "Jardim Público de Évora" shares only the city's name with "Royal Palace of Évora"
+  wiki = createWikiService({ lang: 'en', fetchImpl: mockFetch([nearby(['Royal Palace of Évora']), summaryOf('Royal Palace of Évora'), none]).fetchImpl });
+  assert.equal(await wiki.resolveArticle({ name: 'Jardim Público de Évora', ...here, city: 'Évora' }), null);
+  // a distinctive word still matches
+  wiki = createWikiService({ lang: 'en', fetchImpl: mockFetch([nearby(['Bantay Church']), summaryOf('Bantay Church'), none]).fetchImpl });
+  assert.equal((await wiki.resolveArticle({ name: 'Bantay Bell Tower', ...here, city: 'Vigan' })).title, 'Bantay Church');
+  // a "List of…" page the name redirects to is no article for the stop
+  wiki = createWikiService({ lang: 'en', fetchImpl: mockFetch([['/page/summary/Ethnographic_Museum', { pageid: 5, title: 'List of ethnographic museums', type: 'standard', extract: 'This is a list…' }], nearby([]), none]).fetchImpl });
+  assert.equal(await wiki.resolveArticle({ name: 'Ethnographic Museum', ...here }), null);
+});
+
+test('resolveArticle asks Wikipedia\'s search for the name, and keeps a hit only at the spot and with the name', async () => {
   const near = { lat: 36.5725, lon: 136.6666 };
   const { fetchImpl, seen } = mockFetch([
     ['generator=geosearch', { query: { pages: [] } }],

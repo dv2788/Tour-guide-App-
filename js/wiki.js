@@ -2,7 +2,7 @@
 // Uses public, CORS-enabled endpoints, so no API key or backend is needed.
 
 import { distanceMeters } from './geo.js';
-import { classifyPlace, sharesNameToken, nameTokens } from './text.js';
+import { classifyPlace, nameTokens } from './text.js';
 
 const defaultFetch = (...args) => globalThis.fetch(...args);
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -37,6 +37,16 @@ function inTurn(task) {
 const SETTLEMENT_RE = /\b(?:city|town|municipality|village|comune|commune|province|region|island|country|capital|department|county)\b/i;
 // Wikipedia's own kinds of coordinates for places that are areas with a centre point.
 const ADMIN_COORD_RE = /^(?:country|city|adm\w*)$/i;
+// Words that name a kind of place, not the place: two squares share "square", two temples "temple".
+const GENERIC_WORDS = new Set(
+  'street road avenue square plaza place piazza platz praca park garden gardens church cathedral chapel basilica temple mosque shrine monastery convent abbey palace palazzo palacio castle castillo fort fortress citadel tower gate bridge house hall market museum gallery theatre theater station old new great grand royal national city town saint san santa sankt sainte iglesia eglise kirche chiesa plaza rue via calle strasse pont puente ponte'.split(' '),
+);
+/** A word of `name` other than a kind of place or the city's name is in `title`. */
+function sharesDistinctiveToken(name, title, city = '') {
+  const skip = new Set([...GENERIC_WORDS, ...nameTokens(city)]);
+  const ta = new Set(nameTokens(title).filter((w) => !skip.has(w)));
+  return nameTokens(name).some((w) => !skip.has(w) && ta.has(w));
+}
 /** Every significant word of `b` is in `a` ("Higashi Chaya District" contains "Higashi Chaya"). */
 function nameContains(a, b) {
   const ta = new Set(nameTokens(a));
@@ -264,7 +274,7 @@ export function createWikiService({ lang = 'en', fetchImpl = defaultFetch, retry
    * Best article for a geocoded place: OpenStreetMap's wikipedia/wikidata tags first,
    * then the place name, then the nearest article whose title matches the name.
    */
-  async function resolveArticle({ name, wikipedia, wikidata, lat, lon }, { maxDistance = 5000 } = {}) {
+  async function resolveArticle({ name, wikipedia, wikidata, lat, lon, city = '' }, { maxDistance = 5000 } = {}) {
     const titles = [];
     if (wikipedia) {
       const i = wikipedia.indexOf(':');
@@ -280,7 +290,7 @@ export function createWikiService({ lang = 'en', fetchImpl = defaultFetch, retry
     const wantsTransit = TRANSIT_RE.test(name ?? '');
     for (const title of titles) {
       const s = await summary(title).catch(() => null);
-      if (!s || s.type === 'disambiguation' || !s.extract) continue;
+      if (!s || s.type === 'disambiguation' || !s.extract || /^list of\b/i.test(s.title)) continue;
       if (here && s.lat != null && distanceMeters(here, s) > maxDistance) continue; // same name, other city
       // A map tag pointing at the station named after a bridge or square: try the next title.
       if (!wantsTransit && TRANSIT_RE.test(`${s.title} ${s.description}`)) continue;
@@ -288,32 +298,33 @@ export function createWikiService({ lang = 'en', fetchImpl = defaultFetch, retry
     }
 
     if (here) {
-      // The nearest article sharing a word of the name, or one on the very spot (15 m: a
-      // monument's own coordinates). Never a town, region or department whose centre point
-      // happens to be here, nor the building next door.
-      const near = await nearby(here.lat, here.lon, 250, 15).catch(() => []);
-      const match = near.find(
-        (p) =>
-          p.category !== 'skip' &&
-          !ADMIN_COORD_RE.test(p.coordType ?? '') &&
-          !SETTLEMENT_RE.test(p.description) &&
-          (sharesNameToken(name, p.title) || distanceMeters(here, p) < 15),
-      );
-      if (match) {
-        const s = await summary(match.title).catch(() => null);
-        if (s?.extract) return s;
-      }
-      // Last, Wikipedia's own search: "Higashi Chaya District" is the article "Higashi Chaya",
+      // Wikipedia's own search: "Higashi Chaya District" is the article "Higashi Chaya",
       // "Kapana" is "Kapana (Plovdiv)". A hit counts only if it stands here and one name
       // contains the other's words ("Lamu Market" is not "Lamu Fort").
       if (name) {
         for (const title of (await searchTitles(name).catch(() => [])).slice(0, 4)) {
           if (!nameContains(name, title) && !nameContains(title, name)) continue;
           const s = await summary(title).catch(() => null);
-          if (!s?.extract || s.type === 'disambiguation' || s.lat == null || distanceMeters(here, s) > maxDistance) continue;
+          if (!s?.extract || s.type === 'disambiguation' || /^list of\b/i.test(s.title) || s.lat == null || distanceMeters(here, s) > maxDistance) continue;
           if (SETTLEMENT_RE.test(s.description ?? '') || (!wantsTransit && TRANSIT_RE.test(`${s.title} ${s.description}`))) continue;
           return s;
         }
+      }
+      // Last, the nearest article sharing a distinctive word of the name (not "square",
+      // "temple" or the city's name), or one on the very spot (15 m: a monument's own
+      // coordinates). Never a town, region or department whose centre point happens to be
+      // here, nor the building next door.
+      const near = await nearby(here.lat, here.lon, 250, 15).catch(() => []);
+      const match = near.find(
+        (p) =>
+          p.category !== 'skip' &&
+          !ADMIN_COORD_RE.test(p.coordType ?? '') &&
+          !SETTLEMENT_RE.test(p.description) &&
+          (sharesDistinctiveToken(name, p.title, city) || distanceMeters(here, p) < 15),
+      );
+      if (match) {
+        const s = await summary(match.title).catch(() => null);
+        if (s?.extract) return s;
       }
     }
     return null;

@@ -339,7 +339,7 @@ export class TourEngine {
     }
     if (!stop.articlePromise) {
       stop.articlePromise = this.wiki
-        .resolveArticle(stop)
+        .resolveArticle({ ...stop, city: this.city?.name ?? '' })
         .catch(() => null)
         .then((s) => {
           if (s?.pageid) this.narrated.add(s.pageid); // don't also mention it as a passing place
