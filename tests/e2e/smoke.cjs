@@ -111,6 +111,17 @@ const LIVE = process.env.LIVE === '1';
   const samples = await page.$$eval('.sample .sample-city', (els) => els.map((e) => e.textContent));
   console.log('Sample tours:', samples.join(', '));
   expect(['Barcelona', 'Brussels', 'Cape Town', 'Kinshasa', 'Miami Beach', 'San Francisco', 'Shenzhen', 'Matera', 'Khiva', 'Hobart'].every((c) => samples.includes(c)), 'sample tours from several cities');
+  // The row shows a handful of cards and a "Show more" card; the rest come out on request, per part of the world.
+  const visible = () => page.$$eval('#samples .sample:not(.sample-more):not([hidden])', (els) => els.length);
+  const moreText = () => page.$eval('.sample-more', (el) => (el.hidden ? '' : el.textContent));
+  expect((await visible()) === 8 && /^Show more/.test(await moreText()), `8 sample cards and a Show more card first (${await visible()})`);
+  await page.click('.sample-more');
+  expect((await visible()) === samples.length && /^Show fewer/.test(await moreText()), `Show more reveals all ${samples.length} tours (${await visible()})`);
+  await page.click('#sample-regions button[data-region="oceania"]');
+  expect((await visible()) === 3 && (await moreText()) === '', `a part of the world with few tours needs no Show more (${await visible()})`);
+  await page.click('#sample-regions button[data-region="europe"]');
+  expect((await visible()) === 8 && /^Show more/.test(await moreText()), 'a part with many tours folds again');
+  await page.click('#sample-regions button[data-region=""]');
   await page.click('.sample[data-id="cape-town"]');
   expect((await page.$eval('#city', (el) => el.value)) === 'Cape Town', 'a sample tour fills in its city');
   await page.click('#demo');

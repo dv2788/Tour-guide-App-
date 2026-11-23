@@ -1274,6 +1274,28 @@ select:focus {
   box-shadow: 0 0 0 1px var(--gold-bright) inset;
 }
 
+/* The last card of the row: the rest of the tours, on request */
+.sample-more {
+  border-style: dashed;
+  border-color: var(--hairline-strong);
+  background: transparent;
+}
+
+.sample-more-title {
+  font-family: var(--serif);
+  font-size: 1.32rem;
+  font-weight: 500;
+  line-height: 1.1;
+  color: var(--gold);
+}
+
+.sample-more-note {
+  font-size: 0.8rem;
+  line-height: 1.35;
+  color: var(--muted);
+  min-height: 2.7em;
+}
+
 .sample-city {
   font-family: var(--serif);
   font-size: 1.32rem;

@@ -151,6 +151,8 @@ function save(values) {
 form.addEventListener('change', syncFormHints);
 // ---------- Sample tours ----------
 
+let revealSample = () => {}; // set once the cards are laid out, below
+
 function loadSample(id, { onSite = false } = {}) {
   const sample = sampleById(id);
   imported = new Map();
@@ -161,6 +163,7 @@ function loadSample(id, { onSite = false } = {}) {
   fillForm({ city: sample.city, area: '', areaPoint: null, stops: sample.stops.join('\n'), mode: sample.mode, source: onSite ? 'gps' : 'sim', simSpeed: '8', start: null, lang: $('lang').value });
   showEvents();
   for (const el of document.querySelectorAll('.sample')) el.setAttribute('aria-pressed', String(el.dataset.id === sample.id));
+  revealSample(sample.id);
   showImportNote(
     onSite
       ? `✓ Tour of ${sample.label}: ${sample.stops.length} stops. Tap “Begin the tour” when you're there, or choose “Try from the couch” below to hear it from anywhere.`
@@ -185,25 +188,64 @@ $('samples').replaceChildren(
     return button;
   }),
 );
-// Filter the sample tours by part of the world (only the parts that have some).
+// Filter the sample tours by part of the world (only the parts that have some), and show the
+// first few of them: a "Show more" card at the end of the row brings out the rest.
 {
+  const SHOWN = 8;
   const present = REGIONS.filter(([id]) => !id || SAMPLES.some((s) => s.region === id));
-  const show = (region) => {
+  let region = '';
+  let expanded = false;
+  const more = document.createElement('button');
+  more.type = 'button';
+  more.className = 'sample sample-more';
+  more.setAttribute('aria-controls', 'samples');
+  $('samples').append(more);
+  const cards = [...$('samples').querySelectorAll('.sample:not(.sample-more)')];
+  const layout = () => {
+    const inRegion = cards.filter((card) => !region || card.dataset.region === region);
+    for (const card of cards) card.hidden = !inRegion.includes(card) || (!expanded && inRegion.indexOf(card) >= SHOWN);
+    const rest = inRegion.length - SHOWN;
+    more.hidden = rest <= 0;
+    more.setAttribute('aria-expanded', String(expanded));
+    more.replaceChildren(
+      el('span', { className: 'sample-more-title', textContent: expanded ? 'Show fewer' : 'Show more' }),
+      el('span', { className: 'sample-more-note', textContent: expanded ? `Back to the first ${SHOWN}` : `${rest} more ${region ? 'there' : 'tours'}` }),
+      el('span', { className: 'sample-meta', textContent: `${inRegion.length} in all` }),
+    );
     for (const b of $('sample-regions').children) b.setAttribute('aria-pressed', String(b.dataset.region === region));
-    for (const card of $('samples').children) card.hidden = Boolean(region) && card.dataset.region !== region;
-    $('samples').scrollLeft = 0;
   };
+  more.addEventListener('click', () => {
+    expanded = !expanded;
+    layout();
+    if (!expanded) $('samples').scrollLeft = 0;
+  });
   $('sample-regions').replaceChildren(
     ...present.map(([id, label]) => {
       const b = document.createElement('button');
       b.type = 'button';
       b.dataset.region = id;
       b.textContent = label;
-      b.setAttribute('aria-pressed', String(!id));
-      b.addEventListener('click', () => show(id));
+      b.addEventListener('click', () => {
+        region = id;
+        expanded = false;
+        layout();
+        $('samples').scrollLeft = 0;
+      });
       return b;
     }),
   );
+  layout();
+  // A tour chosen by link or by name: bring its card into view, whatever the row shows.
+  revealSample = (id) => {
+    const card = cards.find((c) => c.dataset.id === id);
+    if (!card) return;
+    if (region && card.dataset.region !== region) region = '';
+    if (card.hidden) {
+      expanded = true;
+      layout();
+    }
+    $('samples').scrollTo({ left: Math.max(0, card.offsetLeft - 20), behavior: 'smooth' });
+  };
 }
 $('demo').addEventListener('click', () => loadSample(DEFAULT_SAMPLE));
 
